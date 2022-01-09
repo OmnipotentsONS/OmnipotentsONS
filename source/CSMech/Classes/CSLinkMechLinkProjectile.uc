@@ -1,0 +1,43 @@
+class CSLinkMechLinkProjectile extends LinkProjectile;
+
+defaultproperties
+{
+    //MaxEffectDistance=7000.0
+    MaxEffectDistance=15000.0
+    ExplosionDecal=class'CSLinkMechLinkBoltScorch'
+    //Damage=30
+    Damage=120
+    DamageRadius=0.0
+    MyDamageType=class'CSLinkMechDamTypeLinkPlasma'
+    //Speed=1000
+    //MaxSpeed=4000
+    Speed=4000
+    MaxSpeed=15000
+    MomentumTransfer=0
+    ExploWallOut=0
+    LifeSpan=3
+    AmbientGlow=217
+    bDynamicLight=true
+    LightType=LT_Steady
+    LightEffect=LE_QuadraticNonIncidence
+    LightRadius=3
+    LightBrightness=255
+    LightHue=100
+    LightSaturation=100
+    bFixedRotationDir=True
+    RotationRate=(Roll=80000)
+    DrawType=DT_StaticMesh
+    StaticMesh=StaticMesh'WeaponStaticMesh.LinkProjectile'
+    //DrawScale3D=(X=2.295,Y=1.53,Z=1.53)
+    DrawScale3D=(X=9.18,Y=6.12,Z=6.12)
+    Style=STY_Additive
+    AmbientSound=Sound'WeaponSounds.ShockRifle.LinkGunProjectile'
+    SoundRadius=50
+    SoundVolume=255
+    ForceType=FT_Constant
+    ForceScale=5.0
+    ForceRadius=30.0
+    PrePivot=(X=10)
+    FluidSurfaceShootStrengthMod=6.f
+    CullDistance=+15000.0
+}
