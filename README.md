@@ -64,3 +64,34 @@ This mod depends on and includes CSAdvancedArmor, CSBallista, CSHammerhead, CSHe
 
 [What's the opposite of a nuke?](https://www.omnipotents.com/forums/viewtopic.php?f=7&t=48&sid=ad52fda57ae9b6cb0ce348635ca1d213)  Redeemer like weapon that heals power nodes.  Lots of config options.  
 
+## CSEjectorSeat
+
+Powerup that causes player to eject when their vehicle explodes
+
+## CSGPolice
+
+Various buffs to the GPolice vehicles Havoc, Rhino, and Venom
+
+## CSMarvin
+
+Modified flying saucer vehicle with portal gun secondary weapon
+
+## CSPallasV2
+
+Mobile Assault Station with PPC artillery
+
+## CSSpankBadger
+
+Spanker badger vehicle with combo projectile
+
+## CSTrickboard
+
+Modified Locust hoverboard with boost and grapple features
+
+
+
+
+
+
+
+
