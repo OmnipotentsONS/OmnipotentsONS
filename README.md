@@ -71,6 +71,7 @@ Powerup that causes player to eject when their vehicle explodes
 ## CSGPolice
 
 Various buffs to the GPolice vehicles Havoc, Rhino, and Venom
+- you will need GPolice.u in your system folder and GPolice must be listed in your EditPackages to build  this mod.   
 
 ## CSMarvin
 
@@ -87,6 +88,13 @@ Spanker badger vehicle with combo projectile
 ## CSTrickboard
 
 Modified Locust hoverboard with boost and grapple features
+
+## CSNephthys
+
+Modified gravity tank vehicle with increased speed and no team killing from gravity weapon.  
+
+- you will need the WVHoverTankV2.u file in your system folder and WVHoverTankV2 must be listed in your EditPackages to build this mod.
+
 
 
 
