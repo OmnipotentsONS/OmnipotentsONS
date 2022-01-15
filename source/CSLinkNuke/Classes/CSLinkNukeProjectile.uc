@@ -21,6 +21,8 @@ var() int CoreDamage;
 var() bool bHealNodes;
 var() bool bHealPlayers;
 var() bool bHealVehicles;
+var int NodeKillDamage;
+var actor HurtNode;
 
 simulated function Destroyed()
 {
@@ -165,21 +167,24 @@ function HealRadius(float Radius, vector HitLocation)
     local actor Victim;
     local bool sameTeam;
     local actor healedNode;
+    local bool bFlipNodes;
 
     sameTeam = false;
     healedNode = None;
+    bFlipNodes = CSLinkNuke(Owner).bFlipNodes;
+
     foreach VisibleCollidingActors( class 'Actor', Victim, DamageRadius, HitLocation )
 	{
         sameTeam = IsSameTeam(victim);
 
         if( (Victim != None) && (Victim != self) && (Victim.Role == ROLE_Authority))
         {
-            if(bHealNodes && healedNode == None && (Victim.IsA('ONSPowerNode')))
+            if(bHealNodes && healedNode == None && (Victim.IsA('ONSPowerNode')) && ((bFlipNodes) || (!bFlipNodes && HurtNode == None)))
             {
                 spawn(class'CSLinkNuke.CSLinkNukeNodeHealer', Victim);
                 HealedNode = Victim;
             }
-            else if(bHealNodes && healedNode == None && (Victim.IsA('ONSPowerNodeEnergySphere')))
+            else if(bHealNodes && healedNode == None && (Victim.IsA('ONSPowerNodeEnergySphere')) && ((bFlipNodes) || (!bFlipNodes && HurtNode == None)))
             {
                 spawn(class'CSLinkNuke.CSLinkNukeNodeHealer', ONSPowerNodeEnergySphere(Victim).PowerNode);
                 healedNode = Victim;
@@ -251,6 +256,14 @@ simulated function TeamHurtRadius( float DamageAmount, float DamageRadius, class
                 DamageAmount = CoreDamage;
             }
         }
+        if(ONSPowerNode(Victims) != None && Instigator != None)
+        {
+            if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).Health > 0)
+            {
+                DamageAmount = NodeKillDamage;
+                HurtNode = Victims;
+            }
+        }
 
 		// don't let blast damage affect fluid - VisibleCollisingActors doesn't really work for them - jag
 		if( (Victims != self) && (Hurtwall != Victims) && (Victims.Role == ROLE_Authority) && !Victims.IsA('FluidSurfaceInfo') )
@@ -292,6 +305,14 @@ simulated function TeamHurtRadius( float DamageAmount, float DamageRadius, class
             if(ONSPowerCore(Victims).DefenderTeamIndex != Instigator.GetTeamNum())
             {
                 DamageAmount = CoreDamage;
+            }
+        }
+        if(ONSPowerNode(Victims) != None && Instigator != None)
+        {
+            if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).Health > 0)
+            {
+                DamageAmount = NodeKillDamage;
+                HurtNode = Victims;
             }
         }
 
@@ -406,7 +427,7 @@ defaultproperties
      MaxSpeed=1000.000000
      Damage=250.000000
      CoreDamage=6000
-     DamageRadius=1000.000000
+     DamageRadius=1550.000000
      MomentumTransfer=200000.000000
      MyDamageType=Class'CSLinkNuke.CSLinkNukeDamTypeLinkNuke'
      ExplosionDecal=Class'XEffects.ShockImpactScorch'
@@ -440,4 +461,5 @@ defaultproperties
      ForceType=FT_DragAlong
      ForceRadius=100.000000
      ForceScale=5.000000
+     NodeKillDamage=5000
 }

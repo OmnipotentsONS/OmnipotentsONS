@@ -147,7 +147,8 @@ simulated function Timer()
 {
     if(PowerNode != None)
     {
-        PowerNode.Health = Min(PowerNode.Health + healthInc, PowerNode.DamageCapacity);
+        //PowerNode.Health = Min(PowerNode.Health + healthInc, PowerNode.DamageCapacity);
+        PowerNode.HealDamage(healthInc, Instigator.Controller, class'CSLinkNukeDamTypeLinkNuke');
     }
 
     TotalTime -= TimerRate;
