@@ -21,7 +21,7 @@ state ProjectileFireMode
 			else
 			   {
 				BestAim = LockAim;
-				M.HomingTarget = C.PickTarget(BestAim, BestDist, vector(WeaponFireRotation), WeaponFireLocation, MaxLockRange);
+				M.HomingTarget = Vehicle(C.PickTarget(BestAim, BestDist, vector(WeaponFireRotation), WeaponFireLocation, MaxLockRange));
   		       }
         }
         super.Fire(C);
@@ -157,8 +157,9 @@ state ProjectileFireMode
 
 defaultproperties
 {
+    FireInterval=0.75
      MinAim=0.900000
-     MaxLockRange=15000.000000
+     MaxLockRange=10000.000000
      LockAim=0.975000
      YawBone="PlasmaGunBarrel"
      PitchBone="PlasmaGunBarrel"

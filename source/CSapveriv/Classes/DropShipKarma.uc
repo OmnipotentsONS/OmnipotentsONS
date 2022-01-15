@@ -884,7 +884,7 @@ defaultproperties
     TPCamWorldOffset=(Z=200.000000)
     DriverDamageMult=0.000000
     VehiclePositionString="in a DropShip"
-    VehicleNameString="DropShip 1.5"
+    VehicleNameString="DropShip 1.6"
     RanOverDamageType=Class'Onslaught.DamTypeAttackCraftRoadkill'
     CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
     MaxDesireability=0.600000

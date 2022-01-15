@@ -345,7 +345,7 @@ defaultproperties
     ProjectileClass=class'CSSpankBadger.CSSpankBadgerProjSmall'
     AltFireProjectileClass=class'CSSpankBadger.CSSpankBadgerProj'
     RotationsPerSecond=1.0
-    FireInterval=0.50
+    FireInterval=0.75
     AltFireInterval=0.75
     Mesh=Mesh'ONSBPAnimations.ShockTankCannonMesh'
     YawBone=8WheelerTop

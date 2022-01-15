@@ -20,13 +20,13 @@ state ProjectileFireMode
 		{
             if (AIController(C) != None)
             {
-                M.HomingTarget = C.Enemy;
+                M.HomingTarget = Vehicle(C.Enemy);
                 M.SetHomingTarget();
             }
             else
             {
                 BestAim = LockAim;
-                M.HomingTarget = C.PickTarget(BestAim, BestDist, vector(WeaponFireRotation), WeaponFireLocation, MaxLockRange);
+                M.HomingTarget = Vehicle(C.PickTarget(BestAim, BestDist, vector(WeaponFireRotation), WeaponFireLocation, MaxLockRange));
                 M.SetHomingTarget();
             }
         }

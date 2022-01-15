@@ -73,6 +73,8 @@ simulated function PostBeginPlay()
 	Super.PostBeginPlay();
 	SetBoneLocation('RightFrontGunAttach', (vect(0,0,4)));
 	SetBoneLocation('LeftFrontGunAttach', (vect(0,0,4)));
+	SetBoneLocation('RightRearGunAttach', (vect(0,0,4)));
+	SetBoneLocation('LeftRearGunAttach', (vect(0,0,4)));
 }
 
 function KDriverEnter(Pawn p)
@@ -742,8 +744,8 @@ defaultproperties
      DriverWeapons(1)=(WeaponClass=Class'CSPallasV2.CSPallasArtilleryCannon',WeaponBone="maingunpostBase")
      PassengerWeapons(0)=(WeaponPawnClass=Class'CSPallasV2.CSPallasTurretCannonPawn',WeaponBone="RightFrontgunAttach")
      PassengerWeapons(1)=(WeaponPawnClass=Class'CSPallasV2.CSPallasTurretCannonPawn',WeaponBone="LeftFrontGunAttach")
-     PassengerWeapons(2)=(WeaponPawnClass=Class'CSPallasV2.CSPallasTurretLaserCannonPawn',WeaponBone="RightRearGunAttach")
-     PassengerWeapons(3)=(WeaponPawnClass=Class'CSPallasV2.CSPallasTurretLaserCannonPawn',WeaponBone="LeftRearGunAttach")
+     PassengerWeapons(2)=(WeaponPawnClass=Class'CSPallasV2.CSPallasTurretCannonPawn',WeaponBone="RightRearGunAttach")
+     PassengerWeapons(3)=(WeaponPawnClass=Class'CSPallasV2.CSPallasTurretCannonPawn',WeaponBone="LeftRearGunAttach")
      CustomAim=(Pitch=12000)
      RedSkin=Shader'CSPallasV2.CSPallasRedShader'
      BlueSkin=Shader'CSPallasV2.CSPallasBlueShader'
@@ -833,7 +835,7 @@ defaultproperties
      MomentumMult=0.010000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Pallas"
-     VehicleNameString="Pallas 2.0"
+     VehicleNameString="Pallas 2.1"
      RanOverDamageType=Class'OnslaughtFull.DamTypeMASRoadkill'
      CrushedDamageType=Class'OnslaughtFull.DamTypeMASPancake'
      MaxDesireability=2.000000
