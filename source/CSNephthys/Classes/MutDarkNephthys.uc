@@ -4,8 +4,14 @@ class MutDarkNephthys extends Mutator;
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
 	if (SVehicleFactory(Other) != None 
-     && SVehicleFactory(Other).VehicleClass != None 
-     && SVehicleFactory(Other).VehicleClass.Name == 'NephthysTank')
+     && SVehicleFactory(Other).VehicleClass != None
+     && SVehicleFactory(Other).VehicleClass.Name == 'ONSHoverTank')
+     {
+		SVehicleFactory(Other).VehicleClass = class'CSNephthys.CSNephthys';
+     }
+	if (SVehicleFactory(Other) != None 
+     && SVehicleFactory(Other).VehicleClass != None
+     && SVehicleFactory(Other).VehicleClass.Name == 'ONSAttackCraft')
      {
 		SVehicleFactory(Other).VehicleClass = class'CSNephthys.CSNephthys';
      }
