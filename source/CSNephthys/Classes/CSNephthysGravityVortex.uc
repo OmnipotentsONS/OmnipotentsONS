@@ -1,6 +1,8 @@
 
 class CSNephthysGravityVortex extends NephthysGravityVortex;
 
+var CSNephthys OwnerVehicle;
+
 function bool ShouldSuckActor(Actor Other)
 {
     if(Instigator != None && Instigator.Controller != None)
@@ -13,6 +15,12 @@ function bool ShouldSuckActor(Actor Other)
     }
 
     return true;
+}
+
+function RecordDamage(actor victim, float dmg)
+{
+    if(OwnerVehicle != None)
+        OwnerVehicle.RecordDamage(victim, dmg);
 }
 
 
@@ -32,7 +40,7 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation)
 
 simulated function Attract(float DeltaTime, float RadiusScale, float StrengthScale)
 {
-	const WantedPhysicsModes = 0xEA5E; // each bit stands for a physics mode to be considered
+	//const WantedPhysicsModes = 0xEA5E; // each bit stands for a physics mode to be considered
 	local Actor A;
 	local Pawn P;
 	local float actualAttractRadius, actualAttractStrength, dist;
@@ -126,10 +134,68 @@ function DischargeLightningAt(Actor Target, float DamageAmount)
         && Instigator.Controller.GetTeamNum() == Pawn(Target).GetTeamNum())
             DamageAmount = 0;
 
+        RecordDamage(Target, DamageAmount);
 		Target.TakeDamage(DamageAmount, Instigator, HL, vect(0,0,0), LightningDamageType);
 	}
 }
 
+simulated function HurtRadius(float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation)
+{
+	local Actor Victims;
+	local float damageScale, momentumScale, dist;
+	local vector dir;
+    local float dmg;
+
+	if (bHurtEntry)
+		return;
+
+	bHurtEntry = true;
+	foreach VisibleCollidingActors(class'Actor', Victims, 2 * DamageRadius, HitLocation)
+	{
+		if (Victims != self && Hurtwall != Victims && (Victims.Role == ROLE_Authority || Victims.bNetTemporary) && !Victims.IsA('FluidSurfaceInfo'))
+		{
+			dir = Victims.Location - HitLocation;
+			dist = FMax(1, VSize(dir));
+			dir = dir / dist;
+			damageScale   = 1 - FClamp((dist - Victims.CollisionRadius) /      DamageRadius,  0, 1);
+			momentumScale = 1 - FClamp((dist - Victims.CollisionRadius) / (2 * DamageRadius), 0, 1);
+
+			if (Instigator == None || Instigator.Controller == None)
+				Victims.SetDelayedDamageInstigatorController(InstigatorController);
+			if (Victims == LastTouched)
+				LastTouched = None;
+
+			dmg = FMax(0.001, damageScale * DamageAmount);
+            RecordDamage(Victims, dmg);
+			Victims.TakeDamage(dmg, Instigator, Victims.Location - 0.5 * (Victims.CollisionHeight + Victims.CollisionRadius) * dir, momentumScale * Momentum * dir, DamageType);
+			if (Vehicle(Victims) != None && Vehicle(Victims).Health > 0)
+				Vehicle(Victims).DriverRadiusDamage(DamageAmount, DamageRadius, InstigatorController, DamageType, Momentum, HitLocation);
+
+		}
+	}
+	if (LastTouched != None && LastTouched != self && LastTouched.Role == ROLE_Authority && !LastTouched.IsA('FluidSurfaceInfo'))
+	{
+		Victims = LastTouched;
+		LastTouched = None;
+		dir = Victims.Location - HitLocation;
+		dist = FMax(1, VSize(dir));
+		dir = dir / dist;
+		damageScale   = FMax(Victims.CollisionRadius / (Victims.CollisionRadius + Victims.CollisionHeight), 1 - FMax(0, (dist - Victims.CollisionRadius) /      DamageRadius ));
+		momentumScale = FMax(Victims.CollisionRadius / (Victims.CollisionRadius + Victims.CollisionHeight), 1 - FMax(0, (dist - Victims.CollisionRadius) / (2 * DamageRadius)));
+
+		if (Instigator == None || Instigator.Controller == None)
+			Victims.SetDelayedDamageInstigatorController(InstigatorController);
+
+        RecordDamage(Victims, damageScale * DamageAmount);
+		Victims.TakeDamage(damageScale * DamageAmount, Instigator, Victims.Location - 0.5 * (Victims.CollisionHeight + Victims.CollisionRadius) * dir, momentumScale * Momentum * dir, DamageType);
+		if (Vehicle(Victims) != None && Vehicle(Victims).Health > 0)
+        {
+			Vehicle(Victims).DriverRadiusDamage(DamageAmount, DamageRadius, InstigatorController, DamageType, Momentum, HitLocation);
+        }
+	}
+
+	bHurtEntry = false;
+}
 
 defaultproperties
 {
