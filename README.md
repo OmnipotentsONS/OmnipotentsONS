@@ -127,6 +127,10 @@ Modified Odin, faster more powerful main weapon,  depends on WV_HoverTankV2.u
 
 Ion Raptor
 
+## Omnitaur
+
+Omni verison of the (Classic) Minotaur.  This is superceded by CSMinotaur, but its included for reference/completness.
+
 ## ONSLinkFlyer aka Chupacabra aka Goat Sucker
 
 Link/self heal Raptor flyer
