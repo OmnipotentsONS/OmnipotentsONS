@@ -95,7 +95,49 @@ Modified gravity tank vehicle with increased speed and no team killing from grav
 
 - you will need the WVHoverTankV2.u file in your system folder and WVHoverTankV2 must be listed in your EditPackages to build this mod.
 
+## FalconV3Omni
 
+Standardized Falcon based off Falcon, Falcon Series II.   Texture dependencies.
+
+##  HeavyTankV2Omni
+
+Heavy Goliath, originally found on Solace Map, modified for play.   Custom Texture dependency on Redirect.
+
+## helixesvOmni
+
+Updated Helix, based off original esvHelix depends on helixesvFinal.u
+
+## HospitalerV3Omni
+
+Modified, Improved Hospitaler, depends on custom textures and Hospitaler_V2.u
+
+## Minotaur Classic
+
+Original version of the Minotaur.   Modified to switch gunners, minigun second seat, third lasers.
+
+## OdinV2Omni
+
+Modified Odin, faster more powerful main weapon,  depends on WV_HoverTankV2.u
+
+## OmegaV2Omni
+
+Ion Raptor
+
+## ONSLinkFlyer aka Chupacabra aka Goat Sucker
+
+Link/self heal Raptor flyer
+
+## PVWraith
+
+Improved version of Wormbo's Banshee with stronger weapons.  Depends on WVBanshee.u  Has custom textures.
+
+## ShockerV3Omni
+
+Same as Shocker V2 with Bio Roll fix.  Depends on Shocker_V2.u
+
+## StarboltV2Omni
+
+Super fast raptor interceptor type. Custom textures
 
 
 
