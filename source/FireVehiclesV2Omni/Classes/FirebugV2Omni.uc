@@ -108,7 +108,7 @@ if (DamageType.name == 'DamTypeDracoNapalmGlob')
 defaultproperties
 {
      Build="2021-10-17 11:28"
-     VehicleNameString="Firebug 2.4"
+     VehicleNameString="Firebug 2.6"
      JumpDuration=0.800000
      JumpDelay=2.500000
      JumpForceMag=500.000000

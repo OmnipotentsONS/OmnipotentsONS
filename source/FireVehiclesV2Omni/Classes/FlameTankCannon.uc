@@ -82,7 +82,7 @@ defaultproperties
      RedSkin=Texture'SieEng_Tex.FireTank.FireTankRed'
      BlueSkin=Texture'SieEng_Tex.FireTank.FireTankBlue'
      FireInterval=0.200000
-     AltFireInterval=1.200000
+     AltFireInterval=1.100000
      EffectEmitterClass=Class'NapalmTankFireEffect'
      FireSoundClass=Sound'ONSVehicleSounds-S.Explosions.VehicleExplosion02'
      AltFireSoundClass=Sound'WeaponSounds.BaseImpactAndExplosions.BExplosion2'

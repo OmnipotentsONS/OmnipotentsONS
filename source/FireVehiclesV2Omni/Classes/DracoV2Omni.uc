@@ -63,7 +63,7 @@ if (DamageType.name == 'DamTypeDracoNapalmGlob')
 defaultproperties
 {
      Build="2021-10-17 11:28"
-     VehicleNameString="Draco 2.4"
+     VehicleNameString="Draco 2.6"
      
      
 }

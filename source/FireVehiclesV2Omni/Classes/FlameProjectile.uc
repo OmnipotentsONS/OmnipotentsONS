@@ -4,6 +4,7 @@ var xEmitter Flame;
 var() class<xEmitter> FlameClass;
 var() class<DamageType> DamageType, BurnDamageType;
 var bool bDoTouch;
+var int MinDamage;
 
 simulated function PreBeginPlay()
 {
@@ -51,51 +52,54 @@ simulated function PostNetBeginPlay()
 		Velocity += 0.7 * Instigator.Velocity;
 }
 
-function Timer()
+ function Timer()
 {
-	local Pawn P;
-	local Burner Inv;
+  	local Pawn P;
+  	local Burner Inv;
+
 
 	//Flames expand with time.
-	SetCollisionSize(CollisionRadius + 2.5, CollisionHeight + 2.5);
+  	SetCollisionSize(CollisionRadius + 2.5, CollisionHeight + 2.5);
 
-	//Simple damage radius.
-	if(Role == ROLE_Authority)
-	{
-		//Damage reduces with distance.
-    Damage = Max(Default.Damage * Sqrt(Default.CollisionHeight / CollisionHeight), 7);
-		HurtRadius(3, CollisionRadius * 5, MyDamageType, MomentumTransfer, Location);
+//Simple damage radius.
+	
+if(Role == ROLE_Authority)
+{
+	//Damage reduces with distance.
+    Damage = Max(Default.Damage * Sqrt(Default.CollisionHeight / CollisionHeight), MinDamage);
+    //always do at least MinDamage pts.
+		HurtRadius(MinDamage/3, CollisionRadius * 5, MyDamageType, MomentumTransfer, Location);
 	}
 
 	//Setting people on fire is handled here.
-	if(Role == ROLE_Authority && bDoTouch)
-	{
-		foreach TouchingActors(class'Pawn', P)
-		{
-			If(P != class'ONSPowerCore'&& P.Controller != None)
-                        {
-                        if(P.Health > 0 && (!Level.Game.bTeamGame || !P.Controller.SameTeamAs(InstigatorController)))
-			{
-				P.CreateInventory("SiegeEngines.Burner");
-				Inv = Burner(P.FindInventoryType(class'Burner'));
-
-				if(Inv != None)
-				{
-					Inv.DamageType = BurnDamageType;
-					Inv.Chef = Instigator;
-					Inv.DamageDealt = 0;
-					Inv.Temperature += 1.5;  //was 0.6
-					Inv.WaitTime = 0;
-				}
-			}
-			
-			}
-		}
+  	if(Role == ROLE_Authority && bDoTouch)
+  	{
+    foreach TouchingActors(class'Pawn', P)
+  		{
+  			If(P != class'ONSPowerCore'&& P.Controller != None)
+          {
+          if(P.Health > 0 && (!Level.Game.bTeamGame || !P.Controller.SameTeamAs(InstigatorController)))
+  			{
+ 				//P.CreateInventory("SiegeEngines.Burner");
+ 				P.CreateInventory("FireVehiclesV2Omni.BurnerFlame");
+ 				Inv = Burner(P.FindInventoryType(class'FireVehiclesV2Omni.BurnerFlame'));
+  
+  				if(Inv != None)
+  				{
+ 					Inv.DamageType = BurnDamageType;
+  					Inv.Chef = Instigator;
+  					Inv.DamageDealt = 0;
+  					Inv.Temperature += 1.5;  //was 0.6
+  					Inv.WaitTime = 0;
+  				}
+  			}
+  			
+  			}
+	  }
 	}
 
-	bDoTouch = !bDoTouch;
+ 	bDoTouch = !bDoTouch;
 }
-
 //No fire underwater.
 simulated function PhysicsVolumeChange(PhysicsVolume NewVolume)
 {
@@ -134,7 +138,8 @@ defaultproperties
      Speed=2200.000000
      MaxSpeed=4000.000000
      TossZ=0.000000
-     Damage=95.000000
+     Damage=90.000000
+     MinDamage = 18.0
      DamageRadius=220.000000
      MomentumTransfer=10000.000000
      MyDamageType=Class'FlameKill'

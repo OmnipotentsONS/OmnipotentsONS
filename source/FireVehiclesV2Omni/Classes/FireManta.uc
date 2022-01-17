@@ -552,7 +552,7 @@ defaultproperties
      TPCamLookat=(X=0.000000,Z=0.000000)
      TPCamWorldOffset=(Z=120.000000)
      VehiclePositionString="in a Cherufe"
-     VehicleNameString="Cherufe 2.5"
+     VehicleNameString="Cherufe 2.6"
      RanOverDamageType=Class'Onslaught.DamTypeHoverBikeHeadshot'
      CrushedDamageType=Class'Onslaught.DamTypeHoverBikePancake'
      MaxDesireability=0.600000

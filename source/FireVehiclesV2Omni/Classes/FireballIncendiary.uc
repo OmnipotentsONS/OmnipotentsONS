@@ -66,8 +66,8 @@ simulated function ProcessTouch (Actor Other, Vector HitLocation)
         {
             if(P.Health > 0 && (!Level.Game.bTeamGame || !P.Controller.SameTeamAs(InstigatorController)))
             {
-                P.CreateInventory("Burner");
-                Inv = Burner(P.FindInventoryType(class'Burner'));
+                P.CreateInventory("FireVehiclesV2Omni.Burner");
+                Inv = Burner(P.FindInventoryType(class'FireVehiclesV2Omni.Burner'));
 
                 if(Inv != None)
                 {
@@ -80,8 +80,10 @@ simulated function ProcessTouch (Actor Other, Vector HitLocation)
             }
         }
 
-        Explode(HitLocation,Vect(0,0,1));
+    //    Explode(HitLocation,Vect(0,0,1));
     }
+    // Moved so it always explodes
+    Explode(HitLocation,Vect(0,0,1));
 }
 
 
@@ -125,7 +127,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 	start = Location + 10 * HitNormal;
 	if ( Role == ROLE_Authority )
 	{
-		HurtRadius(damage, 220, MyDamageType, MomentumTransfer, HitLocation);	
+		HurtRadius(Damage, 220, MyDamageType, MomentumTransfer, HitLocation);	
 		
 		for (i=0; i<6; i++)
 		{
@@ -163,7 +165,7 @@ defaultproperties
      BurnDamageType=Class'FireVehiclesV2Omni.Burned'
      Speed=17000.000000
      MaxSpeed=17000.000000
-     Damage=294.000000
+     Damage=285.000000
      DamageRadius=1001.000000
      MomentumTransfer=1000.000000
      MyDamageType=Class'FireVehiclesV2Omni.FireBall'

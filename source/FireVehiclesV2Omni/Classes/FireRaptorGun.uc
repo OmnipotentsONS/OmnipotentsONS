@@ -119,7 +119,7 @@ defaultproperties
      WeaponFireAttachmentBone="PlasmaGunBarrel"
      DualFireOffset=50.000000
      RotationsPerSecond=1.200000
-     FireInterval=1.350000
+     FireInterval=1.55000
      AltFireInterval=7.000000
      FireSoundClass=Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01'
      AltFireSoundClass=Sound'ONSVehicleSounds-S.Tank.TankFire01'

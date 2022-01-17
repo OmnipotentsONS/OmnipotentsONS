@@ -1,4 +1,4 @@
-class Burner extends Inventory;
+class BurnerFlame extends Inventory;
 
 #exec OBJ LOAD FILE=GeneralAmbience.uax
 
@@ -65,7 +65,7 @@ state Crisping
 {
 	function Timer()
 	{
-		BaseDamage = 3;  // originally was 3
+	
 		if(Owner == None)
 			Destroy();
 
@@ -111,7 +111,7 @@ state Crisping
 	}
 
 Begin:
-	SetTimer(0.3, true);
+	SetTimer(0.2, true);
 	Pawn(Owner).ReceiveLocalizedMessage(class'OnFireMessage', 0);
 }
 
@@ -156,6 +156,7 @@ defaultproperties
 {
      DamageType=Class'FireVehiclesV2Omni.Burned'
      Damage=90
+  	BaseDamage = 6;  // originally was 3
      bOnlyRelevantToOwner=False
      bAlwaysRelevant=True
 }

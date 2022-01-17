@@ -15,7 +15,7 @@ defaultproperties
      bShowChargingBar=True
      RedSkin=Texture'FireTank_Tex.FireTank.FireTankRed'
      BlueSkin=Texture'FireTank_Tex.FireTank.FireTankBlue'
-     FireInterval=1.300000
+     FireInterval=1.400000
      AltFireInterval=5.300000
      EffectEmitterClass=Class'FireVehiclesV2Omni.FireTankFireEffect'
      FireSoundClass=Sound'WeaponSounds.BaseImpactAndExplosions.BExplosion2'

@@ -351,7 +351,7 @@ defaultproperties
      FPCamViewOffset=(X=-30.000000)
      TPCamLookat=(Z=100.000000)
      TPCamWorldOffset=(Z=150.000000)
-     VehiclePositionString="in a Firebug 2.5"
+     VehiclePositionString="in a Firebug 2.6"
      VehicleNameString="Firebug"
      VehicleDescription="The Firebug is a small and agile hover tank that can quickly turn enemies into a smoking pile of ashes with its twin flamethrowers."
      RanOverDamageType=Class'FireVehiclesV2Omni.DamTypeFirebugRoadkill'

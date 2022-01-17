@@ -129,8 +129,8 @@ defaultproperties
      MaxSpeed=5000.000000
      //Damage=37.500000
      //DamageRadius=80.000000
-     Damage=40.00000
-     DamageRadius=120.000000
+     Damage=50.00000
+     DamageRadius=150.000000
      MomentumTransfer=10000.000000
      MyDamageType=Class'FireVehiclesV2Omni.DamTypeFirebugFlame'
      LightType=LT_FadeOut

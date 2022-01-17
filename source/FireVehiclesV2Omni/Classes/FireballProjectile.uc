@@ -54,66 +54,61 @@ if (Level.NetMode != NM_DedicatedServer)
 
 }
 
-simulated function Timer()
-{
-	local float VelMag;
-	local vector ForceDir;
-	local Pawn P;
-	local Burner Inv;
 
-	if (HomingTarget == None)
-		return;
-
-	ForceDir = Normal(HomingTarget.Location - Location);
-	if (ForceDir dot InitialDir > 0)
-	{
-	    	VelMag = VSize(Velocity);
-
-	    	ForceDir = Normal(ForceDir * 0.7 * VelMag + Velocity);
-		Velocity =  VelMag * ForceDir;
-    		Acceleration = Normal(Velocity) * AccelRate;
-
-		SetRotation(rotator(Velocity));
-	}
-	if(Role == ROLE_Authority && bDoTouch)
-	{
-		foreach TouchingActors(class'Pawn', P)
-		{
-			If(P != class'ONSPowerCore'&& P.Controller != None)
-                        {
-                        if(P.Health > 0 && (!Level.Game.bTeamGame || !P.Controller.SameTeamAs(InstigatorController)))
-			{
-				P.CreateInventory("Burner");
-				Inv = Burner(P.FindInventoryType(class'Burner'));
-
-				if(Inv != None)
-				{
-					Inv.DamageType = BurnDamageType;
-					Inv.Chef = Instigator;
-					Inv.DamageDealt = 0;
-					Inv.Temperature += 1.5;  //was 0.6
-					Inv.WaitTime = 0;
-				}
-			}
-			
-			}
-		}
-	}
-
-	bDoTouch = !bDoTouch;
-}
 
 simulated function ProcessTouch (Actor Other, Vector HitLocation)
 {
-	if ( (Other != instigator) && (!Other.IsA('Projectile') || Other.bProjTarget) )
-	{
-		Explode(HitLocation,Vect(0,0,1));
-	}
+    local Pawn P;
+  //local float VelMag;
+	//local vector ForceDir;
+	
+	local Burner Inv;
+	
+    if ( (Other != instigator) && (!Other.IsA('Projectile') || Other.bProjTarget) )
+    {
+        P = Pawn(Other);
+        If(P != None && P != class'ONSPowerCore'&& P.Controller != None)
+        {
+            if(P.Health > 0 && (!Level.Game.bTeamGame || !P.Controller.SameTeamAs(InstigatorController)))
+            {
+                P.CreateInventory("FireVehiclesV2Omni.Burner");
+                Inv = Burner(P.FindInventoryType(class'FireVehiclesV2Omni.Burner'));
+
+                if(Inv != None)
+                {
+                    Inv.DamageType = BurnDamageType;
+                    Inv.Chef = Instigator;
+                    Inv.DamageDealt = 0;
+                    Inv.Temperature += 1.5;
+                    Inv.WaitTime = 0;
+                }
+            }
+        }
+
+    //    Explode(HitLocation,Vect(0,0,1));
+    }
+    // Moved so it always explodes
+    Explode(HitLocation,Vect(0,0,1));
 }
+
+
+//simulated function ProcessTouch (Actor Other, Vector HitLocation)
+//{
+//	if ( (Other != instigator) && (!Other.IsA('Projectile') || Other.bProjTarget) )
+//	{
+//		Explode(HitLocation,Vect(0,0,1));
+//	}
+//}
+
 
 simulated function Explode(vector HitLocation, vector HitNormal)
 {
 	local PlayerController PC;
+		local vector start;
+    local rotator rot;
+    local int i;
+    local FireTankFireSmall FireBLOB;
+
 
 	PlaySound(sound'WeaponSounds.BExplosion5',, 2.5*TransientSoundVolume);
 
@@ -133,7 +128,21 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 		if ( (ExplosionDecal != None) && (Level.NetMode != NM_DedicatedServer) )
 			Spawn(ExplosionDecal,self,,Location, rotator(-HitNormal));
     }
-
+  start = Location + 10 * HitNormal;
+	if ( Role == ROLE_Authority )
+	{
+		HurtRadius(Damage, 180, MyDamageType, MomentumTransfer, HitLocation);	
+		
+		for (i=0; i<6; i++)
+		{
+			rot = Rotation;
+			rot.yaw += FRand()*32000-16000;
+			rot.pitch += FRand()*32000-16000;
+			rot.roll += FRand()*32000-16000;
+			FireBLOB = Spawn( class 'FireVehiclesV2Omni.FireTankFireSmall',, '', Start, rot);
+		}
+	}
+	
 	BlowUp( HitLocation + HitNormal * 2.f );
 	Destroy();
 }
@@ -158,10 +167,10 @@ defaultproperties
      TrailClass=Class'FireVehiclesV2Omni.FireBallTrail'
      AccelRate=1500.000000
      BurnDamageType=Class'FireVehiclesV2Omni.Burned'
-     Speed=13000.000000
-     MaxSpeed=13000.000000
+     Speed=15000.000000
+     MaxSpeed=16500.000000
      // was 140
-     Damage=240.000000
+     Damage=190.000000
      DamageRadius=771.000000
      MomentumTransfer=5000.000000
      MyDamageType=Class'FireVehiclesV2Omni.FireBall'
