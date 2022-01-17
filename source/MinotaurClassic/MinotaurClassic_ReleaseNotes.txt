@@ -1,0 +1,9 @@
+Classic Minotaur
+10/3/2021
+
+Origin:  Omnipotents/DW
+
+Updated to ClassicMinotaur by pOOty for )o(
+Cleaned up Classes, added ReduceShake to avoid bio spin.
+Base Code unchanged.
+Switched Turrets to match Omnitaur
