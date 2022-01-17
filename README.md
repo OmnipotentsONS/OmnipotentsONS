@@ -99,6 +99,10 @@ Modified gravity tank vehicle with increased speed and no team killing from grav
 
 Standardized Falcon based off Falcon, Falcon Series II.   Texture dependencies.
 
+## FireVehiclesV2Omni
+
+Standardized and Improved Fire Vehicles.  Fire Tank, Flame Tank, Fire Raptor (Ifrit), Fire Manta (Cherufe), FireBug.  Depends on WVHoverTankV2.u  Possibly others.
+
 ##  HeavyTankV2Omni
 
 Heavy Goliath, originally found on Solace Map, modified for play.   Custom Texture dependency on Redirect.
