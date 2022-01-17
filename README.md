@@ -147,6 +147,10 @@ Same as Shocker V2 with Bio Roll fix.  Depends on Shocker_V2.u
 
 Super fast raptor interceptor type. Custom textures
 
+## Wasp (Series II)
+
+Balanced version of the Wasp
+
 
 
 
