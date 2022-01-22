@@ -1100,7 +1100,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a Reaper"
-     VehicleNameString="Reaper 1.6"
+     VehicleNameString="Reaper 1.7"
      RanOverDamageType=Class'Onslaught.DamTypeAttackCraftRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
      FlagBone="Main"
