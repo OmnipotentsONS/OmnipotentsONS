@@ -43,6 +43,7 @@ var()array<vector>				RunningLightOffsets;
 var ONSVehicle spawnVehicle;
 var bool bEnhancedHud;
 var float EnhancedHudRange;
+var array<Pawn> passengers;
 
 replication
 {
@@ -383,13 +384,27 @@ function EjectPassengers()
 {
     local int x;
 
+
+    if (NewAttachVehicle != None )
+        EjectVehicle();
+
     for (x = 0; x < WeaponPawns.length; x++)
     {
         WeaponPawns[x].KDriverLeave(true);
     }
+}
 
-    if (NewAttachVehicle != None )
-        EjectVehicle();
+function int HasPassenger(Pawn passenger)
+{
+    local int x;
+
+    for(x=0;x<WeaponPawns.Length;x++)
+    {
+        if(WeaponPawns[x].Driver == passenger)
+            return x;
+    }
+
+    return -1;
 }
 
 simulated function ClientEjectVehicle()
@@ -409,7 +424,7 @@ simulated function EjectVehicle()
     local vector LOC;
     local ONSVehicleFactory parentFactory;
     local class<ONSVehicle> vehicleClass;
-    local int oldHealth;
+    local int oldHealth, i, passengerIndex;
 
     if (NewAttachVehicle != None && (Role == ROLE_Authority))
     {
@@ -448,6 +463,27 @@ simulated function EjectVehicle()
 
         VehicleMass = default.VehicleMass;
 
+        if(passengers.length > 0)
+        {
+            passengerIndex = HasPassenger(passengers[0]);
+            if(passengerIndex >= 0)
+            {
+                WeaponPawns[passengerIndex].KDriverLeave(true);
+                spawnVehicle.KDriverEnter(passengers[0]);
+            }
+            for(i=1;i<passengers.length;i++)
+            {
+                passengerIndex = HasPassenger(passengers[i]);
+                if(passengerIndex >= 0)
+                {
+                    WeaponPawns[passengerIndex].KDriverLeave(true);
+                    spawnVehicle.WeaponPawns[i-1].KDriverEnter(passengers[i]);
+                }
+            }
+
+            passengers.length=0;
+        }
+
         //mag effect needs to happen on client only 
         //due to same attachment issue
         ClientEjectVehicle();
@@ -465,10 +501,11 @@ simulated function AttachVehicle()
     local int x,y;
     local Pawn passenger;
     local bool detached, found;
-    local array<Pawn> passengers;
+    //local array<Pawn> passengers;
 
     if(NewAttachVehicle != None && Role == ROLE_Authority)
     {
+        passengers.length=0;
         //move vehicle occupiants into passenger seats
         if(NewAttachVehicle.Occupied())
         {
@@ -814,10 +851,8 @@ defaultproperties
     //MaxRiseForce=80.000000
     MaxRiseForce=240.000000
     UpDamping=0.050000
-    //TurnTorqueFactor=600.000000
-    TurnTorqueFactor=300.000000
-    //TurnTorqueMax=200.000000
-    TurnTorqueMax=100.000000
+    TurnTorqueFactor=600.000000
+    TurnTorqueMax=200.000000
     TurnDamping=50.000000
     MaxYawRate=1.500000
     PitchTorqueFactor=200.000000
@@ -884,7 +919,7 @@ defaultproperties
     TPCamWorldOffset=(Z=200.000000)
     DriverDamageMult=0.000000
     VehiclePositionString="in a DropShip"
-    VehicleNameString="DropShip 1.6"
+    VehicleNameString="DropShip 1.7"
     RanOverDamageType=Class'Onslaught.DamTypeAttackCraftRoadkill'
     CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
     MaxDesireability=0.600000
