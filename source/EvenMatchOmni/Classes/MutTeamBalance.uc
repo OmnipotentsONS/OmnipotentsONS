@@ -160,6 +160,11 @@ function Mutate(string MutateString, PlayerController Sender)
 			HandleTeamsCall(Sender);
 			return;
 		}
+
+		if (MutateString ~= "shuffle") {
+			HandleShuffleCall(Sender);
+			return;
+		}
 		
 		SetPlayerIdPrefix = "EvenMatch SetPlayerId " $ Rules.MatchStartTS $ " ";
 		if (Left(MutateString, Len(SetPlayerIdPrefix)) == SetPlayerIdPrefix) {
@@ -189,6 +194,21 @@ function HandleTeamsCall(PlayerController Sender)
 		}
 	}
 }
+
+function HandleShuffleCall(PlayerController Sender)
+{
+    local bool bisAdmin;
+	if (Sender != None && Sender.PlayerReplicationInfo != None) 
+    {
+		bisAdmin = Sender.PlayerReplicationInfo.bAdmin || Level.Game.AccessControl != None && Level.Game.AccessControl.IsAdmin(Sender);
+		if (bisAdmin && IsBalancingActive()) 
+        {
+            BroadcastLocalizedMessage(class'UnevenChatMessage', 4);
+            Rules.ShuffleTeams(true);
+        }
+    }
+}
+
 
 function bool IsBalancingActive()
 {
@@ -717,13 +737,27 @@ function bool RebalanceStillNeeded(int SizeOffset, float Progress, optional out 
 	}
 	BiggerTeam = byte(SizeDiff < 0); // 0 if red is larger, 1 if blue is larger
 
-	return Abs(BiggerTeam - Progress) < SmallTeamProgressThreshold ** Sqrt(1 / Abs(SizeDiff));
+	//return Abs(BiggerTeam - Progress) < SmallTeamProgressThreshold ** Sqrt(1 / Abs(SizeDiff));
+
+    // snarf
+    //if red is bigger and red has more pph
+    if(BiggerTeam == 0 && Progress == 0.0)
+        return true;
+
+    //if blue is bigger and blue has more pph
+    if(BiggerTeam == 1 && Progress == 1.0)
+        return true;
+    
+    return false;
 }
 
 
 /**
 Returns a value between 0 and 1, indicating which team has made more progress so far.
 */
+
+/*
+ 
 function float GetTeamProgress()
 {
 	local int TeamNum, i;
@@ -778,6 +812,13 @@ function float GetTeamProgress()
 
 	// return red team's share of total progress
 	return Progress[1] / (Progress[0] + Progress[1]);
+}
+*/
+
+// use PPH instead of game score
+function float GetTeamProgress()
+{
+    return Rules.GetTeamProgress();
 }
 
 

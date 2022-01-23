@@ -23,6 +23,7 @@ const SECONDS_PER_DAY = 86400;
 
 
 var EvenMatchPPH Recent, RecentMap;
+var KnownPlayerPPH KnownPlayers;
 
 var ONSOnslaughtGame Game;
 var MutTeamBalance EvenMatchMutator;
@@ -70,6 +71,15 @@ function PreBeginPlay()
 	MatchStartTS = GetTS();
 	// generic part of PPH database
 	Recent = new(None, "EvenMatchPPHDatabase") class'EvenMatchPPH';
+    KnownPlayers = new(None, "EvenMatchKnownPlayerDatabase") class'KnownPlayerPPH';
+
+    /*
+    for(i=0;i<KnownPlayers.PPH.length;i++)
+    {
+        log("KnownPlayer: "$KnownPlayers.PPH[i].PlayerName$" "$KnownPlayers.PPH[i].Multiplier, 'EvenMatch');
+    }
+    */
+
 	while (Recent.MyReplacementStatsID.Length > 0 && Recent.MyReplacementStatsID[0] == "") {
 		// just a little cleanup from older EvenMatch versions
 		Recent.MyReplacementStatsID.Remove(0, 1);
@@ -332,7 +342,7 @@ function ScoreKill(Controller Killer, Controller Killed)
 }
 
 
-function ShuffleTeams()
+function ShuffleTeams(optional bool killPlayers)
 {
 	local PlayerReplicationInfo PRI, PRI2;
 	local array<PlayerReplicationInfo> PRIs, RedPRIs, BluePRIs;
@@ -340,6 +350,7 @@ function ShuffleTeams()
 	local int Index, OldNumBots, OldMinPlayers;
 	local int Low, High, Middle;
 	local float PPH, PPH2, RedPPH, BluePPH, TotalPPH;
+    local Pawn P;
 
 	// complexity below documented in terms of n players and m stored PPH values
 	
@@ -360,6 +371,7 @@ function ShuffleTeams()
 			if (!PRI.bOnlySpectator && PlayerController(PRI.Owner) != None && PlayerController(PRI.Owner).bIsPlayer) {
 			
 				PPH = GetPointsPerHour(PRI); // binary search O(log m)
+                PPH = PPH * GetKnownPlayerMultplier(PRI);
 				TotalPPH += PPH;
 				if (EvenMatchMutator.bDebug)
 					log(PRI.PlayerName @ PPH $ " PPH, currently on " $ PRI.Team.GetHumanReadableName(), 'EvenMatchDebug');
@@ -454,6 +466,27 @@ function ShuffleTeams()
 	
 	// apply team changes
 	if (EvenMatchMutator.bDebug) log("Applying team changes...", 'EvenMatchDebug');
+
+    if(killPlayers)
+    {
+        for (Index = 0; Index < RedPRIs.Length; ++Index) {
+            P = PlayerController(RedPRIs[Index].Owner).Pawn;
+            if(P != None)
+            {
+                P.Health = 0;
+                P.Died( PlayerController(RedPRIs[Index].Owner), class'Suicided', P.Location );
+            }
+        }
+        for (Index = 0; Index < BluePRIs.Length; ++Index) {
+            P = PlayerController(BluePRIs[Index].Owner).Pawn;
+            if(P != None)
+            {
+                P.Health = 0;
+                P.Died( PlayerController(BluePRIs[Index].Owner), class'Suicided', P.Location );
+            }
+        }
+    }
+
 	for (Index = 0; Index < RedPRIs.Length; ++Index) {
 		if (RedPRIs[Index].Team.TeamIndex != 0) {
 			if (EvenMatchMutator.bDebug) log("Moving " $ RedPRIs[Index].PlayerName $ " to red", 'EvenMatchDebug');
@@ -469,24 +502,6 @@ function ShuffleTeams()
 	if (EvenMatchMutator.bDebug) log("Teams shuffled.", 'EvenMatchDebug');
 }
 
-
-function int FindPPHSlot(array<PlayerReplicationInfo> PRIs, float PPH)
-{
-	local int Low, High, Middle;
-
-	Low = 0;
-	High = PRIs.Length;
-	if (Low < High) do {
-		Middle = (High + Low) / 2;
-		if (GetPointsPerHour(PRIs[Middle]) > PPH)
-			Low = Middle + 1;
-		else
-			High = Middle;
-	} until (Low >= High);
-	
-	return Low;
-}
-
 function ReceivedReplacementStatsId(PlayerController PC, string ReplacementID)
 {
 	if (!Level.Game.bEnableStatLogging || !Level.Game.bLoggingGame) {
@@ -496,12 +511,25 @@ function ReceivedReplacementStatsId(PlayerController PC, string ReplacementID)
 	}
 }
 
+function float GetKnownPlayerMultplier(PlayerReplicationInfo PRI)
+{
+    local int i;
+    for(i=0;i<KnownPlayers.PPH.length;i++)
+    {
+        if(KnownPlayers.PPH[i].PlayerName ~= PRI.PlayerName)
+            return KnownPlayers.PPH[i].Multiplier;
+    }
+
+    return 1.0;
+}
+
 function float GetPointsPerHour(PlayerReplicationInfo PRI)
 {
 	local PlayerController PC;
 	local string ID;
 	local int Index, IndexMap;
 	local float PPH, CurrentPPH, PastPPH, PastPPHMap;
+    local float retval;
 
 	PC = PlayerController(PRI.Owner);
 	if (PC != None) {
@@ -587,29 +615,38 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 	// combine current and past PPH values in a meaningful way
 	switch (int(PPH == -1) + 2 * int(PastPPH == -1) + 4 * int(PastPPHMap == -1)) {
 		case 0: // all three PPH values available
-			return 0.4 * (PPH + PastPPHMap + 0.5 * PastPPH);
+			retval = 0.4 * (PPH + PastPPHMap + 0.5 * PastPPH);
+            break;
 			
 		case 1: // no current (meaningful) score yet, but both past PPH available
-			return 0.8 * (PastPPHMap + 0.25 * PastPPH);
+			retval = 0.8 * (PastPPHMap + 0.25 * PastPPH);
+            break;
 			
 		case 2: // no past generic PPH (should not be possible)
-			return 0.5 * (PPH + PastPPHMap);
+			retval = 0.5 * (PPH + PastPPHMap);
+            break;
 			
 		case 3: // only past map-specific PPH (should not be possible either)
-			return PastPPHMap;
+			retval = PastPPHMap;
+            break;
 			
 		case 4: // no past map-specific PPH
-			return 0.5 * (PPH + PastPPHMap);
+			retval = 0.5 * (PPH + PastPPHMap);
+            break;
 			
 		case 5: // only past generic PPH
-			return PastPPH;
+			retval = PastPPH;
+            break;
 			
 		case 6: // only current PPH (new player)
-			return PPH;
+			retval = PPH;
+            break;
 			
 		default: // none of the above (should not be possible)
-			return CurrentPPH;
+			retval = CurrentPPH;
 	}
+
+    return retval;
 }
 
 
@@ -622,6 +659,39 @@ function ChangeTeam(PlayerController Player, int NewTeam)
 	}
 	
 	EvenMatchMutator.PendingVoiceChatRoomChecks[EvenMatchMutator.PendingVoiceChatRoomChecks.Length] = Player;
+}
+
+
+// modified balancer team progress function
+// instead of looking at game score look at team strength
+function float GetTeamProgress()
+{
+    local PlayerReplicationInfo PRI;
+    local int i;
+    local float RedPPH, BluePPH;
+    local float PPH;
+
+    for(i = 0;i < Level.GRI.PRIArray.Length; i++ )
+    {
+        PRI = Level.GRI.PRIArray[i];
+        PPH = GetPointsPerHour(PRI);
+        PPH *= GetKnownPlayerMultplier(PRI);
+        if(PRI.TeamID == 0)
+        {
+            RedPPH += PPH;
+        }
+        else if(PRI.TeamID == 1)
+        {
+            BluePPH += PPH;
+        }
+    }
+
+    if(RedPPH > BluePPH)
+        return 0.0;
+    else if(RedPPH < BluePPH)
+        return 1.0;
+    
+    return 0.5;
 }
 
 
