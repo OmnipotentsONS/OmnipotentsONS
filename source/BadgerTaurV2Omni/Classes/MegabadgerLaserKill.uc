@@ -1,7 +1,7 @@
 //=============================================================================
 // MegabadgerLaserKill.
 //=============================================================================
-class MegabadgerLaserKill extends OmnitaurSecondaryTurretKill;
+class MegabadgerLaserKill extends MinotaurSecondaryTurretKill;
 
 defaultproperties
 {
