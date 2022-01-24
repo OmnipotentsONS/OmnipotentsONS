@@ -1,7 +1,7 @@
 //=============================================================================
 // BadgertaurRocketProjectile.
 //=============================================================================
-class BadgertaurRocketProjectile extends Omnitaur.OmnitaurRocketProjectile;
+class BadgertaurRocketProjectile extends MinotaurRocketProjectile;
 
 defaultproperties
 {

@@ -1,7 +1,7 @@
 //=============================================================================
 // Badgertaur.
 //=============================================================================
-class Badgertaur extends CSBadgerFix.MyBadger;
+class Badgertaur extends MyBadger;
 
 event PostBeginPlay()
 {
@@ -49,7 +49,7 @@ simulated function ClientKDriverLeave(PlayerController PC)
 
 defaultproperties
 {
-     TorqueCurve=(Points=((OutVal=3.000000),(OutVal=5.000000),(InVal=1200.000000,OutVal=12.000000),(InVal=1500.000000)))
+     TorqueCurve=(Points=((InVal=0.0,OutVal=3.000000),(InVal=200.0,OutVal=5.000000),(InVal=1200.000000,OutVal=12.000000),(InVal=1500.000000,OutVal=0.0000)))
      GearRatios(0)=-0.900000
      GearRatios(3)=1.000000
      GearRatios(4)=1.300000

@@ -1,7 +1,7 @@
 //=============================================================================
 // BadgertaurLaserTurret.
 //=============================================================================
-class BadgertaurLaserTurret extends Omnitaur.OmnitaurSecondaryTurret;
+class BadgertaurLaserTurret extends MinotaurSecondaryTurret;
 
 defaultproperties
 {

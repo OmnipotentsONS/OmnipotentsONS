@@ -1,7 +1,7 @@
 //=============================================================================
 // BadgertaurLaserTurretPawn.
 //=============================================================================
-class BadgertaurLaserTurretPawn extends CSBadgerFix.BadgerTurretPawn;
+class BadgertaurLaserTurretPawn extends BadgerTurretPawn;
 
 defaultproperties
 {

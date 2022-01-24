@@ -1,10 +1,8 @@
 //=============================================================================
 // BadgertaurTurret.
 //=============================================================================
-class BadgertaurTurret extends CSBadgerFix.BadgerTurret;
+class BadgertaurTurret extends BadgerTurret;
 
-var vector OldDir;
-var rotator OldRot;
 var() int ProjPerFire;
 var() int AltFireProjPerFire;
 var() int ProjSpread;

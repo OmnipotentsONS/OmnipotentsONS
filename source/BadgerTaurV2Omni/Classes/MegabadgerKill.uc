@@ -1,7 +1,7 @@
 //=============================================================================
 // MegabadgerKill.
 //=============================================================================
-class MegabadgerKill extends Omnitaur.OmnitaurKill;
+class MegabadgerKill extends MinotaurKill;
 
 defaultproperties
 {
