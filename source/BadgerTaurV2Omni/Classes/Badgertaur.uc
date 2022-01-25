@@ -3,6 +3,8 @@
 //=============================================================================
 class Badgertaur extends MyBadger;
 
+#exec obj load file="Animations\Badgertaur_Anim.ukx" package=BadgerTaurV2Omni
+
 event PostBeginPlay()
 {
 	Super.PostBeginPlay();
@@ -127,11 +129,12 @@ defaultproperties
      TPCamLookat=(Z=200.000000)
      TPCamWorldOffset=(Z=200.000000)
      VehiclePositionString="in a Megabadger"
-     VehicleNameString="Megabadger 2.0"
+     VehicleNameString="Megabadger 2.1"
      HornSounds(0)=Sound'Minotaur_Sound.Minotaurhorn'
      HealthMax=2000.000000
      Health=2000
-     Mesh=SkeletalMesh'MoreBadgers_Anim.BadgertaurCollision'
+     //Mesh=SkeletalMesh'MoreBadgers_Anim.BadgertaurCollision'
+     Mesh=SkeletalMesh'BadgerTaurV2Omni.BadgertaurCollision'
      Begin Object Class=KarmaParamsRBFull Name=KarmaParamsRBFull2
          KInertiaTensor(0)=1.000000
          KInertiaTensor(3)=3.000000
@@ -147,6 +150,7 @@ defaultproperties
          bDoSafetime=True
          KFriction=0.500000
          KImpactThreshold=500.000000
+         KCOMOffset=(X=0.0,Y=0.0,Z=-1.0)
      End Object
      KParams=KarmaParamsRBFull'BadgerTaurV2Omni.KarmaParamsRBFull2'
 
