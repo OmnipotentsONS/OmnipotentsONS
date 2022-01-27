@@ -151,6 +151,13 @@ Super fast raptor interceptor type. Custom textures
 
 Balanced version of the Wasp
 
+## EvenMatchOmni
+
+Omnip)o(tents tweaks to the EvenMatch mutator
+
+## CSMegaSpanker
+
+BadgerTaur + Spanker
 
 
 
