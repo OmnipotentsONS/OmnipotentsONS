@@ -467,35 +467,33 @@ function ShuffleTeams(optional bool killPlayers)
 	// apply team changes
 	if (EvenMatchMutator.bDebug) log("Applying team changes...", 'EvenMatchDebug');
 
-    if(killPlayers)
-    {
-        for (Index = 0; Index < RedPRIs.Length; ++Index) {
-            P = PlayerController(RedPRIs[Index].Owner).Pawn;
-            if(P != None)
-            {
-                P.Health = 0;
-                P.Died( PlayerController(RedPRIs[Index].Owner), class'Suicided', P.Location );
-            }
-        }
-        for (Index = 0; Index < BluePRIs.Length; ++Index) {
-            P = PlayerController(BluePRIs[Index].Owner).Pawn;
-            if(P != None)
-            {
-                P.Health = 0;
-                P.Died( PlayerController(BluePRIs[Index].Owner), class'Suicided', P.Location );
-            }
-        }
-    }
-
 	for (Index = 0; Index < RedPRIs.Length; ++Index) {
 		if (RedPRIs[Index].Team.TeamIndex != 0) {
 			if (EvenMatchMutator.bDebug) log("Moving " $ RedPRIs[Index].PlayerName $ " to red", 'EvenMatchDebug');
+            if(killPlayers)
+            {
+                P = PlayerController(RedPRIs[Index].Owner).Pawn;
+                if(P != None)
+                {
+                    P.Health = 0;
+                    P.Died( PlayerController(RedPRIs[Index].Owner), class'DamTypeTeamChange', P.Location );
+                }
+            }
 			ChangeTeam(PlayerController(RedPRIs[Index].Owner), 0);
 		}
 	}
 	for (Index = 0; Index < BluePRIs.Length; ++Index) {
 		if (BluePRIs[Index].Team.TeamIndex != 1) {
 			if (EvenMatchMutator.bDebug) log("Moving " $ BluePRIs[Index].PlayerName $ " to blue", 'EvenMatchDebug');
+            if(killPlayers)
+            {
+                P = PlayerController(BluePRIs[Index].Owner).Pawn;
+                if(P != None)
+                {
+                    P.Health = 0;
+                    P.Died( PlayerController(BluePRIs[Index].Owner), class'DamTypeTeamChange', P.Location );
+                }
+            }
 			ChangeTeam(PlayerController(BluePRIs[Index].Owner), 1);
 		}
 	}
@@ -511,13 +509,29 @@ function ReceivedReplacementStatsId(PlayerController PC, string ReplacementID)
 	}
 }
 
+function string GetStatsID(PlayerController PC)
+{
+    local string PlayerID;
+    PlayerID = Super(GameStats).GetStatsIdentifier(PC);
+    return Mid(PlayerID,0,32);
+}
+
 function float GetKnownPlayerMultplier(PlayerReplicationInfo PRI)
 {
     local int i;
-    for(i=0;i<KnownPlayers.PPH.length;i++)
+    local PlayerController PC;
+    local string PlayerID;
+
+    PC = PlayerController(PRI.Owner);
+
+    if(PC != None)
     {
-        if(KnownPlayers.PPH[i].PlayerName ~= PRI.PlayerName)
-            return KnownPlayers.PPH[i].Multiplier;
+        PlayerID = PC.GetPlayerIDHash();
+        for(i=0;i<KnownPlayers.PPH.length;i++)
+        {
+            if(KnownPlayers.PPH[i].ID ~= PlayerID)
+                return KnownPlayers.PPH[i].Multiplier;
+        }
     }
 
     return 1.0;
@@ -670,6 +684,7 @@ function float GetTeamProgress()
     local int i;
     local float RedPPH, BluePPH;
     local float PPH;
+    local float PPHDiff;
 
     for(i = 0;i < Level.GRI.PRIArray.Length; i++ )
     {
@@ -685,6 +700,10 @@ function float GetTeamProgress()
             BluePPH += PPH;
         }
     }
+
+    PPHDiff = Abs(RedPPH - BluePPH);
+    if(PPHDiff < 100)
+        return 0.5;
 
     if(RedPPH > BluePPH)
         return 0.0;

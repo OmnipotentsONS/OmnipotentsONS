@@ -201,10 +201,10 @@ function HandleShuffleCall(PlayerController Sender)
 	if (Sender != None && Sender.PlayerReplicationInfo != None) 
     {
 		bisAdmin = Sender.PlayerReplicationInfo.bAdmin || Level.Game.AccessControl != None && Level.Game.AccessControl.IsAdmin(Sender);
-		if (bisAdmin && IsBalancingActive()) 
+		if (bisAdmin)
         {
-            BroadcastLocalizedMessage(class'UnevenChatMessage', 4);
             Rules.ShuffleTeams(true);
+            BroadcastLocalizedMessage(class'UnevenMessage', 4);
         }
     }
 }
@@ -730,25 +730,21 @@ function bool RebalanceStillNeeded(int SizeOffset, float Progress, optional out 
 		SizeDiff = Level.GRI.Teams[0].Size - Level.GRI.Teams[1].Size + SizeOffset;
 	}
 
+    
+
 	// > 0 if red is larger, < 0 if blue is larger
 	if (SizeDiff == 0) {
 		BiggerTeam = 255;
-		return false; // same size, don't rebalance
 	}
-	BiggerTeam = byte(SizeDiff < 0); // 0 if red is larger, 1 if blue is larger
+    else
+    {
+        BiggerTeam = byte(SizeDiff < 0); // 0 if red is larger, 1 if blue is larger
+    }
 
-	//return Abs(BiggerTeam - Progress) < SmallTeamProgressThreshold ** Sqrt(1 / Abs(SizeDiff));
+    if(Progress == 0.5)
+        return false;
 
-    // snarf
-    //if red is bigger and red has more pph
-    if(BiggerTeam == 0 && Progress == 0.0)
-        return true;
-
-    //if blue is bigger and blue has more pph
-    if(BiggerTeam == 1 && Progress == 1.0)
-        return true;
-    
-    return false;
+    return true;
 }
 
 
