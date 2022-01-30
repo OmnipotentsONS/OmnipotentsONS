@@ -702,7 +702,7 @@ function float GetTeamProgress()
     }
 
     PPHDiff = Abs(RedPPH - BluePPH);
-    if(PPHDiff < 100)
+    if(PPHDiff < 200)
         return 0.5;
 
     if(RedPPH > BluePPH)

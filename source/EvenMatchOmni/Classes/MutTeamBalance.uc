@@ -713,7 +713,6 @@ function bool RebalanceNeeded(optional int SizeOffset, optional out float Progre
 	return RebalanceStillNeeded(SizeOffset, Progress, BiggerTeam) && IsBalancingActive();
 }
 
-
 function bool RebalanceStillNeeded(int SizeOffset, float Progress, optional out byte BiggerTeam)
 {
 	local int SizeDiff, TeamSizes[2];
@@ -730,23 +729,15 @@ function bool RebalanceStillNeeded(int SizeOffset, float Progress, optional out 
 		SizeDiff = Level.GRI.Teams[0].Size - Level.GRI.Teams[1].Size + SizeOffset;
 	}
 
-    
-
 	// > 0 if red is larger, < 0 if blue is larger
 	if (SizeDiff == 0) {
 		BiggerTeam = 255;
+		return false; // same size, don't rebalance
 	}
-    else
-    {
-        BiggerTeam = byte(SizeDiff < 0); // 0 if red is larger, 1 if blue is larger
-    }
+	BiggerTeam = byte(SizeDiff < 0); // 0 if red is larger, 1 if blue is larger
 
-    if(Progress == 0.5)
-        return false;
-
-    return true;
+	return Abs(BiggerTeam - Progress) < SmallTeamProgressThreshold ** Sqrt(1 / Abs(SizeDiff));
 }
-
 
 /**
 Returns a value between 0 and 1, indicating which team has made more progress so far.
