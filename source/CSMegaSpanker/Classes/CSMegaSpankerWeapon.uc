@@ -333,13 +333,13 @@ state ProjectileFireMode
 defaultproperties
 {
     NetPriority=3.0
-    BeamEffectClass=class'CSSpankBadgerBeamEffect'
+    BeamEffectClass=class'CSMegaSpankerBeamEffect'
     RedSkin=Material'CSSpankBadger.Badger.SpankBadgerWeaponRed'
     BlueSkin=Material'CSSpankBadger.Badger.SpankBadgerWeaponBlue'
     //DrawScale3D=(X=0.35,Y=0.35,Z=0.45)
     DrawScale3D=(X=0.70,Y=0.70,Z=1.25)
     ProjectileClass=class'CSSpankBadger.CSSpankBadgerProjSmall'
-    AltFireProjectileClass=class'CSMegaSpankerProjectile'
+    AltFireProjectileClass=class'CSMegaSpanker.CSMegaSpankerProjectile'
     //RotationsPerSecond=1.0
     RotationsPerSecond=0.07000
     FireInterval=0.75
@@ -354,7 +354,7 @@ defaultproperties
     PitchDownLimit=58000
     FireSoundClass=sound'CSSpankBadger.beamfiresound'
     FireSoundRadius=250
-    FireSoundPitch=1.0
+    FireSoundPitch=0.82
     AltFireSoundClass=sound'CSSpankBadger.projshoot'
     RotateSound=None
     bAimable=True

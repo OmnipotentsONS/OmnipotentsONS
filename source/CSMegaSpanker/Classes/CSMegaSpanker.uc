@@ -16,46 +16,23 @@ simulated function PostNetBeginPlay()
 
 function AltFire(optional float F)
 {
-	local PlayerController PC;
-
-	PC = PlayerController(Controller);
-	if (PC == None)
-		return;
-
-	bWeaponIsAltFiring = true;
-	//PC.ToggleZoom();
+    super(ONSWheeledCraft).AltFire(F);
 }
 
 function ClientVehicleCeaseFire(bool bWasAltFire)
 {
-	local PlayerController PC;
-
-	if (!bWasAltFire)
-	{
-		super(ONSWheeledCraft).ClientVehicleCeaseFire(bWasAltFire);
-		return;
-	}
-
-	PC = PlayerController(Controller);
-	if (PC == None)
-		return;
-
-	bWeaponIsAltFiring = false;
-	//PC.StopZoom();
+    super(ONSWheeledCraft).ClientVehicleCeaseFire(bWasAltFire);
 }
 
 simulated function ClientKDriverLeave(PlayerController PC)
 {
 	super(ONSWheeledCraft).ClientKDriverLeave(PC);
-
-	bWeaponIsAltFiring = false;
-	//PC.EndZoom();
 }
 
 
 defaultproperties
 {
-    VehicleNameString="Mega Spanker 1.0"
+    VehicleNameString="Mega Spanker 1.1"
     VehiclePositionString="in a Mega Spanker"
     RedSkin=Shader'CSSpankBadger.Badger.SpankBadgerRedShader'
     BlueSkin=Shader'CSSpankBadger.Badger.SpankBadgerBlueShader'
