@@ -136,8 +136,8 @@ if ( (Level.TimeSeconds - NextFire) > 0)
 defaultproperties
 {
      TrailClass=Class'XEffects.RedeemerTrail'
-     AccelRate=2000.000000
-     Speed=2200.000000
+     AccelRate=2200.000000
+     Speed=4000.000000
      MaxSpeed=23000.000000
      //Damage=60.000000
      Damage=175

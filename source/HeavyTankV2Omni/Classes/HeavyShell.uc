@@ -78,8 +78,8 @@ defaultproperties
      Speed=18000.000000
      MaxSpeed=18000.000000
      Damage=550.000000
-     DamageRadius=550.000000
-     MomentumTransfer=175000.000000
+     DamageRadius=800.000000
+     MomentumTransfer=200000.000000
      MyDamageType=Class'HeavyTankV2Omni.DamTypeHeavyShell'
      ExplosionDecal=Class'HeavyTankV2Omni.HeavyShellScorch'
      DrawType=DT_StaticMesh

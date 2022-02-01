@@ -25,8 +25,8 @@ defaultproperties
 {
      VehicleClass=Class'HeavyTankV2Omni.HeavyTankV2Omni'
      DeathString="%k's Heavy tank shell blew %o into itty bitty bits."
-     FemaleSuicide="%o fired her rocket prematurely."
-     MaleSuicide="%o fired his rocket prematurely."
+     FemaleSuicide="%o fired her tank shell prematurely."
+     MaleSuicide="%o fired his tank shell prematurely."
      bDetonatesGoop=True
      bDelayedDamage=True
      bThrowRagdoll=True

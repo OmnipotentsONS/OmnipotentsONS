@@ -169,18 +169,18 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Heavy Goliath"
-     VehicleNameString="Heavy Goliath 2.1"
+     VehicleNameString="Heavy Goliath 2.2"
      RanOverDamageType=Class'HeavyTankV2Omni.DamTypeTankRoadkill'
      CrushedDamageType=Class'HeavyTankV2Omni.DamTypeTankPancake'
      MaxDesireability=0.800000
      FlagBone="MachineGunTurret"
      FlagRotation=(Yaw=32768)
-     HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.Horn09'
-     HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.Horn02'
+     HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.La_Cucharacha_Horn'
+     HornSounds(1)=Sound'ONSVehicleSounds-S.CarAlarm.ahooga'
      bCanStrafe=True
      GroundSpeed=620.000000
-     HealthMax=1400.000000
-     Health=1400
+     HealthMax=1650.000000
+     Health=1650
      Mesh=SkeletalMesh'ONSNewTank-A.HoverTank'
      DrawScale=1.100000
      Skins(1)=Texture'VMVehicles-TX.HoverTankGroup.tankTreads'
