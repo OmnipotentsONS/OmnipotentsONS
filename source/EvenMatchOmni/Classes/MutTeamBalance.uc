@@ -47,6 +47,7 @@ var config string TeamsCallString;
 var config int DeletePlayerPPHAfterDaysNotSeen;
 var config int PlayerGameSecondsBeforeStoringPPH;
 var config int PlayerMinScoreBeforeStoringPPH;
+var config float TeamImbalancePPHThreshold;
 
 var config bool bDebug;
 
@@ -104,6 +105,7 @@ function PostBeginPlay()
 	log(Class$" build "$Build, 'EvenMatch');
 
 	Rules = Spawn(class'EvenMatchRules', Self);
+    Rules.ConfigPPHDiff = TeamImbalancePPHThreshold;
 	
 	Game = ONSOnslaughtGame(Level.Game);
 	if (bDisplayRoundProgressIndicator) {
@@ -142,13 +144,11 @@ function MatchStarting()
 {
 	SetTimer(1.0, true);
 	
-	if (TeamsCallString != "") {
-		TeamsCallSpec = Spawn(class'EvenMatchTeamsCallSpectator');
-		if (TeamsCallSpec != None) {
-			TeamsCallSpec.EvenMatchMutator = Self;
-			TeamsCallSpec.TeamsCallString = TeamsCallString;
-		}
-	}
+    TeamsCallSpec = Spawn(class'EvenMatchTeamsCallSpectator');
+    if (TeamsCallSpec != None) {
+        TeamsCallSpec.EvenMatchMutator = Self;
+        TeamsCallSpec.TeamsCallString = TeamsCallString;
+    }
 }
 
 function Mutate(string MutateString, PlayerController Sender)
@@ -178,19 +178,31 @@ function Mutate(string MutateString, PlayerController Sender)
 
 function HandleTeamsCall(PlayerController Sender)
 {
+    local float imbalance, newbalance;
+    local GamePPH gamePPH, shufflePPH;
 	if (Sender != None && Sender.PlayerReplicationInfo != None) {
+        gamePPH = Rules.GetGamePPH();
+        imbalance = Abs(gamePPH.RedPPH - gamePPH.BluePPH);
 		if ((!Sender.PlayerReplicationInfo.bOnlySpectator && bBalanceTeamsOnPlayerRequest || bBalanceTeamsOnAdminRequest && (Sender.PlayerReplicationInfo.bAdmin || Level.Game.AccessControl != None && Level.Game.AccessControl.IsAdmin(Sender))) && SoftRebalanceCountdown != 0 && !bBalancingRequested && IsBalancingActive()) {
 			if (RebalanceNeeded()) {
 				bBalancingRequested = True;
 				SoftRebalanceCountdown = 0;
-				BroadcastLocalizedMessage(class'UnevenMessage', -2, Sender.PlayerReplicationInfo);
+				BroadcastLocalizedMessage(class'UnevenMessage', -2, Sender.PlayerReplicationInfo,,gamePPH);
 			}
+            else if(imbalance > TeamImbalancePPHThreshold)
+            {
+                shufflePPH = Rules.ShuffleTeams(true);
+                newbalance = Abs(shufflePPH.RedPPH - shufflePPH.BluePPH);
+                gamePPH.RedPPH = imbalance;
+                gamePPH.BluePPH = newbalance;
+				BroadcastLocalizedMessage(class'UnevenMessage', -7, Sender.PlayerReplicationInfo,,gamePPH);
+            }
 			else {
-				BroadcastLocalizedMessage(class'UnevenChatMessage', -4);
+				BroadcastLocalizedMessage(class'UnevenChatMessage', -4,,,gamePPH);
 			}
 		}
 		else if (bBalanceTeamsOnPlayerRequest) {
-			Sender.ReceiveLocalizedMessage(class'UnevenChatMessage', -3);
+			Sender.ReceiveLocalizedMessage(class'UnevenChatMessage', -3,,,gamePPH);
 		}
 	}
 }
@@ -198,17 +210,28 @@ function HandleTeamsCall(PlayerController Sender)
 function HandleShuffleCall(PlayerController Sender)
 {
     local bool bisAdmin;
+    local GamePPH gamePPH;
 	if (Sender != None && Sender.PlayerReplicationInfo != None) 
     {
 		bisAdmin = Sender.PlayerReplicationInfo.bAdmin || Level.Game.AccessControl != None && Level.Game.AccessControl.IsAdmin(Sender);
 		if (bisAdmin)
         {
             Rules.ShuffleTeams(true);
-            BroadcastLocalizedMessage(class'UnevenMessage', 4);
+            gamePPH = Rules.GetGamePPH();
+            BroadcastLocalizedMessage(class'UnevenMessage', 4,,,gamePPH);
         }
     }
 }
 
+simulated function HandleBalanceCall(PlayerController Sender)
+{
+    local GamePPH gamePPH;
+	if (Sender != None && Sender.PlayerReplicationInfo != None) 
+    {
+        gamePPH = Rules.GetGamePPH();
+        Sender.ReceiveLocalizedMessage(class'UnevenChatMessage', -2,Sender.PlayerReplicationInfo,,gamePPH);
+    }
+}
 
 function bool IsBalancingActive()
 {
@@ -1057,6 +1080,7 @@ defaultproperties
 	DeletePlayerPPHAfterDaysNotSeen       = 30
 	PlayerGameSecondsBeforeStoringPPH     = 60
 	PlayerMinScoreBeforeStoringPPH        = 10
+    TeamImbalancePPHThreshold             = 1000
 	
 	bDebug = True
 	

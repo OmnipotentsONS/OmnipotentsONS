@@ -31,16 +31,21 @@ var int MinDesiredFirstRoundDuration;
 var bool bBalancing, bSaveNeeded;
 var int FirstRoundResult;
 var int MatchStartTS;
+var float ConfigPPHDiff;
 
 var float LastRestartTime;
 var PlayerController LastRestarter, PotentiallyLeavingPlayer;
 var array<string> CachedPlayerIDs;
-
+var GamePPH CurrentGamePPH;
+var int replicationHack;
 
 replication
 {
 	reliable if (bNetInitial)
 		MatchStartTS;
+
+	unreliable if (bNetInitial || bNetDirty)
+		CurrentGamePPH;
 }
 
 
@@ -73,6 +78,8 @@ function PreBeginPlay()
 	Recent = new(None, "EvenMatchPPHDatabase") class'EvenMatchPPH';
     KnownPlayers = new(None, "EvenMatchKnownPlayerDatabase") class'KnownPlayerPPH';
 
+    CurrentGamePPH = spawn(class'GamePPH', self);
+    replicationHack = 0;
     /*
     for(i=0;i<KnownPlayers.PPH.length;i++)
     {
@@ -201,8 +208,10 @@ function MatchStarting()
 {
 	if (class'MutTeamBalance'.default.bShuffleTeamsAtMatchStart) {
 		log("Shuffling teams based on previous known PPH...", 'EvenMatch');
-		ShuffleTeams();
-		BroadcastLocalizedMessage(class'UnevenMessage', -1);
+		CurrentGamePPH = ShuffleTeams();
+		//BroadcastLocalizedMessage(class'UnevenMessage', -1,,,CurrentGamePPH);
+        replicationHack = 1;
+        SetTimer(1.0,false);
 	}
 }
 
@@ -276,8 +285,10 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 		Tag = 'EndGame';
 
 		log("Quick first round, shuffling teams...", 'EvenMatch');
-		ShuffleTeams();
-		BroadcastLocalizedMessage(class'UnevenMessage', 0,,, Level.GRI.Teams[FirstRoundResult-1]);
+		CurrentGamePPH = ShuffleTeams();
+		//BroadcastLocalizedMessage(class'UnevenMessage', 0,,, Level.GRI.Teams[FirstRoundResult-1]);
+		replicationHack = 2;
+        SetTimer(1.0,false);
 
 		// force round restart
 		if (Level.Game.GameStats != None) {
@@ -326,6 +337,20 @@ function Timer()
 		}
 		EvenMatchMutator.CheckBalance(PotentiallyLeavingPlayer, True);
 	}
+
+    if(replicationHack != 0)
+    {
+        if(replicationHack == 1)
+        {	
+            BroadcastLocalizedMessage(class'UnevenMessage', -1,,,CurrentGamePPH);
+        }
+        else if(replicationHack == 2)
+        {
+            BroadcastLocalizedMessage(class'UnevenMessage', 0,,, Level.GRI.Teams[FirstRoundResult-1]);
+        }
+
+        replicationHack = 0;
+    }
 }
 
 
@@ -341,8 +366,38 @@ function ScoreKill(Controller Killer, Controller Killed)
 	// don't save right away, too much work to be done on every kill
 }
 
+simulated function GamePPH GetGamePPH()
+{
+    local int i;
+    local byte Team;
+    local PlayerReplicationInfo PRI;
+    local float PPH;
 
-function ShuffleTeams(optional bool killPlayers)
+    CurrentGamePPH.RedPPH = 0;
+    CurrentGamePPH.BluePPH = 0;
+
+    for (i = 0; i < Level.GRI.PRIArray.Length; i++) 
+    {
+		if (Level.GRI.PRIArray[i].Team != None && Level.GRI.PRIArray[i].Team.TeamIndex < 2 && !Level.GRI.PRIArray[i].bOnlySpectator)
+        {
+            PRI = Level.GRI.PRIArray[i];
+            Team = PRI.Team.TeamIndex;
+
+            PPH = GetPointsPerHour(PRI); // binary search O(log m)
+            PPH = PPH * GetKnownPlayerMultplier(PRI);
+            if(Team == 0)
+                CurrentGamePPH.RedPPH += PPH;
+            else if(Team == 1)
+                CurrentGamePPH.BluePPH += PPH;
+
+        }
+    }
+
+    return CurrentGamePPH;
+}
+
+
+simulated function GamePPH ShuffleTeams(optional bool killPlayers)
 {
 	local PlayerReplicationInfo PRI, PRI2;
 	local array<PlayerReplicationInfo> PRIs, RedPRIs, BluePRIs;
@@ -352,6 +407,7 @@ function ShuffleTeams(optional bool killPlayers)
 	local float PPH, PPH2, RedPPH, BluePPH, TotalPPH;
     local Pawn P;
 
+	//retval = new class'GamePPH';
 	// complexity below documented in terms of n players and m stored PPH values
 	
 	OldNumBots = Game.NumBots + Game.RemainingBots;
@@ -498,6 +554,10 @@ function ShuffleTeams(optional bool killPlayers)
 		}
 	}
 	if (EvenMatchMutator.bDebug) log("Teams shuffled.", 'EvenMatchDebug');
+
+    CurrentGamePPH.RedPPH = RedPPH;
+    CurrentGamePPH.BluePPH = BluePPH;
+    return CurrentGamePPH;
 }
 
 function ReceivedReplacementStatsId(PlayerController PC, string ReplacementID)
@@ -702,7 +762,7 @@ function float GetTeamProgress()
     }
 
     PPHDiff = Abs(RedPPH - BluePPH);
-    if(PPHDiff < 200)
+    if(PPHDiff < ConfigPPHDiff)
         return 0.5;
 
     if(RedPPH > BluePPH)
@@ -720,5 +780,6 @@ function float GetTeamProgress()
 
 defaultproperties
 {
-	bNetTemporary = True;
+	bNetTemporary = True
+    ConfigPPHDiff=1000
 }
