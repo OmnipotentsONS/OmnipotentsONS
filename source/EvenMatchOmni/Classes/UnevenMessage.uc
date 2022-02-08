@@ -33,6 +33,7 @@ var localized string NoCallForBalanceNowString;
 var localized string NoCallForBalanceEvenString;
 var localized string YouWereSwitchedString;
 var localized string PlayerWasSwitchedString;
+var localized string TeamsImbalancedString;
 
 
 //=============================================================================
@@ -59,18 +60,20 @@ static function ClientReceive(PlayerController P, optional int MessageSwitch, op
 static function string GetString(optional int MessageSwitch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject)
 {
 	switch (MessageSwitch) {
+	case -7:
+		return Repl(Repl(default.TeamsImbalancedString, "%r", int(GamePPH(OptionalObject).RedPPH)), "%b", int(GamePPH(OptionalObject).BluePPH));
 	case -6:
 		return Repl(Repl(default.PlayerWasSwitchedString, "%t", TeamInfo(OptionalObject).GetHumanReadableName()), "%p", RelatedPRI_1.PlayerName);
 	case -5:
 		return default.YouWereSwitchedString;
 	case -4:
-		return default.NoCallForBalanceEvenString;
+		return Repl(Repl(default.NoCallForBalanceEvenString, "%r", int(GamePPH(OptionalObject).RedPPH)), "%b", int(GamePPH(OptionalObject).BluePPH));
 	case -3:
 		return default.NoCallForBalanceNowString;
 	case -2:
-		return Repl(default.CallForBalanceString, "%p", RelatedPRI_1.PlayerName);
+		return Repl(Repl(Repl(default.CallForBalanceString, "%p", RelatedPRI_1.PlayerName), "%r", int(GamePPH(OptionalObject).RedPPH)), "%b", int(GamePPH(OptionalObject).BluePPH));
 	case -1:
-		return default.PrevMatchBalanceString;
+		return Repl(Repl(default.PrevMatchBalanceString, "%r", int(GamePPH(OptionalObject).RedPPH)), "%b", int(GamePPH(OptionalObject).BluePPH));
 	case 0:
 		return default.QuickRoundBalanceString;
 	case 1:
@@ -79,7 +82,7 @@ static function string GetString(optional int MessageSwitch, optional PlayerRepl
 	case 3:
 		return default.SoftBalanceString;
 	case 4:
-		return default.ForcedBalanceString;
+		return Repl(Repl(default.ForcedBalanceString, "%r", int(GamePPH(OptionalObject).RedPPH)), "%b", int(GamePPH(OptionalObject).BluePPH));
 	default:
 		if (MessageSwitch > 3)
 			return Repl(default.TeamsUnbalancedString, "%n", 10 * (MessageSwitch - 4));
@@ -94,17 +97,18 @@ static function string GetString(optional int MessageSwitch, optional PlayerRepl
 
 defaultproperties
 {
-	QuickRoundBalanceString = "Quick round, restarting with balanced teams"
-	PrevMatchBalanceString  = "Teams have been balanced based on player skill estimation"
+	QuickRoundBalanceString = "Mulligan!!! Restarting with balanced teams"
+	PrevMatchBalanceString  = "Teams have been balanced based on skill: Red(%r) Blue(%b)"
 	FirstRoundWinnerString  = "%t won the first round"
 	SoftBalanceString       = "Teams are uneven, respawning players may switch to balance"
 	TeamsUnbalancedString   = "Teams are uneven, balance will be forced in %n seconds"
-	ForcedBalanceString     = "Teams are uneven, balance will be forced now"
-	CallForBalanceString    = "%p called for a team balance check"
+	ForcedBalanceString     = "Teams rebalanced, new balance: Red(%r) Blue(%b)"
+	CallForBalanceString    = "%p called for a team balance check: Red(%r) Blue(%b)"
 	NoCallForBalanceNowString  = "You can't request a team balance check at this time."
-	NoCallForBalanceEvenString = "Teams look even already, no apparent need for balancing."
+	NoCallForBalanceEvenString = "Teams look even already: Red(%r) Blue(%b), not re-balancing."
 	YouWereSwitchedString   = "Forced team change by EvenMatch"
 	PlayerWasSwitchedString = "%p was switched to %t by EvenMatch"
+	TeamsImbalancedString    = "Teams rebalanced: diff before(%r) after(%b)"
 
 	QuickRoundAnnouncement(0) = red_team_dominating
 	QuickRoundAnnouncement(1) = blue_team_dominating

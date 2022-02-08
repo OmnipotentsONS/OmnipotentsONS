@@ -34,8 +34,14 @@ function TeamMessage(PlayerReplicationInfo PRI, coerce string Message, name Type
 	if (EvenMatchMutator != None && Type == 'Say' && PRI != None && PlayerController(PRI.Owner) != None && Message ~= "shuffle")
 		EvenMatchMutator.HandleShuffleCall(PlayerController(PRI.Owner));
 
-	if (EvenMatchMutator != None && Type == 'Say' && PRI != None && PlayerController(PRI.Owner) != None && Message ~= TeamsCallString)
-		EvenMatchMutator.HandleTeamsCall(PlayerController(PRI.Owner));
+	if (EvenMatchMutator != None && Type == 'Say' && PRI != None && PlayerController(PRI.Owner) != None && Message ~= "balance")
+		EvenMatchMutator.HandleBalanceCall(PlayerController(PRI.Owner));
+
+    if(TeamscallString != "")
+    {
+        if (EvenMatchMutator != None && Type == 'Say' && PRI != None && PlayerController(PRI.Owner) != None && Message ~= TeamsCallString)
+            EvenMatchMutator.HandleTeamsCall(PlayerController(PRI.Owner));
+    }
 
 }
 
