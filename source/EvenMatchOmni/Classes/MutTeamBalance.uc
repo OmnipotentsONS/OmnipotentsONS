@@ -324,6 +324,7 @@ function ModifyLogin(out string Portal, out string Options)
 	local int RequestedTeam;
 	local float Progress;
 	local byte BiggerTeam, NewTeam;
+    local GamePPH gamePPH;
 
 	Super.ModifyLogin(Portal, Options);
 
@@ -333,11 +334,18 @@ function ModifyLogin(out string Portal, out string Options)
 	RequestedTeam = Game.GetIntOption(Options, "team", 255);
 	if (bAssignConnectingPlayerTeam) {
 	
-		if (!RebalanceNeeded(0, Progress, BiggerTeam) && !bIgnoreConnectingPlayerTeamPreference)
-			return;
+        //populate biggerteam 
+		RebalanceNeeded(0, Progress, BiggerTeam);
 		
+        //if teams have even numbers, use PPH to pick the team
 		if (BiggerTeam == 255)
-			BiggerTeam = int(Progress >= 0.5);
+        {
+            gamePPH = Rules.GetGamePPH();
+            if(gamePPH.BluePPH > gamePPH.RedPPH)
+                BiggerTeam = 1;
+            else 
+                BiggerTeam = 0;
+        }
 
 		// force player to join the weaker team
 		NewTeam = (1 - BiggerTeam);

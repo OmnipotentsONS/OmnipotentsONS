@@ -211,7 +211,7 @@ function MatchStarting()
 		CurrentGamePPH = ShuffleTeams();
 		//BroadcastLocalizedMessage(class'UnevenMessage', -1,,,CurrentGamePPH);
         replicationHack = 1;
-        SetTimer(1.0,false);
+        SetTimer(1.5,false);
 	}
 }
 
@@ -288,7 +288,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 		CurrentGamePPH = ShuffleTeams();
 		//BroadcastLocalizedMessage(class'UnevenMessage', 0,,, Level.GRI.Teams[FirstRoundResult-1]);
 		replicationHack = 2;
-        SetTimer(1.0,false);
+        SetTimer(1.5,false);
 
 		// force round restart
 		if (Level.Game.GameStats != None) {
