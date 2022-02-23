@@ -6,7 +6,7 @@ class CSDarkRailTank extends  RailgunTank;
 #exec AUDIO IMPORT FILE="Sounds\imperialmarch.wav"
 defaultproperties
 {
-    VehicleNameString="Dark Railtank 1.0"
+    VehicleNameString="Dark Railtank 1.1"
     VehiclePositionString="in a Dark Railtank"
     DriverWeapons(0)=(WeaponClass=Class'CSDarkRailTank.CSDarkRailTankTurret')
     PassengerWeapons(0)=(WeaponPawnClass=Class'CSDarkRailTank.CSDarkRailSecondaryTurretPawn')

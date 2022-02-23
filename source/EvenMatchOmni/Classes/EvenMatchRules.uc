@@ -261,9 +261,49 @@ event Trigger(Actor Other, Pawn EventInstigator)
 		BroadcastLocalizedMessage(class'UnevenMessage', FirstRoundResult);
 }
 
+function CustomScore(PlayerReplicationInfo Scorer)
+{
+    local ONSOnslaughtGame onsgame;
+    local int oldscore, newscore;
+    local bool bHasScored, bCoreDestroyed;
+
+    if(EvenMatchMutator.bCustomScoring)
+    {
+        if(Level.Game.bOverTime)
+        {
+            oldscore = 1;
+            newscore = EvenMatchMutator.CustomOvertimePoints;
+        }
+        else
+        {
+            oldscore = 2;
+            newscore = EvenMatchMutator.CustomRegulationPoints;
+        }
+
+        onsgame = ONSOnslaughtGame(Level.Game);
+
+        bHasScored = Level.GRI.Teams[0].Score + Level.GRI.Teams[1].Score > 0;
+        bCoreDestroyed = (onsgame.PowerCores[onsgame.FinalCore[0]].Health <= 0) || (onsgame.PowerCores[onsgame.FinalCore[1]].Health <= 0);
+
+        if(bHasScored && bCoreDestroyed)
+        {
+            //todo unwind stats?
+            Level.GRI.Teams[Scorer.Team.TeamIndex].Score -= oldscore;
+            Level.GRI.Teams[Scorer.Team.TeamIndex].Score += newscore;
+            if(Level.GRI.Teams[Scorer.Team.TeamIndex].Score < 0)
+                Level.GRI.Teams[Scorer.Team.TeamIndex].Score = 0;
+
+            Level.GRI.Teams[Scorer.Team.TeamIndex].NetUpdateTime = Level.TimeSeconds - 1;
+
+        }
+    }
+}
+
 function bool CheckScore(PlayerReplicationInfo Scorer)
 {
 	local int i;
+
+    CustomScore(Scorer);
 
 	if (bBalancing || Super.CheckScore(Scorer)) {
 		if (!bBalancing) {

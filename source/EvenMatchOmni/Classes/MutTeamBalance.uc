@@ -48,6 +48,9 @@ var config int DeletePlayerPPHAfterDaysNotSeen;
 var config int PlayerGameSecondsBeforeStoringPPH;
 var config int PlayerMinScoreBeforeStoringPPH;
 var config float TeamImbalancePPHThreshold;
+var config bool bCustomScoring;
+var config int CustomRegulationPoints;
+var config int CustomOvertimePoints;
 
 var config bool bDebug;
 
@@ -117,6 +120,11 @@ function PostBeginPlay()
 		ApplyLinuxDedicatedServerCrashFix();
 }
 
+function MaplistReset()
+{
+
+}
+
 function ApplyLinuxDedicatedServerCrashFix()
 {
 	local Actor A;
@@ -163,6 +171,11 @@ function Mutate(string MutateString, PlayerController Sender)
 
 		if (MutateString ~= "shuffle") {
 			HandleShuffleCall(Sender);
+			return;
+		}
+
+		if (MutateString ~= "resetmaps") {
+			HandleResetMapsCall(Sender);
 			return;
 		}
 		
@@ -222,6 +235,35 @@ function HandleShuffleCall(PlayerController Sender)
         }
     }
 }
+
+function HandleResetMapsCall(PlayerController Sender)
+{
+    local bool bisAdmin;
+    local int i;
+    local MapVoteHistory_INI History;
+
+	if (Sender != None && Sender.PlayerReplicationInfo != None) 
+    {
+		bisAdmin = Sender.PlayerReplicationInfo.bAdmin || Level.Game.AccessControl != None && Level.Game.AccessControl.IsAdmin(Sender);
+		if (bisAdmin)
+        {
+            History = MapVoteHistory_INI(xVotingHandler(Level.Game.VotingHandler).History);
+            if(History != None)
+            {
+                for(i = 0;i<History.H.length;i++)
+                {
+                    History.H[i].S = 0;
+                }
+
+                History.bUpdated = true;
+                History.Save();
+                xVotingHandler(Level.Game.VotingHandler).SaveConfig();
+                Sender.ClientMessage("Map sequences have been reset.  All maps will be available next match.");
+            }
+        }
+    }
+}
+
 
 simulated function HandleBalanceCall(PlayerController Sender)
 {
@@ -1089,6 +1131,9 @@ defaultproperties
 	PlayerGameSecondsBeforeStoringPPH     = 60
 	PlayerMinScoreBeforeStoringPPH        = 10
     TeamImbalancePPHThreshold             = 1000
+    bCustomScoring                        = False
+    CustomRegulationPoints                = 1
+    CustomOvertimePoints                  = 1
 	
 	bDebug = True
 	
