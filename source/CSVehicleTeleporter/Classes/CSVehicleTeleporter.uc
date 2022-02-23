@@ -160,7 +160,7 @@ simulated function bool Accept( actor Incoming, Actor Source )
 
 	if ( Pawn(Incoming) != None )
 	{
-     if ((InStr( Incoming.Name, "CS")+InStr( Incoming.Name, "Mech")) > 0)
+     if ((InStr( Incoming.Name, "CS") >0 && InStr( Incoming.Name, "Mech") > 0))
      //(CSHoverMech(Incoming) != None)
      // for CSMechs eg. CSShockMech etc, not dependent on class just class names
         {
