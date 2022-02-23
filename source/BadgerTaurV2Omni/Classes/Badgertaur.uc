@@ -5,6 +5,34 @@ class Badgertaur extends MyBadger;
 
 #exec obj load file="Animations\Badgertaur_Anim.ukx" package=BadgerTaurV2Omni
 
+// Added ReduceShake to avoid spinning bug from massive damage..
+// 02-23-2022 pooty
+replication
+{
+	reliable if (Role == ROLE_Authority)
+		ReduceShake;
+}
+
+
+simulated function ReduceShake()
+{
+	local float ShakeScaling;
+	local PlayerController Player;
+
+	if (Controller == None || PlayerController(Controller) == None)
+		return;
+
+	Player = PlayerController(Controller);
+	ShakeScaling = VSize(Player.ShakeRotMax) / 7500;
+
+	if (ShakeScaling > 1)
+	{
+		Player.ShakeRotMax /= ShakeScaling;
+		Player.ShakeRotTime /= ShakeScaling;
+		Player.ShakeOffsetMax /= ShakeScaling;
+	}
+}
+
 event PostBeginPlay()
 {
 	Super.PostBeginPlay();
@@ -129,7 +157,7 @@ defaultproperties
      TPCamLookat=(Z=200.000000)
      TPCamWorldOffset=(Z=200.000000)
      VehiclePositionString="in a Megabadger"
-     VehicleNameString="Megabadger 2.1"
+     VehicleNameString="Megabadger 2.2"
      HornSounds(0)=Sound'Minotaur_Sound.Minotaurhorn'
      HealthMax=2000.000000
      Health=2000
