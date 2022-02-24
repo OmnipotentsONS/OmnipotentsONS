@@ -1,8 +1,6 @@
 
 class CSDarkRailSecondaryTurret extends ONSWeapon;
 
-#exec AUDIO IMPORT FILE="Sounds\instagib_rifleshot.wav"
-
 var class<ShockBeamEffect> BeamEffectClass[2];
 
 
@@ -34,12 +32,8 @@ defaultproperties
     PitchBone=Object02
     PitchUpLimit=12500
     PitchDownLimit=59500
-    //bInstantFire=True
-
-    //AmbientEffectEmitterClass=class'Onslaught.ONSRVChainGunFireEffect'
     FireInterval=1.1
-    //FireSoundClass=sound'ONSVehicleSounds-S.TankMachineGun01'
-    FireSoundClass=Sound'CSDarkRailTank.instagib_rifleshot'
+    FireSoundClass=Sound'WeaponSounds.instagib_rifleshot'
 
     SoundVolume=255
     AmbientSoundScaling=1.3
@@ -52,14 +46,8 @@ defaultproperties
     ShakeRotTime=2
 
     FireForce="minifireb"
-    //bIsRepeatingFF=True
-    bAmbientFireSound=True
-
-    //WeaponFireAttachmentBone=Object02
-    //WeaponFireOffset=85.0
     DualFireOffset=5.0
     bAimable=True
-    //DamageType=class'DamTypeONSChainGun'
     DamageMin=1000
     DamageMax=1000
     Momentum=100000
