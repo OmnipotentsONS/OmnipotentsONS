@@ -122,7 +122,7 @@ simulated function bool Accept( actor Incoming, Actor Source )
 	local rotator newPassengerRotation; // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	local int Num;
 	local PlayerController PC;
-    local vector LocationOffset;
+  local vector LocationOffset;
 
 	if ( Incoming == None )
 		return false;
@@ -160,11 +160,12 @@ simulated function bool Accept( actor Incoming, Actor Source )
 
 	if ( Pawn(Incoming) != None )
 	{
-     if ((InStr( Incoming.Name, "CS") >0 && InStr( Incoming.Name, "Mech") > 0))
-     //(CSHoverMech(Incoming) != None)
+		 // 0 is start of string..damn 0 based indexing.
+     if ((InStr( Incoming.Name, "CS") > -1 && InStr( Incoming.Name, "Mech") > -1))
+     //if (CSHoverMech(Incoming) != None)
      // for CSMechs eg. CSShockMech etc, not dependent on class just class names
         {
-            LocationOffset = vect(0,0,420);
+            LocationOffset = vect(0,0,650);
         }
 		//tell enemies about teleport
 		if ( Role == ROLE_Authority )
