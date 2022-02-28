@@ -266,7 +266,7 @@ function ShouldTargetMissile(Projectile P)
 
 defaultproperties
 {
-     MaxPitchSpeed=1000.000000
+     MaxPitchSpeed=800.000000
      TreadVelocityScale=450.000000
      MaxGroundSpeed=1100.000000
      MaxAirSpeed=5000.000000
@@ -288,12 +288,12 @@ defaultproperties
      UprightStiffness=100.000000
      UprightDamping=300.000000
      MaxThrust=100.000000
-     MaxSteerTorque=200.000000
+     MaxSteerTorque=150.000000
      ForwardDampFactor=0.100000
      LateralDampFactor=0.500000
      ParkingDampFactor=0.800000
      SteerDampFactor=100.000000
-     PitchTorqueFactor=-300.000000
+    // PitchTorqueFactor=-300.000000
      InvertSteeringThrottleThreshold=-0.100000
      DriverWeapons(0)=(WeaponClass=Class'MirageTankV3Omni.MirageTankV3Cannon',WeaponBone="Cannon")
      PassengerWeapons(0)=(WeaponPawnClass=Class'MirageTankV3Omni.MirageTankV3GunPawn',WeaponBone="MachineGun")

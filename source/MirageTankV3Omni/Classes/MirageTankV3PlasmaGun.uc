@@ -98,7 +98,7 @@ defaultproperties
      YawBone="rvGUNTurret"
      PitchBone="rvGUNbody"
      PitchUpLimit=18000
-     PitchDownLimit=49153
+     PitchDownLimit=59500
      WeaponFireAttachmentBone="RVfirePoint"
      GunnerAttachmentBone="rvGUNbody"
      RotationsPerSecond=1.200000

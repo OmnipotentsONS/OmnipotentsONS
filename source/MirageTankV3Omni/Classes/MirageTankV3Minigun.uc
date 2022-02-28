@@ -103,9 +103,11 @@ defaultproperties
      mTracerPullback=150.000000
      mTracerSpeed=15000.000000
      YawBone="PassengerGunBase"
-     YawStartConstraint=57344.000000
-     YawEndConstraint=8192.000000
+    // YawStartConstraint=57344.000000
+    // YawEndConstraint=8192.000000
      PitchBone="PassengerGunBarrel"
+     PitchUpLimit=18000
+     PitchDownLimit=59500
      WeaponFireAttachmentBone="SideGunFirePointf"
      GunnerAttachmentBone="SideGunAttach"
      WeaponFireOffset=5.000000
