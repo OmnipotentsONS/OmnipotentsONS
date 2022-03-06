@@ -701,7 +701,8 @@ defaultproperties
 {
      MaxHoldTime=1.500000
      MinSpeed=1000.000000
-     MaxSpeed=6000.000000
+     //MaxSpeed=6000.000000
+     MaxSpeed=5000.000000
      TargetPredictionTimeStep=0.300000
      WeaponCharge=0.250000
      CameraLaunchWait=5.000000

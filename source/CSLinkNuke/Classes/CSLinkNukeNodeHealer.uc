@@ -148,7 +148,8 @@ simulated function Timer()
     if(PowerNode != None)
     {
         //PowerNode.Health = Min(PowerNode.Health + healthInc, PowerNode.DamageCapacity);
-        PowerNode.HealDamage(healthInc, Instigator.Controller, class'CSLinkNukeDamTypeLinkNuke');
+        //PowerNode.HealDamage(healthInc, Instigator.Controller, class'CSLinkNukeDamTypeLinkNuke');
+        HealNode();
     }
 
     TotalTime -= TimerRate;
@@ -157,6 +158,37 @@ simulated function Timer()
         Destroy();
     }
 
+
+}
+
+function bool HealNode()
+{
+    local int Amount;
+    if (PowerNode.Health >= PowerNode.DamageCapacity)
+	{
+        if (Level.TimeSeconds - PowerNode.HealingTime < 0.5)
+            PlaySound(PowerNode.HealedSound, SLOT_Misc, 5.0);
+
+        return false;
+    }
+
+    PowerNode.Health = Min(PowerNode.Health + healthInc * PowerNode.LinkHealMult, PowerNode.DamageCapacity);
+	if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None)
+		ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(float(Amount) / PowerNode.DamageCapacity * PowerNode.Score);
+
+	PowerNode.NetUpdateTime = Level.TimeSeconds - 1;
+    PowerNode.HealingTime = Level.TimeSeconds;
+    PowerNode.LastHealedBy =Instigator.Controller;
+
+    if (PowerNode.NodeHealEffect == None)
+    {
+        PowerNode.NodeHealEffect = Spawn(class'ONSNodeHealEffect', self,, PowerNode.Location + vect(0,0,363));
+        PowerNode.NodeHealEffect.AmbientSound = PowerNode.HealingSound;
+		if ( Level.NetMode == NM_DedicatedServer )
+			PowerNode.NodeHealEffect.LifeSpan = 5000.0;
+    }
+
+    return true;
 }
 
 defaultproperties

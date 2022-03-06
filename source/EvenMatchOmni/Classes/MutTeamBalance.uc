@@ -271,7 +271,9 @@ simulated function HandleBalanceCall(PlayerController Sender)
 	if (Sender != None && Sender.PlayerReplicationInfo != None) 
     {
         gamePPH = Rules.GetGamePPH();
-        Sender.ReceiveLocalizedMessage(class'UnevenChatMessage', -2,Sender.PlayerReplicationInfo,,gamePPH);
+        //Sender.ReceiveLocalizedMessage(class'UnevenChatMessage', -2,Sender.PlayerReplicationInfo,,gamePPH);
+        BroadcastLocalizedMessage(class'UnevenChatMessage', -2,Sender.PlayerReplicationInfo,,gamePPH);
+
     }
 }
 

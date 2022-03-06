@@ -642,7 +642,7 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Mo
     if (DamageType == class'DamTypeBioGlob')
         Damage *= 3.0;
 
-	if (DamageType == class'DamTypeLinkShaft')
+	if (DamageType == class'DamTypeLinkShaft' || ClassIsChildOf(DamageType, class'DamTypeLinkShaft'))
 		Damage *= 3.0;
 
 	if (DamageType == class'DamTypeFlakChunk')
@@ -835,7 +835,7 @@ defaultproperties
      MomentumMult=0.010000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Pallas"
-     VehicleNameString="Pallas 2.1"
+     VehicleNameString="Pallas 2.2"
      RanOverDamageType=Class'OnslaughtFull.DamTypeMASRoadkill'
      CrushedDamageType=Class'OnslaughtFull.DamTypeMASPancake'
      MaxDesireability=2.000000
@@ -845,8 +845,8 @@ defaultproperties
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.LevHorn02'
      bSuperSize=True
      NavigationPointRange=190.000000
-     HealthMax=5000.000000
-     Health=5000
+     HealthMax=3500.000000
+     Health=3500
      bStasis=False
      bReplicateAnimations=True
      Mesh=SkeletalMesh'ONSFullAnimations.MASchassis'

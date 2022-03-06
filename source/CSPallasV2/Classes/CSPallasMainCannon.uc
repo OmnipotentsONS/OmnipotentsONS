@@ -120,9 +120,9 @@ defaultproperties
     RedSkin=Shader'CSPallasV2.CSPallasRedShader'
     BlueSkin=Shader'CSPallasV2.CSPallasBlueShader'
     WeaponFireOffset=30.000000
-    FireInterval=0.28
+    FireInterval=0.33
     AltFireInterval=1.75
-    MaxLockRange=30000
+    MaxLockRange=20000
     FireSoundClass=Sound'CSPallasV2.pinkprojectile'
     ProjectileClass=Class'CSPallasV2.CSPallasMainCannonProjectile'
     AltFireProjectileClass=Class'CSPallasV2.CSPallasMainCannonProjectile'

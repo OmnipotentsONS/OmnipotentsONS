@@ -6,7 +6,7 @@ var float BluePPH;
 
 replication
 {
-    unreliable if(bNetDirty)
+    reliable if(bNetDirty && Role == ROLE_Authority)
         RedPPH, BluePPH;
 }
 
@@ -16,4 +16,5 @@ defaultproperties
 	bAlwaysRelevant=True
     NetUpdateFrequency=1
     bNetNotify=True
+    bHidden=True
 }

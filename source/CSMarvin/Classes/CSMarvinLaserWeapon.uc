@@ -86,7 +86,7 @@ defaultproperties
     FireInterval=0.22
     //AltFireProjectileClass=class'CSMarvinProjectileBlue'
     AltFireProjectileClass=class'CSMarvin.CSMarvinMissileProjectile'
-    AltFireInterval=1.2
+    AltFireInterval=0.9
     WeaponFireAttachmentBone=PlasmaGunAttachment
     WeaponFireOffset=0.0
     bAimable=True
@@ -94,6 +94,6 @@ defaultproperties
     DualFireOffset=44
     //MinAim=0.900
     //bDoOffsetTrace=true
-    MaxLockRange=20000
+    MaxLockRange=14000
     LockAim=0.975
 }

@@ -41,7 +41,7 @@ simulated function PostBeginPlay()
 	if (PhysicsVolume.bWaterVolume)
 		Velocity = 0.6 * Velocity;
 
-	SetTimer(0.1, true);
+	SetTimer(0.2, true);
 
 	Super.PostBeginPlay();
 }
@@ -75,7 +75,8 @@ simulated function Timer()
     VelMag = VSize(Velocity);
 
     //clamp forcedir * multiplier between 0.5 and 0.8 depending on current velocity, this limits the rotation/direction change
-    ForceDir = Normal(ForceDir * FClamp((VSize(Velocity)/MaxSpeed),0.5, 0.8) * VelMag + Velocity);
+    //ForceDir = Normal(ForceDir * FClamp((VSize(Velocity)/MaxSpeed),0.5, 0.8) * VelMag + Velocity);
+    ForceDir = Normal(ForceDir * 0.6 * VelMag + Velocity);
 
     Velocity =  VelMag * ForceDir; //change direction
     SetRotation(rotator(ForceDir)); //rotate to match direction
@@ -132,8 +133,8 @@ simulated function Tick(float deltaTime)
 defaultproperties
 {
      AccelerationAddPerSec=300.000000
-     Speed=1100.000000
-     MaxSpeed=3500.000000
+     Speed=1300.000000
+     MaxSpeed=2600.000000
      Damage=20.000000
      DamageRadius=250.000000
      MomentumTransfer=20000.000000

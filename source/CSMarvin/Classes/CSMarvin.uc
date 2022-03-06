@@ -429,9 +429,12 @@ defaultproperties
      StreamerEffectOffset(0)=(X=0.000000,Y=180.000000,Z=0.000000)
      StreamerEffectOffset(1)=(X=0.000000,Y=-180.000000,Z=0.000000)
      StreamerEffectClass=class'Onslaught.ONSAttackCraftStreamer'
-     MaxThrustForce=300.000000
-     MaxStrafeForce=300.000000
-     MaxRiseForce=200.000000
+     //MaxThrustForce=300.000000
+     //MaxStrafeForce=300.000000
+     MaxThrustForce=240.000000
+     MaxStrafeForce=240.000000
+     //MaxRiseForce=200.000000
+     MaxRiseForce=160.000000
      UpDamping=0.200000
      TurnTorqueMax=300.000000
      PitchDamping=200.000000
@@ -459,7 +462,7 @@ defaultproperties
      FPCamPos=(Z=50.000000)
      TPCamWorldOffset=(Z=130.000000)
      VehiclePositionString="in a Q-36 Space Modulator"
-     VehicleNameString="Q-36 Space Modulator"
+     VehicleNameString="Q-36 Space Modulator 1.7"
      AirSpeed=800.000000
      AccelRate=4000.000000
      AirControl=0.300000
@@ -477,7 +480,8 @@ defaultproperties
          KStartEnabled=True
          bKNonSphericalInertia=True
          KActorGravScale=0.000000
-         KMaxSpeed=5000.000000
+         //KMaxSpeed=5000.000000
+         KMaxSpeed=3000.000000
          bHighDetailOnly=False
          bClientOnly=False
          bKDoubleTickRate=True

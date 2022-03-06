@@ -94,12 +94,14 @@ simulated function Timer()
 	if (HomingTarget == None)
 		return;
 
+    /*
     if(Level.TimeSeconds - startTime < 6.0)
         ForceDir = Normal(HomingTarget.Location - Location);
     else
         ForceDir = HomingTarget.Location - Location;
+        */
+    ForceDir = Normal(HomingTarget.Location - Location);
 
-    //ForceDir = ForceDir + HomingTarget.Velocity * VSize(ForceDir) / (VelMag * 2);
     dist = VSize(HomingTarget.Location - Location);
     if(dist < 5000)
     {
@@ -112,9 +114,8 @@ simulated function Timer()
 
     VelMag = VSize(Velocity);
 
-    VelFactor = FClamp(VelFactor+0.01,0,1);
+    //VelFactor = FClamp(VelFactor+0.01,0,0.7);
 
-    //VelFactor = 1.0;
     ForceDir = Normal(ForceDir * VelFactor * VelMag + Velocity);
 
     Velocity =  VelMag * ForceDir; //change direction
@@ -184,13 +185,14 @@ defaultproperties
     //MaxSpeed=2800.000000
 
     AccelerationAddPerSec=750.0
-    Speed=3000.000000
-    MaxSpeed=6000.000000
+    //Speed=3000.000000
+    //MaxSpeed=6000.000000
+    Speed=2500.000000
+    MaxSpeed=2900.000000
     VelFactor=0.6
 
 
-
-    Damage=100.000000
+    Damage=70.000000
     DamageRadius=250.000000
     MomentumTransfer=20000.000000
     Lifespan=16.0

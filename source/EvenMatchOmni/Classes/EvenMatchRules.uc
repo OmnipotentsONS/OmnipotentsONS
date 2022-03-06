@@ -282,7 +282,8 @@ function CustomScore(PlayerReplicationInfo Scorer)
 
         onsgame = ONSOnslaughtGame(Level.Game);
 
-        bHasScored = Level.GRI.Teams[0].Score + Level.GRI.Teams[1].Score > 0;
+        //bHasScored = Level.GRI.Teams[0].Score + Level.GRI.Teams[1].Score > 0;
+        bHasScored = Level.GRI.Teams[Scorer.Team.TeamIndex].Score > 0;
         bCoreDestroyed = (onsgame.PowerCores[onsgame.FinalCore[0]].Health <= 0) || (onsgame.PowerCores[onsgame.FinalCore[1]].Health <= 0);
 
         if(bHasScored && bCoreDestroyed)
