@@ -159,6 +159,9 @@ Omnip)o(tents tweaks to the EvenMatch mutator
 
 BadgerTaur + Spanker
 
+## ONSPlusOmni
+
+Omnip)o(tents tweaks to the ONSPlus mutator
 
 
 
