@@ -32,6 +32,7 @@ var bool bBalancing, bSaveNeeded;
 var int FirstRoundResult;
 var int MatchStartTS;
 var float ConfigPPHDiff;
+var bool bAutobalance;
 
 var float LastRestartTime;
 var PlayerController LastRestarter, PotentiallyLeavingPlayer;
@@ -265,7 +266,7 @@ function CustomScore(PlayerReplicationInfo Scorer)
 {
     local ONSOnslaughtGame onsgame;
     local int oldscore, newscore;
-    local bool bHasScored, bCoreDestroyed;
+    local bool bHasScored, bEnemyCoreDestroyed;
 
     if(EvenMatchMutator.bCustomScoring)
     {
@@ -282,20 +283,18 @@ function CustomScore(PlayerReplicationInfo Scorer)
 
         onsgame = ONSOnslaughtGame(Level.Game);
 
-        //bHasScored = Level.GRI.Teams[0].Score + Level.GRI.Teams[1].Score > 0;
-        bHasScored = Level.GRI.Teams[Scorer.Team.TeamIndex].Score > 0;
-        bCoreDestroyed = (onsgame.PowerCores[onsgame.FinalCore[0]].Health <= 0) || (onsgame.PowerCores[onsgame.FinalCore[1]].Health <= 0);
+        bHasScored = onsgame.Teams[Scorer.Team.TeamIndex].Score > 0;
+        bEnemyCoreDestroyed = onsgame.PowerCores[onsgame.FinalCore[1-Scorer.Team.TeamIndex]].Health <= 0;
 
-        if(bHasScored && bCoreDestroyed)
+        if(bHasScored && bEnemyCoreDestroyed)
         {
             //todo unwind stats?
-            Level.GRI.Teams[Scorer.Team.TeamIndex].Score -= oldscore;
-            Level.GRI.Teams[Scorer.Team.TeamIndex].Score += newscore;
-            if(Level.GRI.Teams[Scorer.Team.TeamIndex].Score < 0)
-                Level.GRI.Teams[Scorer.Team.TeamIndex].Score = 0;
+            onsgame.Teams[Scorer.Team.TeamIndex].Score -= oldscore;
+            onsgame.Teams[Scorer.Team.TeamIndex].Score += newscore;
+            if(onsgame.Teams[Scorer.Team.TeamIndex].Score < 0)
+                onsgame.Teams[Scorer.Team.TeamIndex].Score = 0;
 
-            Level.GRI.Teams[Scorer.Team.TeamIndex].NetUpdateTime = Level.TimeSeconds - 1;
-
+            onsgame.Teams[Scorer.Team.TeamIndex].NetUpdateTime = Level.TimeSeconds - 1;
         }
     }
 }
@@ -389,6 +388,10 @@ function Timer()
         {
             BroadcastLocalizedMessage(class'UnevenMessage', 0,,, Level.GRI.Teams[FirstRoundResult-1]);
         }
+        else if(replicationHack == 3)
+        {
+            BroadcastLocalizedMessage(class'UnevenMessage', 5);
+        }
 
         replicationHack = 0;
     }
@@ -434,6 +437,7 @@ simulated function GamePPH GetGamePPH()
         }
     }
 
+    CurrentGamePPH.NetUpdateTime = Level.TimeSeconds - 1;
     return CurrentGamePPH;
 }
 
@@ -598,6 +602,7 @@ simulated function GamePPH ShuffleTeams(optional bool killPlayers)
 
     CurrentGamePPH.RedPPH = RedPPH;
     CurrentGamePPH.BluePPH = BluePPH;
+    CurrentGamePPH.NetUpdateTime = Level.TimeSeconds - 1;
     return CurrentGamePPH;
 }
 
@@ -822,5 +827,5 @@ function float GetTeamProgress()
 defaultproperties
 {
 	bNetTemporary = True
-    ConfigPPHDiff=1000
+    ConfigPPHDiff=200
 }

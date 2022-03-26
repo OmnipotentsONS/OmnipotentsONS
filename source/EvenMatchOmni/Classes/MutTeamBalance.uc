@@ -24,6 +24,7 @@ var() const editconst string Build;
 var config int ActivationDelay;
 var config int MinDesiredFirstRoundDuration;
 var config bool bShuffleTeamsAtMatchStart;
+var config bool bShuffleTeamsAtRoundStart;
 var config bool bRandomlyStartWithSidesSwapped;
 var config bool bAssignConnectingPlayerTeam;
 var config bool bIgnoreConnectingPlayerTeamPreference;
@@ -296,10 +297,21 @@ when they respawn at the start of the new round.
 */
 function Reset()
 {
+    local GamePPH gamePPH;
 	RecentTeams.Length = 0;
 	
 	if (bBalanceTeamsBetweenRounds)
 		BalanceTeams();
+    if(bShuffleTeamsAtRoundStart)
+    {
+        gamePPH = Rules.GetGamePPH();
+        log("evenmatch reset:"$gamePPH.RedPPH$" "$gamePPH.BluePPH);
+        if(abs(gamePPH.RedPPH - gamePPH.BluePPH) > TeamImbalancePPHThreshold)
+        {
+            Rules.ShuffleTeams(true);
+            BroadcastLocalizedMessage(class'UnevenMessage', 5);
+        }
+    }
 }
 
 
@@ -1095,13 +1107,18 @@ static event string GetDescriptionText(string PropName)
 }
 
 
+function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
+{
+	Class'ONSOnslaughtGame'.static.AddServerDetail(ServerState, "EvenMatchOmniVersion", Build);
+}
+
 //=============================================================================
 // Default values
 //=============================================================================
 
 defaultproperties
 {
-	Build = "%%%%-%%-%% %%:%%"
+	Build = "2.6"
 	FriendlyName = "Omnip)o(tents Team Balance (Onslaught-only)"
 	Description  = "Special team balancing rules for public Onslaught matches."
 	bAddToServerPackages = True
@@ -1109,6 +1126,7 @@ defaultproperties
 	ActivationDelay                       = 10
 	MinDesiredFirstRoundDuration          = 5
 	bShuffleTeamsAtMatchStart             = True
+	bShuffleTeamsAtRoundStart             = True
 	bRandomlyStartWithSidesSwapped        = True
 	bAssignConnectingPlayerTeam           = True
 	bIgnoreConnectingPlayerTeamPreference = True
@@ -1132,7 +1150,7 @@ defaultproperties
 	DeletePlayerPPHAfterDaysNotSeen       = 30
 	PlayerGameSecondsBeforeStoringPPH     = 60
 	PlayerMinScoreBeforeStoringPPH        = 10
-    TeamImbalancePPHThreshold             = 1000
+    TeamImbalancePPHThreshold             = 500
     bCustomScoring                        = False
     CustomRegulationPoints                = 1
     CustomOvertimePoints                  = 1

@@ -34,6 +34,7 @@ var localized string NoCallForBalanceEvenString;
 var localized string YouWereSwitchedString;
 var localized string PlayerWasSwitchedString;
 var localized string TeamsImbalancedString;
+var localized string TeamsAutobalanceString;
 
 
 //=============================================================================
@@ -83,6 +84,8 @@ static function string GetString(optional int MessageSwitch, optional PlayerRepl
 		return default.SoftBalanceString;
 	case 4:
 		return Repl(Repl(default.ForcedBalanceString, "%r", int(GamePPH(OptionalObject).RedPPH)), "%b", int(GamePPH(OptionalObject).BluePPH));
+	case 5:
+		return default.TeamsAutobalanceString;
 	default:
 		if (MessageSwitch > 3)
 			return Repl(default.TeamsUnbalancedString, "%n", 10 * (MessageSwitch - 4));
@@ -109,6 +112,7 @@ defaultproperties
 	YouWereSwitchedString   = "Forced team change by EvenMatch"
 	PlayerWasSwitchedString = "%p was switched to %t by EvenMatch"
 	TeamsImbalancedString    = "Teams rebalanced: diff before(%r) after(%b)"
+	TeamsAutobalanceString   = "Teams have been shuffled"
 
 	QuickRoundAnnouncement(0) = red_team_dominating
 	QuickRoundAnnouncement(1) = blue_team_dominating
