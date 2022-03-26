@@ -12,7 +12,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	if (SVehicleFactory(Other) != None && 
        (class<ONSHoverBike>(SVehicleFactory(Other).VehicleClass) != None))
      {
-		SVehicleFactory(Other).VehicleClass = class'FlyingSaucer';
+		SVehicleFactory(Other).VehicleClass = class'CSFlyingSaucer';
      }
 	
 	return true;

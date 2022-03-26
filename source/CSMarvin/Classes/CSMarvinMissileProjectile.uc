@@ -5,7 +5,6 @@ class CSMarvinMissileProjectile extends Projectile;
 #exec AUDIO IMPORT FILE=Sounds\orangeprojectile.wav
 #exec AUDIO IMPORT FILE=Sounds\missileambient.wav
 
-var Actor HomingTarget;
 var vector InitialDir;
 
 var Emitter SmokeTrailEffect;
@@ -13,12 +12,14 @@ var Emitter Spinner1, Spinner2, Spinner3;
 var float AccelerationAddPerSec;
 var float startTime;
 var float velFactor;
+var class<Emitter> TrailEffectClass[2];
+var class<Emitter> TrailHitEffectClass[2];
 
 
 replication
 {
     reliable if (bNetInitial && Role == ROLE_Authority)
-        InitialDir, HomingTarget;
+        InitialDir;
 }
 
 simulated function Destroyed()
@@ -35,35 +36,33 @@ simulated function Destroyed()
 	if ( Spinner3 != None )
 		Spinner3.Kill();
 
-    HomingTarget = none;
-
 	Super.Destroyed();
 }
 
 simulated function PostBeginPlay()
 {
+    /*
 	local vector Dir;
+    local int Team;
 	Dir = vector(Rotation);
 
 	if (Level.NetMode != NM_DedicatedServer)
 	{
-		//SmokeTrailEffect = Spawn(class'CSMarvin.CSMarvinMissileEffect',,,Location - 15 * Dir);
-		//SmokeTrailEffect.Setbase(self);
-
-		//Spinner1 = Spawn(class'ONSDualMissileSmokeTrail',,,vect(90,-80,50) + Location - 15 * Dir);
-		Spinner1 = Spawn(class'CSMarvinMissileTrailEffectBlue',,,vect(0,70,0) + Location - 15 * Dir);
+        Team = ONSWeapon(Owner).Team;
+		Spinner1 = Spawn(TrailEffectClass[Team],,,0.5*vect(0,70,0) + Location - 15 * Dir);
 		Spinner1.Setbase(self);
-		Spinner1.SetRelativeLocation(dir * vect(0,70,0));
+		Spinner1.SetRelativeLocation(dir * 0.5*vect(0,70,0));
 
-		Spinner2 = Spawn(class'CSMarvinMissileTrailEffectGreen',,,vect(0,-35,61) + Location - 15 * Dir);
+		Spinner2 = Spawn(TrailEffectClass[Team],,,0.5*vect(0,-35,61) + Location - 15 * Dir);
 		Spinner2.Setbase(self);
-		Spinner2.SetRelativeLocation(dir * vect(0,-35,61));
+		Spinner2.SetRelativeLocation(dir * 0.5*vect(0,-35,61));
 
-		Spinner3 = Spawn(class'CSMarvinMissileTrailEffectRed',,,vect(0,-35,-61) + Location - 15 * Dir);
+		Spinner3 = Spawn(TrailEffectClass[Team],,,0.5*vect(0,-35,-61) + Location - 15 * Dir);
 		Spinner3.Setbase(self);
-		Spinner3.SetRelativeLocation(dir * vect(0,-35,-61));
+		Spinner3.SetRelativeLocation(dir * 0.5*vect(0,-35,-61));
 
 	}
+    */
 
 	InitialDir = vector(Rotation);
 	Velocity = InitialDir * Speed;
@@ -72,55 +71,44 @@ simulated function PostBeginPlay()
 		Velocity = 0.6 * Velocity;
 
     startTime = Level.TimeSeconds;
-	SetTimer(0.1, true);
+	SetTimer(0.2, true);
 
 	Super.PostBeginPlay();
 }
 
+simulated function PostNetBeginPlay()
+{
+	local vector Dir;
+    local int Team;
+
+    super.PostNetBeginPlay();
+	if (Level.NetMode != NM_DedicatedServer)
+	{
+        Dir = vector(Rotation);
+        Team = ONSWeapon(Owner).Team;
+		Spinner1 = Spawn(TrailEffectClass[Team],,,0.5*vect(0,70,0) + Location - 15 * Dir);
+		Spinner1.Setbase(self);
+		Spinner1.SetRelativeLocation(dir * 0.5*vect(0,70,0));
+
+		Spinner2 = Spawn(TrailEffectClass[Team],,,0.5*vect(0,-35,61) + Location - 15 * Dir);
+		Spinner2.Setbase(self);
+		Spinner2.SetRelativeLocation(dir * 0.5*vect(0,-35,61));
+
+		Spinner3 = Spawn(TrailEffectClass[Team],,,0.5*vect(0,-35,-61) + Location - 15 * Dir);
+		Spinner3.Setbase(self);
+		Spinner3.SetRelativeLocation(dir * 0.5*vect(0,-35,-61));
+	}
+}
+
 simulated function Timer()
 {
-	local float VelMag;
-	local vector ForceDir;
-    local CSMarvinLaserWeapon cannon;
     local float dist;
 
-    cannon = CSMarvinLaserWeapon(Owner);
-    if(Instigator != None && cannon != None && VSize(Instigator.Location - Location) > cannon.MaxLockRange)
-        HomingTarget = None;
-
-    if(Instigator == None || (Instigator != None && Instigator.Health <= 0))
-        HomingTarget = None;
-
-	if (HomingTarget == None)
-		return;
-
-    /*
-    if(Level.TimeSeconds - startTime < 6.0)
-        ForceDir = Normal(HomingTarget.Location - Location);
-    else
-        ForceDir = HomingTarget.Location - Location;
-        */
-    ForceDir = Normal(HomingTarget.Location - Location);
-
-    dist = VSize(HomingTarget.Location - Location);
-    if(dist < 5000)
+    dist = VSize(Owner.Location - Location);
+    if(dist > 1000)
     {
-        RotationRate.Roll += (5000 - dist / 5000) * 20;
-
+        RotationRate.Roll += (3000 - dist / 3000) * 40;
     }
-
-    //missilepitch = 64.0 + VSize(Velocity)/MaxPitchSpeed * 32.0;
-    //SoundPitch = FClamp(SoundPitch+2, 64, 2048);
-
-    VelMag = VSize(Velocity);
-
-    //VelFactor = FClamp(VelFactor+0.01,0,0.7);
-
-    ForceDir = Normal(ForceDir * VelFactor * VelMag + Velocity);
-
-    Velocity =  VelMag * ForceDir; //change direction
-    //Acceleration += 5 * ForceDir;
-    SetRotation(rotator(ForceDir)); //rotate to match direction
 }
 
 simulated function Landed( vector HitNormal )
@@ -145,12 +133,15 @@ function BlowUp(vector HitLocation)
 simulated function Explode(vector HitLocation, vector HitNormal)
 {
 	local PlayerController PC;
+    local int Team;
+    Team = ONSWeapon(Owner).Team;
 
 	PlaySound(sound'CSMarvin.orangeexplosion',,4.0*TransientSoundVolume);
 
     if ( EffectIsRelevant(Location,false) )
     {
-    	Spawn(class'CSMarvinMissileHitEffect',,,HitLocation + HitNormal*20,rotator(HitNormal));
+    	//Spawn(class'CSMarvinMissileHitEffect',,,HitLocation + HitNormal*20,rotator(HitNormal));
+    	Spawn(TrailHitEffectClass[Team],,,HitLocation + HitNormal*20,rotator(HitNormal));
     	PC = Level.GetLocalPlayerController();
 		if ( (PC.ViewTarget != None) && VSize(PC.ViewTarget.Location - Location) < 5000 )
 	        Spawn(class'ExplosionCrap',,, HitLocation + HitNormal*20, rotator(HitNormal));
@@ -184,16 +175,15 @@ defaultproperties
     //Speed=550.000000
     //MaxSpeed=2800.000000
 
-    AccelerationAddPerSec=750.0
+    AccelerationAddPerSec=5000.0
     //Speed=3000.000000
     //MaxSpeed=6000.000000
-    Speed=2500.000000
-    MaxSpeed=2900.000000
-    VelFactor=0.6
 
+    Damage=32
+    DamageRadius=300.0
+    Speed=8000
+    MaxSpeed=13000
 
-    Damage=70.000000
-    DamageRadius=250.000000
     MomentumTransfer=20000.000000
     Lifespan=16.0
     MyDamageType=Class'CSMarvin.CSMarvinMissileDamType'
@@ -220,4 +210,8 @@ defaultproperties
 
     RemoteRole=ROLE_SimulatedProxy
     bNetTemporary=false
+    TrailEffectClass(0)=class'CSMarvinMissileTrailEffectRed'
+    TrailEffectClass(1)=class'CSMarvinMissileTrailEffectBlue'
+    TrailHitEffectClass(0)=class'CSMarvinPlasmaHitRed'
+    TrailHitEffectClass(1)=class'CSMarvinPlasmaHitBlue'
 }

@@ -75,9 +75,9 @@ defaultproperties
          UseColorScale=True
          SpinParticles=True
          UniformSize=True
-         ColorScale(0)=(Color=(B=0,G=10,R=255))
-         ColorScale(1)=(RelativeTime=0.800000,Color=(B=0,G=10,R=255))
-         ColorScale(2)=(RelativeTime=1.000000,Color=(B=0,G=10,R=255))
+         ColorScale(0)=(Color=(B=10,G=30,R=255))
+         ColorScale(1)=(RelativeTime=0.500000,Color=(B=10,G=30,R=255))
+         ColorScale(2)=(RelativeTime=1.000000,Color=(B=30,G=50,R=255))
          CoordinateSystem=PTCS_Relative
          MaxParticles=2
          //StartLocationOffset=(X=150.000000)
@@ -110,9 +110,9 @@ defaultproperties
          UseSizeScale=True
          UseRegularSizeScale=False
          AutomaticInitialSpawning=False
-         ColorScale(0)=(Color=(B=0,G=10,R=255))
-         ColorScale(1)=(RelativeTime=0.5,Color=(B=0,G=10,R=255))
-         ColorScale(2)=(RelativeTime=1.000000,Color=(B=0,G=10,R=255))
+         ColorScale(0)=(Color=(B=2,G=30,R=255))
+         ColorScale(1)=(RelativeTime=0.5,Color=(B=2,G=30,R=255))
+         ColorScale(2)=(RelativeTime=1.000000,Color=(B=40,G=30,R=255))
          Opacity=0.900000
          MaxParticles=1
          SizeScale(0)=(RelativeSize=1.000000)
