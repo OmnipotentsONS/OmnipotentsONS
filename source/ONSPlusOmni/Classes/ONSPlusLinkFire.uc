@@ -334,8 +334,19 @@ simulated function ModeTick(float dt)
 			if (!LinkedVehicle.HealDamage(AdjustedDamage / (LinkGun.LockingPawns.Length + 1), Instigator.Controller, DamageType))
 				LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 			else
+            {
+                if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None)
+                    ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(float(AdjustedDamage) / LinkedVehicle.default.Health);
+
 				for (i=0; i<LinkGun.LockingPawns.Length; i++)
-					LinkedVehicle.HealDamage(AdjustedDamage / (LinkGun.LockingPawns.Length + 1), LinkGun.LockingPawns[i].Controller, DamageType);
+                {
+					if(LinkedVehicle.HealDamage(AdjustedDamage / (LinkGun.LockingPawns.Length + 1), LinkGun.LockingPawns[i].Controller, DamageType))
+                    {
+                        if (ONSPlayerReplicationInfo(LinkGun.LockingPawns[i].Controller.PlayerReplicationInfo) != None)
+                            ONSPlayerReplicationInfo(LinkGun.LockingPawns[i].Controller.PlayerReplicationInfo).AddHealBonus(float(AdjustedDamage) / LinkedVehicle.default.Health);
+                    }
+                }
+            }
 		}
 
 		if (Weapon != none)

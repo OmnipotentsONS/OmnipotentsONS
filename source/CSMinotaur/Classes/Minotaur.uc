@@ -146,4 +146,5 @@ defaultproperties
      KParams=KarmaParamsRBFull'CSMinotaur.Minotaur.KarmaParamsRBFull8'
 
      bSelected=True
+     bKeyVehicle=True
 }

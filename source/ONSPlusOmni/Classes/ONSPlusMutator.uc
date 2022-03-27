@@ -821,7 +821,7 @@ static function string GetONSPlusVersion()
 	return Mid(sTempStr, InStr(sTempStr, "_") + 1);
     */
 
-    return ")o(mni 1.0";
+    return ")o(mni 1.1";
 }
 
 defaultproperties
@@ -849,6 +849,6 @@ defaultproperties
 	bEnableCustomVehiclePlugins=False
 	bRPGCompatible=False
 */
-	FriendlyName="ONSPlusOmni"
+	FriendlyName="ONSPlusOmni 1.1"
 	Description="ONSPlus (Omni) adds many fixes and small enhancements to the Onslaught and VehicleCTF gametypes"
 }
