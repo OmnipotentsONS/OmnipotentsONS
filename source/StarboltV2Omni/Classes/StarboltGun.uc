@@ -30,6 +30,8 @@ state InstantFireMode
 
 defaultproperties
 {
+     TraceRange=11500 // added by pooty, default is 20000 limits range.
+     CullDistance=11500
      PitchUpLimit=18000
      FireInterval=0.100000
      AltFireInterval=3.000000

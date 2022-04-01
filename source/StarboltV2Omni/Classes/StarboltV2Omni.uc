@@ -19,7 +19,7 @@ if (DamageType == class'DamTypeSniperShot')
 
 defaultproperties
 {
-     MaxPitchSpeed=6000.000000
+     MaxPitchSpeed=5000.000000
      StreamerOpacityRamp=(Min=2000.000000,Max=6000.000000)
      MaxThrustForce=230.000000
      LongDamping=0.350000
@@ -36,8 +36,8 @@ defaultproperties
      BlueSkin=Shader'Starbolt_Tex.Starbolt.ShieldBodyBlue'
      ImpactDamageMult=0.0010000
      VehiclePositionString="in a Starbolt"
-     VehicleNameString="Starbolt 2.1"
-     GroundSpeed=3750.000000
+     VehicleNameString="Starbolt 2.2"
+     GroundSpeed=3550.000000
      HealthMax=200.000000
      Health=200
      CollisionRadius=130.000000
