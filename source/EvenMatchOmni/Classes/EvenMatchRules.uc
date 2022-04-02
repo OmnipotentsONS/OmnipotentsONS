@@ -266,9 +266,9 @@ function CustomScore(PlayerReplicationInfo Scorer)
 {
     local ONSOnslaughtGame onsgame;
     local int oldscore, newscore;
-    local bool bHasScored, bEnemyCoreDestroyed;
+    local bool bHasScored, bCoreDestroyed, bEnemyCoreDestroyed;
 
-    if(EvenMatchMutator.bCustomScoring)
+    if(Role == ROLE_Authority && EvenMatchMutator.bCustomScoring)
     {
         if(Level.Game.bOverTime)
         {
@@ -282,19 +282,23 @@ function CustomScore(PlayerReplicationInfo Scorer)
         }
 
         onsgame = ONSOnslaughtGame(Level.Game);
-
-        bHasScored = onsgame.Teams[Scorer.Team.TeamIndex].Score > 0;
+        bHasScored = Level.GRI.Teams[Scorer.Team.TeamIndex].Score > 0;
         bEnemyCoreDestroyed = onsgame.PowerCores[onsgame.FinalCore[1-Scorer.Team.TeamIndex]].Health <= 0;
+        bCoreDestroyed = onsgame.PowerCores[onsgame.FinalCore[Scorer.Team.TeamIndex]].Health <= 0;
 
-        if(bHasScored && bEnemyCoreDestroyed)
+        if(bHasScored && bEnemyCoreDestroyed && !bCoreDestroyed)
         {
             //todo unwind stats?
-            onsgame.Teams[Scorer.Team.TeamIndex].Score -= oldscore;
-            onsgame.Teams[Scorer.Team.TeamIndex].Score += newscore;
-            if(onsgame.Teams[Scorer.Team.TeamIndex].Score < 0)
-                onsgame.Teams[Scorer.Team.TeamIndex].Score = 0;
+            Level.GRI.Teams[Scorer.Team.TeamIndex].Score -= oldscore;
+            Level.GRI.Teams[Scorer.Team.TeamIndex].Score += newscore;
+            if(Level.GRI.Teams[Scorer.Team.TeamIndex].Score < 0)
+                Level.GRI.Teams[Scorer.Team.TeamIndex].Score = 0;
 
-            onsgame.Teams[Scorer.Team.TeamIndex].NetUpdateTime = Level.TimeSeconds - 1;
+            Level.GRI.Teams[Scorer.Team.TeamIndex].NetUpdateTime = Level.TimeSeconds - 1;
+
+            //update game objects
+            onsgame.GameReplicationInfo.Teams[Scorer.Team.TeamIndex].Score = Level.GRI.Teams[Scorer.Team.TeamIndex].Score;
+            onsgame.GameReplicationInfo.NetUpdateTime = Level.TimeSeconds - 1;
         }
     }
 }
@@ -420,6 +424,7 @@ simulated function GamePPH GetGamePPH()
     CurrentGamePPH.RedPPH = 0;
     CurrentGamePPH.BluePPH = 0;
 
+    log("GamePPH:Start");
     for (i = 0; i < Level.GRI.PRIArray.Length; i++) 
     {
 		if (Level.GRI.PRIArray[i].Team != None && Level.GRI.PRIArray[i].Team.TeamIndex < 2 && !Level.GRI.PRIArray[i].bOnlySpectator)
@@ -434,8 +439,10 @@ simulated function GamePPH GetGamePPH()
             else if(Team == 1)
                 CurrentGamePPH.BluePPH += PPH;
 
+            log("GamePPH: PlayerName: "$PRI.Name$" PPH: "$PPH , 'EvenMatchOmni');
         }
     }
+    log("GamePPH:End   Red:"$CurrentGamePPH.RedPPH$" Blue:"$CurrentGamePPH.BluePPH, 'EvenMatchOmni');
 
     CurrentGamePPH.NetUpdateTime = Level.TimeSeconds - 1;
     return CurrentGamePPH;
@@ -772,10 +779,20 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 
 function ChangeTeam(PlayerController Player, int NewTeam)
 {
+    local int i;
+    local ONSOnslaughtGame onsgame;
 	Player.PlayerReplicationInfo.Team.RemoveFromTeam(Player);
 	if (Level.GRI.Teams[NewTeam].AddToTeam(Player)) {
+        onsgame = ONSOnslaughtGame(Level.Game);
 		Player.ReceiveLocalizedMessage(class'TeamSwitchNotification', NewTeam);
-		ONSOnslaughtGame(Level.Game).GameEvent("TeamChange", string(NewTeam), Player.PlayerReplicationInfo);
+		onsgame.GameEvent("TeamChange", string(NewTeam), Player.PlayerReplicationInfo);
+
+        if (Player == Level.GetLocalPlayerController())
+		{
+			//Update client side effects on powercores to reflect which ones the player can go after changing teams
+			for (i = 0; i < onsgame.PowerCores.length; i++)
+				onsgame.PowerCores[i].CheckShield();
+		}
 	}
 	
 	EvenMatchMutator.PendingVoiceChatRoomChecks[EvenMatchMutator.PendingVoiceChatRoomChecks.Length] = Player;
