@@ -23,6 +23,9 @@ class HelixESVOmni extends ONSchopperCraft
 #exec OBJ LOAD FILE=..\Sounds\MenuSounds.uax
 #exec OBJ LOAD FILE=..\Textures\ONSFullTextures.utx
 #exec OBJ LOAD FILE=..\Sounds\IndoorAmbience.uax
+
+#exec AUDIO IMPORT FILE="Sounds\GetSomeFullMetalJacket.wav"
+#exec AUDIO IMPORT FILE="Sounds\LetsRockVasquezALIENS.wav"
 // plane options
 //-------------------------------------------------------------------------------------------------
 var()   float							MaxPitchSpeed;
@@ -292,35 +295,8 @@ function UpdateRoll()                                          //Update Pickup S
     SetBoneRotation(ShieldPickupBone, r, 0, 1.f);
 }
 
-simulated function Destroyed()
-{
-    local int i;
-
-    if(Level.NetMode != NM_DedicatedServer)
-	{
-    	for(i=0;i<TrailEffects.Length;i++)
-        	TrailEffects[i].Destroy();
-        TrailEffects.Length = 0;
-
-		for(i=0; i<StreamerEffect.Length; i++)
-			StreamerEffect[i].Destroy();
-		StreamerEffect.Length = 0;
-
-
-        a.destroy() ;                            //Remove Pickups
-        b.destroy() ;
-        c.destroy() ;
-        d.destroy() ;
-        e.destroy() ;
-        f.destroy() ;
-        g.destroy() ;
-        h.destroy() ;
-
-        }
-Super.Destroyed();
-
-}
 */
+
 
 // --- Added to give driver an edo chute 02-28-21
 // Requires APVerIV class
@@ -339,21 +315,41 @@ function KDriverEnter(Pawn p)
 
 function Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
 {
+  bDriving = False;
+	Super.Died(Killer, damageType, HitLocation);
+}
+
+// added this the bulk of it was in Died function, but ,..
+simulated function Destroyed()
+{
     local int i;
 
-    if(Level.NetMode != NM_DedicatedServer)
-	{
-    	for(i=0;i<TrailEffects.Length;i++)
+   	for(i=0;i<TrailEffects.Length;i++)
         	TrailEffects[i].Destroy();
         TrailEffects.Length = 0;
 
 		for(i=0; i<StreamerEffect.Length; i++)
 			StreamerEffect[i].Destroy();
 		StreamerEffect.Length = 0;
-    }
-        bDriving = False;
-	Super.Died(Killer, damageType, HitLocation);
+
+// moved this if from above the Trail/Streamer effects.
+    if(Level.NetMode != NM_DedicatedServer)
+	{  //Remove Pickups
+        a.destroy() ;        
+        b.destroy() ;
+        c.destroy() ;
+        d.destroy() ;
+        e.destroy() ;
+        f.destroy() ;
+        g.destroy() ;
+        h.destroy() ;
+
+        }
+Super.Destroyed();
+
 }
+
+
 
 //-------------------------------------------------------------------------------------------------
 // Plane options
@@ -756,15 +752,14 @@ defaultproperties
      MomentumMult=0.250000
      DriverDamageMult=0.000000
      VehiclePositionString="in a OmniHelix"
-     VehicleNameString="OmniHelix"
+     VehicleNameString="OmniHelix 1.1"
      RanOverDamageType=Class'helixesvOmni.DamTypeHelixRoadkill'
      CrushedDamageType=Class'helixesvOmni.DamTypeHelixPancake'
      FlagBone="PlasmaGunAttachment"
      FlagOffset=(Z=175.000000)
      FlagRotation=(Yaw=32768)
-     HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.Horn03'
-     HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.LaCuchachaHorn'
-     HornSounds(2)=Sound'ONSVehicleSounds-S.Horns.DixieHorn'
+     HornSounds(0)=Sound'helixesvOmni.GetSomeFullMetalJacket'
+     HornSounds(1)=Sound'helixesvOmni.LetsRockVasquezALIENS'
      bCanBeBaseForPawns=True
      GroundSpeed=2000.000000
      HealthMax=1500.000000

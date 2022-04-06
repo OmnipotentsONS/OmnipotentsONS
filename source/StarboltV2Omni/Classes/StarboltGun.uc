@@ -30,10 +30,13 @@ state InstantFireMode
 
 defaultproperties
 {
-     TraceRange=11500 // added by pooty, default is 20000 limits range.
-     CullDistance=11500
+     TraceRange=20000 // Back to usual 20000 for lasers per community outrage.
+     CullDistance=20000
+     // set damage same as phoenix
+     DamageMin=12
+     DamageMax=15
      PitchUpLimit=18000
-     FireInterval=0.100000
+     FireInterval=0.133333  //slowed just a touch as it lags on the server.
      AltFireInterval=3.000000
      AltFireSoundClass=Sound'CicadaSnds.Decoy.DecoyLaunch'
      DamageType=Class'StarboltV2Omni.DamTypeStarboltLaser'

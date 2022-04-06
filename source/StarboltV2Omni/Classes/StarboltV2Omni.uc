@@ -36,7 +36,7 @@ defaultproperties
      BlueSkin=Shader'Starbolt_Tex.Starbolt.ShieldBodyBlue'
      ImpactDamageMult=0.0010000
      VehiclePositionString="in a Starbolt"
-     VehicleNameString="Starbolt 2.2"
+     VehicleNameString="Starbolt 2.4"
      GroundSpeed=3550.000000
      HealthMax=200.000000
      Health=200
