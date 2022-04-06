@@ -381,6 +381,7 @@ function ModifyLogin(out string Portal, out string Options)
 	local float Progress;
 	local byte BiggerTeam, NewTeam;
     local GamePPH gamePPH;
+    local string InName;
 
 	Super.ModifyLogin(Portal, Options);
 
@@ -396,11 +397,18 @@ function ModifyLogin(out string Portal, out string Options)
         //if teams have even numbers, use PPH to pick the team
 		if (BiggerTeam == 255)
         {
+            InName = Left(Game.ParseOption ( Options, "Name"), 20);
             gamePPH = Rules.GetGamePPH();
             if(gamePPH.BluePPH > gamePPH.RedPPH)
+            {
+                log("ModifyLogin: Red:"$gamePPH.RedPPH$" Blue:"$gamePPH.BluePPH$" - "$InName$" going to RED", 'EvenMatchOmni');
                 BiggerTeam = 1;
+            }
             else 
+            {
+                log("ModifyLogin: Red:"$gamePPH.RedPPH$" Blue:"$gamePPH.BluePPH$" - "$InName$" going to BLUE", 'EvenMatchOmni');
                 BiggerTeam = 0;
+            }
         }
 
 		// force player to join the weaker team
@@ -1118,7 +1126,7 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
 defaultproperties
 {
-	Build = "2.6"
+	Build = "2.8"
 	FriendlyName = "Omnip)o(tents Team Balance (Onslaught-only)"
 	Description  = "Special team balancing rules for public Onslaught matches."
 	bAddToServerPackages = True
