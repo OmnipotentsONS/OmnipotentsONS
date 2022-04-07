@@ -1,10 +1,12 @@
 class StarboltGun extends ONSDualACGatlingGun;
 
+var class<StarBoltTurretBeamEffect> StarBeamEffectClass[2];
+
 state InstantFireMode
 {
 	simulated function SpawnHitEffects(actor HitActor, vector HitLocation, vector HitNormal)
 	{
-		local ONSTurretBeamEffect Beam;
+		local StarboltTurretBeamEffect Beam;
 
 		if (Level.NetMode != NM_DedicatedServer)
 		{
@@ -14,7 +16,7 @@ state InstantFireMode
 				DualFireOffset *= -1;
 			}
 
-			Beam = Spawn(BeamEffectClass[Team],,, WeaponFireLocation, rotator(HitLocation - WeaponFireLocation));
+			Beam = Spawn(StarBeamEffectClass[Team],,, WeaponFireLocation, rotator(HitLocation - WeaponFireLocation));
 			BeamEmitter(Beam.Emitters[0]).BeamDistanceRange.Min = VSize(WeaponFireLocation - HitLocation);
 			BeamEmitter(Beam.Emitters[0]).BeamDistanceRange.Max = VSize(WeaponFireLocation - HitLocation);
 			BeamEmitter(Beam.Emitters[1]).BeamDistanceRange.Min = VSize(WeaponFireLocation - HitLocation);
@@ -43,4 +45,7 @@ defaultproperties
      AltFireProjectileClass=Class'StarboltV2Omni.FlareBomb'
      Mesh=SkeletalMesh'ONSWeapons-A.PlasmaGun'
      bSelected=True
+     StarBeamEffectClass(0)=class'StarboltTurretBeamEffect'
+     StarBeamEffectClass(1)=class'StarboltTurretBeamEffectBlue'
+
 }
