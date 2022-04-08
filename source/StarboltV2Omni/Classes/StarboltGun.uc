@@ -34,9 +34,11 @@ defaultproperties
 {
      TraceRange=20000 // Back to usual 20000 for lasers per community outrage.
      CullDistance=20000
-     // set damage same as phoenix
-     DamageMin=12
-     DamageMax=15
+     // Default was 25
+     // old version did 25 * 10 (beams / sec) 250 pts/s
+     // new version 27 *.7.5 = 202 pts/sec avg.
+     DamageMin=25
+     DamageMax=28
      PitchUpLimit=18000
      FireInterval=0.133333  //slowed just a touch as it lags on the server.
      AltFireInterval=3.000000

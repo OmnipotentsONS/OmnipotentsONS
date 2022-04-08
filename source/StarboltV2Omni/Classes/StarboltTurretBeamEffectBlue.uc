@@ -49,7 +49,7 @@ defaultproperties
         UseRotationFrom=PTRS_Actor
         UseSizeScale=True
         UseRegularSizeScale=False
-        SizeScale(0)=(RelativeSize=1.000000)
+        SizeScale(0)=(RelativeSize=0.400000)
         SizeScale(1)=(RelativeTime=1.000000)
         StartSizeRange=(X=(Min=100.000000,Max=100.000000),Y=(Min=20.000000,Max=20.000000))
         InitialParticlesPerSecond=5000.000000
@@ -72,7 +72,7 @@ defaultproperties
         StartSpinRange=(X=(Max=1.000000))
         UseSizeScale=True
         UseRegularSizeScale=False
-        SizeScale(0)=(RelativeSize=1.000000)
+        SizeScale(0)=(RelativeSize=0.200000)
         SizeScale(1)=(RelativeTime=1.000000)
         StartSizeRange=(X=(Min=150.000000,Max=200.000000))
         UniformSize=True
