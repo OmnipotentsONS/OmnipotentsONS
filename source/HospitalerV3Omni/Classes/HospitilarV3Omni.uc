@@ -532,7 +532,7 @@ defaultproperties
      MomentumMult=0.010000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Hospitaler"
-     VehicleNameString="Hospitaler 3.1"
+     VehicleNameString="Hospitaler 3.2"
      RanOverDamageType=Class'OnslaughtFull.DamTypeMASRoadkill'
      CrushedDamageType=Class'OnslaughtFull.DamTypeMASPancake'
      MaxDesireability=2.000000
