@@ -39,6 +39,7 @@ var PlayerController LastRestarter, PotentiallyLeavingPlayer;
 var array<string> CachedPlayerIDs;
 var GamePPH CurrentGamePPH;
 var int replicationHack;
+var float LastCheckScoreTime;
 
 replication
 {
@@ -214,6 +215,8 @@ function MatchStarting()
         replicationHack = 1;
         SetTimer(1.5,false);
 	}
+
+    LastCheckScoreTime=Level.TimeSeconds;
 }
 
 
@@ -270,6 +273,14 @@ function CustomScore(PlayerReplicationInfo Scorer)
 
     if(Role == ROLE_Authority && EvenMatchMutator.bCustomScoring)
     {
+        // add some hysteresis, restrict calling this function faster than once per 2 seconds
+        if(LastCheckScoreTime > level.TimeSeconds )
+        {
+            return;
+        }
+        LastCheckScoreTime=Level.TimeSeconds+2.0;
+
+
         if(Level.Game.bOverTime)
         {
             oldscore = 1;
@@ -356,6 +367,12 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 				GetPointsPerHour(Level.GRI.PRIArray[i]);
 		}
 	}
+
+    if ( NextGameRules != none )
+	{
+		return NextGameRules.CheckScore( Scorer );
+    }
+    
 	return false;
 }
 

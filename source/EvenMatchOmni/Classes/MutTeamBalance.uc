@@ -1126,7 +1126,7 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
 defaultproperties
 {
-	Build = "2.8"
+	Build = "2.9"
 	FriendlyName = "Omnip)o(tents Team Balance (Onslaught-only)"
 	Description  = "Special team balancing rules for public Onslaught matches."
 	bAddToServerPackages = True
@@ -1134,7 +1134,7 @@ defaultproperties
 	ActivationDelay                       = 10
 	MinDesiredFirstRoundDuration          = 5
 	bShuffleTeamsAtMatchStart             = True
-	bShuffleTeamsAtRoundStart             = True
+	bShuffleTeamsAtRoundStart             = False
 	bRandomlyStartWithSidesSwapped        = True
 	bAssignConnectingPlayerTeam           = True
 	bIgnoreConnectingPlayerTeamPreference = True
