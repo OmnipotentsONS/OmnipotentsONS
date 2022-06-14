@@ -94,4 +94,5 @@ defaultproperties
      ForceType=FT_Constant
      ForceRadius=30.000000
      ForceScale=5.000000
+     DamageRadius=120.0
 }

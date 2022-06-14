@@ -123,8 +123,8 @@ defaultproperties
      AmbientSoundScaling=1.300000
      FireForce="minifireb"
      DamageType=Class'Onslaught.DamTypeONSChainGun'
-     DamageMin=45
-     DamageMax=55
+     DamageMin=38
+     DamageMax=48
      TraceRange=15000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      CullDistance=8000.000000

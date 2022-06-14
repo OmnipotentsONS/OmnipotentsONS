@@ -231,7 +231,7 @@ state InstantFireMode
 
             DualFireOffset=0;
 		}
-        NetUpdateTime = Level.TimeSeconds - 1;
+        //NetUpdateTime = Level.TimeSeconds - 1;
 	}
 
     function AltFire(Controller C)
@@ -382,7 +382,6 @@ function byte BestMode()
 
 DefaultProperties
 {
-    NetPriority=3
     //Mesh=Mesh'ONSBPAnimations.DualAttackCraftGatlingGunMesh'
     //YawBone=GatlingGun
     //PitchBone=GatlingGun

@@ -31,22 +31,13 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Mo
 }
 
 
-//no boost for biobomber
-Function RawInput(float DeltaTime,
-                            float aBaseX, float aBaseY, float aBaseZ, float aMouseX, float aMouseY,
-                            float aForward, float aTurn, float aStrafe, float aUp, float aLookUp)
-{
-    super(ONSChopperCraft).RawInput(DeltaTime, aBaseX, aBaseY, aBaseZ, aMouseX, aMouseY, aForward, aTurn, aStrafe, aUp, aLookUp);
-}
-
 defaultproperties
 {
-    VehicleNameString="Bio Bomber 1.1"
+    VehicleNameString="Bio Bomber 1.2"
     VehiclePositionString="in a Bio Bomber"
     DriverWeapons(0)=(WeaponClass=class'CSBomber.CSBioBomberWeapon',WeaponBone=FrontGunMount)
     RedSkin=Shader'CSBomber.CSBioBomberRedShader'
     BlueSkin=Shader'CSBomber.CSBioBomberBlueShader'
-    bShowChargingBar=False
 
     MaxThrustForce=125.000000
     MaxStrafeForce=90.000000

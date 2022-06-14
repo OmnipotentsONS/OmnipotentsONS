@@ -447,8 +447,8 @@ defaultproperties
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.Horn02'
      bCanStrafe=True
      GroundSpeed=520.000000
-     HealthMax=2200.000000
-     Health=2200
+     HealthMax=1200.000000
+     Health=1200
      Mesh=SkeletalMesh'AdvancedArmor_anim.TroopCarrier'
      Skins(0)=Texture'PC_ConvoyTextures.Trailer.PC_TrackTread'
      SoundVolume=200

@@ -1030,7 +1030,7 @@ simulated event PostNetReceive()
 
 defaultproperties
 {
-    ConfigCloakTime=60
+    ConfigCloakTime=90
     bEnhancedHud=false
     EnhancedHudRange=10000
      bNetNotify=true
@@ -1100,7 +1100,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a Reaper"
-     VehicleNameString="Reaper 1.7"
+     VehicleNameString="Reaper 1.8"
      RanOverDamageType=Class'Onslaught.DamTypeAttackCraftRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
      FlagBone="Main"

@@ -64,6 +64,7 @@ function bool FastVehicle()
 	return true;
 }
 
+/*
 Function RawInput(float DeltaTime,
                             float aBaseX, float aBaseY, float aBaseZ, float aMouseX, float aMouseY,
                             float aForward, float aTurn, float aStrafe, float aUp, float aLookUp)
@@ -89,6 +90,7 @@ Function RawInput(float DeltaTime,
     lastAForward=aForward;
     super.RawInput(DeltaTime, aBaseX, aBaseY, aBaseZ, aMouseX, aMouseY, aForward, aTurn, aStrafe, aUp, aLookUp);
 }
+*/
 
 function KDriverEnter(Pawn P)
 {
@@ -116,6 +118,16 @@ simulated function ServerBoost()
 {
     BoostRechargeCounter=0;
     bBoost=true;
+}
+
+
+simulated function SwitchWeapon(byte F)
+{
+    super.SwitchWeapon(F);
+    if(F == 10)
+    {
+        Boost();
+    }
 }
 
 //
@@ -561,7 +573,7 @@ defaultproperties
 
     //Mesh=Mesh'ONSFullAnimations.Bomber'
     Mesh=Mesh'CSBomber.Bomber'
-    VehicleNameString="Guppy Bomber 1.1"
+    VehicleNameString="Guppy Bomber 1.2"
 	VehiclePositionString="in a Guppy Bomber"
     RedSkin=Shader'CSBomber.CSBomberRedShader'
     BlueSkin=Shader'CSBomber.CSBomberBlueShader'

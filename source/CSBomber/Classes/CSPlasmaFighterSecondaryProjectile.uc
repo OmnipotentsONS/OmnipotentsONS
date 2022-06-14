@@ -70,6 +70,7 @@ simulated function Timer()
 		return;
 
 	ForceDir = Normal(HomingTarget.Location - Location);
+	//ForceDir = HomingTarget.Location - Location;
 
     if(VSize(HomingTarget.Location - Location) < 500 && !bSeekTimer)
     {
@@ -78,11 +79,12 @@ simulated function Timer()
     }
 
     VelMag = VSize(Velocity);
-    VelFactor = 0.80;
-    if(bSeekTimer && Level.TimeSeconds - seekTime > 2.0)
+    VelFactor = 0.60;
+
+    if(bSeekTimer && Level.TimeSeconds - seekTime > 3.0)
     {
-        VelFactor=1.0;
-        ForceDir = HomingTarget.Location - Location;
+        VelFactor=0.85;
+        //ForceDir = HomingTarget.Location - Location;
     }
 
     ForceDir = Normal(ForceDir * VelFactor * VelMag + Velocity);
@@ -153,9 +155,9 @@ defaultproperties
     //Speed=550.000000
     //MaxSpeed=2800.000000
 
-    AccelerationAddPerSec=1750.0
+    AccelerationAddPerSec=750.0
     Speed=2800.000000
-    MaxSpeed=8000.000000
+    MaxSpeed=4000.000000
 
 
     Damage=30.000000
