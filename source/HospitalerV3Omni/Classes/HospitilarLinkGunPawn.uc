@@ -145,7 +145,7 @@ defaultproperties
      FPCamPos=(Z=20.000000)
      TPCamDistance=500.000000
      TPCamLookat=(X=0.000000)
-     DriverDamageMult=0.400000
-     VehiclePositionString="in a Hospitaler 3.0's Link turret"
+     DriverDamageMult=0.000000
+     VehiclePositionString="in a Hospitaler 3 Link turret"
      VehicleNameString="Hospitaler Link Turret"
 }
