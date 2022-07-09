@@ -301,6 +301,7 @@ defaultproperties
      WheelPenOffset=0.010000
      WheelRestitution=0.100000
      WheelInertia=0.100000
+     WheelAdhesion=3.750000
      WheelLongFrictionFunc=(Points=(,(InVal=100.000000,OutVal=1.000000),(InVal=200.000000,OutVal=0.900000),(InVal=10000000000.000000,OutVal=0.900000)))
      WheelLongSlip=0.001000
      WheelLatSlipFunc=(Points=(,(InVal=30.000000,OutVal=0.009000),(InVal=45.000000),(InVal=10000000000.000000)))
@@ -315,12 +316,13 @@ defaultproperties
      ChassisTorqueScale=0.700000
      MinBrakeFriction=4.000000
      MaxSteerAngleCurve=(Points=((OutVal=25.000000),(InVal=1500.000000,OutVal=8.000000),(InVal=1000000000.000000,OutVal=8.000000)))
-     TorqueCurve=(Points=((OutVal=9.000000),(InVal=200.000000,OutVal=10.000000),(InVal=1500.000000,OutVal=11.000000),(InVal=2500.000000)))
+//     TorqueCurve=(Points=((OutVal=9.000000),(InVal=200.000000,OutVal=10.000000),(InVal=1500.000000,OutVal=11.000000),(InVal=2500.000000)))
+     TorqueCurve=(Points=((OutVal=14.000000),(InVal=200.000000,OutVal=16.000000),(InVal=1500.000000,OutVal=19.000000),(InVal=2500.000000)))
      GearRatios(0)=-0.537810
      GearRatios(1)=0.660000
      GearRatios(2)=0.850000
      GearRatios(3)=1.470000
-     GearRatios(4)=1.800000
+     GearRatios(4)=1.850000
      TransRatio=0.110000
      ChangeUpPoint=2000.000000
      ChangeDownPoint=1000.000000
@@ -344,7 +346,7 @@ defaultproperties
      BrakeLightMaterial=Texture'EpicParticles.Flares.FlashFlare1'
      bDoStuntInfo=True
      bAllowAirControl=True
-     AirTurnTorque=35.000000
+     AirTurnTorque=45.000000
      AirPitchTorque=55.000000
      AirPitchDamping=35.000000
      AirRollTorque=35.000000
@@ -433,12 +435,13 @@ defaultproperties
      TPCamWorldOffset=(Z=100.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a King HellHound"
-     VehicleNameString="King HellHound"
+     VehicleNameString="King HellHound 2.0"
      RanOverDamageType=Class'CSKingHellHound.KingHellHoundRoadkill'
      HornSounds(0)=Sound'GorzWheels_Sounds.KingHellHound.KHHHorn1'
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.DixieHorn'
-     HealthMax=600.000000
-     Health=600
+     //give it bit more health its king after all!
+     HealthMax=700.000000
+     Health=700
      Mesh=SkeletalMesh'ONSVehicles-A.PRVchassis'
      DrawScale=0.800000
      SoundVolume=180

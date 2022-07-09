@@ -289,7 +289,8 @@ defaultproperties
      WheelPenScale=1.500000
      WheelPenOffset=0.010000
      WheelRestitution=0.100000
-     WheelAdhesion=2.000000
+//     WheelAdhesion=2.000000
+     WheelAdhesion=3.000000
      WheelInertia=0.100000
      WheelLongFrictionFunc=(Points=(,(InVal=100.000000,OutVal=1.000000),(InVal=200.000000,OutVal=0.900000),(InVal=10000000000.000000,OutVal=0.900000)))
      WheelLongSlip=0.001000
@@ -303,9 +304,11 @@ defaultproperties
      WheelSuspensionMaxRenderTravel=25.000000
      FTScale=0.030000
      ChassisTorqueScale=0.700000
-     MinBrakeFriction=4.000000
+//     MinBrakeFriction=4.000000
+     MinBrakeFriction=5.000000
      MaxSteerAngleCurve=(Points=((OutVal=25.000000),(InVal=1500.000000,OutVal=8.000000),(InVal=1000000000.000000,OutVal=8.000000)))
-     TorqueCurve=(Points=((OutVal=9.000000),(InVal=200.000000,OutVal=10.000000),(InVal=1500.000000,OutVal=11.000000),(InVal=2500.000000)))
+//     TorqueCurve=(Points=((OutVal=9.000000),(InVal=200.000000,OutVal=10.000000),(InVal=1500.000000,OutVal=11.000000),(InVal=2500.000000)))
+     TorqueCurve=(Points=((OutVal=12.000000),(InVal=200.000000,OutVal=14.000000),(InVal=1500.000000,OutVal=17.000000),(InVal=2500.000000)))
      GearRatios(0)=-0.537810
      GearRatios(1)=0.660000
      GearRatios(2)=0.850000
@@ -334,7 +337,7 @@ defaultproperties
      BrakeLightMaterial=Texture'EpicParticles.Flares.FlashFlare1'
      bDoStuntInfo=True
      bAllowAirControl=True
-     AirTurnTorque=35.000000
+     AirTurnTorque=45.000000
      AirPitchTorque=55.000000
      AirPitchDamping=35.000000
      AirRollTorque=35.000000
@@ -423,7 +426,7 @@ defaultproperties
      TPCamWorldOffset=(Z=100.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a HellHound"
-     VehicleNameString="HellHound"
+     VehicleNameString="HellHound 2.0"
      RanOverDamageType=Class'CSHellHound.HellHoundRoadkill'
      HornSounds(0)=Sound'GorzWheels_Sounds.HellHound.HHHorn0'
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.Horn01'
