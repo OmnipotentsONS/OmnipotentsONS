@@ -3,7 +3,7 @@ class CSSpankBomber extends CSBomber
 
 defaultproperties
 {
-    VehicleNameString="Prodigy 1.2"
+    VehicleNameString="Prodigy 1.3"
     VehiclePositionString="in a Prodigy"
     RedSkin=Shader'CSBomber.CSSpankBomberRedShader'
     BlueSkin=Shader'CSBomber.CSSpankBomberBlueShader'

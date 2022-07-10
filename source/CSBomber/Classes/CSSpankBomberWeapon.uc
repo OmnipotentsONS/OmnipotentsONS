@@ -264,7 +264,7 @@ defaultproperties
     //FireInterval=0.5
     FireInterval=0.75
     //AltFireInterval=1.5
-    AltFireInterval=1.0
+    AltFireInterval=2.0
     PitchUpLimit=18000
     PitchDownLimit=49153
     //ProjectileClass=class'CSSpankBomberProjectile'
