@@ -33,7 +33,7 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Mo
 
 defaultproperties
 {
-    VehicleNameString="Bio Bomber 1.2"
+    VehicleNameString="Bio Bomber 1.3"
     VehiclePositionString="in a Bio Bomber"
     DriverWeapons(0)=(WeaponClass=class'CSBomber.CSBioBomberWeapon',WeaponBone=FrontGunMount)
     RedSkin=Shader'CSBomber.CSBioBomberRedShader'

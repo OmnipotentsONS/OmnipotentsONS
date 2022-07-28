@@ -95,7 +95,7 @@ Function RawInput(float DeltaTime,
 function KDriverEnter(Pawn P)
 {
 	bHeadingInitialized = False;
-
+	p.ReceiveLocalizedMessage(class'CSBomber.CSBomberBoostMessage', 0);
 	Super.KDriverEnter(P);
 }
 
@@ -573,7 +573,7 @@ defaultproperties
 
     //Mesh=Mesh'ONSFullAnimations.Bomber'
     Mesh=Mesh'CSBomber.Bomber'
-    VehicleNameString="Guppy Bomber 1.2"
+    VehicleNameString="Guppy Bomber 1.3"
 	VehiclePositionString="in a Guppy Bomber"
     RedSkin=Shader'CSBomber.CSBomberRedShader'
     BlueSkin=Shader'CSBomber.CSBomberBlueShader'
