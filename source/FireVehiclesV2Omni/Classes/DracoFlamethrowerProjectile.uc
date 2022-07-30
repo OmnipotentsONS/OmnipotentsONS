@@ -1,5 +1,5 @@
 /******************************************************************************
-FlamerProjectile
+DracoFlamethrowerProjectile
 
 Creation date: 2012-10-12 11:48
 Last change: $Id$
@@ -10,12 +10,19 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class FlamerProjectile extends Projectile;
+class DracoFlamethrowerProjectile extends Projectile;
 
+
+//=============================================================================
+// Imports
+//=============================================================================
 
 #exec obj load file="GeneralAmbience.uax"
-//#exec audio import file=Sounds\FlameFire.wav
 
+
+//=============================================================================
+// Properties
+//=============================================================================
 
 var() float StartSize;
 var() float TargetSize;
@@ -24,10 +31,15 @@ var() float HeightRatio;
 var() float AddVelocityScale;
 
 
+//=============================================================================
+// Variables
+//=============================================================================
+
 var array<Actor> AlreadyDamaged;
+var transient bool bResizing;
 
 
-function PostBeginPlay()
+simulated function PostBeginPlay()
 {
 	Super.PostBeginPlay();
 
@@ -43,7 +55,7 @@ function bool CanSplash()
 
 static function float GetRange()
 {
-	return 0.6 * default.Speed * default.LifeSpan;
+	return 0.7 * default.Speed * default.LifeSpan;
 }
 
 simulated function Tick(float DeltaTime)
@@ -51,21 +63,26 @@ simulated function Tick(float DeltaTime)
 	local float RelativeTime;
 	local float NewSize;
 
-	Velocity *= 1.0 - DeltaTime;
+	Velocity -= Velocity * DeltaTime;
 
 	RelativeTime = (default.LifeSpan - LifeSpan) / default.LifeSpan;
 	if (CollisionRadius < TargetSize)
 	{
 		NewSize = Lerp(FMin(RelativeTime / TargetSizeTime, 1.0), StartSize, TargetSize);
+		bResizing = True;
 		SetCollisionSize(NewSize, HeightRatio * NewSize);
+		SetLocation(Location);
+		bResizing = False;
 		ForceRadius = 1.2 * NewSize;
-		//SetLocation(Location);
 	}
 }
 
 
 simulated singular function HitWall(vector HitNormal, actor Wall)
 {
+	if (bResizing)
+		return;
+	
 	if (Wall != None && Wall.bWorldGeometry)
 	{
 		Velocity = MirrorVectorByNormal(Velocity, HitNormal) * 0.15;
@@ -120,31 +137,28 @@ simulated function ProcessTouch(Actor Victim, vector HitLocation)
 
 defaultproperties
 {
-     StartSize=10.000000
-     TargetSize=180.000000
-     TargetSizeTime=0.700000
-     HeightRatio=1.000000
+     StartSize=5.000000
+     TargetSize=600.000000
+     TargetSizeTime=2.000000
+     HeightRatio=0.800000
      AddVelocityScale=0.900000
-     Speed=3000.000000
+     Speed=3200.000000
      MaxSpeed=5000.000000
-     //Damage=37.500000
-     //DamageRadius=80.000000
-     Damage=50.00000
-     DamageRadius=175.000000
-     MomentumTransfer=10000.000000
-     MyDamageType=Class'FireVehiclesV2Omni.DamTypeFirebugFlame'
+     Damage=45.000000
+     DamageRadius=200.000000
+     MomentumTransfer=20000.000000
+     MyDamageType=Class'FireVehiclesV2Omni.DamTypeDracoFlamethrower'
      LightType=LT_FadeOut
      LightHue=25
      LightSaturation=30
      LightBrightness=60.000000
-     LightRadius=35.000000
+     LightRadius=30.000000
      DrawType=DT_None
-     CullDistance=4000.000000
+     CullDistance=3000.000000
      bDynamicLight=True
      bIgnoreVehicles=True
      AmbientSound=Sound'GeneralAmbience.firefx14'
-     //LifeSpan=1.000000
-     LifeSpan=1.200000
+     LifeSpan=1.250000
      Acceleration=(Z=200.000000)
      bCanBeDamaged=False
      SoundVolume=255

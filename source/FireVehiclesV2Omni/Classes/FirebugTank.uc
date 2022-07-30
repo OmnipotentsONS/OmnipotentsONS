@@ -57,6 +57,24 @@ replication
 		bDoFlameJump, JumpDir;
 }
 
+simulated function ReduceShake()
+{
+	local float ShakeScaling;
+	local PlayerController Player;
+
+	if (Controller == None || PlayerController(Controller) == None)
+		return;
+
+	Player = PlayerController(Controller);
+	ShakeScaling = VSize(Player.ShakeRotMax) / 7500;
+
+	if (ShakeScaling > 1)
+	{
+		Player.ShakeRotMax /= ShakeScaling;
+		Player.ShakeRotTime /= ShakeScaling;
+		Player.ShakeOffsetMax /= ShakeScaling;
+	}
+}
 
 simulated function UpdatePrecacheMaterials()
 {
@@ -237,40 +255,78 @@ simulated function KApplyForce(out vector Force, out vector Torque)
 function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
 {
 
+  if (DamageType.name == 'DamTypeBioGlob')
+            Damage *= 2.0;
 
-	if (DamageType.name == 'FlameKill')
-		Damage *= 0.20;
+	if (DamageType == class'DamTypeHoverBikePlasma')
+		Damage *= 0.70;
+
+	if (DamageType == class'DamTypeONSCicadaRocket')
+		Damage *= 0.50;
+
+	if (DamageType.name == 'AuroraLaser' || DamageType.name == 'WaspFlak')
+		Damage *= 0.50;
+
+
+	if (DamageType == class'DamTypeShockBeam')
+		Damage *= 0.75;
+
+	if (DamageType.name == 'DamTypeMinotaurClassicTurret')
+		Damage *= 0.50;
+
+	if (DamageType.name == 'DamTypeMinotaurClassicSecondaryTurret')
+		Damage *= 0.50;
+
+if (DamageType.name == 'OmnitaurTurretkill')
+		Damage *= 0.50;
+
+	if (DamageType.name == 'OmnitaurSecondaryTurretKill')
+		Damage *= 0.50;
+
+if (DamageType.name == 'MinotaurTurretkill')
+		Damage *= 0.50;
+
+	if (DamageType.name == 'MinotaurSecondaryTurretKill')
+		Damage *= 0.50;
 
 if (DamageType.name == 'FireKill')
-		Damage *= 0.25;
+		Damage *= 0.10;
+
+if (DamageType.name == 'FlameKill')
+		Damage *= 0.1;
 				
 if (DamageType.name == 'Burned')
-		Damage *= 0.25;
-		
-if (DamageType.name == 'FireBall')
-		Damage *= 0.20;
+		Damage *= 0.10;
 		
 if (DamageType.name == 'DamTypeFirebugFlame')
-		Damage *= 0.50;
+		Damage *= 0.10;
+
+if (DamageType.name == 'FireBall')
+		Damage *= 0.10;
 
 if (DamageType.name == 'FlameKillRaptor')
-		Damage *= 0.50;
+		Damage *= 0.10;
 
-	if (DamageType.name == 'HeatRay')
-		Damage *= 0.20;
+if (DamageType.name == 'HeatRay')
+		Damage *= 0.10;
 
 if (DamageType.name == 'DamTypeDracoFlamethrower')
-		Damage *= 0.30;
+		Damage *= 0.05;
 
 if (DamageType.name == 'DamTypeDracoNapalmRocket')
-		Damage *= 0.25;
+		Damage *= 0.10;
 
 if (DamageType.name == 'DamTypeDracoNapalmGlob')
-		Damage *= 0.50;
+		Damage *= 0.10;
 
+
+
+	//Momentum *= 0.00;
 
     Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
+	ReduceShake();
 }
+
 
 function ShouldTargetMissile(Projectile P)
 {
@@ -294,13 +350,18 @@ function bool Dodge(eDoubleClickDir DoubleClickMove)
 
 defaultproperties
 {
-     JumpDuration=0.500000
-     JumpDelay=2.500000
-     JumpForceMag=400.000000
-     JumpTorqueMag=500.000000
+     
      JumpSound=Sound'WVHoverTankV2.FlameJumpSound'
      JumpForce="HoverBikeJump"
-     FlamerForceMag=50.000000
+     
+      JumpDuration=0.800000
+     JumpDelay=2.500000
+     JumpForceMag=500.000000
+     JumpTorqueMag=600.000000
+     FlamerForceMag=80.000000
+     MaxGroundSpeed=1900.000000
+     
+     
      FlameJumpProjectileClass=Class'FlameJumpProjectile'
      HoverDustOffset(0)=(X=112.000000,Y=-78.000000)
      HoverDustOffset(1)=(X=56.000000,Y=-78.000000)
@@ -315,7 +376,7 @@ defaultproperties
      EnginePitchRange=35
      RaisedHoverCheckDist=130.000000
      DustEmitterClass=Class'FireVehiclesV2Omni.FirebugDustEmitter'
-     MaxGroundSpeed=1000.000000
+     
      TurretSocketClass=Class'FireVehiclesV2Omni.FirebugTurretSocket'
      ThrusterOffsets(0)=(X=135.000000,Y=90.000000)
      ThrusterOffsets(1)=(X=135.000000)
@@ -338,9 +399,17 @@ defaultproperties
      RedSkin=Shader'WVHoverTankV2.Skins.FirebugShaderRed'
      BlueSkin=Shader'WVHoverTankV2.Skins.FirebugShaderBlue'
      DisintegrationEffectClass=Class'FireVehiclesV2Omni.FirebugExplosionEffect'
-     ExplosionDamage=250.000000
-     ExplosionRadius=800.000000
-     ExplosionMomentum=100000.000000
+     
+     // Increase explosion damage if they killing you hitting node should take the node out..
+     ExplosionDamage=750.000000
+     ExplosionRadius=2500.000000
+     ExplosionMomentum=150000.000000
+     
+    // ExplosionDamage=250.000000
+    // ExplosionRadius=800.000000
+    // ExplosionMomentum=100000.000000
+    // Made similar to Draco, big boom upon death
+    
      ExplosionDamageType=Class'FireVehiclesV2Omni.DamTypeFirebugExplosion'
      VehicleMass=8.000000
      bShowChargingBar=True
@@ -351,8 +420,8 @@ defaultproperties
      FPCamViewOffset=(X=-30.000000)
      TPCamLookat=(Z=100.000000)
      TPCamWorldOffset=(Z=150.000000)
-     VehiclePositionString="in a Firebug 2.6"
-     VehicleNameString="Firebug"
+     VehiclePositionString="in a Firebug"
+     VehicleNameString="Firebug 2.9"
      VehicleDescription="The Firebug is a small and agile hover tank that can quickly turn enemies into a smoking pile of ashes with its twin flamethrowers."
      RanOverDamageType=Class'FireVehiclesV2Omni.DamTypeFirebugRoadkill'
      CrushedDamageType=Class'FireVehiclesV2Omni.DamTypeFirebugPancake'
