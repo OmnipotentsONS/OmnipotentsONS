@@ -465,11 +465,10 @@ state InstantFireMode
 		//if (bCorrectAim)
 		//	WeaponFireRotation = AdjustAim(false);
 
-        //WeaponFireRotation = rotator(vector(CurrentAim) >> Rotation);
         //big wtf
-        //WeaponFireRotation = C.Rotation;
-        //WeaponFireRotation.Pitch += 2048;
-        //WeaponFireRotation.Yaw -= 512;
+        WeaponFireRotation = C.Rotation;
+        WeaponFireRotation.Pitch += 2048;
+        WeaponFireRotation.Yaw -= 512;
 
         DoFireEffect();
 		//Super.Fire(C);
@@ -489,7 +488,7 @@ state InstantFireMode
 		FireCountdown = FireInterval;
 		bHoldingFire = false;
         bIsCharging = false;
-    	NetUpdateTime = Level.TimeSeconds - 1;
+    	//NetUpdateTime = Level.TimeSeconds - 1;
 
         if(Vehicle(Owner) != None)
         {

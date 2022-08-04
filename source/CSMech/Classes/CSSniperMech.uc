@@ -259,7 +259,7 @@ simulated function CheckHover(float DeltaTime)
         HoverCharge = FClamp(HoverCharge, 0, HoverChargeMax);
     }
 
-    if(OldHoverRise != Rise && didDoubleJump)
+    if(OldHoverRise != Rise && didDoubleJump && dodgeDir < 0)
     {
         if(Rise > 0)
         {
@@ -292,6 +292,7 @@ simulated function CheckHover(float DeltaTime)
 
 simulated function MechLanded()
 {
+    super.MechLanded();
     bHovering = false;
     EnableThrusters(bHovering);
 }
@@ -314,7 +315,7 @@ simulated function KApplyForce(out vector Force, out vector Torque)
     local float DT;
 	Super.KApplyForce(Force, Torque);
 
-	if (bDriving && bHovering && HoverCharge > 0.0)
+	if (bDriving && bHovering && HoverCharge > 0.0 && dodgeDir < 0)
 	{
         DT = FClamp((Level.TimeSeconds - LastHover)*2.0, 0, 1);
 		Force += vect(0,0,1) * HoverForceMag * DT;
@@ -323,9 +324,9 @@ simulated function KApplyForce(out vector Force, out vector Torque)
 
 simulated function Tick(float DeltaTime)
 {
+    CheckHover(DeltaTime);
     super.Tick(DeltaTime);
 
-    CheckHover(DeltaTime);
 }
 
 simulated function float ChargeBar()
@@ -409,7 +410,7 @@ simulated event DrivingStatusChanged()
 
 defaultproperties
 {    
-    VehicleNameString="Snipertron 1.6"
+    VehicleNameString="Snipertron 1.8"
     VehiclePositionString="in a Snipertron"
     bExtraTwist=false
 
@@ -452,6 +453,18 @@ defaultproperties
     HoverCost=0.50
     HoverGain=0.20
     HoverForceMag=3000.0
+    HoverCheckDist=150.0
+    //back row
+    ThrusterOffsets(0)=(X=-140,Y=-150,Z=-290)
+	ThrusterOffsets(1)=(X=-140,Y=-50,Z=-290)
+	ThrusterOffsets(2)=(X=-140,Y=50,Z=-290)
+	ThrusterOffsets(3)=(X=-140,Y=150,Z=-290)
+
+	//front row
+	ThrusterOffsets(4)=(X=90,Y=-150,Z=-290)
+	ThrusterOffsets(5)=(X=90,Y=-50,Z=-290)
+	ThrusterOffsets(6)=(X=90,Y=50,Z=-290)
+	ThrusterOffsets(7)=(X=90,Y=150,Z=-290)
 
     bShowChargingBar=true
 

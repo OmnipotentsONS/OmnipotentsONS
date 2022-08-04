@@ -273,14 +273,12 @@ function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector H
 
 simulated function ClientStartFire(Controller C, bool bAltFire)
 {
-//	log(self@"client start fire alt"@bAltFire,'KDebug');
 	Super.ClientStartFire(C, bAltFire);
 
 	// Write UpTime here in the client
 	if (bAltFire && Role < ROLE_Authority)
 	{
 		UpTime = AltFireInterval + 0.1;
-//		log("UpTime is now"@UpTime,'KDebug');
 	}
 }
 
@@ -294,7 +292,6 @@ function WeaponCeaseFire(Controller C, bool bWasAltFire)
 	if (CSLinkMech(Owner) != None)
 		Beam = CSLinkMech(Owner).Beam;
 
-//	log(self@"ceasefire"@bWasAltFire,'KDebug');
 	if (bWasAltFire && Beam != None)
 	{
 		Beam.Destroy();
@@ -313,7 +310,6 @@ function WeaponCeaseFire(Controller C, bool bWasAltFire)
 		// Can't link if there's no beam
 		if (CSLinkMech(Owner) != None)
 		{
-			//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to FALSE in WeaponCeaseFire",'KDebug');
 			CSLinkMech(Owner).bLinking = false;
 		}
 	}
@@ -335,7 +331,6 @@ simulated event Tick(float dt)
 	local Vehicle LinkedVehicle;
 	local LinkBeamEffect Beam;
 
-	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
 
 	// I don't think ONSWeapon has a tick by default but it's always a good idea to call super when in doubt
 	Super.Tick(dt);
@@ -344,7 +339,6 @@ simulated event Tick(float dt)
 	//LinkGun = LinkGun(Weapon);
 	// Instead let's get a reference to our LinkTank
 	// This is easily changed over if I decide I want to recode the Link Badger based off this code
-	//log(Level.TimeSeconds@self@"TICK -- Owner"@Owner@"LinkTank of Owner"@ONSLinkTank(Owner),'KDebug');
 	if (CSLinkMech(Owner) != None)
 	{
 		LinkTank = CSLinkMech(Owner);
@@ -355,7 +349,6 @@ simulated event Tick(float dt)
 		NumLinks = 0;
 	
 	//if (Role < ROLE_Authority)
-	//	log(Level.TimeSeconds@self@"TICK -- Role"@Role@"LinkBeam"@Beam,'KDebug');
 
 	// If not firing, restore value of bInitAimError
 	if (Beam == None && Role == ROLE_Authority)
@@ -366,92 +359,32 @@ simulated event Tick(float dt)
 
 	if (LinkTank != None && LinkTank.GetLinks() < 0)
 	{
-        //log("warning:"@Instigator@"linktank had"@LinkTank.GetLinks()@"links");
         LinkTank.ResetLinks();
     }
 
     if ( (UpTime > 0.0) || (Role < ROLE_Authority) )
     {
-//		log("warning: logspam ahead",'KDebug');
 
-//		log("UpTime -= dt",'KDebug');
 		UpTime -= dt;
 
 		// FireStart begins at WeaponFireLocation
-//		log("CalcWeaponFire",'KDebug');
 		CalcWeaponFire();
-//		log("GetAxes",'KDebug');
 		GetAxes( WeaponFireRotation, X, Y, Z );
-//		log("StartTrace = WeaponFireLocation",'KDebug');
 		StartTrace = WeaponFireLocation;
-//		log("TraceRange = default.TraceRange + NumLinks*250",'KDebug');
 		TraceRange = default.TraceRange + NumLinks*250;
 
-//		log("if role < role authority then do shit",'KDebug');
 		// Get client LockedPawn
 		if ( Role < ROLE_Authority )
         {
-			//log(Level.TimeSeconds@self@"looking for a beam current beam"@beam,'KDebug');
-			
-			/*
-			if ( Beam == None )
-				ForEach DynamicActors(class'LinkBeamEffect', LB )
-				{
-					//log(self@"in tick check linkbeam"@LB@"instigator"@LB.Instigator@"vs our instigator"@Instigator@"and possibly our driver"@Vehicle(Owner).Driver@"also the link beams' bdelete is"@LB.bDeleteMe,'KDebug');
-					//log("also our owner is"@owner@"and our owner's owner is"@owner.owner@"and our instigator is"@instigator@"and our instigator's owner is"@instigator.owner,'KDebug');
-					//if ( !LB.bDeleteMe && (LB.Instigator != None) && (LB.Instigator == Instigator) )
-					//log(self@"check beam"@lb@"owner"@lb.owner@"our owner"@owner@"instigator"@instigator,'KDebug');
-					//if ( !LB.bDeleteMe && (LB.Instigator != None) && (LB.Owner == Owner) )
-					if (ONSLinkTankBeamEffect(LB) != None && ONSLinkTankBeamEffect(LB).WeaponOwner == self)
-					{
-						//log("and now it's ours",'KDebug');
-						Beam = LB;
-						break;
-					}
-				}
-			*/
 
 			if ( Beam != None )
 				LockedPawn = Beam.LinkedPawn;
-			//log("in tick found beam"@beam@"locked onto"@LockedPawn,'KDebug');
 		}
 
 		// If we're locked onto a pawn increase our trace distance
         if ( LockedPawn != None )
 			TraceRange *= 1.5;
 
-		// Skip this stuff -- in regular linkgun this will have bots link their leader, but in most cases the tank driver will be the leader
-		/*
-        if ( Role == ROLE_Authority )
-		{
-		    if ( bDoHit )
-			    LinkGun.ConsumeAmmo(ThisModeNum, AmmoPerFire);
-
-			B = Bot(Instigator.Controller);
-			if ( (B != None) && (PlayerController(B.Squad.SquadLeader) != None) && (B.Squad.SquadLeader.Pawn != None) )
-			{
-				if ( IsLinkable(B.Squad.SquadLeader.Pawn)
-					&& (B.Squad.SquadLeader.Pawn.Weapon != None && B.Squad.SquadLeader.Pawn.Weapon.GetFireMode(1).bIsFiring)
-					&& (VSize(B.Squad.SquadLeader.Pawn.Location - StartTrace) < TraceRange) )
-				{
-					Other = Weapon.Trace(HitLocation, HitNormal, B.Squad.SquadLeader.Pawn.Location, StartTrace, true);
-					if ( Other == B.Squad.SquadLeader.Pawn )
-					{
-						B.Focus = B.Squad.SquadLeader.Pawn;
-						if ( B.Focus != LockedPawn )
-							SetLinkTo(B.Squad.SquadLeader.Pawn);
-						B.SetRotation(Rotator(B.Focus.Location - StartTrace));
- 						X = Normal(B.Focus.Location - StartTrace);
- 					}
- 					else if ( B.Focus == B.Squad.SquadLeader.Pawn )
-						bShouldStop = true;
-				}
- 				else if ( B.Focus == B.Squad.SquadLeader.Pawn )
-					bShouldStop = true;
-			}
-		}
-		*/
-		
 		if ( LockedPawn != None )
 		{
 			EndTrace = LockedPawn.Location + LockedPawn.BaseEyeHeight*Vect(0,0,0.5); // beam ends at approx gun height
@@ -468,59 +401,6 @@ simulated event Tick(float dt)
 
         if ( LockedPawn == None )
         {
-			// More bot shit, ignore for linktank
-			/*
-            if ( Bot(Instigator.Controller) != None )
-            {
-				if ( bInitAimError )
-				{
-					CurrentAimError = AdjustAim(StartTrace, AimError);
-					bInitAimError = false;
-				}
-				else
-				{
-					BoundError();
-					CurrentAimError.Yaw = CurrentAimError.Yaw + Instigator.Rotation.Yaw;
-				}
-
-				// smooth aim error changes
-				Step = 7500.0 * dt;
-				if ( DesiredAimError.Yaw ClockWiseFrom CurrentAimError.Yaw )
-				{
-					CurrentAimError.Yaw += Step;
-					if ( !(DesiredAimError.Yaw ClockWiseFrom CurrentAimError.Yaw) )
-					{
-						CurrentAimError.Yaw = DesiredAimError.Yaw;
-						DesiredAimError = AdjustAim(StartTrace, AimError);
-					}
-				}
-				else
-				{
-					CurrentAimError.Yaw -= Step;
-					if ( DesiredAimError.Yaw ClockWiseFrom CurrentAimError.Yaw )
-					{
-						CurrentAimError.Yaw = DesiredAimError.Yaw;
-						DesiredAimError = AdjustAim(StartTrace, AimError);
-					}
-				}
-				CurrentAimError.Yaw = CurrentAimError.Yaw - Instigator.Rotation.Yaw;
-				if ( BoundError() )
-					DesiredAimError = AdjustAim(StartTrace, AimError);
-				CurrentAimError.Yaw = CurrentAimError.Yaw + Instigator.Rotation.Yaw;
-
-				if ( Instigator.Controller.Target == None )
-					Aim = Rotator(Instigator.Controller.FocalPoint - StartTrace);
-				else
-					Aim = Rotator(Instigator.Controller.Target.Location - StartTrace);
-
-				Aim.Yaw = CurrentAimError.Yaw;
-
-				// save difference
-				CurrentAimError.Yaw = CurrentAimError.Yaw - Instigator.Rotation.Yaw;
-			}
-			else
-			*/
-	        //Aim = GetPlayerAim(StartTrace, AimError);
 	        if (Role == ROLE_Authority)
 	        	Aim = AdjustAim(true);
 	        else
@@ -541,27 +421,6 @@ simulated event Tick(float dt)
 
 		if ( Role < ROLE_Authority )
 		{
-			//log("beam endloc set to"@Beam.EndEffect@"should be"@EndEffect,'KDebug');
-			// LinkColor is handled on the tank
-			/*
-			if ( LinkGun.ThirdPersonActor != None )
-			{
-				if ( LinkGun.Linking || ((Other != None) && (Instigator.PlayerReplicationInfo.Team != None) && Other.TeamLink(Instigator.PlayerReplicationInfo.Team.TeamIndex)) )
-				{
-					if (Instigator.PlayerReplicationInfo.Team == None || Instigator.PlayerReplicationInfo.Team.TeamIndex == 0)
-						LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Red );
-					else
-						LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Blue );
-				}
-				else
-				{
-					if ( LinkGun.Links > 0 )
-						LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Gold );
-					else
-						LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Green );
-				}
-			}
-			*/
 			return;
 		}
 
@@ -609,12 +468,9 @@ simulated event Tick(float dt)
 						if ( HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()) )
 						{
 							SetLinkTo(None,true);
-							//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to TRUE in Tick",'KDebug');
 							LinkTank.bLinking = true;
 							bIsHealingObjective = true;
 							HealObjective.HealDamage(HealMult * AdjustedDamage, Instigator.Controller, DamageType);
-							//if (!HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
-							//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 						}
 						else
 						{
@@ -639,34 +495,11 @@ simulated event Tick(float dt)
 			if (Instigator.HasUDamage())
 				AdjustedDamage *= 2;
 			LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
-			//if (!LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
-			//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 		}
 		if (LinkTank != None && bDoHit)
 		{
-			//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to (LockedPawn != None) || bIsHealingObjective in Tick",'KDebug');
 			LinkTank.bLinking = (LockedPawn != None) || bIsHealingObjective;
-			//log("(This resolved to"@LinkTank.bLinking$")",'KDebug');
 		}
-
-
-		//if ( bShouldStop )
-		//	B.StopFiring();
-		//else
-		//{
-
-		// Beam is created in TraceFire, don't create it again here.
-
-		// beam effect is created and destroyed when firing starts and stops
-		//if ( (Beam == None) && bIsFiring )
-		//{
-		//	Beam = Weapon.Spawn( BeamEffectClass, Instigator );
-		//	// vary link volume to make sure it gets replicated (in case owning player changed it client side)
-		//	if ( SentLinkVolume == Default.LinkVolume )
-		//		SentLinkVolume = Default.LinkVolume + 1;
-		//	else
-		//		SentLinkVolume = Default.LinkVolume;
-		//}
 
 		// Handle color changes
 		if ( Beam != None )
@@ -674,28 +507,10 @@ simulated event Tick(float dt)
 			if ( (LinkTank != None && LinkTank.bLinking) || ((Other != None) && (Instigator.PlayerReplicationInfo.Team != None) && Other.TeamLink(Instigator.PlayerReplicationInfo.Team.TeamIndex)) )
 			{
 				Beam.LinkColor = Instigator.PlayerReplicationInfo.Team.TeamIndex + 1;
-
-				// Color change is handled on the tank itself
-				//if ( LinkGun.ThirdPersonActor != None )
-				//{
-				//	if ( Instigator.PlayerReplicationInfo.Team == None || Instigator.PlayerReplicationInfo.Team.TeamIndex == 0 )
-				//		LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Red );
-				//	else
-				//		LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Blue );
-				//}
 			}
 			else
 			{
 				Beam.LinkColor = 0;
-
-				// Color change is handled on the tank itself
-				//if ( LinkGun.ThirdPersonActor != None )
-				//{
-				//	if ( LinkGun.Links > 0 )
-				//		LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Gold );
-				//	else
-				//		LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Green );
-				//}
 			}
 
 			Beam.Links = NumLinks;
@@ -747,13 +562,11 @@ function SetLinkTo(Pawn Other, optional bool bHealing)
 	{
 	    if (LockedPawn != None && CSLinkMech(Owner) != None)
 	    {
-			//log(self@"setlinkto"@other@"current"@LockedPawn,'KDebug');
 	        RemoveLink(1 + CSLinkMech(Owner).GetLinks(), Instigator);
 
 	        // Added flag so the tank doesn't flash from green to teamcolor rapidly while linking a non-Wormbo node
 	        if (!bHealing)
 	        {
-				//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to FALSE in SetLinkTo"@Other,'KDebug');
 	        	CSLinkMech(Owner).bLinking = false;
 	        }
 	    }
@@ -772,7 +585,6 @@ function SetLinkTo(Pawn Other, optional bool bHealing)
 		        {
 		            bFeedbackDeath = true;
 		        }
-		        			//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to TRUE in SetLinkTo"@Other,'KDebug');
 		        CSLinkMech(Owner).bLinking = true;
 			}
 	
@@ -827,7 +639,6 @@ function RemoveLink(int Size, Pawn Starter)
             Inv = LockedPawn.FindInventoryType(class'LinkGun');
             if (Inv != None)
             {
-				//log(self@"removing link from"@Inv);
                 LinkFire(LinkGun(Inv).GetFireMode(1)).RemoveLink(Size, Starter);
                 LinkGun(Inv).Links -= Size;
             }
@@ -966,7 +777,6 @@ function TraceFire(Vector Start, Rotator Dir)
 
         if ( bDoReflect && ++ReflectNum < 4 )
         {
-            //Log("reflecting off"@Other@Start@HitLocation);
             Start	= HitLocation;
             Dir		= Rotator(RefNormal); //Rotator( X - 2.0*RefNormal*(X dot RefNormal) );
         }

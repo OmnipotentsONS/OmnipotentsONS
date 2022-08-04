@@ -15,7 +15,7 @@ defaultproperties
     BlueSkin=Texture'CSMech.RocketMechBodyBlue';
     BlueSkinHead=Texture'CSMech.RocketMechHeadBlue';
 
-    VehicleNameString="Rocketron 1.6"
+    VehicleNameString="Rocketron 1.8"
     VehiclePositionString="in a Rocketron"
     Mesh=Mesh'CSMech.BotC'
 	Health=1800
@@ -29,4 +29,7 @@ defaultproperties
     StartUpSound=sound'CSMech.EngStart2'
 	ShutDownSound=sound'CSMech.EngStop2'
     FootStepSound=sound'CSMech.FootStep2'
+
+    DodgeAnims(2)=DoubleJumpL
+    DodgeAnims(3)=DoubleJumpR
 }

@@ -10,7 +10,7 @@ class CSShockMech extends CSHoverMech
 
 defaultproperties
 {    
-    VehicleNameString="Shockatron 1.6"
+    VehicleNameString="Shockatron 1.8"
     VehiclePositionString="in a Shockatron"
     Mesh=Mesh'CSMech.BotD'
     RedSkin=Texture'CSMech.ShockMechBodyRed';
@@ -28,4 +28,6 @@ defaultproperties
     StartUpSound=sound'CSMech.EngStart5'
 	ShutDownSound=sound'CSMech.EngStop5'
     FootStepSound=sound'CSMech.FootStepMegaManX'
+    DodgeAnims(2)=DoubleJumpL
+    DodgeAnims(3)=DoubleJumpR
 }

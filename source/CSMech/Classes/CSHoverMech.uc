@@ -59,12 +59,16 @@ var()     Name                            HornAnim;
 var       Name                          PrevAction;
 var name HitAnims[4];
 
+var float OldThrottle; // , OldSteering;  defined in Vehicle.uc
+var float lastFirstTap, lastSecondTap, doubleTapThreshold;
+var int dodgeDir, oldDodgeDir, firstDodgeDir, secondDodgeDir;
+var float DodgeForceMag, DodgeCountdown, DodgeDuration, DodgeAirSpeedMulti;
 
 replication
 {
 	reliable if (bNetDirty && Role == ROLE_Authority)
-		DoMechJump;
-	reliable if (Role == ROLE_Authority)
+		DoMechJump, dodgeDir;
+	unreliable if (Role == ROLE_Authority)
         ClientPlayHorn;
 }
 
@@ -187,7 +191,7 @@ simulated function DrawRadarHUD( Canvas C, PlayerController PC )
     foreach DynamicActors(class'Vehicle', V )
     {
         if ((V==Self) || (V.Health < 1) || V.bDeleteMe || V.GetTeamNum() == Team || V.bDriving==false || !V.IndependentVehicle())
-                continue;
+            continue;
 
         if ( !class'HUD_Assault'.static.IsTargetInFrontOfPlayer( C, V, ScreenPos, Location, Rotation ) )
             continue;
@@ -209,7 +213,7 @@ simulated function DrawRadarHUD( Canvas C, PlayerController PC )
     foreach DynamicActors(class'XPawn', P )
     {
         if ((P==Self) || (P.Health < 1) || P.bDeleteMe || P.GetTeamNum() != Team || P.bCanTeleport==false)
-                continue;
+            continue;
 
         if ( !class'HUD_Assault'.static.IsTargetInFrontOfPlayer( C, P, ScreenPos, Location, Rotation ) )
             continue;
@@ -234,7 +238,6 @@ function KDriverEnter(Pawn P)
 simulated function ClientKDriverEnter(PlayerController PC)
 {
 	bHeadingInitialized = False;
-
 	Super.ClientKDriverEnter(PC);
 }
 
@@ -263,6 +266,7 @@ simulated event DrivingStatusChanged()
         SetAnimAction('JumpF_Land');
 
     JumpCountDown = 0.0;
+    DodgeCountdown = 0.0;
 	Super.DrivingStatusChanged();
 }
 
@@ -273,7 +277,7 @@ simulated event SetAnimAction(name NewAction)
     PrevAction = AnimAction;
     AnimAction = NewAction;
 
-    if(AnimAction == 'None' || AnimAction == '')
+    if(AnimAction == 'None' || AnimAction == ''|| bWaitForAnim)
         return;
 
 
@@ -295,12 +299,18 @@ simulated event SetAnimAction(name NewAction)
     else if(IsTakeOffSeq(AnimAction))
     {
         AnimBlendParams(1, 0.0);
-        PlayAnim(AnimAction, animRate);
+        PlayAnim(AnimAction, animRate, 0.1);
     }
     else if(IsJumpSeq(AnimAction))
     {
         AnimBlendParams(1, 0.0);
-        TweenAnim(AnimAction, tweenTime);
+        PlayAnim(AnimAction, animRate, 0.1);
+        
+    }
+    else if(IsDoubleJumpSeq(AnimAction))
+    {
+        AnimBlendParams(1, 0.0);
+        PlayAnim(AnimAction, animRate, 0.1);
         
     }
     else if(IsHitSeq(AnimAction))
@@ -311,12 +321,10 @@ simulated event SetAnimAction(name NewAction)
         LoopAnim(AnimAction, animRate,0.3,0);
     else if(isCrouchWalking || isWalking)
         LoopAnim(AnimAction, animRate,,0);
-    //else if(AnimAction == 'Idle_Biggun' && prevAction == 'Crouch')
     else if(AnimAction == 'Idle_Biggun')
     {
         LoopAnim(AnimAction, animRate,0.3,0);
     }
-    //else if(AnimAction == 'Crouch' && prevAction == 'Idle_Biggun')
     else if(AnimAction == 'Crouch')
     {
         LoopAnim(AnimAction, animRate,0.3,0);
@@ -329,15 +337,23 @@ simulated event SetAnimAction(name NewAction)
 
 }
 
+/*
+function PlayTakeHit(vector HitLoc, int damage, class<DamageType> damageType)
+{
+    super.PlayTakeHit(HitLoc, damage, damageType);
+    PlayDirectionalHit(HitLoc);
+}
+*/
+
 simulated function PlayDirectionalHit(Vector HitLoc)
 {
     local Vector X,Y,Z, Dir;
 
-    if(!bDriving)
+    if(!bDriving || !bOnGround)
         return;
 
-    if(Health > 300)
-        return;
+    //if(Health > 300)
+    //    return;
 
     GetAxes(Rotation, X,Y,Z);
     HitLoc.Z = Location.Z;
@@ -369,6 +385,7 @@ simulated function PlayDirectionalHit(Vector HitLoc)
     {
         SetAnimAction('HitL');
     }
+    bWaitForAnim=true;
 }
 
 simulated function Tick(float DeltaTime)
@@ -376,14 +393,16 @@ simulated function Tick(float DeltaTime)
     Super.Tick(DeltaTime);
 
     CheckOnGround(DeltaTime);
-    CheckJump(DeltaTime);
     ForceUpright();
     UpdateTwist();
     ApplyAnims();
+    CheckJump(DeltaTime);
+    CheckDodging(DeltaTime);
     UpdateCollision();
     CheckDoStep(DeltaTime);
     UpdateEnginePitch(DeltaTime);
 }
+
 
 function DoStep()
 {
@@ -473,6 +492,32 @@ simulated function bool IsJumpSeq(name seq)
     return false;
 }
 
+simulated function bool IsDoubleJumpSeq(name seq)
+{
+    local int i;
+
+    for(i = 0;i < 4; i++ )
+    {
+        if(DoubleJumpAnims[i] == seq)
+            return true;
+    }
+
+    return false;
+}
+
+simulated function bool IsDodgeSeq(name seq)
+{
+    local int i;
+
+    for(i = 0;i < 4; i++ )
+    {
+        if(DoubleJumpAnims[i] == seq)
+            return true;
+    }
+
+    return false;
+}
+
 simulated function bool IsTakeOffSeq(name seq)
 {
     local int i;
@@ -486,8 +531,6 @@ simulated function bool IsTakeOffSeq(name seq)
     return false;
 }
 
-
-
 simulated function bool IsHitSeq(name seq)
 {
     local int i;
@@ -500,7 +543,6 @@ simulated function bool IsHitSeq(name seq)
 
     return false;
 }
-
 
 simulated function bool IsHornAnim(name anim)
 {
@@ -567,7 +609,6 @@ simulated function ApplyAnims()
             }
         }
     }
-
     if(bOldOnGround != bOnGround)
     {
         if(!bOnGround)
@@ -594,18 +635,26 @@ simulated function CheckOnGround(float DeltaTime)
     }
     else
     {
-	   KP.kMaxSpeed = MaxAirSpeed;
+        KP.kMaxSpeed = MaxAirSpeed;
     }
 
     bOnGround = GroundContact > 0.0;
     GroundContact -= DeltaTime * 3.0;
+
 }
 
-simulated function MechLanded() {}
+simulated function MechLanded() 
+{
+    dodgeDir=-1;
+    DidDoubleJump=false;
+    DodgeCountdown=0;
+    JumpCountdown=0;
+}
 
 simulated function CheckJump(float DeltaTime)
 {
     local int dir;
+
     JumpCountdown -= DeltaTime;
 
     if(oldJumpRise != Rise)
@@ -651,7 +700,7 @@ simulated function CheckJump(float DeltaTime)
             LastJumpTime = Level.TimeSeconds;
             DidDoubleJump=true;
             dir = Get4WayDirection();
-            SetAnimAction(TakeoffAnims[dir]);
+            SetAnimAction(DoubleJumpAnims[dir]);
         }
 
         oldJumpRise = Rise;
@@ -659,27 +708,118 @@ simulated function CheckJump(float DeltaTime)
 
 	if(DoMechJump != OldDoMechJump)
 	{
-		JumpCountdown = JumpDuration;
-        OldDoMechJump = DoMechJump;
+        JumpCountdown = JumpDuration;
         if(DidDoubleJump)
         {
             JumpCountdown+=JumpDuration;
         }
-	}
 
-    if(bOnGround)
+        OldDoMechJump = DoMechJump;
+	}
+}
+
+simulated function CheckDodging(float DeltaTime)
+{
+    local KarmaParams KP;
+    DodgeCountdown -= DeltaTime;
+
+    if(Throttle != OldThrottle)
     {
-        DidDoubleJump=false;
+        if(Throttle != 0)
+        {
+            lastSecondTap=lastFirstTap;
+            lastFirstTap=Level.TimeSeconds;
+            secondDodgeDir=firstDodgeDir;
+
+            if(Throttle > 0 && OldThrottle <= 0)
+                firstDodgeDir=0;
+            else if (Throttle < 0 && OldThrottle >= 0)
+                firstDodgeDir=1;
+
+            if((lastFirstTap - lastSecondTap) < doubleTapThreshold && firstDodgeDir == secondDodgeDir && dodgeDir < 0 && bOnGround)
+            {
+                if(ROLE == ROLE_Authority)
+                    dodgeDir=firstDodgeDir;
+            }
+        }
+
+        OldThrottle=Throttle;
+    }
+    else if(Steering != OldSteering)
+    {
+        if(Steering != 0)
+        {
+            lastSecondTap=lastFirstTap;
+            lastFirstTap=Level.TimeSeconds;
+            secondDodgeDir=firstDodgeDir;
+
+            if( Steering > 0 && OldSteering <= 0)
+                firstDodgeDir=2;
+            else if( Steering < 0 && OldSteering >= 0)
+                firstDodgeDir=3;
+
+            if((lastFirstTap - lastSecondTap) < doubleTapThreshold && firstDodgeDir == secondDodgeDir && dodgeDir < 0 && bOnGround)
+            {
+                if(ROLE == ROLE_Authority)
+                    dodgeDir=firstDodgeDir;
+            }
+        }
+
+        OldSteering=Steering;
+    }
+
+    if(oldDodgeDir != dodgeDir)
+    {
+        if(dodgeDir >= 0)
+        {
+            if(bOnGround && Level.TimeSeconds - JumpDelay >= LastJumpTime)
+            {
+                if(Level.NetMode != NM_DedicatedServer)
+                {
+                    ClientPlayForceFeedback(JumpForce);
+                }
+
+                LastJumpTime = Level.TimeSeconds;
+                DodgeCountdown = DodgeDuration;
+                SetAnimAction(DodgeAnims[dodgeDir]);
+            }
+
+        }
+
+        oldDodgeDir=dodgeDir;
+    }
+
+    // when dodging remove some air control to mimick pawn dodging
+    if(Driver != None && dodgeDir >= 0 && (Role == ROLE_Authority))
+    {
+        if(dodgeDir == 0)
+            Throttle=1;
+        else if(dodgeDir == 1)
+            Throttle=-1;
+        else if(dodgeDir == 3)
+            Steering=-1;
+        else if(dodgeDir == 2)
+            Steering=1;
+
+        KP = KarmaParams(KParams);
+        KP.kMaxSpeed = MaxAirSpeed*DodgeAirSpeedMulti;
     }
 }
 
 simulated function KApplyForce(out vector Force, out vector Torque)
 {
+	local vector worldForward, worldBackward, worldRight, worldLeft;
+
 	Super.KApplyForce(Force, Torque);
+
+	worldForward = vect(1, 0, 0) >> Rotation;
+	worldBackward = vect(-1, 0, 0) >> Rotation;
+	worldRight = vect(0, 1, 0) >> Rotation;
+	worldLeft = vect(0, -1, 0) >> Rotation;
 
 	if (bDriving && JumpCountdown > 0.0)
 	{
-		Force += vect(0,0,1) * JumpForceMag;
+        Force += vect(0,0,1) * JumpForceMag;
         if(Throttle != 0 || Steering != 0)
         {
             //extra force to counter air control floating
@@ -687,6 +827,20 @@ simulated function KApplyForce(out vector Force, out vector Torque)
         }
 
 	}
+
+    if (bDriving && DodgeCountdown > 0.0)
+    {
+        if(dodgeDir == 0)
+            Force += (worldForward * DodgeForceMag);
+        else if(dodgeDir == 1)
+            Force += (worldBackward * DodgeForceMag);
+        else if(dodgeDir == 3)
+            Force += (worldRight * DodgeForceMag);
+        else if(dodgeDir == 2)
+            Force += (worldLeft * DodgeForceMag);
+
+        Force += vect(0,0,1) * DodgeForceMag;
+    }
 
     //counteract hover
     if(bDriving && !bOnGround)
@@ -728,7 +882,7 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation,
 						Vector momentum, class<DamageType> damageType)
 {
     //lol
-    if(Damage > 0)
+    if(Damage >= 100)
         PlayDirectionalHit(HitLocation);
 
     momentum *= 0.25;
@@ -737,13 +891,13 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation,
         Damage *= 3;
 
     if(damageType == class'DamTypeSniperHeadShot')
-        Damage *= 5;
+        Damage *= 6;
 
     if(damageType == class'DamTypeClassicSniper')
         Damage *= 3;
 
     if(damageType == class'DamTypeClassicHeadShot')
-        Damage *= 5;
+        Damage *= 6;
 
 
     super.TakeDamage(Damage, instigatedBy, hitLocation, momentum, damageType);
@@ -885,8 +1039,18 @@ event AnimEnd(int channel)
         dir = Get4WayDirection();
         SetAnimAction(AirAnims[dir]);
     }
+    else if(IsDodgeSeq(seq))
+    {
+        dir = Get4WayDirection();
+        SetAnimAction(AirAnims[dir]);
+    }
+    else if(IsHitSeq(seq))
+    {
+        bWaitForAnim=false;
+    }
 }
 
+// only difference from default is to play horn louder
 function PossessedBy(Controller C)
 {
 	local PlayerController PC;
@@ -952,7 +1116,6 @@ simulated function Gib SpawnGiblet( class<Gib> GibClass, Vector Location, Rotato
 
     GetAxes( Rotation, Dummy, Dummy, Direction );
 
-    //Giblet.Velocity = Velocity + Normal(Direction) * (250 + 260 * FRand());
     Giblet.Velocity = Velocity + Normal(Direction) * (550 + 500 * FRand());
     Giblet.LifeSpan = Giblet.LifeSpan + 2 * FRand() - 1;
     Giblet.SetDrawScale(scale);
@@ -1049,8 +1212,6 @@ defaultproperties
 	bDrawMeshInFP=True
     SparkEffectClass=None
 
-	//DriverWeapons(0)=(WeaponClass=class'CSRocketMechWeapon',WeaponBone=righthand)
-
     Begin Object Class=KarmaParamsRBFull Name=KParams0
         KMaxSpeed=800
 		KStartEnabled=True
@@ -1127,16 +1288,16 @@ defaultproperties
 	ExitPositions(7)=(X=0,Y=-300,Z=-100)
 
     //back row
-	ThrusterOffsets(0)=(X=-140,Y=-150,Z=-340)
-	ThrusterOffsets(1)=(X=-140,Y=-50,Z=-340)
-	ThrusterOffsets(2)=(X=-140,Y=50,Z=-340)
-	ThrusterOffsets(3)=(X=-140,Y=150,Z=-340)
+	ThrusterOffsets(0)=(X=-140,Y=-150,Z=-310)
+	ThrusterOffsets(1)=(X=-140,Y=-50,Z=-310)
+	ThrusterOffsets(2)=(X=-140,Y=50,Z=-310)
+	ThrusterOffsets(3)=(X=-140,Y=150,Z=-310)
 
 	//front row
-	ThrusterOffsets(4)=(X=90,Y=-150,Z=-340)
-	ThrusterOffsets(5)=(X=90,Y=-50,Z=-340)
-	ThrusterOffsets(6)=(X=90,Y=50,Z=-340)
-	ThrusterOffsets(7)=(X=90,Y=150,Z=-340)
+	ThrusterOffsets(4)=(X=90,Y=-150,Z=-310)
+	ThrusterOffsets(5)=(X=90,Y=-50,Z=-310)
+	ThrusterOffsets(6)=(X=90,Y=50,Z=-310)
+	ThrusterOffsets(7)=(X=90,Y=150,Z=-310)
 
 	HoverSoftness=0.0
 	HoverPenScale=1.5
@@ -1168,12 +1329,8 @@ defaultproperties
 
 	VehicleMass=12.0
 
-    //JumpDuration=0.11
-	//JumpForceMag=3000.0
     JumpDuration=0.16
 	JumpForceMag=2200.0
-    //GravScale=0.5
-    //GravScaleAir=0.8
     GravScaleAir=0.7
     GravScaleAirThrottle=0.3
     JumpSound=sound'CSMech.jump'
@@ -1204,36 +1361,26 @@ defaultproperties
     SpineBone2="Bip01 Spine2"
     FireRootBone="Bip01 Spine"
 
-    //MovementAnims(0)=WalkF
-    //MovementAnims(1)=WalkB
-    //MovementAnims(2)=WalkL
-    //MovementAnims(3)=WalkR
     WalkAnims(0)=WalkF
     WalkAnims(1)=WalkB
     WalkAnims(2)=WalkL
     WalkAnims(3)=WalkR
+
     CrouchAnims(0)=CrouchF
     CrouchAnims(1)=CrouchB
     CrouchAnims(2)=CrouchL
     CrouchAnims(3)=CrouchR
+
     LandAnims(0)=JumpF_land
     LandAnims(1)=JumpB_land
     LandAnims(2)=JumpL_land
     LandAnims(3)=JumpR_land
-    /*
+
     TakeoffAnims(0)=JumpF_Takeoff
     TakeoffAnims(1)=JumpB_Takeoff
     TakeoffAnims(2)=JumpL_Takeoff
     TakeoffAnims(3)=JumpR_Takeoff    
-    AirAnims(0)=JumpF_Takeoff
-    AirAnims(1)=JumpB_Takeoff
-    AirAnims(2)=JumpL_Takeoff
-    AirAnims(3)=JumpR_Takeoff    
-    */
-    TakeoffAnims(0)=JumpF_Takeoff
-    TakeoffAnims(1)=JumpB_Takeoff
-    TakeoffAnims(2)=JumpL_Takeoff
-    TakeoffAnims(3)=JumpR_Takeoff    
+
     AirAnims(0)=JumpF_Mid
     AirAnims(1)=JumpB_Mid
     AirAnims(2)=JumpL_Mid
@@ -1243,10 +1390,17 @@ defaultproperties
     HitAnims(1)=HitB
     HitAnims(2)=HitL
     HitAnims(3)=HitR
+
     DoubleJumpAnims(0)=DoubleJumpF
     DoubleJumpAnims(1)=DoubleJumpB
     DoubleJumpAnims(2)=DoubleJumpL
     DoubleJumpAnims(3)=DoubleJumpR
+
+    DodgeAnims(0)=WallDodgeF
+    DodgeAnims(1)=WallDodgeB
+    DodgeAnims(2)=WallDodgeL
+    DodgeAnims(3)=WallDodgeR
+
     bCanCrouch=true
     bCanStrafe=true
     bDoTorsoTwist=true
@@ -1267,4 +1421,12 @@ defaultproperties
     HeadScale=4.5
     EyeHeight=200
     BaseEyeHeight=200
+
+    doubleTapThreshold=0.25
+    DodgeDuration=0.1
+	DodgeForceMag=2000.0
+    DodgeAirSpeedMulti=1.5
+    dodgeDir=-1
+    OldSteering=-1
+    OldThrottle=-1
 }

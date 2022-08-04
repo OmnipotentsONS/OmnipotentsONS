@@ -33,7 +33,7 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Mo
 
 defaultproperties
 {
-    VehicleNameString="Bio Bomber 1.3"
+    VehicleNameString="Bio Bomber 1.4"
     VehiclePositionString="in a Bio Bomber"
     DriverWeapons(0)=(WeaponClass=class'CSBomber.CSBioBomberWeapon',WeaponBone=FrontGunMount)
     RedSkin=Shader'CSBomber.CSBioBomberRedShader'
@@ -42,7 +42,8 @@ defaultproperties
     MaxThrustForce=125.000000
     MaxStrafeForce=90.000000
     MaxRiseForce=55.000000
-    Health=400
-    HealthMax=400
+    Health=350
+    HealthMax=350
+    BoostMaxThrust=625.0000
 
 }

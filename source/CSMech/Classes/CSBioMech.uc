@@ -35,7 +35,7 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Mo
 
 defaultproperties
 {    
-    VehicleNameString="Biotron 1.6"
+    VehicleNameString="Biotron 1.8"
     VehiclePositionString="in a Biotron"
     bExtraTwist=false
 
@@ -56,4 +56,16 @@ defaultproperties
     StartUpSound=sound'CSMech.EngStart3'
 	ShutDownSound=sound'CSMech.EngStop4'
     FootStepSound=sound'CSMech.FootStep2'
+
+    HoverCheckDist=150
+    ThrusterOffsets(0)=(X=-140,Y=-150,Z=-290)
+	ThrusterOffsets(1)=(X=-140,Y=-50,Z=-290)
+	ThrusterOffsets(2)=(X=-140,Y=50,Z=-290)
+	ThrusterOffsets(3)=(X=-140,Y=150,Z=-290)
+
+	//front row
+	ThrusterOffsets(4)=(X=90,Y=-150,Z=-290)
+	ThrusterOffsets(5)=(X=90,Y=-50,Z=-290)
+	ThrusterOffsets(6)=(X=90,Y=50,Z=-290)
+	ThrusterOffsets(7)=(X=90,Y=150,Z=-290)
 }

@@ -167,16 +167,8 @@ simulated event Tick(float DT)
 
 	if (Role == ROLE_Authority)
 		ResetLinks();
-	//else
-	//	log(Level.TimeSeconds@Self@"Beam Effect:"@Beam,'KDebug');
-
-	//log(self@"tick links"@links,'KDebug');
-
-	//log(Level.TimeSeconds@Self@"TICK -- Linking"@bLinking,'KDebug');
-	// When linked, always show gold link panels
 	if (Links > 0)
 		UpdateLinkColor(LC_Gold);
-	// If linking a vehicle/player/node, show team-colored link panels
 	else if (bLinking && Team == 0)
 		UpdateLinkColor(LC_Red);
 	else if (bLinking && Team == 1)
@@ -210,7 +202,7 @@ function ClientVehicleCeaseFire(bool bWasAltFire)
 
 defaultproperties
 {    
-    VehicleNameString="Linkatron 1.6"
+    VehicleNameString="Linkatron 1.8"
     VehiclePositionString="in a Linkatron"
     Mesh=Mesh'CSMech.BotA'
     RedSkin=Texture'CSMech.LinkMechBodyRed';
@@ -228,6 +220,9 @@ defaultproperties
     StartUpSound=sound'CSMech.EngStart4'
 	ShutDownSound=sound'CSMech.EngStop4'   
     FootStepSound=sound'CSMech.FootStep4' 
+    DodgeAnims(2)=DoubleJumpL
+    DodgeAnims(3)=DoubleJumpR
+
     //////
     /* todo ?
      LinkSkin_Gold(0)=Combiner'ONSToys1Tex.LinkTankTex.LinkTankBodyRed-DoubleLink'

@@ -10,7 +10,7 @@ class CSFlakMech extends CSHoverMech
 
 defaultproperties
 {    
-    VehicleNameString="Flakatron 1.6"
+    VehicleNameString="Flakatron 1.8"
     VehiclePositionString="in a Flakatron"
     Mesh=Mesh'CSMech.BotB'
     RedSkin=Texture'CSMech.FlakMechBodyRed';
@@ -29,4 +29,6 @@ defaultproperties
 	ShutDownSound=sound'CSMech.EngStop3'
     FootStepSound=sound'CSMech.FootStep3'
 
+    DodgeAnims(2)=DoubleJumpL
+    DodgeAnims(3)=DoubleJumpR
 }

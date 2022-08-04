@@ -37,7 +37,7 @@ var () Rotator		AfterburnerRotOffset[2];
 var bool				  bAfterburnersOn;
 
 var bool  bBoost;         //Boost functionality
-var float BoostForce;
+var float DefaultMaxThrust, BoostMaxThrust;
 var float BoostTime;
 var Sound BoostSound, BoostReadySound;
 var float BoostRechargeTime;
@@ -124,7 +124,7 @@ simulated function ServerBoost()
 simulated function SwitchWeapon(byte F)
 {
     super.SwitchWeapon(F);
-    if(F == 10)
+    if(F == 10 && !bBoost && BoostRechargeCounter>=BoostRechargeTime)
     {
         Boost();
     }
@@ -168,13 +168,19 @@ simulated function EnableAfterburners(bool bEnable)
 
 simulated event Timer()
 {
+    local KarmaParams KP;
 	// when boost time exceeds time limit, turn it off and disable the primed detonator
 	bBoost = false;
+    KP = KarmaParams(KParams);
+    KP.kMaxSpeed=2000;
+    MaxThrustForce=DefaultMaxThrust;
+    OutputThrust=MaxThrustForce;
 	EnableAfterburners(bBoost);
 }
 
 simulated function BoostTick(float DT)
 {
+    local KarmaParams KP;
     //If bAfterburnersOn and boost state don't agree
     if (bBoost != bAfterburnersOn)
     {
@@ -186,12 +192,21 @@ simulated function BoostTick(float DT)
         // to turn them off after set time has expired
         if (bBoost)
         {
+            KP = KarmaParams(KParams);
+            KP.kMaxSpeed=9000;
+            DefaultMaxThrust=MaxThrustForce;
+            MaxThrustForce=BoostMaxThrust;
+            OutputThrust=MaxThrustForce;
             SetTimer(BoostTime, false);
         }
     }
 
     if (Role == ROLE_Authority)
     {
+        if(bBoost)
+        {
+            Throttle=1;
+        }
         // Afterburners recharge after the change in time exceeds the specified charge duration
         if(BoostRechargeCounter<BoostRechargeTime)
         {
@@ -209,6 +224,7 @@ simulated function BoostTick(float DT)
     }
 }
 
+/*
 simulated event KApplyForce(out vector Force, out vector Torque)
 {
 	Super.KApplyForce(Force, Torque); // apply other forces first
@@ -218,6 +234,7 @@ simulated event KApplyForce(out vector Force, out vector Torque)
 		Force += Normal(Force) * BoostForce; // apply force in that direction
 	}
 }
+*/
 
 
 simulated function float ChargeBar()
@@ -573,7 +590,7 @@ defaultproperties
 
     //Mesh=Mesh'ONSFullAnimations.Bomber'
     Mesh=Mesh'CSBomber.Bomber'
-    VehicleNameString="Guppy Bomber 1.3"
+    VehicleNameString="Guppy Bomber 1.4"
 	VehiclePositionString="in a Guppy Bomber"
     RedSkin=Shader'CSBomber.CSBomberRedShader'
     BlueSkin=Shader'CSBomber.CSBomberBlueShader'
@@ -590,8 +607,8 @@ defaultproperties
     DestructionLinearMomentum=(Min=50000,Max=150000)
     DestructionAngularMomentum=(Min=100,Max=300)
 
-	Health=300
-	HealthMax=300
+	Health=250
+	HealthMax=250
 	DriverDamageMult=0.0
 	CollisionHeight=+70.0
 	CollisionRadius=150.0
@@ -715,11 +732,11 @@ defaultproperties
     AfterburnerClass(0)=class'CSBomberSmokeTrail'
     AfterburnerClass(1)=class'CSBomberSmokeTrail'
 
-    BoostForce=16000.000000
-    BoostTime=2.000000
+    BoostMaxThrust=900.000000
+    BoostTime=2.0
     BoostSound=Sound'CSBomber.BoostSound'
     BoostReadySound=Sound'WeaponSounds.TAGRifle.TAGTargetAquired'
-    BoostRechargeTime=4.000000
+    BoostRechargeTime=8.000000
     BoostDoubleTapThreshold=0.25
     bShowChargingBar=True
 

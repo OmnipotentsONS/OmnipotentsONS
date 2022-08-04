@@ -10,7 +10,6 @@ var float BombInterval, BombSpread;
 var actor LastHitActor;
 var vector LastHitNormal;
 var int GunOffset, BombFireOffset, ZFireOffset, BombZOffset;
-var sound HitSound;
 
 simulated function CalcWeaponFire()
 {
@@ -74,7 +73,6 @@ function TraceFire(Vector Start, Rotator Dir)
     local Actor Other;
     local int Damage;
     local vector LStart, RStart;
-    local PlayerController PC;
 
     DualFireOffset=GunOffset;
     CalcWeaponFire();
@@ -100,12 +98,6 @@ function TraceFire(Vector Start, Rotator Dir)
             Damage = (DamageMin + Rand(DamageMax - DamageMin));
             Other.TakeDamage(Damage, Instigator, HitLocation, Momentum*X, DamageType);
             HitNormal = vect(0,0,0);
-
-            PC = PlayerController(Instigator.Controller);
-            if(PC != None)
-            {
-                PC.ClientPlaySound(HitSound);
-            }
         }
     }
     else
@@ -428,5 +420,4 @@ DefaultProperties
     bAmbientFireSound=true
     DamageType=class'CSBomber.CSBomberDamTypeGun'
 	CullDistance=+15000.0
-    HitSound=sound'MenuSounds.select3'
 }

@@ -25,6 +25,15 @@ simulated function PostBeginPlay()
     SetBoneRotation('Bone_weapon',r);
 }
 
+
+simulated function Destroyed()
+{
+	if ( MuzFlash != None )
+		MuzFlash.Destroy();
+
+	Super.Destroyed();
+}
+
 simulated event FlashMuzzleFlash()
 {
     local rotator r;
