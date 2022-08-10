@@ -3,7 +3,7 @@ class MutUTComp extends Mutator;
 // #exec OBJ LOAD FILE="Textures\minimegatex.utx" PACKAGE=UTCompOmni
 #exec OBJ LOAD FILE="Textures\minimegatex.utx"
 
-var config bool bEnableVoting;
+var bool bEnableVoting;
 var config bool bEnableBrightskinsVoting;
 var config bool bEnableHitsoundsVoting;
 var config bool bEnableWarmupVoting;
@@ -23,7 +23,9 @@ var config bool bEnableClanSkins;
 var config bool bEnableTeamOverlay;
 var config bool bEnablePowerupsOverlay;
 var config byte EnableHitSoundsMode;
-var config bool bEnableScoreboard;
+
+var bool bEnableScoreboard;
+
 var config bool bEnableWarmup;
 var config float WarmupReadyPercentRequired;
 var config bool bShowSpawnsDuringWarmup;
@@ -71,6 +73,11 @@ var config bool bShowSealRewardConsoleMsg;
 var config bool bShowAssistConsoleMsg;
 
 var config int SuicideInterval;
+
+var config int NodeIsolateBonusPct;
+var config int VehicleHealScore;
+var config int PowerCoreScore;
+var config int PowerNodeScore;
 
 /* ----Known issues ----
    Mutant:  No Bskins/Forcemodel
@@ -185,6 +192,8 @@ var bool bDefaultWeaponsChanged;
 //==========================
 
 var config array<string> IgnoredHitSounds;
+
+var UTComp_ONSGameRules ONSGameRules;
 
 function PreBeginPlay()
 {
@@ -459,6 +468,20 @@ function ModifyPlayer(Pawn Other)
     }
 
     Super.ModifyPlayer(Other);
+
+    if (ONSOnslaughtGame(Level.Game) != none && Other != none && Other.PlayerReplicationInfo != none && UTComp_ONSPlayerReplicationInfo(Other.PlayerReplicationInfo) != none)
+	{
+		if (UTComp_ONSPlayerReplicationInfo(Other.PlayerReplicationInfo).MutatorOwner == none)
+			UTComp_ONSPlayerReplicationInfo(Other.PlayerReplicationInfo).MutatorOwner = self;
+
+		if (!UTComp_ONSPlayerReplicationInfo(Other.PlayerReplicationInfo).bInitializedVSpawnList
+			|| UTComp_ONSPlayerReplicationInfo(Other.PlayerReplicationInfo).LastInitialiseTeam != Other.GetTeamNum())
+		{
+			ONSGameRules.InitialiseVehicleSpawnList(UTComp_ONSPlayerReplicationInfo(Other.PlayerReplicationInfo));
+			UTComp_ONSPlayerReplicationInfo(Other.PlayerReplicationInfo).bInitializedVSpawnList = True;
+			UTComp_ONSPlayerReplicationInfo(Other.PlayerReplicationInfo).LastInitialiseTeam = Other.GetTeamNum();
+		}
+    }
 }
 
 
@@ -731,7 +754,13 @@ function SpawnReplicationClass()
     RepInfo.bForward = bForward;
     RepInfo.bEnableForwardVoting= bEnableForwardVoting;
     RepInfo.bShieldFix=bShieldFix;
-    repinfo.bAllowRestartVoteEvenIfMapVotingIsTurnedOff = bAllowRestartVoteEvenIfMapVotingIsTurnedOff;
+    RepInfo.bAllowRestartVoteEvenIfMapVotingIsTurnedOff = bAllowRestartVoteEvenIfMapVotingIsTurnedOff;
+
+    RepInfo.NodeIsolateBonusPct=NodeIsolateBonusPct;
+    RepInfo.VehicleHealScore=VehicleHealScore;
+    RepInfo.PowerCoreScore=PowerCoreScore;
+    RepInfo.PowerNodeScore=PowerNodeScore;
+
     for(i=0; i<VotingGametype.Length && i<ArrayCount(RepInfo.VotingNames); i++)
         RepInfo.VotingNames[i]=VotingGametype[i].GameTypeName;
 
@@ -749,6 +778,7 @@ function PostBeginPlay()
 	local mutator M;
 	local string URL;
 
+
 	Super.PostBeginPlay();
 
 	URL = Level.GetLocalURL();
@@ -764,10 +794,14 @@ function PostBeginPlay()
     G.UTCompMutator=self;
 	G.OVERTIMETIME=TimedOverTimeLength;
 
-    if ( Level.Game.GameRulesModifiers == None )
-		Level.Game.GameRulesModifiers = G;
-	else
-		Level.Game.GameRulesModifiers.AddGameRules(G);
+    Level.Game.AddGameModifier(G);
+
+    if(ONSOnslaughtGame(Level.Game) != none)
+    {
+        ONSGameRules = Spawn(Class'UTComp_ONSGameRules', self);
+        ONSGameRules.OPInitialise();
+        Level.Game.AddGameModifier(ONSGameRules);
+    }
 
     if(StampInfo == none && bEnhancedNetCodeEnabledAtStartOfMap)
        StampInfo = Spawn(class'TimeStamp');
@@ -800,6 +834,10 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
     bSuperRelevant = 0;
     if(Other.IsA('pickup') && Level.Game!=None && Level.Game.IsA('utcomp_clanarena'))
         return false;
+
+    if (Controller(Other) != None && MessagingSpectator(Other) == None && ONSOnslaughtGame(Level.Game) != none )
+		Controller(Other).PlayerReplicationInfoClass = class'UTComp_ONSPlayerReplicationInfo';
+    
     if(bEnhancedNetCodeEnabledAtStartOfMap && !GetForward())
     {
         if (xWeaponBase(Other) != None)
@@ -951,8 +989,10 @@ function ModifyLogin(out string Portal, out string Options)
             //else
                 Level.Game.ScoreBoardType=string(class'UTComp_ScoreBoard');
         }
-        else
+        else if(ONSOnslaughtGame(Level.Game) == none) // no custom scoreboard at all for Onslaught 
+        {
             Level.Game.ScoreBoardType=string(class'UTComp_ScoreBoardTDM');
+        }
     }
     else if(Level.Game.ScoreBoardType~="UT2k4Assault.ScoreBoard_Assault")
     {
@@ -1405,7 +1445,7 @@ function string GetInventoryClassOverride(string InventoryClassName)
 defaultproperties
 {
      bAddToServerPackages=True
-     bEnableVoting=True
+     bEnableVoting=False
      bEnableBrightskinsVoting=True
      bEnableHitsoundsVoting=True
      bEnableWarmupVoting=True
@@ -1420,8 +1460,8 @@ defaultproperties
      bEnableClanSkins=True
      bEnablePowerupsOverlay=True
      EnableHitSoundsMode=1
-     bEnableScoreboard=True
-     bEnableWarmup=True
+     bEnableScoreboard=False
+     bEnableWarmup=False
      WarmupReadyPercentRequired=100.000000
      bEnableWeaponStats=True
      bEnablePowerupStats=True
@@ -1445,10 +1485,14 @@ defaultproperties
 
      MinNetSpeed=15000
      MaxNetSpeed=25000
+     NodeIsolateBonusPct=20
+     VehicleHealScore=500
+     PowerCoreScore=10
+     PowerNodeScore=5
 
-     FriendlyName="UTComp Version 1.8c (Omni)"
+     FriendlyName="UTComp Version 1.10 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.8c"
+     FriendlyVersionNumber=")o(mni 1.10"
      Description="A mutator for warmup, brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
@@ -1458,8 +1502,8 @@ defaultproperties
      TimedOverTimeLength=300
      bEnableTimedOvertimeVoting=True
      NumGrenadesOnSpawn=4
-     bEnableEnhancedNetCode=false
-     bEnableEnhancedNetCodeVoting=true
+     bEnableEnhancedNetCode=true
+     bEnableEnhancedNetCodeVoting=false
      MinNetUpdateRate=60
      MaxNetUpdateRate=250
 

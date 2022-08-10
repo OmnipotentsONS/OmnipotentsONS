@@ -4,6 +4,32 @@ class UTComp_ONSHudOnslaught extends ONSHudOnslaught;
 
 var UTComp_HUDSettings HUDSettings;
 
+var UTComp_ONSPlayerReplicationInfo OPPRI;
+
+struct VehicleDescription
+{
+	var class VehicleClass;
+	var color RadarColour;
+};
+
+var array<VehicleDescription> VehicleData;
+var color TempColour;
+
+var array<object> DataHolders;
+
+struct NodeData
+{
+	var ONSPowerCore CurNode;
+	var bool bDontShowNode;
+};
+
+var array<NodeData> NodeDataList;
+
+var float RadarWidth, CenterRadarPosX, CenterRadarPosY;
+
+var float LastCoreCheck;
+var float LastVInfoUpdate;
+
 simulated event PostBeginPlay() {
     Super.PostBeginPlay();
 
@@ -231,6 +257,445 @@ simulated function DrawTimer(Canvas C)
 	DrawNumericWidget( C, TimerMinutes, DigitsBig);
 	DrawNumericWidget( C, TimerSeconds, DigitsBig);
 }
+
+/*
+// snarf removed this and replace with simplier system
+function SetVehicleData(class<Vehicle> VehicleClass, out color RadarColour)
+{
+	local int i, j;
+	local class CurDataHolderClass;
+	local object CurDataHolder;
+	local string sTempStr, CurClass, CurPackage, CurColour, CurDataPrefix;
+
+	for (i=0; i<VehicleData.Length; ++i)
+	{
+		if (VehicleData[i].VehicleClass == VehicleClass)
+		{
+			RadarColour = VehicleData[i].RadarColour;
+			return;
+		}
+	}
+
+	// If the code reaches here that means the vehicle is not yet listed
+	VehicleData.Length = VehicleData.Length + 1;
+	i = VehicleData.Length - 1;
+
+	VehicleData[i].VehicleClass = VehicleClass;
+
+	// Get the raw string representation of the package the current vehicle class is located in and the classname of the vehicle
+	sTempStr = string(VehicleClass);
+
+	CurClass = GetItemName(sTempStr);
+
+	CurPackage = Left(sTempStr, Len(sTempStr) - 1 - Len(CurClass));
+
+
+	CurDataHolder = none;
+
+	// Check if the current package already has a dataholder
+	for (j=0; j<DataHolders.Length; j++)
+	{
+		if (Left(GetItemName(string(DataHolders[j].Class)), Len(CurPackage)) ~= CurPackage)
+		{
+			CurDataHolder = DataHolders[j];
+			break;
+		}
+	}
+
+	// If the current package is not currently in the dataholder list see if there is a dataholder object in that package and if so, add it to the list
+	if (CurDataHolder == none)
+	{
+		j = InStr(CurPackage, "_");
+
+		if (j == -1)
+			CurDataPrefix = CurPackage;
+		else
+			CurDataPrefix = Left(CurPackage, j);
+
+		CurDataHolderClass = Class(DynamicLoadObject(CurPackage$"."$CurDataPrefix$"VehicleRadarData", Class'Class'));
+
+		// If the class exists try to create the data object and if that is created successfully then add it to the list
+		if (CurDataHolderClass != none)
+		{
+			CurDataHolder = new(none, "ONSPlus") CurDataHolderClass;
+
+			if (CurDataHolder != none)
+				DataHolders[DataHolders.Length] = CurDataHolder;
+		}
+	}
+
+	// If this is true then we know that we are dealing with a custom vehicle, default its colour
+	if (CurDataHolder == none)
+	{
+		VehicleData[i].RadarColour.R = 0;
+		VehicleData[i].RadarColour.G = 0;
+		VehicleData[i].RadarColour.B = 0;
+
+		VehicleName = VehicleClass.default.VehicleNameString;
+		RadarColour = VehicleData[i].RadarColour;
+
+		return;
+	}
+
+	// If the code reaches this point then we know the DataHolder was created, check if the current vehicle class has an entry in the data holder
+	CurColour = CurDataHolder.GetPropertyText(CurClass$"RadarColour");
+
+	// If it does then gather the data and add the data to the list, if not then treat it like a custom vehicle
+	if (CurColour != "")
+	{
+		// If the colour hasn't been entered into the data holder then default it
+		if (CurColour != "")
+		{
+			// A hack for my laziness (actually...upon further thought this is FASTER than any other alternative)
+			SetPropertyText("TempColour", CurColour);
+
+			VehicleData[i].RadarColour = TempColour;
+		}
+		else
+		{
+			VehicleData[i].RadarColour.R = 0;
+			VehicleData[i].RadarColour.G = 0;
+			VehicleData[i].RadarColour.B = 0;
+		}
+	}
+	else
+	{
+		VehicleData[i].RadarColour.R = 0;
+		VehicleData[i].RadarColour.G = 0;
+		VehicleData[i].RadarColour.B = 0;
+	}
+
+	VehicleName = VehicleClass.default.VehicleNameString;
+	RadarColour = VehicleData[i].RadarColour;
+}
+*/
+
+function SetVehicleData(class<Vehicle> VehicleClass, out color RadarColour, out float U, out float V)
+{
+    local color RC;
+    RC.R=0;
+    RC.G=0;
+    RC.B=0;
+    U=0;
+    V=0;
+
+    if(ClassIsChildOf(VehicleClass, class'ONSHoverTank'))
+    {
+        //goliath
+        RC.R=192;
+        RC.G=0;
+        RC.B=192;
+    }
+    else if(ClassIsChildOf(VehicleClass, class'ONSHoverBike'))
+    {
+        //manta
+        RC.R=0;
+        RC.G=192;
+        RC.B=0;
+
+        U=32;
+    }
+    else if(ClassIsChildOf(VehicleClass, class'ONSAttackCraft'))
+    {
+        //raptor
+        RC.R=255;
+        RC.G=255;
+        RC.B=0;
+    }
+    else if(ClassIsChildOf(VehicleClass, class'ONSDualAttackCraft'))
+    {
+        //cicada
+        RC.R=192;
+        RC.G=192;
+        RC.B=0;
+    }
+    else if(ClassIsChildOf(VehicleClass, class'ONSPRV'))
+    {
+        //bender
+        RC.R=0;
+        RC.G=192;
+        RC.B=192;
+    }
+    else if(ClassIsChildOf(VehicleClass, class'ONSRV'))
+    {
+        //scorpion
+        RC.R=0;
+        RC.G=96;
+        RC.B=96;
+
+        U=32;
+    }
+    else if(ClassIsChildOf(VehicleClass, class'ONSTreadCraft'))
+    {
+        //tank variant
+        RC.R=192;
+        RC.G=32;
+        RC.B=192;
+    }
+    else if(ClassIsChildOf(VehicleClass, class'ONSChopperCraft'))
+    {
+        //raptor variant
+        RC.R=192;
+        RC.G=192;
+        RC.B=0;
+    }
+    else if(ClassIsChildOf(VehicleClass, class'ONSHoverCraft'))
+    {
+        //manta variant
+        RC.R=192;
+        RC.G=192;
+        RC.B=32;
+
+        U=32;
+    }
+    else if(ClassIsChildOf(VehicleClass, class'ONSWheeledCraft'))
+    {
+        //bender/scorp variant
+        RC.R=32;
+        RC.G=192;
+        RC.B=192;
+    }
+
+    RadarColour=RC;
+}
+
+simulated function DrawRadarMapVehicles(Canvas C, float CenterPosX, float CenterPosY, float RadarWidth, bool bShowDisabledNodes)
+{
+	local float PawnIconSize, PlayerIconSize, CoreIconSize, MapScale, OldHudScale;
+	local vector HUDLocation;
+	local int i;
+	local plane SavedModulation;
+    local bool bShouldDrawVehicles;
+    local float U, V;
+    
+    OldHudScale=HudScale;
+
+    if (PlayerOwner.Level.TimeSeconds - LastVInfoUpdate > 3.0)
+	{
+		LastVInfoUpdate = PlayerOwner.Level.TimeSeconds;
+
+        BS_xPlayer(PlayerOwner).GetVInfoUpdate();
+	}
+
+    C.ColorModulate.X = 1;
+	C.ColorModulate.Y = 1;
+	C.ColorModulate.Z = 1;
+	C.ColorModulate.W = 1;
+
+	// Make sure that the canvas style is alpha
+	C.Style = ERenderStyle.STY_Alpha;
+
+	if (PawnOwner != None)
+	{
+		MapCenter.X = 0.0;
+		MapCenter.Y = 0.0;
+	}
+	else
+	{
+		MapCenter = vect(0,0,0);
+	}
+
+	CoreIconSize = IconScale * 16 * C.ClipX * HUDScale/1600;
+	PawnIconSize = CoreIconSize * 0.5;
+	PlayerIconSize = CoreIconSize * 1.5;
+    MapScale = RadarWidth / RadarRange;
+    // big hack, need to figure out which map we are drawing, the big one in menu or the little one on hud
+    // alternative is to override like 3 other classes and replace them 
+    bShouldDrawVehicles=C.ClipX / CenterPosX >= 1.5;
+    OPPRI = UTComp_ONSPlayerReplicationInfo(Level.GetLocalPlayerController().PlayerReplicationInfo);
+    if(OPPRI != none && bShouldDrawVehicles)
+    {
+        HudScale=1.0;
+        for (i=0; i<OPPRI.ClientVSpawnList.Length; i++)
+        {
+            if (OPPRI.ClientVSpawnList[i].CurFactoryTeam == PlayerOwner.GetTeamNum() && OPPRI.ClientVSpawnList[i].bSpawned)
+            {
+                HUDLocation = OPPRI.ClientVSpawnList[i].Factory.Location - MapCenter;
+
+                SetVehicleData(OPPRI.ClientVSpawnList[i].VehicleClass, C.DrawColor, U, V);
+                C.DrawColor.A = 255;
+
+                C.SetPos(CenterPosX + (HUDLocation.X * MapScale) - (PlayerIconSize * 0.25), CenterPosY + (HUDLocation.Y * MapScale) - (PlayerIconSize * 0.25));
+                C.DrawTile(Material'NewHUDIcons', PlayerIconSize * 0.25, PlayerIconSize * 0.25, U, V, 32, 32);
+            }
+        }    
+        HudScale=OldHudScale;
+    }
+
+    C.ColorModulate = SavedModulation;
+}
+
+simulated function DrawRadarMap(Canvas C, float CenterPosX, float CenterPosY, float RadarWidth, bool bShowDisabledNodes)
+{
+	local float PawnIconSize, PlayerIconSize, CoreIconSize, MapScale, MapRadarWidth;
+	local vector HUDLocation;
+	local FinalBlend PlayerIcon;
+	local Actor A;
+	local ONSPowerCore CurCore;
+	local int i;
+	local plane SavedModulation;
+
+	SavedModulation = C.ColorModulate;
+
+	C.ColorModulate.X = 1;
+	C.ColorModulate.Y = 1;
+	C.ColorModulate.Z = 1;
+	C.ColorModulate.W = 1;
+
+	// Make sure that the canvas style is alpha
+	C.Style = ERenderStyle.STY_Alpha;
+
+	MapRadarWidth = RadarWidth;
+    if (PawnOwner != None)
+    {
+//    	MapCenter.X = FClamp(PawnOwner.Location.X, -RadarMaxRange + RadarRange, RadarMaxRange - RadarRange);
+//    	MapCenter.Y = FClamp(PawnOwner.Location.Y, -RadarMaxRange + RadarRange, RadarMaxRange - RadarRange);
+        MapCenter.X = 0.0;
+        MapCenter.Y = 0.0;
+    }
+    else
+        MapCenter = vect(0,0,0);
+
+	HUDLocation.X = RadarWidth;
+	HUDLocation.Y = RadarRange;
+	HUDLocation.Z = RadarTrans;
+
+	DrawMapImage( C, Level.RadarMapImage, CenterPosX, CenterPosY, MapCenter.X, MapCenter.Y, HUDLocation );
+
+	if (Node == None)
+		return;
+
+	CurCore = Node;
+	do
+	{
+		if ( CurCore.HasHealthBar() )
+			DrawHealthBar(C, CurCore, CurCore.Health, CurCore.DamageCapacity, HealthBarPosition);
+
+		CurCore = CurCore.NextCore;
+	} until ( CurCore == None || CurCore == Node );
+
+	CoreIconSize = IconScale * 16 * C.ClipX * HUDScale/1600;
+	PawnIconSize = CoreIconSize * 0.5;
+	PlayerIconSize = CoreIconSize * 1.5;
+    MapScale = MapRadarWidth/RadarRange;
+    C.Font = GetConsoleFont(C);
+
+	Node.UpdateHUDLocation( CenterPosX, CenterPosY, RadarWidth, RadarRange, MapCenter );
+	for ( i = 0; i < PowerLinks.Length; i++ )
+		PowerLinks[i].Render(C, ColorPercent, bShowDisabledNodes);
+
+	CurCore = Node;
+	do
+	{
+		if (!bShowDisabledNodes && (CurCore.CoreStage == 255 || CurCore.PowerLinks.Length == 0))	//hide unused powernodes
+		{
+			if (PlayerOwner==none || !PlayerOwner.bDemoOwner)
+			{
+				CurCore = CurCore.NextCore;
+				continue;
+			}
+		}
+
+		C.DrawColor = LinkColor[CurCore.DefenderTeamIndex];
+
+		// Draw appropriate icon to represent the current state of this node
+	    if (CurCore.bUnderAttack || (CurCore.CoreStage == 0 && CurCore.bSevered))
+	    	DrawAttackIcon( C, CurCore, CurCore.HUDLocation, IconScale, HUDScale, ColorPercent );
+
+		if (CurCore.bFinalCore)
+			DrawCoreIcon( C, CurCore.HUDLocation, PowerCoreAttackable(CurCore), IconScale, HUDScale, ColorPercent );
+		else
+		{
+			DrawNodeIcon( C, CurCore.HUDLocation, PowerCoreAttackable(CurCore), CurCore.CoreStage, IconScale, HUDScale, ColorPercent );
+			DrawNodeLabel(C, CurCore.HUDLocation, IconScale, HUDScale, C.DrawColor, CurCore.NodeNum);
+		}
+
+		CurCore = CurCore.NextCore;
+
+	} until ( CurCore == None || CurCore == Node );
+
+    // Draw PlayerIcon
+    if (PawnOwner != None)
+    	A = PawnOwner;
+    else if (PlayerOwner.IsInState('Spectating'))
+        A = PlayerOwner;
+    else if (PlayerOwner.Pawn != None)
+    	A = PlayerOwner.Pawn;
+
+    if (A != None)
+    {
+    	PlayerIcon = FinalBlend'CurrentPlayerIconFinal';
+    	TexRotator(PlayerIcon.Material).Rotation.Yaw = -A.Rotation.Yaw - 16384;
+        HUDLocation = A.Location - MapCenter;
+        HUDLocation.Z = 0;
+    	if (HUDLocation.X < (RadarRange * 0.95) && HUDLocation.Y < (RadarRange * 0.95))
+    	{
+        	C.SetPos( CenterPosX + HUDLocation.X * MapScale - PlayerIconSize * 0.5,
+                          CenterPosY + HUDLocation.Y * MapScale - PlayerIconSize * 0.5 );
+
+            C.DrawColor = C.MakeColor(40,255,40);
+            C.DrawTile(PlayerIcon, PlayerIconSize, PlayerIconSize, 0, 0, 64, 64);
+        }
+    }
+
+//    // VERY SLOW DEBUGGING CODE for showing all the dynamic actors that exist in the level in real-time
+//    ForEach DynamicActors(class'Actor', A)
+//    {
+//        if (A.IsA('Projectile')) //(A.IsA('Projector') || A.IsA('Emitter') || A.IsA('xEmitter'))
+//        {
+//            HUDLocation = A.Location - MapCenter;
+//            HUDLocation.Z = 0;
+//        	C.SetPos(CenterPosX + HUDLocation.X * MapScale - PlayerIconSize * 0.5 * 0.25, CenterPosY + HUDLocation.Y * MapScale - PlayerIconSize * 0.5 * 0.25);
+//            C.DrawColor = C.MakeColor(255,255,0);
+//            C.DrawTile(Material'NewHUDIcons', PlayerIconSize * 0.25, PlayerIconSize * 0.25, 0, 0, 32, 32);
+//        }
+//        if (A.IsA('Pawn'))
+//        {
+//            if (Pawn(A).PlayerReplicationInfo != None && Pawn(A).PlayerReplicationInfo.Team != None)
+//            {
+//                if (Pawn(A).PlayerReplicationInfo.Team.TeamIndex == 0)
+//                    C.DrawColor = C.MakeColor(255,0,0);
+//                else if (Pawn(A).PlayerReplicationInfo.Team.TeamIndex == 1)
+//                    C.DrawColor = C.MakeColor(0,0,255);
+//                else
+//                    C.DrawColor = C.MakeColor(255,0,255);
+//            }
+//            else
+//                C.DrawColor = C.MakeColor(255,255,255);
+//
+//            HUDLocation = A.Location - MapCenter;
+//            HUDLocation.Z = 0;
+//
+//            if (A.IsA('Vehicle'))
+//            {
+//            	C.SetPos(CenterPosX + HUDLocation.X * MapScale - PlayerIconSize * 0.5 * 0.5, CenterPosY + HUDLocation.Y * MapScale - PlayerIconSize * 0.5 * 0.5);
+//                C.DrawTile(Material'NewHUDIcons', PlayerIconSize * 0.5, PlayerIconSize * 0.5, 0, 0, 32, 32);
+//            }
+//            else
+//            {
+//            	C.SetPos(CenterPosX + HUDLocation.X * MapScale - PlayerIconSize * 0.5 * 0.25, CenterPosY + HUDLocation.Y * MapScale - PlayerIconSize * 0.5 * 0.25);
+//                C.DrawTile(Material'NewHUDIcons', PlayerIconSize * 0.25, PlayerIconSize * 0.25, 0, 0, 32, 32);
+//            }
+//        }
+//    }
+
+    // Draw Border
+    C.DrawColor = C.MakeColor(200,200,200);
+	C.SetPos(CenterPosX - RadarWidth, CenterPosY - RadarWidth);
+	C.DrawTile(BorderMat,
+               RadarWidth * 2.0,
+               RadarWidth * 2.0,
+               0,
+               0,
+               256,
+               256);
+
+
+    DrawRadarMapVehicles(C, CenterPosX, CenterPosY, RadarWidth, bShowDisabledNodes);
+
+    C.ColorModulate = SavedModulation;
+}
+
 
 defaultproperties
 {

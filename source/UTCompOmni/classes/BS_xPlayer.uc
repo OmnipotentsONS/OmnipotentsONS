@@ -115,6 +115,8 @@ var UTComp_HUDSettings HUDSettings;
 
 var float LastWeaponEffectSent;
 
+var float LastVRequestTime;
+
 replication
 {
     unreliable if(Role==Role_Authority)
@@ -3806,6 +3808,24 @@ simulated final function SendWeaponEffect(
         ReflectNum
     );
 }
+
+function ClientOpenMenu(string Menu, optional bool bDisconnect,optional string Msg1, optional string Msg2)
+{
+	if (Menu == MidGameMenuClass)
+		GetVInfoUpdate();
+
+	Super.ClientOpenMenu(Menu, bDisconnect, Msg1, Msg2);
+}
+
+function GetVInfoUpdate()
+{
+	if (Level.TimeSeconds - LastVRequestTime > 3.0 && PlayerReplicationInfo != none && UTComp_ONSPlayerReplicationInfo(PlayerReplicationInfo) != none)
+	{
+		LastVRequestTime = Level.TimeSeconds;
+		UTComp_ONSPlayerReplicationInfo(PlayerReplicationInfo).RequestVehicleInfoUpdate();
+	}
+}
+
 
 defaultproperties
 {

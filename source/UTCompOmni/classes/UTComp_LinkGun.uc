@@ -8,6 +8,7 @@ class UTComp_LinkGun extends LinkGun
 	CacheExempt;
 
 var bool bCantFire;
+var array<pawn> LockingPawns;
 
 replication
 {
@@ -30,6 +31,15 @@ simulated function bool ReadyToFire(int Mode)
     if(bCantFire)
 	    return false;
 	return super.ReadyToFire(mode);
+}
+
+simulated function UTComp_ServerReplicationInfo GetRepInfo()
+{
+    local UTComp_ServerReplicationInfo RepInfo;
+    foreach DynamicActors(class'UTComp_ServerReplicationInfo', RepInfo)
+        break;
+
+    return RepInfo;
 }
 
 DefaultProperties

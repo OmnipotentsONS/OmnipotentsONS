@@ -34,6 +34,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     Super.InitComponent(myController,MyOwner);
 
     ch_EnemySkins.Checked(Settings.bEnemyBasedSkins);
+    ch_EnemySkins.bValueReadOnly = true;
     ch_EnemyModels.Checked(Settings.bEnemyBasedModels);
 
     //Team Select Combobox
@@ -174,7 +175,8 @@ function InternalOnChange( GUIComponent C )
         return;
     Switch(C)
     {
-        case ch_EnemySkins:  Settings.bEnemyBasedSkins=ch_EnemySkins.IsChecked();
+        //case ch_EnemySkins:  Settings.bEnemyBasedSkins=ch_EnemySkins.IsChecked();
+        case ch_EnemySkins:  Settings.bEnemyBasedSkins=false;
                              ChangeComboBoxCaption();
                              if(!bUpdatingCrap)
                                  UpdateAllComponents(); break;

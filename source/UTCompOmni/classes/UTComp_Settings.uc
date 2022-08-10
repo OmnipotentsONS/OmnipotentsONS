@@ -2,7 +2,7 @@
 //
 //-----------------------------------------------------------
 class UTComp_Settings extends Object
-    Config(UTComp)
+    Config(UTCompOmni)
     PerObjectConfig;
 
 #exec AUDIO IMPORT FILE=Sounds\HitSound.wav     GROUP=Sounds
@@ -56,7 +56,6 @@ struct ClanSkinTripple
 };
 
 var config string FallbackCharacterName;
-var config bool bEnemyBasedSkins;
 var config byte ClientSkinModeRedTeammate;
 var config byte ClientSkinModeBlueEnemy;
 var config byte PreferredSkinColorRedTeammate;
@@ -73,6 +72,10 @@ var config array<string> DisallowedEnemyNames;
 var config bool bEnemyBasedModels;
 var config bool bUseNewEyeHeightAlgorithm;
 var config float DesiredNetUpdateRate;
+
+//var config bool bEnemyBasedSkins;
+//this messes up team games when changing teams if turned on, hard code it for now
+var bool bEnemyBasedSkins;
 
 function CheckSettings() {
     local string PackageName;
@@ -91,7 +94,7 @@ function CheckSettings() {
 defaultproperties
 {
     bFirstRun=True
-    bStats=True
+    bStats=False
     DemoRecordingMask="%d-(%t)-%m-%p"
     ScreenShotMask="%d-(%t)-%m-%p"
     FriendlySound="UTCompOmni.Sounds.HitSoundFriendly"
@@ -127,12 +130,14 @@ defaultproperties
     ColorName(18)=(R=255,G=255,B=255,A=255)
     ColorName(19)=(R=255,G=255,B=255,A=255)
     FallbackCharacterName="Arclite"
-    ClientSkinModeRedTeammate=1
-    ClientSkinModeBlueEnemy=1
+    ClientSkinModeRedTeammate=3
+    ClientSkinModeBlueEnemy=3
     BlueEnemyUTCompSkinColor=(R=0,G=0,B=128,A=255)
     RedTeammateUTCompSkinColor=(R=128,G=0,B=0,A=255)
     BlueEnemyModelName="Arclite"
     RedTeammateModelName="Arclite"
     bEnableDarkSkinning=True
     DesiredNetUpdateRate=90
+
+    bEnemyBasedSkins=false
 }

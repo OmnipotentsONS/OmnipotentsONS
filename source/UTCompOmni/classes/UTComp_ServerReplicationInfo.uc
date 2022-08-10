@@ -46,6 +46,11 @@ var int MaxMultiDodges;
 var int MinNetSpeed;
 var int MaxNetSpeed;
 
+var int NodeIsolateBonusPct;
+var int VehicleHealScore;
+var int PowerNodeScore;
+var int PowerCoreScore;
+
 
 replication
 {
@@ -58,23 +63,24 @@ replication
         benableDoubleDamage, ServerMaxPlayers, bEnableTimedOvertime,
         MaxPlayersClone, bEnableAdvancedVotingOptions, VotingOptions, LinePRI, bEnableTimedOvertimeVoting,
         bEnableEnhancedNetCodeVoting,bEnableEnhancedNetCode, bEnableWarmupVoting, bForward, bEnableForwardVoting,
-        bAllowRestartVoteEvenIfMapVotingIsTurnedOff, MaxMultiDodges, MinNetSpeed, MaxNetSpeed;
+        bAllowRestartVoteEvenIfMapVotingIsTurnedOff, MaxMultiDodges, MinNetSpeed, MaxNetSpeed,
+        NodeIsolateBonusPct, VehicleHealScore, PowerNodeScore, PowerCoreScore;
 }
 
 defaultproperties
 {
-     bEnableVoting=True
+     bEnableVoting=False
      EnableBrightSkinsMode=3
      bEnableClanSkins=True
      bEnableTeamOverlay=True
      bEnablePowerupsOverlay=True;
      EnableHitSoundsMode=1
-     bEnableScoreboard=True
+     bEnableScoreboard=False
      bEnableWarmup=True
      bEnableWeaponStats=True
      bEnablePowerupStats=True
      bEnableBrightskinsVoting=True
-     bEnableHitsoundsVoting=True
+     bEnableHitsoundsVoting=False
      bEnableWarmupVoting=True
      bEnableTeamOverlayVoting=True
      bEnablePowerupsOverlayVoting=True;
@@ -84,5 +90,10 @@ defaultproperties
      ServerMaxPlayers=10
      bEnableTimedOvertimeVoting=True
      bEnableTimedOvertime=False
+
+     NodeIsolateBonusPct=20
+     VehicleHealScore=500
+     PowerNodeScore=100 //debug!
+     PowerCoreScore=1000
 }
 
