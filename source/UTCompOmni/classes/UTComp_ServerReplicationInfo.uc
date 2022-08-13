@@ -50,6 +50,7 @@ var int NodeIsolateBonusPct;
 var int VehicleHealScore;
 var int PowerNodeScore;
 var int PowerCoreScore;
+var int NodeHealBonusPct;
 
 
 replication
@@ -64,7 +65,7 @@ replication
         MaxPlayersClone, bEnableAdvancedVotingOptions, VotingOptions, LinePRI, bEnableTimedOvertimeVoting,
         bEnableEnhancedNetCodeVoting,bEnableEnhancedNetCode, bEnableWarmupVoting, bForward, bEnableForwardVoting,
         bAllowRestartVoteEvenIfMapVotingIsTurnedOff, MaxMultiDodges, MinNetSpeed, MaxNetSpeed,
-        NodeIsolateBonusPct, VehicleHealScore, PowerNodeScore, PowerCoreScore;
+        NodeIsolateBonusPct, VehicleHealScore, PowerNodeScore, PowerCoreScore, NodeHealBonusPct;
 }
 
 defaultproperties
@@ -93,7 +94,8 @@ defaultproperties
 
      NodeIsolateBonusPct=20
      VehicleHealScore=500
-     PowerNodeScore=100 //debug!
-     PowerCoreScore=1000
+     PowerNodeScore=10
+     PowerCoreScore=5
+     NodeHealBonusPct=60
 }
 

@@ -379,18 +379,25 @@ function SetVehicleData(class<Vehicle> VehicleClass, out color RadarColour, out 
     U=0;
     V=0;
 
-    if(ClassIsChildOf(VehicleClass, class'ONSHoverTank'))
+    if(VehicleClass.name == 'Minotaur' || VehicleClass.name == 'Omnitaur' || VehicleClass.name == 'Badgertaur')
+    {
+        //special classes
+        RC.R=255;
+        RC.G=255;
+        RC.B=255;
+    }
+    else if(ClassIsChildOf(VehicleClass, class'ONSHoverTank'))
     {
         //goliath
-        RC.R=192;
+        RC.R=128;
         RC.G=0;
-        RC.B=192;
+        RC.B=128;
     }
     else if(ClassIsChildOf(VehicleClass, class'ONSHoverBike'))
     {
         //manta
         RC.R=0;
-        RC.G=192;
+        RC.G=128;
         RC.B=0;
 
         U=32;
@@ -398,52 +405,52 @@ function SetVehicleData(class<Vehicle> VehicleClass, out color RadarColour, out 
     else if(ClassIsChildOf(VehicleClass, class'ONSAttackCraft'))
     {
         //raptor
-        RC.R=255;
-        RC.G=255;
+        RC.R=128;
+        RC.G=128;
         RC.B=0;
     }
     else if(ClassIsChildOf(VehicleClass, class'ONSDualAttackCraft'))
     {
         //cicada
-        RC.R=192;
-        RC.G=192;
+        RC.R=128;
+        RC.G=128;
         RC.B=0;
     }
     else if(ClassIsChildOf(VehicleClass, class'ONSPRV'))
     {
         //bender
         RC.R=0;
-        RC.G=192;
-        RC.B=192;
+        RC.G=128;
+        RC.B=128;
     }
     else if(ClassIsChildOf(VehicleClass, class'ONSRV'))
     {
         //scorpion
         RC.R=0;
-        RC.G=96;
-        RC.B=96;
+        RC.G=32;
+        RC.B=32;
 
         U=32;
     }
     else if(ClassIsChildOf(VehicleClass, class'ONSTreadCraft'))
     {
         //tank variant
-        RC.R=192;
+        RC.R=128;
         RC.G=32;
-        RC.B=192;
+        RC.B=128;
     }
     else if(ClassIsChildOf(VehicleClass, class'ONSChopperCraft'))
     {
         //raptor variant
-        RC.R=192;
-        RC.G=192;
+        RC.R=128;
+        RC.G=128;
         RC.B=0;
     }
     else if(ClassIsChildOf(VehicleClass, class'ONSHoverCraft'))
     {
         //manta variant
-        RC.R=192;
-        RC.G=192;
+        RC.R=128;
+        RC.G=128;
         RC.B=32;
 
         U=32;
@@ -452,8 +459,8 @@ function SetVehicleData(class<Vehicle> VehicleClass, out color RadarColour, out 
     {
         //bender/scorp variant
         RC.R=32;
-        RC.G=192;
-        RC.B=192;
+        RC.G=128;
+        RC.B=128;
     }
 
     RadarColour=RC;
@@ -512,10 +519,18 @@ simulated function DrawRadarMapVehicles(Canvas C, float CenterPosX, float Center
             {
                 HUDLocation = OPPRI.ClientVSpawnList[i].Factory.Location - MapCenter;
 
+                //draw larger black icon for outline
+                C.SetPos(CenterPosX + (HUDLocation.X * MapScale) - (PlayerIconSize * 0.35) + 1.0, CenterPosY + (HUDLocation.Y * MapScale) - (PlayerIconSize * 0.35) + 1.0);
+                C.DrawColor.R = 0;
+                C.DrawColor.G = 0;
+                C.DrawColor.B = 0;
+                C.DrawColor.A = 255;
+                C.DrawTile(Material'NewHUDIcons', PlayerIconSize * 0.35, PlayerIconSize * 0.35, U, V, 32, 32);
+
+                //draw colored icon
+                C.SetPos(CenterPosX + (HUDLocation.X * MapScale) - (PlayerIconSize * 0.25), CenterPosY + (HUDLocation.Y * MapScale) - (PlayerIconSize * 0.25));
                 SetVehicleData(OPPRI.ClientVSpawnList[i].VehicleClass, C.DrawColor, U, V);
                 C.DrawColor.A = 255;
-
-                C.SetPos(CenterPosX + (HUDLocation.X * MapScale) - (PlayerIconSize * 0.25), CenterPosY + (HUDLocation.Y * MapScale) - (PlayerIconSize * 0.25));
                 C.DrawTile(Material'NewHUDIcons', PlayerIconSize * 0.25, PlayerIconSize * 0.25, U, V, 32, 32);
             }
         }    

@@ -1,6 +1,6 @@
 /*
 UTComp - UT2004 Mutator
-Copyright (C) 2004-2005 Aaron Everitt & Joël Moffatt
+Copyright (C) 2004-2005 Aaron Everitt & Joï¿½l Moffatt
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@ var float PredictedPing;
 var float PingSendTime;
 var bool bPingReceived;
 var int numPings;
+var MutUTComp MutatorOwner;
 
 const PING_TWEEN_TIME = 3.0;
 
@@ -31,6 +32,19 @@ replication
         Ping;
     reliable if(Role == Role_Authority && bNetOwner)
         Pong;
+}
+
+simulated function PostBeginPlay()
+{
+    super.PostBeginPlay();
+    ForEach AllActors(class'MutUTComp', MutatorOwner)
+        break;
+    
+    if(MutatorOwner != none)
+    {
+        if(MutatorOwner.NewNetUpdateFrequency > 0)
+            NetUpdateFrequency=MutatorOwner.NewNetUpdateFrequency;
+    }
 }
 
 simulated function Ping()

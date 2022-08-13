@@ -4,6 +4,7 @@ class UTComp_LinkFire extends LinkFire;
 
 var UTComp_ServerReplicationInfo RepInfo;
 var int VehicleHealScore;
+var int NodeHealBonusPct;
 
 event ModeDoFire()
 {
@@ -23,7 +24,10 @@ simulated function PostBeginPlay()
 
     RepInfo = UTComp_LinkGun(Weapon).GetRepInfo();
     if(RepInfo != None)
+    {
         VehicleHealScore=RepInfo.VehicleHealScore;
+        NodeHealBonusPct=RepInfo.NodeHealBonusPct;
+    }
 }
 
 //ONSPlus
@@ -38,11 +42,13 @@ simulated function ModeTick(float dt)
 	local float Step, ls;
 	local bot B;
 	local bool bShouldStop, bIsHealingObjective;
-	local int AdjustedDamage, i, DamageAmount;
+	local int AdjustedDamage, i;
+    local float DamageAmount;
 	local LinkBeamEffect LB;
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
     local int score;
+    local ONSPowerNode Node;
 
 	if (!bIsFiring)
 	{
@@ -289,21 +295,33 @@ simulated function ModeTick(float dt)
 							SetLinkTo(None);
 							bIsHealingObjective = true;
 
-							//if (OPGRI != none && OPGRI.bNodeHealScoreFix)
-							if (true)
-							{
-								if (!HealObjective.HealDamage(AdjustedDamage / (LinkGun.LockingPawns.Length + 1), Instigator.Controller, DamageType))
-									LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
-								else
-									for (i=0; i<LinkGun.LockingPawns.Length; i++)
-										HealObjective.HealDamage(AdjustedDamage / (LinkGun.LockingPawns.Length + 1),
-														LinkGun.LockingPawns[i].Controller, DamageType);
-							}
-							else
-							{
-								if (!HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
-									LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
-							}
+                            // snarf healbonus
+                            //NodeHealBonus
+                            Node = ONSPowerNode(HealObjective);
+                            DamageAmount = (AdjustedDamage*NodeHealBonusPct/100)/(LinkGun.LockingPawns.Length+1);
+                            if (!HealObjective.HealDamage(AdjustedDamage / (LinkGun.LockingPawns.Length + 1), Instigator.Controller, DamageType))
+                            {
+                                LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
+                            }
+                            else
+                            {
+                                if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && Node != None)
+                                {
+                                    ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(DamageAmount / Node.DamageCapacity * Node.Score);
+                                }
+                                for (i=0; i<LinkGun.LockingPawns.Length; i++)
+                                {
+                                    HealObjective.HealDamage(AdjustedDamage / (LinkGun.LockingPawns.Length+1), LinkGun.LockingPawns[i].Controller, DamageType);
+                                    //snarf healbonus
+                                    if (Node != None)
+                                    {
+                                        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None)
+                                        {
+                                            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(DamageAmount / Node.DamageCapacity * Node.Score);
+                                        }
+                                    }                                                
+                                }
+                            }
 						}
 						//else if (HealObjective != None && OPGRI != none && OPGRI.bNodeHealScoreFix)
 						else if (HealObjective != None)
@@ -358,26 +376,13 @@ simulated function ModeTick(float dt)
 				LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 			else
             {
-                /*
-                if (OPGRI == none && Weapon != none && Pawn(Weapon.Owner).Controller != None &&
-                    PlayerController(Pawn(Weapon.Owner).Controller) != None &&
-                    PlayerController(Pawn(Weapon.Owner).Controller).GameReplicationInfo != None)
-                    OPGRI = ONSPlusGameReplicationInfo(PlayerController(Pawn(Weapon.Owner).Controller).GameReplicationInfo);
-                    */
-
-                /*
-                // snarf this looks like it was always hardcoded to 1000 heal for +1 pt
-                score = 1;
-                if(LinkedVehicle.default.Health >= 1000)
-                    score = LinkedVehicle.default.Health / 1000;
-                    */
                 score = 1;
                 if(LinkedVehicle.default.Health >= VehicleHealScore)
                     score = LinkedVehicle.default.Health / VehicleHealScore;
+                 DamageAmount = (AdjustedDamage/1.5)/(LinkGun.LockingPawns.Length+1);
 
-                //if (OPGRI != None && OPGRI.bVehicleHealScoreFix && ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
                 if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
-                    ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(float(AdjustedDamage) / LinkedVehicle.default.Health * score);
+                    ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(DamageAmount / LinkedVehicle.default.Health * score);
 
 				for (i=0; i<LinkGun.LockingPawns.Length; i++)
                 {
@@ -385,7 +390,7 @@ simulated function ModeTick(float dt)
                     {
                         //if (OPGRI != None && OPGRI.bVehicleHealScoreFix && ONSPlayerReplicationInfo(LinkGun.LockingPawns[i].Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
                         if (ONSPlayerReplicationInfo(LinkGun.LockingPawns[i].Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
-                            ONSPlayerReplicationInfo(LinkGun.LockingPawns[i].Controller.PlayerReplicationInfo).AddHealBonus(float(AdjustedDamage) / LinkedVehicle.default.Health * score);
+                            ONSPlayerReplicationInfo(LinkGun.LockingPawns[i].Controller.PlayerReplicationInfo).AddHealBonus(DamageAmount / LinkedVehicle.default.Health * score);
                     }
                 }
             }

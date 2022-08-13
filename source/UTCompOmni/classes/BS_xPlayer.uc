@@ -490,6 +490,65 @@ state GameEnded
     }
 }
 
+// onsplus
+state RoundEnded
+{
+ignores SeePlayer, HearNoise, KilledBy, NotifyBump, HitWall, NotifyHeadVolumeChange, NotifyPhysicsVolumeChange, Falling, TakeDamage, Suicide;
+
+	function BeginState()
+	{
+		local Pawn P;
+
+		EndZoom();
+		CameraDist = Default.CameraDist;
+		FOVAngle = DesiredFOV;
+		bFire = 0;
+		bAltFire = 0;
+
+		if (Pawn != None)
+		{
+			if (Vehicle(Pawn) != None)
+				Pawn.StopWeaponFiring();
+
+			Pawn.TurnOff();
+			Pawn.bSpecialHUD = false;
+			Pawn.SimAnim.AnimRate = 0;
+
+			if (Pawn.Weapon != None)
+			{
+				Pawn.Weapon.StopFire(0);
+				Pawn.Weapon.StopFire(1);
+				Pawn.Weapon.bEndOfRound = true;
+			}
+		}
+
+
+		// Shambler: Here is the attempted fix
+		if (PlayerReplicationInfo == none || !PlayerReplicationInfo.bOnlySpectator)
+			bFrozen = true;
+
+		bBehindView = true;
+
+		if (!bFixedCamera)
+			FindGoodView();
+
+		SetTimer(5, false);
+
+
+		ForEach DynamicActors(class'Pawn', P)
+		{
+			if (P.Role == ROLE_Authority)
+				P.RemoteRole = ROLE_DumbProxy;
+
+			P.TurnOff();
+		}
+
+
+		StopForceFeedback();
+	}
+}
+//end onsplus
+
 
 //====================================
 // Stats / Hitsounds
@@ -563,7 +622,7 @@ simulated function bool IsIgnoredDamageSound(class<DamageType> DamageType)
     local int i;
     local array<string> IgnoredHitSounds;
     if(DamageType == none)
-        return true;
+        return false;
 
     IgnoredHitSounds=class'MutUTComp'.Default.IgnoredHitSounds;
 
