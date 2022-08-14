@@ -1496,9 +1496,9 @@ defaultproperties
      NodeHealBonusPct=60
      NewNetUpdateFrequency=200
 
-     FriendlyName="UTComp Version 1.12 (Omni)"
+     FriendlyName="UTComp Version 1.13 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.12"
+     FriendlyVersionNumber=")o(mni 1.13"
      Description="A mutator for warmup, brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True

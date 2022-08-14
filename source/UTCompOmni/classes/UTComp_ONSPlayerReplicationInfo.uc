@@ -217,6 +217,13 @@ function array<NavigationPoint> ONSPlusFindPlayerStart(optional bool bSkipRules,
 	// Assume player already has a team
 	TeamNum = Team.TeamIndex;
 
+    //snarf attempt color fix
+    If(BS_xPlayer(Controller(Owner)) != none && UTComp_xPawn(BS_xPlayer(Controller(Owner)).Pawn) != none)
+    {
+        If(UTComp_xPawn(BS_xPlayer(Controller(Owner)).Pawn).oldteam != TeamNum)
+            UTComp_xPawn(BS_xPlayer(Controller(Owner)).Pawn).ColorSkins();
+    }
+
 	// Use the powercore the player selected (if it's valid)
 	SelectedPC = TemporaryStartSpawn;
 
