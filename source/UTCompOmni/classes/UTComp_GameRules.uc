@@ -352,6 +352,11 @@ function bool PreventDeath(Pawn Victim, Controller Killer, class<DamageType> dam
 
 function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 {
+    if(ONSOnslaughtGame(Level.Game) != none)
+    {
+        return true;
+    }
+
     if(UTCompMutator.WarmupClass!=None && UTCompMutator.WarmupClass.bInWarmup)
         return false;
     if(UTCompMutator.bEnableTimedOvertime && Level.Game.bOverTime && !Level.Game.IsA('UTComp_ClanArena'))

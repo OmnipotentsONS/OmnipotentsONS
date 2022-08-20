@@ -276,6 +276,11 @@ simulated function ModeTick(float dt)
                             //NodeHealBonus
                             Node = ONSPowerNode(HealObjective);
                             DamageAmount = (AdjustedDamage*NodeHealBonusPct/100)/(LinkGun.LockingPawns.Length+1);
+
+                            //if node has shield, check config value and disable bonus if needed
+                            if(!bNodeHealBonusForLockedNodes && Node.Shield != none && !Node.Shield.bHidden)
+                                DamageAmount = 0;
+
                             if (!HealObjective.HealDamage(AdjustedDamage / (LinkGun.LockingPawns.Length + 1), Instigator.Controller, DamageType))
                             {
                                 LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
@@ -353,7 +358,7 @@ simulated function ModeTick(float dt)
                 score = 1;
                 if(LinkedVehicle.default.Health >= VehicleHealScore)
                     score = LinkedVehicle.default.Health / VehicleHealScore;
-                 DamageAmount = AdjustedDamage/(LinkGun.LockingPawns.Length+1)/1.5;
+                DamageAmount = (AdjustedDamage*NodeHealBonusPct/100)/(LinkGun.LockingPawns.Length+1);
 
                 if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
                     ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(DamageAmount / LinkedVehicle.default.Health * score);

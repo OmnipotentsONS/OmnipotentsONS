@@ -134,6 +134,45 @@ function OPInitialise()
 	}
 }
 
+// snarf attempt to fix the after round shenanigans
+function bool CheckScore(PlayerReplicationInfo Scorer)
+{
+    local PlayerController PC;
+    local Controller C;
+    local ONSOnslaughtGame ONS;
+    local int deadCore;
+    deadCore = -1;
+
+    ONS = ONSOnslaughtGame(Level.Game);
+    if(ONS != none && ONS.PowerCores[ONS.FinalCore[0]].Health <= 0)
+        deadCore = 0;
+    else if(ONS != none && ONS.PowerCores[ONS.FinalCore[1]].Health <= 0)
+        deadCore = 1;
+
+        //round has ended
+    if(deadCore >= 0)
+    {
+        for (C = Level.ControllerList; C != None; C = C.NextController)
+        {
+            PC = PlayerController(C);
+            if (PC != None)
+            {
+                PC.ClientSetBehindView(true);
+                PC.ClientSetViewTarget(ONS.PowerCores[deadCore]);
+                PC.SetViewTarget(ONS.PowerCores[deadCore]);
+                PC.ClientRoundEnded();
+
+            }
+            C.RoundHasEnded();
+        }
+    }
+
+    if(NextGameRules != none)
+        return NextGameRules.CheckScore(Scorer);
+    
+    return false;
+}
+
 // Initialise the vehicle spawn list for a certain player
 //function InitialiseVehicleSpawnList(ONSPlusPlayerReplicationInfo NewPlayer)
 function InitialiseVehicleSpawnList(UTComp_ONSPlayerReplicationInfo NewPlayer)

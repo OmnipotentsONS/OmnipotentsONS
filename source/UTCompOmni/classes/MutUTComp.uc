@@ -79,6 +79,7 @@ var config int VehicleHealScore;
 var config int PowerCoreScore;
 var config int PowerNodeScore;
 var config int NodeHealBonusPct;
+var config bool bNodeHealBonusForLockedNodes;
 var config int NewNetUpdateFrequency;
 
 /* ----Known issues ----
@@ -763,6 +764,7 @@ function SpawnReplicationClass()
     RepInfo.PowerCoreScore=PowerCoreScore;
     RepInfo.PowerNodeScore=PowerNodeScore;
     RepInfo.NodeHealBonusPct=NodeHealBonusPct;
+    RepInfo.bNodeHealBonusForLockedNodes = bNodeHealBonusForLockedNodes;
 
     for(i=0; i<VotingGametype.Length && i<ArrayCount(RepInfo.VotingNames); i++)
         RepInfo.VotingNames[i]=VotingGametype[i].GameTypeName;
@@ -1494,11 +1496,12 @@ defaultproperties
      PowerCoreScore=10
      PowerNodeScore=5
      NodeHealBonusPct=60
+     bNodeHealBonusForLockedNodes=false
      NewNetUpdateFrequency=200
 
-     FriendlyName="UTComp Version 1.13 (Omni)"
+     FriendlyName="UTComp Version 1.15 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.13"
+     FriendlyVersionNumber=")o(mni 1.15"
      Description="A mutator for warmup, brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True

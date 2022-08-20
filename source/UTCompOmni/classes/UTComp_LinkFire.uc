@@ -5,6 +5,7 @@ class UTComp_LinkFire extends LinkFire;
 var UTComp_ServerReplicationInfo RepInfo;
 var int VehicleHealScore;
 var int NodeHealBonusPct;
+var bool bNodeHealBonusForLockedNodes;
 
 event ModeDoFire()
 {
@@ -27,6 +28,7 @@ simulated function PostBeginPlay()
     {
         VehicleHealScore=RepInfo.VehicleHealScore;
         NodeHealBonusPct=RepInfo.NodeHealBonusPct;
+        bNodeHealBonusForLockedNodes=RepInfo.bNodeHealBonusForLockedNodes;
     }
 }
 
@@ -299,6 +301,11 @@ simulated function ModeTick(float dt)
                             //NodeHealBonus
                             Node = ONSPowerNode(HealObjective);
                             DamageAmount = (AdjustedDamage*NodeHealBonusPct/100)/(LinkGun.LockingPawns.Length+1);
+
+                            //if node has shield, check config value and disable bonus if needed
+                            if(!bNodeHealBonusForLockedNodes && Node.Shield != none && !Node.Shield.bHidden)
+                                DamageAmount = 0;
+
                             if (!HealObjective.HealDamage(AdjustedDamage / (LinkGun.LockingPawns.Length + 1), Instigator.Controller, DamageType))
                             {
                                 LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
