@@ -265,7 +265,6 @@ function HandleResetMapsCall(PlayerController Sender)
     }
 }
 
-
 simulated function HandleBalanceCall(PlayerController Sender)
 {
     local GamePPH gamePPH;
@@ -274,7 +273,6 @@ simulated function HandleBalanceCall(PlayerController Sender)
         gamePPH = Rules.GetGamePPH();
         //Sender.ReceiveLocalizedMessage(class'UnevenChatMessage', -2,Sender.PlayerReplicationInfo,,gamePPH);
         BroadcastLocalizedMessage(class'UnevenChatMessage', -2,Sender.PlayerReplicationInfo,,gamePPH);
-
     }
 }
 
@@ -682,6 +680,10 @@ function ActuallyCheckBalance(PlayerController Player, bool bIsLeaving)
 				i = Rand(Candidates.Length);
 				if ((!bIsLeaving || Candidates[i] != Player) && Candidates[i].GetTeamNum() == BiggerTeam && !IsRecentBalancer(Candidates[i])) {
 					Game.ChangeTeam(Candidates[i], 1 - BiggerTeam, true);
+                    // snarf attempt color fix
+                    if(Candidates[i].Pawn != none)
+                        Candidates[i].Pawn.NotifyTeamChanged();
+
 					RememberForcedSwitch(Candidates[i], "soft-balance by undoing team switch");
 				}
 				Candidates.Remove(i, 1);
@@ -707,6 +709,10 @@ function ActuallyCheckBalance(PlayerController Player, bool bIsLeaving)
 					i = 0; //Rand(Candidates.Length);
 					if (!IsValuablePlayer(Candidates[i])) {
 						Game.ChangeTeam(Candidates[i], 1 - BiggerTeam, true);
+                        // snarf attempt color fix
+                        if(Candidates[i].Pawn != none)
+                            Candidates[i].Pawn.NotifyTeamChanged();                        
+
 						RememberForcedSwitch(Candidates[i], "soft-balance at respawn");
 					}
 					Candidates.Remove(i, 1);
@@ -734,6 +740,10 @@ function ActuallyCheckBalance(PlayerController Player, bool bIsLeaving)
 						// try switching a not so random candidate to the smaller team
 						i = 0; //Rand(Candidates.Length);
 						Game.ChangeTeam(Candidates[i], 1 - BiggerTeam, true);
+                        //snarf attempt color fix
+                       if(Candidates[i].Pawn != none)
+                            Candidates[i].Pawn.NotifyTeamChanged();      
+
 						RememberForcedSwitch(Candidates[i], "forced balance");
 						if (Candidates[i].Pawn != None) {
 							if (Vehicle(Candidates[i].Pawn) != None && Vehicle(Candidates[i].Pawn).Driver != None)
@@ -769,6 +779,9 @@ function ActuallyCheckBalance(PlayerController Player, bool bIsLeaving)
 				if ((IsRecentUnbalancer(Candidates[i]) || !IsRecentBalancer(Candidates[i]) && Abs(1 - Candidates[i].GetTeamNum() - Progress) > SwitchToWinnerProgressLimit) && !RebalanceStillNeeded(SizeOffset, Progress, BiggerTeam)) {
 					// try switching the team changer back to his previous team
 					Game.ChangeTeam(Candidates[i], 1 - Candidates[i].GetTeamNum(), true);
+                    //snarf attempt color fix
+                    if(Candidates[i].Pawn != none)
+                        Candidates[i].Pawn.NotifyTeamChanged();
 					RememberForcedSwitch(Candidates[i], "undoing switch to winning team");
 				}
 				Candidates.Remove(i, 1);
@@ -1126,7 +1139,7 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
 defaultproperties
 {
-	Build = "2.9"
+	Build = "3.0"
 	FriendlyName = "Omnip)o(tents Team Balance (Onslaught-only)"
 	Description  = "Special team balancing rules for public Onslaught matches."
 	bAddToServerPackages = True

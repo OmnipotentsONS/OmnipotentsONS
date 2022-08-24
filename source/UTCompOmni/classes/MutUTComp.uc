@@ -80,7 +80,11 @@ var config int PowerCoreScore;
 var config int PowerNodeScore;
 var config int NodeHealBonusPct;
 var config bool bNodeHealBonusForLockedNodes;
+var Config bool bNodeHealBonusForConstructor;
+
 var config int NewNetUpdateFrequency;
+
+var bool bEnableReady;
 
 /* ----Known issues ----
    Mutant:  No Bskins/Forcemodel
@@ -765,6 +769,7 @@ function SpawnReplicationClass()
     RepInfo.PowerNodeScore=PowerNodeScore;
     RepInfo.NodeHealBonusPct=NodeHealBonusPct;
     RepInfo.bNodeHealBonusForLockedNodes = bNodeHealBonusForLockedNodes;
+    RepInfo.bNodeHealBonusForConstructor = bNodeHealBonusForConstructor;
 
     for(i=0; i<VotingGametype.Length && i<ArrayCount(RepInfo.VotingNames); i++)
         RepInfo.VotingNames[i]=VotingGametype[i].GameTypeName;
@@ -772,9 +777,14 @@ function SpawnReplicationClass()
     for(i=0; i<VotingGametype.Length && i<ArrayCount(RepInfo.VotingOptions); i++)
         RepInfo.VotingOptions[i]=VotingGametype[i].GameTypeOptions;
 
-    if(Level.Game.IsA('CTFGame') || Level.Game.IsA('ONSONslaughtGame') || Level.Game.IsA('ASGameInfo') || Level.Game.IsA('xBombingRun')
+    if(Level.Game.IsA('CTFGame') || Level.Game.IsA('ONSOnslaughtGame') || Level.Game.IsA('ASGameInfo') || Level.Game.IsA('xBombingRun')
     || Level.Game.IsA('xMutantGame') || Level.Game.IsA('xLastManStandingGame') || Level.Game.IsA('xDoubleDom') || Level.Game.IsA('Invasion'))
+    {
        bEnableTimedOvertime=False;
+       bEnableReady=False;
+    }
+
+    RepInfo.bEnableReady = bEnableReady;
 }
 
 function PostBeginPlay()
@@ -1491,17 +1501,20 @@ defaultproperties
      MinNetSpeed=15000
      MaxNetSpeed=25000
 
+     //ONS
      NodeIsolateBonusPct=20
      VehicleHealScore=500
      PowerCoreScore=10
      PowerNodeScore=5
      NodeHealBonusPct=60
      bNodeHealBonusForLockedNodes=false
+     bNodeHealBonusForConstructor=false
+
      NewNetUpdateFrequency=200
 
-     FriendlyName="UTComp Version 1.15 (Omni)"
+     FriendlyName="UTComp Version 1.18 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.15"
+     FriendlyVersionNumber=")o(mni 1.18"
      Description="A mutator for warmup, brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
@@ -1515,6 +1528,7 @@ defaultproperties
      bEnableEnhancedNetCodeVoting=false
      MinNetUpdateRate=60
      MaxNetUpdateRate=250
+     bEnableReady=true
 
      WeaponClasses(0)=Class'NewNet_ShockRifle'
      WeaponClasses(1)=Class'NewNet_LinkGun'

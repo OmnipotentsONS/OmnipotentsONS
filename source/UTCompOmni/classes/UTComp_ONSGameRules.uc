@@ -158,8 +158,8 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
             if (PC != None)
             {
                 PC.ClientSetBehindView(true);
-                PC.ClientSetViewTarget(ONS.PowerCores[deadCore]);
-                PC.SetViewTarget(ONS.PowerCores[deadCore]);
+                PC.ClientSetViewTarget(ONS.PowerCores[ONS.FinalCore[deadCore]]);
+                PC.SetViewTarget(ONS.PowerCores[ONS.FinalCore[deadCore]]);
                 PC.ClientRoundEnded();
 
             }
@@ -280,13 +280,6 @@ function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam
 
 	if (MutatorOwner == none || Player == none || AIController(Player) != none)
 		return Super.FindPlayerStart(Player, InTeam, incomingName);
-
-    //snarf attempt color fix
-    If(BS_xPlayer(Player) != none && UTComp_xPawn(BS_xPlayer(Player).Pawn) != none)
-    {
-        If(UTComp_xPawn(BS_xPlayer(Player).Pawn).oldteam != Player.PlayerReplicationInfo.Team.TeamIndex)
-            UTComp_xPawn(BS_xPlayer(Player).Pawn).ColorSkins();
-    }
 
 	// HACK HACK HACK HACK HACK HACK HACK MUAHAHAHAHAH! (I'm overriding the FindPlayerStart function)
 	if (ONSOnslaughtGame(level.game) != none && Player.PlayerReplicationInfo != none && UTComp_ONSPlayerReplicationInfo(Player.PlayerReplicationInfo) != none

@@ -52,6 +52,8 @@ var int PowerNodeScore;
 var int PowerCoreScore;
 var int NodeHealBonusPct;
 var bool bNodeHealBonusForLockedNodes;
+var bool bNodeHealBonusForConstructor;
+var bool bEnableReady;
 
 
 replication
@@ -66,7 +68,8 @@ replication
         MaxPlayersClone, bEnableAdvancedVotingOptions, VotingOptions, LinePRI, bEnableTimedOvertimeVoting,
         bEnableEnhancedNetCodeVoting,bEnableEnhancedNetCode, bEnableWarmupVoting, bForward, bEnableForwardVoting,
         bAllowRestartVoteEvenIfMapVotingIsTurnedOff, MaxMultiDodges, MinNetSpeed, MaxNetSpeed,
-        NodeIsolateBonusPct, VehicleHealScore, PowerNodeScore, PowerCoreScore, NodeHealBonusPct, bNodeHealBonusForLockedNodes;
+        NodeIsolateBonusPct, VehicleHealScore, PowerNodeScore, PowerCoreScore, NodeHealBonusPct, 
+        bNodeHealBonusForLockedNodes, bNodeHealBonusForConstructor, bEnableReady;
 }
 
 defaultproperties
@@ -98,5 +101,7 @@ defaultproperties
      PowerNodeScore=10
      PowerCoreScore=5
      NodeHealBonusPct=60
+     bEnableReady=true
+     bNodeHealBonusForConstructor=false
 }
 

@@ -6,6 +6,9 @@ var UTComp_ServerReplicationInfo RepInfo;
 var int VehicleHealScore;
 var int NodeHealBonusPct;
 var bool bNodeHealBonusForLockedNodes;
+var bool bNodeHealBonusForConstructor;
+
+var float totalBonus;
 
 event ModeDoFire()
 {
@@ -29,6 +32,7 @@ simulated function PostBeginPlay()
         VehicleHealScore=RepInfo.VehicleHealScore;
         NodeHealBonusPct=RepInfo.NodeHealBonusPct;
         bNodeHealBonusForLockedNodes=RepInfo.bNodeHealBonusForLockedNodes;
+        bNodeHealBonusForConstructor=RepInfo.bNodeHealBonusForConstructor;
     }
 }
 
@@ -300,7 +304,7 @@ simulated function ModeTick(float dt)
                             // snarf healbonus
                             //NodeHealBonus
                             Node = ONSPowerNode(HealObjective);
-                            DamageAmount = (AdjustedDamage*NodeHealBonusPct/100)/(LinkGun.LockingPawns.Length+1);
+                            DamageAmount = (AdjustedDamage*NodeHealBonusPct/100)/(LinkGun.LockingPawns.Length+1)*2;
 
                             //if node has shield, check config value and disable bonus if needed
                             if(!bNodeHealBonusForLockedNodes && Node.Shield != none && !Node.Shield.bHidden)
@@ -312,7 +316,7 @@ simulated function ModeTick(float dt)
                             }
                             else
                             {
-                                if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && Node != None)
+                                if (ShouldGetHealBonus(Instigator.Controller, Node) && ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && Node != None)
                                 {
                                     ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(DamageAmount / Node.DamageCapacity * Node.Score);
                                 }
@@ -320,11 +324,11 @@ simulated function ModeTick(float dt)
                                 {
                                     HealObjective.HealDamage(AdjustedDamage / (LinkGun.LockingPawns.Length+1), LinkGun.LockingPawns[i].Controller, DamageType);
                                     //snarf healbonus
-                                    if (Node != None)
+                                    if (ShouldGetHealBonus(LinkGun.LockingPawns[i].Controller, Node))
                                     {
-                                        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None)
+                                        if (ONSPlayerReplicationInfo(LinkGun.LockingPawns[i].Controller.PlayerReplicationInfo) != None)
                                         {
-                                            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(DamageAmount / Node.DamageCapacity * Node.Score);
+                                            ONSPlayerReplicationInfo(LinkGun.LockingPawns[i].Controller.PlayerReplicationInfo).AddHealBonus(DamageAmount / Node.DamageCapacity * Node.Score);
                                         }
                                     }                                                
                                 }
@@ -468,6 +472,17 @@ simulated function ModeTick(float dt)
 
 	bStartFire = false;
 	bDoHit = false;
+}
+
+simulated function bool ShouldGetHealBonus(Controller controller, ONSPowerNode node)
+{
+    if(controller == none || node == none)
+        return false;
+
+    if(controller == node.Constructor && !bNodeHealBonusForConstructor)
+        return false;
+
+    return true;    
 }
 
 function bool AddLink(int Size, Pawn Starter)

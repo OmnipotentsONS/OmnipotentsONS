@@ -273,12 +273,16 @@ function CustomScore(PlayerReplicationInfo Scorer)
 
     if(Role == ROLE_Authority && EvenMatchMutator.bCustomScoring)
     {
+        onsgame = ONSOnslaughtGame(Level.Game);
+        onsgame.Timer();
+        /*
         // add some hysteresis, restrict calling this function faster than once per 2 seconds
         if(LastCheckScoreTime > level.TimeSeconds )
         {
             return;
         }
         LastCheckScoreTime=Level.TimeSeconds+2.0;
+        */
 
 
         if(Level.Game.bOverTime)
@@ -292,7 +296,6 @@ function CustomScore(PlayerReplicationInfo Scorer)
             newscore = EvenMatchMutator.CustomRegulationPoints;
         }
 
-        onsgame = ONSOnslaughtGame(Level.Game);
         bHasScored = Level.GRI.Teams[Scorer.Team.TeamIndex].Score > 0;
         bEnemyCoreDestroyed = onsgame.PowerCores[onsgame.FinalCore[1-Scorer.Team.TeamIndex]].Health <= 0;
         bCoreDestroyed = onsgame.PowerCores[onsgame.FinalCore[Scorer.Team.TeamIndex]].Health <= 0;
@@ -800,6 +803,8 @@ function ChangeTeam(PlayerController Player, int NewTeam)
     local ONSOnslaughtGame onsgame;
 	Player.PlayerReplicationInfo.Team.RemoveFromTeam(Player);
 	if (Level.GRI.Teams[NewTeam].AddToTeam(Player)) {
+        if(Player.Pawn != none)
+            Player.Pawn.NotifyTeamChanged();
         onsgame = ONSOnslaughtGame(Level.Game);
 		Player.ReceiveLocalizedMessage(class'TeamSwitchNotification', NewTeam);
 		onsgame.GameEvent("TeamChange", string(NewTeam), Player.PlayerReplicationInfo);

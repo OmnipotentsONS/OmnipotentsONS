@@ -1055,6 +1055,30 @@ event UpdateEyeHeight( float DeltaTime )
     Controller.AdjustView(DeltaTime);
 }
 
+// snarf attempt color fix
+function NotifyTeamChanged()
+{
+    if(Controller!=None && Controller.PlayerReplicationInfo != none && Controller.PlayerReplicationInfo.Team!=None && Controller.PlayerReplicationInfo.Team.TeamIndex!=OldTeam)
+    {
+        ColorSkins();
+    }
+    super.NotifyTeamChanged();
+}
+
+// snarf attempt color fix
+simulated event PostNetReceive()
+{
+    super.PostNetReceive();
+
+    if(LocalPC==None)
+        LocalPC=Level.GetLocalPlayerController();
+
+    if(LocalPC!=None && LocalPC.PlayerReplicationInfo != none && LocalPC.PlayerReplicationInfo.Team!=None && LocalPC.PlayerReplicationInfo.Team.TeamIndex!=OldTeam)
+    {
+        ColorSkins();
+    }
+}
+
 defaultproperties
 {
      bAlwaysRelevant=True
