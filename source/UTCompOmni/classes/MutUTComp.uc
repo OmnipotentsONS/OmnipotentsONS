@@ -1457,6 +1457,19 @@ function string GetInventoryClassOverride(string InventoryClassName)
 	return InventoryClassName;
 }
 
+//snarf attempt to fix crashing
+//instagib mutator uses this but not any we use on the omni server
+function bool AlwaysKeep(Actor Other)
+{
+	//if ( NextMutator != None )
+    //	return ( NextMutator.AlwaysKeep(Other) );
+
+    //snarf could also try this check against self?
+	//if ( NextMutator != None  && NextMutator != self)
+    //	return ( NextMutator.AlwaysKeep(Other) );
+	return false;
+}
+
 defaultproperties
 {
      bAddToServerPackages=True
@@ -1512,9 +1525,9 @@ defaultproperties
 
      NewNetUpdateFrequency=200
 
-     FriendlyName="UTComp Version 1.18 (Omni)"
+     FriendlyName="UTComp Version 1.20 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.18"
+     FriendlyVersionNumber=")o(mni 1.20"
      Description="A mutator for warmup, brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
