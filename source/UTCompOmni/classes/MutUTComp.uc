@@ -494,10 +494,14 @@ function ModifyPlayer(Pawn Other)
 
 function DriverEnteredVehicle(Vehicle V, Pawn P)
 {
+/*
+    snarf attempt to fix crashing
+    moved to check replacement
 	SpawnCollisionCopy(V);
 
     if( NextMutator != none )
 		NextMutator.DriverEnteredVehicle(V, P);
+*/
 }
 
 function SpawnCollisionCopy(Pawn Other)
@@ -887,6 +891,17 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
     		return true;
     	}
 	}
+    /*
+    // snarf attempt to fix crashing
+    // this does work but lags the server quite a bit
+    // we'll just use normal collision for now
+    if(Vehicle(Other) != None)
+    {
+       	SpawnCollisionCopy(Vehicle(Other)); 
+        return true;
+    }
+    */
+
     if (PlayerReplicationInfo(Other)!=None)
     {
         if(PlayerReplicationInfo(Other).CustomReplicationInfo!=None)
@@ -1457,19 +1472,6 @@ function string GetInventoryClassOverride(string InventoryClassName)
 	return InventoryClassName;
 }
 
-//snarf attempt to fix crashing
-//instagib mutator uses this but not any we use on the omni server
-function bool AlwaysKeep(Actor Other)
-{
-	//if ( NextMutator != None )
-    //	return ( NextMutator.AlwaysKeep(Other) );
-
-    //snarf could also try this check against self?
-	//if ( NextMutator != None  && NextMutator != self)
-    //	return ( NextMutator.AlwaysKeep(Other) );
-	return false;
-}
-
 defaultproperties
 {
      bAddToServerPackages=True
@@ -1525,9 +1527,9 @@ defaultproperties
 
      NewNetUpdateFrequency=200
 
-     FriendlyName="UTComp Version 1.20 (Omni)"
+     FriendlyName="UTComp Version 1.21 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.20"
+     FriendlyVersionNumber=")o(mni 1.21"
      Description="A mutator for warmup, brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True

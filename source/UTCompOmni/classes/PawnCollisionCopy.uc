@@ -329,12 +329,6 @@ function RemoveOutdatedHistory()
     }
 }
 
-//snarf attempt to fix crashing
-event PreBeginPlay()
-{
-    //don't call super
-}
-
 defaultproperties
 {
     RemoteRole=ROLE_NONE
@@ -360,7 +354,4 @@ defaultproperties
 
     CrouchHeight=29.000000   //Direct copies from xPawn
     CrouchRadius=25.000000
-
-    //snarf attempt to fix crashing
-    bGameRelevant=true
 }

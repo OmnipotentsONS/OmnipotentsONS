@@ -537,25 +537,7 @@ simulated function GamePPH ShuffleTeams(optional bool killPlayers)
 	if (EvenMatchMutator.bDebug) log("Balancing team sizes and PPH...", 'EvenMatchDebug');
 	if (PPHs.Length > 0) {
 		Index = PPHs.Length;
-		if ((Index & 1) != 0) {
-			PRI = PRIs[0];
-			PPH = PPHs[0];
-			if (Rand(2) == 0) {
-				if (EvenMatchMutator.bDebug)
-					log("Odd player count, randomly assigning " $ PRI.PlayerName $ " to red (" $ PPH $ " PPH)", 'EvenMatchDebug');
-				
-				RedPRIs[RedPRIs.Length] = PRI;
-				RedPPH += PPH;
-			}
-			else {
-				if (EvenMatchMutator.bDebug)
-					log("Odd player count, randomly assigning " $ PRI.PlayerName $ " to blue (" $ PPH $ " PPH)", 'EvenMatchDebug');
-				
-				BluePRIs[BluePRIs.Length] = PRI;
-				BluePPH += PPH;
-			}
-		}
-	
+
 		while (Index > 1) {
 			PRI = PRIs[--Index];
 			PPH = PPHs[Index];
@@ -585,6 +567,27 @@ simulated function GamePPH ShuffleTeams(optional bool killPlayers)
 					log(PRI.PlayerName $ " will be on red (now " $ RedPPH $ " PPH), " $ PRI2.PlayerName $ " will be on blue (now " $ BluePPH $ " PPH)", 'EvenMatchDebug');
 			}
 		}
+
+        // snarf do this at the end
+		if ((Index & 1) != 0) {
+			PRI = PRIs[0];
+			PPH = PPHs[0];
+			if (Rand(2) == 0) {
+				if (EvenMatchMutator.bDebug)
+					log("Odd player count, randomly assigning " $ PRI.PlayerName $ " to red (" $ PPH $ " PPH)", 'EvenMatchDebug');
+				
+				RedPRIs[RedPRIs.Length] = PRI;
+				RedPPH += PPH;
+			}
+			else {
+				if (EvenMatchMutator.bDebug)
+					log("Odd player count, randomly assigning " $ PRI.PlayerName $ " to blue (" $ PPH $ " PPH)", 'EvenMatchDebug');
+				
+				BluePRIs[BluePRIs.Length] = PRI;
+				BluePPH += PPH;
+			}
+		}
+	
 	} // entire if: O(n)
 	
 	if (EvenMatchMutator.bDebug) {
