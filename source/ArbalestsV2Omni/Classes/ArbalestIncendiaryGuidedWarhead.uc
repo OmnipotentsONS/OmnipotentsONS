@@ -30,12 +30,12 @@ function BlowUp(vector HitLocation)
 	if ( Role == ROLE_Authority )
 	{
 		HurtRadius(damage, 220, MyDamageType, MomentumTransfer, HitLocation);	
-		for (i=0; i<8; i++)
+		for (i=0; i<12; i++)
 		{
 			rot = Rotation;
-			rot.yaw += FRand()*32000-16000;
-			rot.pitch += FRand()*32000-16000;
-			rot.roll += FRand()*32000-16000;
+			rot.yaw += FRand()*32000-14000;
+			rot.pitch += FRand()*32000-14000;
+			rot.roll += FRand()*32000-14000;
 			FireBLOB = Spawn( class 'ArbalestFire',, '', Start, rot);
 		}
 	}
@@ -111,7 +111,7 @@ Begin:
 defaultproperties
 {
      Damage=50.000000
-     DamageRadius=1300.000000
+     DamageRadius=1800.000000
      MomentumTransfer=0.000000
-     AirSpeed=1900.000000
+     AirSpeed=2000.000000
 }

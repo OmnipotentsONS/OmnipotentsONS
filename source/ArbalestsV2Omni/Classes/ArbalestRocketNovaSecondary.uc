@@ -16,7 +16,8 @@ static function ScoreKill(Controller Killer, Controller Killed)
 
 defaultproperties
 {
-     VehicleClass=Class'ONS-ArbalestNM.Arbalest'
+     VehicleClass=Class'ArbalestsV2Omni.ArbalestNova'
+// not sure why I need vehicle class here?
      DeathString="%o was blown up."
      FemaleSuicide="%o blew herself up."
      MaleSuicide="%o blew himself up."

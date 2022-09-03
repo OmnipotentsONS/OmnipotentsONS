@@ -207,10 +207,34 @@ function bool RecommendLongRangedAttack()
 
 function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
 {
-	if (DamageType == class'DamTypeHoverBikePlasma')
-		Damage *= 0.80;
+	if (DamageType == class'DamTypeBioGlob')
+  Damage *= 2.0;
 
-	Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
+	if (DamageType == class'DamTypeHoverBikePlasma')
+		Damage *= 0.70;
+
+	if (DamageType == class'DamTypeONSCicadaRocket')
+		Damage *= 0.70;
+
+	if (ClassIsChildOf(DamageType,class'DamTypeAirPower'))
+		Damage *= 0.70;
+
+	if (DamageType == class'DamTypeAttackCraftPlasma')
+		Damage *= 0.70;
+
+	if (DamageType.name == 'MinotaurTurretkill')
+		Damage *= 0.30;
+
+	if (DamageType.name == 'MinotaurSecondaryTurretKill')
+		Damage *= 0.30;
+
+if (DamageType.name == 'FireKill')
+		Damage *= 0.30;
+
+	if (DamageType.name == 'HeatRay')
+		Damage *= 0.30;
+
+        Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
 }
 
 static function StaticPrecache(LevelInfo L)
@@ -341,7 +365,7 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in an Arbalest Nova"
-     VehicleNameString="Arbalest Nova 2.0"
+     VehicleNameString="Arbalest Nova 2.1"
      RanOverDamageType=Class'Onslaught.DamTypeTankRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeTankPancake'
      MaxDesireability=0.800000

@@ -196,8 +196,8 @@ function bool RecommendLongRangedAttack()
 
 function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
 {
-        if (DamageType == class'DamTypeBioGlob')
-                Damage *= 3.0;
+ if (DamageType == class'DamTypeBioGlob')
+  Damage *= 2.0;
 
 	if (DamageType == class'DamTypeHoverBikePlasma')
 		Damage *= 0.70;
@@ -350,7 +350,7 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in an Arbalest Bomber"
-     VehicleNameString="Arbalest Bomber 2.0"
+     VehicleNameString="Arbalest Bomber 2.1"
      RanOverDamageType=Class'Onslaught.DamTypeTankRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeTankPancake'
      MaxDesireability=0.800000

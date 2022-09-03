@@ -2,6 +2,7 @@ class ArbalestRocketNovaPrime extends ONSMASRocketProjectile;
 
 #exec OBJ LOAD FILE=..\Sounds\VMVehicleSounds-S.uax
 
+
 var Actor HomingTarget;
 var vector InitialDir;
 

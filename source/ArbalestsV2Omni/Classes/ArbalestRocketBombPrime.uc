@@ -1,4 +1,4 @@
-class ArbalestRocketBombprime extends ONSMASRocketProjectile;
+class ArbalestRocketBombPrime extends ONSMASRocketProjectile;
 
 #exec OBJ LOAD FILE=..\Sounds\VMVehicleSounds-S.uax
 

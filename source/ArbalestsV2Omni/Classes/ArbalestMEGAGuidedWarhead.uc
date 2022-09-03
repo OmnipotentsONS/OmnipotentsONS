@@ -2,6 +2,8 @@ class ArbalestMEGAGuidedWarhead extends ArbalestGuidedWarhead;
 
 defaultproperties
 {
-     Damage=600.000000
-     AirSpeed=1500.000000
+     Damage=700.000000
+     AirSpeed=1600.000000
+     DamageRadius=2750.000000
+
 }

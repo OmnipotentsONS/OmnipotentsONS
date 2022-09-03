@@ -217,7 +217,7 @@ defaultproperties
      FireMode=1
      maxfiremode=4
      FireModeNames(0)="AA Rockets"
-     FireModeNames(1)="High Explosives"
+     FireModeNames(1)="Weak Redeemers"
      FireModeNames(2)="Incendiary Missile"
      FireModeNames(3)="Cluster Bomb"
      FireInterval=0.500000
