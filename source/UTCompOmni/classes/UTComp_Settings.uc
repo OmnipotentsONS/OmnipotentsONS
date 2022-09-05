@@ -134,6 +134,8 @@ defaultproperties
     FallbackCharacterName="Arclite"
     ClientSkinModeRedTeammate=3
     ClientSkinModeBlueEnemy=3
+    PreferredSkinColorRedTeammate=3
+    PreferredSkinColorBlueEnemy=3
     BlueEnemyUTCompSkinColor=(R=0,G=0,B=128,A=255)
     RedTeammateUTCompSkinColor=(R=128,G=0,B=0,A=255)
     BlueEnemyModelName="Arclite"

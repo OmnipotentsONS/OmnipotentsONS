@@ -376,6 +376,8 @@ simulated function InitializeStuff()
         //with the new release we want to default to this being off
         Settings.Version=1;
         Settings.bEnableEnhancedNetCode=false;
+        Settings.PreferredSkinColorRedTeammate=3;
+        Settings.PreferredSkinColorBlueEnemy=3;
         Settings.SaveConfig();
     }
 

@@ -27,8 +27,6 @@ simulated function ModeTick(float dt)
     local float score;
     local ONSPowerNode Node;
 
-    log("newNet_LinkFire");
-
     if(!bUseEnhancedNetCode || Instigator.Role < Role_Authority)
     {
         super.ModeTick(dt);
@@ -50,6 +48,11 @@ simulated function ModeTick(float dt)
     }
 
     ls = LinkScale[Min(LinkGun.Links,5)];
+    
+    // Clean out the lockingpawns list
+	for (i=0; i<LinkGun.LockingPawns.Length; i++)
+		if (LinkGun.LockingPawns[i] == none)
+			LinkGun.LockingPawns.Remove(i, 1);
 
     if ( myHasAmmo(LinkGun) && ((UpTime > 0.0) || (Instigator.Role < ROLE_Authority)) )
     {
