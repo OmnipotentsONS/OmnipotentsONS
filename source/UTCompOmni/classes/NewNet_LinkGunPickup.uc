@@ -1,5 +1,5 @@
 
-class NewNet_LinkGunPickup extends LinkGunPickup;
+class NewNet_LinkGunPickup extends UTComp_LinkGunPickup;
 
 defaultproperties
 {

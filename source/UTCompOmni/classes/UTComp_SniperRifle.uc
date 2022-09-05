@@ -34,5 +34,6 @@ simulated function bool ReadyToFire(int Mode)
 
 DefaultProperties
 {
-
+    FireModeClass(0) = class'UTComp_SniperFire'
+    PickupClass=Class'UTComp_SniperRiflePickup'
 }

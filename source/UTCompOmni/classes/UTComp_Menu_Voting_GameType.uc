@@ -56,10 +56,6 @@ function Blehz()
     }
     co_GameTypeList.ReadOnly(True);
 
- /*   if(RepInfo!=None && !RepInfo.bEnableWarmup)
-        bu_QuickRestart.DisableMe();
-    else
-       bu_QuickRestart.EnableMe();  */
     ne_NumPlayers.SetValue(RepInfo.MaxPlayersClone);
     NE_NumPlayersSetValue();
     ne_NumPlayers.MaxValue=RepInfo.ServerMaxPlayers;

@@ -14,15 +14,6 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
    // local mutator mut;
 
     l_Mode[2].Caption=class'MutUTComp'.default.FriendlyVersionPrefix $ class'Gameinfo'.Static.MakeColorCode(GoldColor) @ class'MutUTComp'.default.FriendlyVersionNumber;
-
-
-  /*  for ( mut=PlayerOwner().Level.Game.BaseMutator; mut!=None; mut=mut.NextMutator )
-	if ( mut.IsA('Forward_Mutator') )
-	{
-         i_UTCompLogo.Image = texture'ForwardLogo';
-         return;
-	}
-  */
 	Super.InitComponent(myController,MyOwner);
 }
 

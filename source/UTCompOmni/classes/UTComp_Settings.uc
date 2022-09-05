@@ -9,6 +9,7 @@ class UTComp_Settings extends Object
 #exec AUDIO IMPORT FILE=Sounds\HitSoundFriendly.wav    GROUP=Sounds
 
 var config bool bFirstRun;
+var config int Version;
 var config bool bStats;
 var config bool bEnableUTCompAutoDemorec;
 var config string DemoRecordingMask;
@@ -93,6 +94,7 @@ function CheckSettings() {
 
 defaultproperties
 {
+    Version=0
     bFirstRun=True
     bStats=False
     DemoRecordingMask="%d-(%t)-%m-%p"
@@ -105,7 +107,7 @@ defaultproperties
     CPMAPitchModifier=1.40
     SavedSpectateSpeed=800.00
     bShowSelfInTeamOverlay=True
-    bEnableEnhancedNetCode=True
+    bEnableEnhancedNetCode=False
     ballowcoloredmessages=True
     bEnableColoredNamesInTalk=True
     CurrentSelectedColoredName=255

@@ -1,5 +1,5 @@
 
-class NewNet_AssaultRiflePickup extends AssaultRiflePickup;
+class NewNet_AssaultRiflePickup extends UTComp_AssaultRiflePickup;
 
 defaultproperties
 {

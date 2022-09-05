@@ -65,5 +65,7 @@ function Projectile SpawnProjectile(Vector Start, Rotator Dir)
 
 DefaultProperties
 {
-
+    PickupClass=Class'UTComp_RocketLauncherPickup'
+    FireModeClass(0)=class'UTComp_RocketFire'
+    FireModeClass(1)=class'UTComp_RocketMultiFire'
 }

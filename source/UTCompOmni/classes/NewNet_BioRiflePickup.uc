@@ -1,5 +1,5 @@
 
-class NewNet_BioRiflePickup extends BioRiflePickup;
+class NewNet_BioRiflePickup extends UTComp_BioRiflePickup;
 
 defaultproperties
 {

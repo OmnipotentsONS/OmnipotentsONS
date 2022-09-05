@@ -27,6 +27,8 @@ simulated function ModeTick(float dt)
     local float score;
     local ONSPowerNode Node;
 
+    log("newNet_LinkFire");
+
     if(!bUseEnhancedNetCode || Instigator.Role < Role_Authority)
     {
         super.ModeTick(dt);

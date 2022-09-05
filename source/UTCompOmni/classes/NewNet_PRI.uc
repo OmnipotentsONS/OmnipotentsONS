@@ -22,7 +22,7 @@ var float PredictedPing;
 var float PingSendTime;
 var bool bPingReceived;
 var int numPings;
-var MutUTComp MutatorOwner;
+var UTComp_ServerReplicationInfo RepInfo;
 
 const PING_TWEEN_TIME = 3.0;
 
@@ -37,13 +37,13 @@ replication
 simulated function PostBeginPlay()
 {
     super.PostBeginPlay();
-    ForEach AllActors(class'MutUTComp', MutatorOwner)
+    ForEach DynamicActors(class'UTComp_ServerReplicationInfo', RepInfo)
         break;
     
-    if(MutatorOwner != none)
+    if(RepInfo != none)
     {
-        if(MutatorOwner.NewNetUpdateFrequency > 0)
-            NetUpdateFrequency=MutatorOwner.NewNetUpdateFrequency;
+        if(RepInfo.NewNetUpdateFrequency > 0)
+            NetUpdateFrequency=RepInfo.NewNetUpdateFrequency;
     }
 }
 

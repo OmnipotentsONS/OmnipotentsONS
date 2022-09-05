@@ -20,13 +20,11 @@ event Opened(GUIComponent Sender)
          case 1:  l_Vote[2].Caption="change Brightskins Mode"; break;
          case 2:  l_Vote[2].Caption="change Hitsounds Mode"; break;
          case 3:  l_Vote[2].Caption="change Team Overlay Mode"; break;
-         case 4:  l_Vote[2].Caption="change Warmup Mode"; break;
          case 5:  l_Vote[2].Caption="Restart The Map"; break;
          case 6:  l_Vote[2].Caption="Change Gametype"; break;
          case 7:  l_Vote[2].Caption="Change Map"; break;
          case 8:  l_Vote[2].Caption="Change DoubleDamage Mode"; break;
          case 9:  l_Vote[2].Caption="Change Enhanced Netcode Mode"; break;
-         case 10:  l_Vote[2].Caption="Change Forward Mode"; break;
          default:  l_Vote[2].Caption=""; break;
      }
      if(BS_xPlayer(PlayerOwner()).UTCompPRI.CurrentVoteID!=6 && BS_xPlayer(PlayerOwner()).UTCompPRI.CurrentVoteID!=7)

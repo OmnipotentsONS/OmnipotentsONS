@@ -24,7 +24,11 @@ var automated moComboBox co_CrosshairScale;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
+    local UTComp_ServerReplicationInfo RepInfo;
     super.InitComponent(MyController,MyOwner);
+
+    foreach PlayerOwner().DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo)
+        break;
 
     ch_UseScoreboard.Checked(!Settings.bUseDefaultScoreboard);
     ch_WepStats.Checked(class'UTComp_Scoreboard'.default.bDrawStats);
@@ -34,6 +38,12 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     ch_UseEyeHeightAlgo.Checked(Settings.bUseNewEyeHeightAlgorithm);
     ch_UseNewNet.Checked(Settings.bEnableEnhancedNetCode);
     ne_NetUpdateRate.SetValue(Settings.DesiredNetUpdateRate);
+    if(RepInfo != None && !RepInfo.bEnableEnhancedNetCode)
+    {
+        ch_UseNewNet.bVisible=false;
+        ne_NetUpdateRate.bVisible=false;
+        l_NewNet.Caption="-----------Net Code (server disabled)----------";
+    }
 }
 
 function InternalOnChange( GUIComponent C )

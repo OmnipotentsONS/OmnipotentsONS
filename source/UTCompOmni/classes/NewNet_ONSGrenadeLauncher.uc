@@ -1,5 +1,5 @@
 
-class NewNet_ONSGrenadeLauncher extends ONSGrenadeLauncher
+class NewNet_ONSGrenadeLauncher extends UTComp_ONSGrenadeLauncher
     HideDropDown
 	CacheExempt;
 

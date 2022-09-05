@@ -34,10 +34,7 @@ function Blehz()
     foreach PlayerOwner().DynamicActors(class'UTComp_ServerReplicationInfo', RepInfo)
         break;
 
-    if(RepInfo!=None && !RepInfo.bEnableWarmup)
-        bu_QuickRestart.DisableMe();
-    else
-       bu_QuickRestart.EnableMe();
+    bu_QuickRestart.DisableMe();
     if(RepInfo!=None && !RepInfo.bEnableMapVoting)
     {
         eb_MapInput.disableme();

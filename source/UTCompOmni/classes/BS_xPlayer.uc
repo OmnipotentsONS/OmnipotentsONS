@@ -29,7 +29,6 @@ var bool oldbShowScoreBoard;
 
 var sound LoadedEnemySound, LoadedFriendlySound;
 
-var UTComp_Warmup uWarmup;
 var UTComp_ServerReplicationInfo RepInfo;
 var UTComp_PRI UTCompPRI;
 
@@ -122,14 +121,14 @@ replication
     unreliable if(Role==Role_Authority)
         ReceiveHit, ReceiveStats, ReceiveHitSound;
     reliable if (Role==Role_Authority)
-        StartDemo, NotifyEndWarmup, SetClockTime, NotifyRestartMap, SetClockTimeOnly, SetEndTimeOnly, TimeBetweenUpdates;
+        StartDemo, SetClockTime, NotifyRestartMap, SetClockTimeOnly, SetEndTimeOnly, TimeBetweenUpdates;
     reliable if(Role<Role_Authority)
         SetbStats, TurnOffNetCode, ServerSetEyeHeightAlgorithm, ServerSetNetUpdateRate;
     unreliable if(Role<Role_Authority)
         ServerNextPlayer, ServerGoToPlayer, ServerFindNextNode,
         serverfindprevnode, servergotonode, ServerGoToWepBase, speclockRed, speclockBlue, ServerGoToTarget, CallVote;
     reliable if(Role<Role_Authority)
-        ServerAdminReady, BroadCastVote, BroadCastReady;
+        BroadCastVote, BroadCastReady;
 
     unreliable if(role < Role_Authority)
         RequestStats, RequestCTFStats;
@@ -294,15 +293,12 @@ event PlayerTick(float deltatime)
     if (RepInfo==None)
         foreach DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo)
             break;
-    if (uWarmup==None)
-        foreach Dynamicactors(class'UTComp_Warmup', uWarmup)
-            break;
+;
     if (UTCompPRI==None)
         UTCompPRI=class'UTComp_Util'.static.GetUTCompPRIFor(self);
     if (Level.NetMode!=NM_DedicatedServer && !Blah && PlayerReplicationInfo !=None && PlayerReplicationInfo.CustomReplicationInfo!=None && myHud !=None && RepInfo!=None && UTCompPRI!=None)
     {
-        if (uWarmup==None || !uWarmup.bInWarmup)
-            StartDemo();
+        StartDemo();
         InitializeStuff();
         blah=true;
     }
@@ -375,6 +371,14 @@ simulated function InitializeStuff()
         }
         SaveSettings();
     }
+    if(Settings.Version <= 0)
+    {
+        //with the new release we want to default to this being off
+        Settings.Version=1;
+        Settings.bEnableEnhancedNetCode=false;
+        Settings.SaveConfig();
+    }
+
     MatchHudColor();
     GetMapList();
 }
@@ -1903,9 +1907,7 @@ function bool IsValidVote(byte b, byte p, out string S, string S2)
         ClientMessage("Sorry, a vote is already in progress.");
         return false;
     }
-    if(uWarmup==None)
-        foreach DynamicActors(class'UTComp_Warmup', uWarmup)
-            break;
+ 
     if(b>10 || b<0)
     {
         ClientMessage("An Error occured, this is an invalid vote");
@@ -1931,18 +1933,6 @@ function bool IsValidVote(byte b, byte p, out string S, string S2)
         }
     }
     return true;
-}
-
-
-simulated function NotifyEndWarmup()
-{
-    NotReady(true);
-    if(GameReplicationInfo!=None)
-        SetClockTime(GameReplicationInfo.TimeLimit*60+1);
-    ResetEpicStats();
-    ResetUTCompStats();
-    StartDemo();
-    bInTimedOvertime=false;
 }
 
 simulated function NotifyRestartMap()
@@ -2036,9 +2026,6 @@ simulated function ResetEpicStats()
 
 simulated function SetClockTime(int iTime)
 {
-    if(uWarmup!=None && uWarmup.bInWarmup && PlayerReplicationInfo!=None)
-        ReceiveLocalizedMessage(class'UTComp_InWarmupMessage',,,,self);
-
     if(GameReplicationInfo!=None)
     {
         GameReplicationInfo.Remainingtime = iTime;
@@ -2063,11 +2050,6 @@ simulated function SetEndTimeOnly(int iTime)
     bInTimedOvertime=True;
 }
 
-exec function AdminReady()
-{
-    ServerAdminReady();
-}
-
 function BroadcastVote(bool b)
 {
     if(b)
@@ -2088,11 +2070,7 @@ function ServerAdminReady()
 {
     if(PlayerReplicationInfo!=None && PlayerReplicationInfo.bAdmin)
     {
-        if(uWarmup==None)
-            foreach DynamicActors(class'UTComp_Warmup', uWarmup)
-                break;
-        if(uWarmup!=None)
-            uWarmup.bAdminBypassReady=True;
+;
     }
 }
 
@@ -2621,10 +2599,8 @@ function ServerTeamSay( string Msg )
             return;
         }
     }
-    if(GameReplicationInfo.bTeamGame && IsCoaching() && PlayerReplicationInfo.bOnlySpectator)
-        SpecLockTeamSay(msg);
-    else
-        Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ) , 'TeamSay');
+
+    Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ) , 'TeamSay');
 }
 
 function SpecDMSay(string msg)
@@ -2640,19 +2616,7 @@ function SpecDMSay(string msg)
     }
 }
 
-function SpecLockTeamSay(string msg)
-{
-    local playercontroller P;
-    local controller C;
 
-    for(C=Level.ControllerList; C!=None; C=C.NextController)
-    {
-        P=PlayerController(C);
-        if(P!=None && P.PlayerReplicationInfo!=None && P.PlayerReplicationInfo.Team !=None && P.PlayerReplicationInfo.Team.TeamIndex==UTCompPRI.CoachTeam)
-            Level.Game.BroadcastHandler.BroadcastText(PlayerReplicationInfo, P, msg, 'coachteamsay');
-    }
-    Level.Game.BroadCastHandler.BroadCastText(PlayerReplicationInfo, self, msg, 'coachteamsay');
-}
 
 simulated function Message( PlayerReplicationInfo PRI, coerce string Msg, name MsgType )
 {
@@ -2683,16 +2647,6 @@ simulated function Message( PlayerReplicationInfo PRI, coerce string Msg, name M
             else
                 Msg = class'UTComp_Util'.Static.GetUTCompPRI(PRI).ColoredName$class'UTComp_Util'.Static.MakeColorCode(GreenMessageColor)$"("$PRI.GetLocationName()$"): "$Msg;
             LocalMessageClass2 = class'TeamSayMessagePlus';
-            break;
-
-        case 'CoachTeamSay':
-            if ( PRI == None )
-                return;
-            if(class'UTComp_Util'.Static.GetUTCompPRI(PRI)==None || class'UTComp_Util'.Static.GetUTCompPRI(PRI).ColoredName=="")
-                Msg = PRI.PlayerName$"("$PRI.GetLocationName()$"): "$Msg;
-            else
-                Msg = class'UTComp_Util'.Static.GetUTCompPRI(PRI).ColoredName$class'UTComp_Util'.Static.MakeColorCode(GrayMessageColor)$"("$PRI.GetLocationName()$"): "$Msg;
-            LocalMessageClass2 = class'CoachTeamSayMessagePlus';
             break;
 
         case 'CriticalEvent':
@@ -3005,20 +2959,20 @@ exec function GetWeapon(class<Weapon> NewWeaponClass )
             NewWeaponClass = class'UTComp_AssaultRifle';
         else if (NewWeaponClass == class'BioRifle')
             NewWeaponClass = class'UTComp_BioRifle';
-        // else if (NewWeaponClass == class'ClassicSniperRifle')
-        //     NewWeaponClass = class'UTComp_ClassicSniperRifle';
+        else if (NewWeaponClass == class'ClassicSniperRifle')
+             NewWeaponClass = class'UTComp_ClassicSniperRifle';
         else if (NewWeaponClass == class'FlakCannon')
             NewWeaponClass = class'UTComp_FlakCannon';
         else if (NewWeaponClass == class'LinkGun')
             NewWeaponClass = class'UTComp_LinkGun';
         else if (NewWeaponClass == class'MiniGun')
             NewWeaponClass = class'UTComp_MiniGun';
-        // else if (NewWeaponClass == class'ONSAvril')
-        //     NewWeaponClass = class'UTComp_ONSAvril';
-        // else if (NewWeaponClass == class'ONSGrenadeLauncher')
-        //     NewWeaponClass = class'UTComp_ONSGrenadeLauncher';
-        // else if (NewWeaponClass == class'ONSMineLayer')
-        //     NewWeaponClass = class'UTComp_ONSMineLayer';
+        else if (NewWeaponClass == class'ONSAvril')
+            NewWeaponClass = class'UTComp_ONSAvril';
+        else if (NewWeaponClass == class'ONSGrenadeLauncher')
+            NewWeaponClass = class'UTComp_ONSGrenadeLauncher';
+        else if (NewWeaponClass == class'ONSMineLayer')
+            NewWeaponClass = class'UTComp_ONSMineLayer';
         else if (NewWeaponClass == class'RocketLauncher')
             NewWeaponClass = class'UTComp_RocketLauncher';
         else if (NewWeaponClass == class'ShockRifle')

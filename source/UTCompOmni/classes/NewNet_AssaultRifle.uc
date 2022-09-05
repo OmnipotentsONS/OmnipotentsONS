@@ -84,6 +84,7 @@ simulated function DispatchClientEffect(Vector V, rotator R)
 
 DefaultProperties
 {
+    ItemName="NewNet AssaultRifle"
     FireModeClass(0)=class'NewNet_AssaultFire'
     FireModeClass(1)=class'NewNet_AssaultGrenade'
     PickupClass=Class'NewNet_AssaultRiflePickup'

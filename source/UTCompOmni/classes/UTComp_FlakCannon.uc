@@ -30,5 +30,7 @@ simulated function bool ReadyToFire(int Mode)
 
 DefaultProperties
 {
-
+    FireModeClass(0)=class'UTComp_FlakFire'
+    FireModeClass(1)=class'UTComp_FlakAltFire'
+    PickupClass=Class'UTComp_FlakCannonPickup'
 }

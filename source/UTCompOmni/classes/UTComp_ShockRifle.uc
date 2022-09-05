@@ -34,5 +34,7 @@ simulated function bool ReadyToFire(int Mode)
 
 DefaultProperties
 {
-
+    FireModeClass(0)=class'UTComp_ShockBeamFire'
+    FireModeClass(1)=class'UTComp_ShockProjFire'
+    PickupClass=Class'UTComp_ShockRiflePickup'
 }

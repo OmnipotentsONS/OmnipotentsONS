@@ -9,12 +9,8 @@ function DrawNetInfo(Canvas Canvas,int FontReduction,int HeaderOffsetY,int Playe
 	local float XL,YL;
 	local int i;
 	local bool bHaveHalfFont, bDrawFPH, bDrawPL;
+    local UTComp_PRI uPRI;
 
-        local UTComp_Warmup uWarmup;
-        local UTComp_PRI uPRI;
-
-        foreach dynamicactors(class'UTComp_Warmup', uWarmup)
-        break;
 	// draw admins
 	if ( GRI.bMatchHasBegun )
 	{
@@ -85,28 +81,7 @@ function DrawNetInfo(Canvas Canvas,int FontReduction,int HeaderOffsetY,int Playe
     	uPRI=class'UTComp_Util'.static.GetUTCompPRI(PRIArray[i]);
         if ( !PRIArray[i].bAdmin && !PRIArray[i].bOutOfLives )
  			{
- 				if ( bDrawPL && uWarmup!=None && uWarmup.bInWarmup)
- 				{
-					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY - 1.9 * YL);
-					Canvas.DrawText(PingText@Min(999,4*PRIArray[i].Ping),true);
-					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY - 0.9 * YL);
-					Canvas.DrawText(PLText@PRIArray[i].PacketLoss,true);
-
-					if (uPRI.bisReady == False)
-				        {
-                                        Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY + 0.1 * YL);
-                                        Canvas.DrawText("Not Ready",true);
-			                }
-                                        else
-				        {
-                                           Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY + 0.1 * YL);
-                                           Canvas.DrawText("Ready",true);
-                                        }
-					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY + 1.1 * YL);
-					Canvas.DrawText(FormatTime(Max(0,FPHTime - PRIArray[i].StartTime)),true);
-				}
-
- 				else if ( bDrawPL )
+ 				if ( bDrawPL )
  				{
 					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY - 1.9 * YL);
 					Canvas.DrawText(PingText@Min(999,4*PRIArray[i].Ping),true);
@@ -117,25 +92,7 @@ function DrawNetInfo(Canvas Canvas,int FontReduction,int HeaderOffsetY,int Playe
 					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY + 1.1 * YL);
 					Canvas.DrawText(FormatTime(Max(0,FPHTime - PRIArray[i].StartTime)),true);
 				}
-
-				else if (bDrawFPH && uWarmup!=None && uWarmup.bInWarmup)
-				{
-					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY - 1.4 * YL);
-					Canvas.DrawText(PingText@Min(999,4*PRIArray[i].Ping),true);
-					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY - 0.5 * YL);
-					if (uPRI.bisReady == False)
-				        {
-                                        Canvas.DrawText("Not Ready",true);
-			                }
-                                        else
-				        {
-                                        Canvas.DrawText("Ready",true);
-                                        }
-					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY + 0.5 * YL);
-					Canvas.DrawText(FormatTime(Max(0,FPHTime - PRIArray[i].StartTime)),true);
-                                }
-
-                                else if ( bDrawFPH )
+                else if ( bDrawFPH )
  				{
 					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY - 1.4 * YL);
 					Canvas.DrawText(PingText@Min(999,4*PRIArray[i].Ping),true);
@@ -144,23 +101,6 @@ function DrawNetInfo(Canvas Canvas,int FontReduction,int HeaderOffsetY,int Playe
 					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY + 0.5 * YL);
 					Canvas.DrawText(FormatTime(Max(0,FPHTime - PRIArray[i].StartTime)),true);
 				}
-
-
-                                else if ( bHaveHalfFont && uWarmup!=None && uWarmup.bInWarmup)
-				{
-					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY - YL);
-					Canvas.DrawText(PingText@Min(999,4*PRIArray[i].Ping),true);
-					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY);
-					if (uPRI.bisReady == False)
-			                {
-                                           Canvas.DrawText("Not Ready",true);
-		                        }
-                                        else
-			                {
-                                           Canvas.DrawText("Ready",true);
-                                        }
-				}
-
 				else if ( bHaveHalfFont )
 				{
 					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY - YL);

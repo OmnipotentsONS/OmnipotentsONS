@@ -78,7 +78,7 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
     {
         if(Item.IsA('ShieldPack'))
         {
-            if(!Level.Game.bTeamGame || !Other.IsA('xPawn') || xPawn(Other).CanUseShield(50)!=0 || Other.IsA('Forward_Pawn'))
+            if(!Level.Game.bTeamGame || !Other.IsA('xPawn') || xPawn(Other).CanUseShield(50)!=0)
             {
                 uPRI.PickedUpFifty++;
             }
@@ -88,9 +88,9 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
             uPRI.PickedUpHundred++;
             LogPickup(other, item);
         }
-        else if(Item.IsA('SuperHealthPack') || Item.IsA('Forward_MiniSuperHealth'))
+        else if(Item.IsA('SuperHealthPack'))
         {
-            if(Other.Health<Other.SuperHealthMax || Other.IsA('Forward_Pawn'))
+            if(Other.Health<Other.SuperHealthMax)
             {
                 uPRI.PickedUpKeg++;
                 LogPickup(other, item);
@@ -357,9 +357,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
         return true;
     }
 
-    if(UTCompMutator.WarmupClass!=None && UTCompMutator.WarmupClass.bInWarmup)
-        return false;
-    if(UTCompMutator.bEnableTimedOvertime && Level.Game.bOverTime && !Level.Game.IsA('UTComp_ClanArena'))
+    if(UTCompMutator.bEnableTimedOvertime && Level.Game.bOverTime)
     {
         if(!OvertimeOver())
             return false;
@@ -384,14 +382,9 @@ function bool OvertimeOver()
 
 function UpdateClock(float F)
 {
-    if(UTCompMutator!=None && UTCompMutator.WarmupClass!=None)
+    if(bFirstEndOT && F<=0.0)
     {
-        UTCompMutator.WarmupClass.SetClientTimerOnly(int(Round(F)));
-        if(bFirstEndOT && F<=0.0)
-        {
-            UTCompMutator.WarmupClass.SetEndTimeOnly(int(Round(F)));
-            bFirstEndOt=False;
-        }
+        bFirstEndOt=False;
     }
 }
 

@@ -1,5 +1,5 @@
 
-class NewNet_RocketLauncherPickup extends RocketLauncherPickup;
+class NewNet_RocketLauncherPickup extends UTComp_RocketLauncherPickup;
 
 defaultproperties
 {

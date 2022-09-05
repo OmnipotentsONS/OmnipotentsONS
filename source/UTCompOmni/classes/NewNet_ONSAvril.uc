@@ -1,5 +1,5 @@
 
-class NewNet_ONSAvril extends ONSAvril
+class NewNet_ONSAvril extends UTComp_ONSAVRiL
     HideDropDown
 	CacheExempt;
 

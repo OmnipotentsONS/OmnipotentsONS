@@ -1,5 +1,5 @@
 
-class NewNet_MiniGunPickup extends MiniGunPickup;
+class NewNet_MiniGunPickup extends UTComp_MiniGunPickup;
 
 defaultproperties
 {

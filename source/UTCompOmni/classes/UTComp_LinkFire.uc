@@ -26,7 +26,9 @@ simulated function PostBeginPlay()
 {
     super.PostBeginPlay();
 
-    RepInfo = UTComp_LinkGun(Weapon).GetRepInfo();
+    if(UTComp_LinkGun(Weapon) != none)
+        RepInfo = UTComp_LinkGun(Weapon).GetRepInfo();
+
     if(RepInfo != None)
     {
         VehicleHealScore=RepInfo.VehicleHealScore;

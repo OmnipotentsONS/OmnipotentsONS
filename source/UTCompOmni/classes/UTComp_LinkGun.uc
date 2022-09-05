@@ -44,5 +44,7 @@ simulated function UTComp_ServerReplicationInfo GetRepInfo()
 
 DefaultProperties
 {
-
+    FireModeClass(0)=class'UTComp_LinkAltFire'
+    FireModeClass(1)=class'UTComp_LinkFire'
+    PickupClass=Class'UTComp_LinkGunPickup'
 }

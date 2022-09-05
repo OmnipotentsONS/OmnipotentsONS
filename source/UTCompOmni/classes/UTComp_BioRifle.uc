@@ -30,5 +30,7 @@ simulated function bool ReadyToFire(int Mode)
 
 DefaultProperties
 {
-
+    FireModeClass(0)=class'UTComp_BioFire'
+    FireModeClass(1)=class'UTComp_BioChargedFire'
+    PickupClass=Class'UTComp_BioRiflePickup'
 }

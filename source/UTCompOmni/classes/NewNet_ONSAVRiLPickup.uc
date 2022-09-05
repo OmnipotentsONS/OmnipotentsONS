@@ -1,5 +1,5 @@
 
-class NewNet_ONSAVRiLPickup extends ONSAVRiLPickup;
+class NewNet_ONSAVRiLPickup extends UTComp_ONSAVRiLPickup;
 
 DefaultProperties
 {

@@ -10,7 +10,6 @@ var bool bEnablePowerupsOverlay;
 var bool bEnableExtraHudClock;
 var byte EnableHitSoundsMode;
 var bool bEnableScoreboard;
-var bool bEnableWarmup;
 var bool bEnableWeaponStats;
 var bool bEnablePowerupStats;
 var bool benableDoubleDamage;
@@ -19,7 +18,6 @@ var bool bEnableTimedOvertimeVoting;
 
 var bool bEnableBrightskinsVoting;
 var bool bEnableHitsoundsVoting;
-var bool bEnableWarmupVoting;
 var bool bEnableTeamOverlayVoting;
 var bool bEnablePowerupsOverlayVoting;
 var bool bEnableMapVoting;
@@ -36,8 +34,6 @@ var bool bEnableTimedOvertime;
 var PlayerReplicationInfo LinePRI[10];
 var bool bEnableEnhancedNetCode;
 var bool bEnableEnhancedNetCodeVoting;
-var bool bForward;
-var bool bEnableForwardVoting;
 
 var bool bShieldFix;
 var bool bAllowRestartVoteEvenIfMapVotingIsTurnedOff;
@@ -45,6 +41,8 @@ var bool bAllowRestartVoteEvenIfMapVotingIsTurnedOff;
 var int MaxMultiDodges;
 var int MinNetSpeed;
 var int MaxNetSpeed;
+
+var int NewNetUpdateFrequency;
 
 var int NodeIsolateBonusPct;
 var int VehicleHealScore;
@@ -61,12 +59,12 @@ replication
     reliable if(Role==Role_Authority)
         bEnableVoting, EnableBrightSkinsMode, EnableHitSoundsMode,
         bEnableClanSkins, bEnableTeamOverlay, bEnablePowerupsOverlay,
-        bEnableWarmup, bEnableBrightskinsVoting,
+        bEnableBrightskinsVoting,
         bEnableHitsoundsVoting, bEnableTeamOverlayVoting, bEnablePowerupsOverlayVoting,
         bEnableMapVoting, bEnableGametypeVoting, VotingNames,
         benableDoubleDamage, ServerMaxPlayers, bEnableTimedOvertime,
         MaxPlayersClone, bEnableAdvancedVotingOptions, VotingOptions, LinePRI, bEnableTimedOvertimeVoting,
-        bEnableEnhancedNetCodeVoting,bEnableEnhancedNetCode, bEnableWarmupVoting, bForward, bEnableForwardVoting,
+        bEnableEnhancedNetCodeVoting,bEnableEnhancedNetCode,NewNetUpdateFrequency,
         bAllowRestartVoteEvenIfMapVotingIsTurnedOff, MaxMultiDodges, MinNetSpeed, MaxNetSpeed,
         NodeIsolateBonusPct, VehicleHealScore, PowerNodeScore, PowerCoreScore, NodeHealBonusPct, 
         bNodeHealBonusForLockedNodes, bNodeHealBonusForConstructor, bEnableReady;
@@ -81,12 +79,10 @@ defaultproperties
      bEnablePowerupsOverlay=True;
      EnableHitSoundsMode=1
      bEnableScoreboard=False
-     bEnableWarmup=True
      bEnableWeaponStats=True
      bEnablePowerupStats=True
      bEnableBrightskinsVoting=True
      bEnableHitsoundsVoting=False
-     bEnableWarmupVoting=True
      bEnableTeamOverlayVoting=True
      bEnablePowerupsOverlayVoting=True;
      bEnableMapVoting=True
@@ -95,6 +91,7 @@ defaultproperties
      ServerMaxPlayers=10
      bEnableTimedOvertimeVoting=True
      bEnableTimedOvertime=False
+     NewNetUpdateFrequency=200
 
      NodeIsolateBonusPct=20
      VehicleHealScore=500

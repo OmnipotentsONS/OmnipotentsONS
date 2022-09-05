@@ -1,5 +1,5 @@
 
-class NewNet_ClassicSniperRifle extends ClassicSniperRifle
+class NewNet_ClassicSniperRifle extends UTComp_ClassicSniperRifle
     HideDropDown
 	CacheExempt;
 

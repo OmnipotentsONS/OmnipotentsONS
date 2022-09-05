@@ -237,6 +237,34 @@ function AddPawnToList(Pawn Other)
        Next.AddPawnToList(Other);
 }
 
+//snarf
+function PawnCollisionCopy RemovePawnFromList(Pawn Other, PawnCollisionCopy Head)
+{
+    local PawnCollisionCopy Current, Previous;
+    Current = Head;
+    while(Current != None)
+    {
+        if(Current.CopiedPawn == Other)
+        {
+            if(Previous == None)
+            {
+                Head = Current.Next;
+            }
+            else
+            {
+                Previous.Next = Current.Next;
+            }
+            Current.LinkMesh(None);
+            Current.Destroy();
+            return Head;
+        }
+
+        Current = Current.Next;
+    }
+
+    return Head;
+}
+
 //Remove old pawns, returns what Next should be for the caller
 //PawnCollisionCopies
 function PawnCollisionCopy RemoveOldPawns()

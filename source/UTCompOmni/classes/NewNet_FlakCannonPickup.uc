@@ -1,5 +1,5 @@
 
-class NewNet_FlakCannonPickup extends FlakCannonPickup;
+class NewNet_FlakCannonPickup extends UTComp_FlakCannonPickup;
 
 defaultproperties
 {

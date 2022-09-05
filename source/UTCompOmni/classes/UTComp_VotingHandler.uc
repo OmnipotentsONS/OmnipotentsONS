@@ -106,16 +106,6 @@ function TakeActionOnVote(byte VoteType, byte VoteSwitch, string Options)
         UTCompMutator.default.bEnableTeamOverlay=(VoteSwitch==1);
         UTCompMutator.RepInfo.bEnableTeamOverlay=(VoteSwitch==1);
     }
-    else if(VoteType==4 && UTCompMutator.bEnableWarmupVoting)
-    {
-        UTCompMutator.bEnableWarmup=(VoteSwitch==1);
-        UTCompMutator.default.bEnableWarmup=(VoteSwitch==1);
-        UTCompMutator.RepInfo.bEnableWarmup=(VoteSwitch==1);
-    }
-    else if(VoteType==5 && UTCompMutator.WarmupClass!=None && (UTCompMutator.bEnableMapVoting || UTCompMutator.bAllowRestartVoteEvenIfMapVotingIsTurnedOff) )
-    {
-        UTCompMutator.WarmupClass.SoftRestart();
-    }
     else if(VoteType==6 && UTCompMutator.bEnableGameTypeVoting && UTCompMutator.bEnableMapVoting)
     {
         if ((UTCompMutator.bForceMapVoteMatchPrefix && !MatchesGametypePrefix(sVotingOptions, UTCompMutator.VotingGameType[Voteswitch].GameTypeOptions))
@@ -347,11 +337,7 @@ function TakeActionOnVote(byte VoteType, byte VoteSwitch, string Options)
         UTCompMutator.default.bEnableEnhancedNetCode=(VoteSwitch==1);
         UTCompMutator.RepInfo.bEnableEnhancedNetCode=(VoteSwitch==1);
     }
-    else if(VoteType==10 && UTCompMutator.bEnableForwardVoting)
-    {
-        UTCompMutator.bForward=(VoteSwitch==1);
-        UTCompMutator.default.bForward=(VoteSwitch==1);
-    }
+
     UTCompMutator.static.StaticSaveConfig();
 }
 

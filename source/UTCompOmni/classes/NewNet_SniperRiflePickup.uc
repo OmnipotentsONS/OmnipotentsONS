@@ -1,5 +1,5 @@
 
-class NewNet_SniperRiflePickup extends SniperRiflePickup;
+class NewNet_SniperRiflePickup extends UTComp_SniperRiflePickup;
 
 defaultproperties
 {
