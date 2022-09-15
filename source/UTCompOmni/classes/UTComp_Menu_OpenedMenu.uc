@@ -44,22 +44,8 @@ function RandomCrap()
     else
        l_Mode[5].Caption =class'GameInfo'.Static.MakeColorCode(GoldColor)$"Enhanced Netcode:"$class'GameInfo'.Static.MakeColorCode(WhiteColor)$" Disabled";
 
-    if(!RepInfo.bEnableReady)
-    {
-        bu_Ready.bVisible=false;
-        bu_NotReady.bVisible=false;
-    }
-
-   if(!PlayerOwner().PlayerReplicationInfo.bOnlySpectator)
-   {
-     bu_Ready.Caption="Ready";
-     bu_NotReady.Caption="Not Ready";
-   }
-   else
-   {
-     bu_Ready.Caption="Coach Red";
-     bu_NotReady.Caption="Coach Blue";
-   }
+    bu_Ready.bVisible=false;
+    bu_NotReady.bVisible=false;
 }
 
 event opened(GUIComponent Sender)

@@ -13,7 +13,7 @@ simulated function ModeTick(float dt)
 	local Vector HitLocation, HitNormal, EndEffect;
 	local Actor Other;
 	local Rotator Aim;
-	local NewNet_LinkGun LinkGun;
+	local UTComp_LinkGun LinkGun;
 	local float Step, ls;
 	local bot B;
 	local bool bShouldStop, bIsHealingObjective;
@@ -39,7 +39,7 @@ simulated function ModeTick(float dt)
         return;
     }
 
-    LinkGun = NewNet_LinkGun(Weapon);
+    LinkGun = UTComp_LinkGun(Weapon);
 
     if ( LinkGun.Links < 0 )
     {

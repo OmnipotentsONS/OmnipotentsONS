@@ -4,5 +4,6 @@ class UTComp_ONSAVRiL extends ONSAVRiL
 
 defaultproperties
 {
-    FireModeClass(0)=class'UTComp_ONSAvrilFire'
+    FireModeClass(0)=class'UTComp_ONSAVRiLFire'
+    PickupClass=class'UTComp_ONSAVRiLPickup'
 }

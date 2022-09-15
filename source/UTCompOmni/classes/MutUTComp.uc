@@ -66,6 +66,7 @@ var config int SuicideInterval;
 
 var config int NodeIsolateBonusPct;
 var config int VehicleHealScore;
+var config int VehicleDamagePoints;
 var config int PowerCoreScore;
 var config int PowerNodeScore;
 var config int NodeHealBonusPct;
@@ -73,8 +74,6 @@ var config bool bNodeHealBonusForLockedNodes;
 var Config bool bNodeHealBonusForConstructor;
 
 var config int NewNetUpdateFrequency;
-
-var bool bEnableReady;
 
 
 struct MapVotePair
@@ -462,6 +461,44 @@ function DriverLeftVehicle(Vehicle V, Pawn P)
 }
 */
 
+function DriverEnteredVehicle(Vehicle V, Pawn P)
+{
+    local PawnCollisionCopy C;
+    C = PCC;
+    while(C != None)
+    {
+        if(C.CopiedPawn == P)
+        {
+            C.SetPawn(V);
+            break;
+        }
+        C = C.Next;
+    }
+
+    if( NextMutator != none )
+		NextMutator.DriverEnteredVehicle(V, P);
+}
+
+//snarf attempt to fix crashing
+//this does fix crashing but there is performance degradation
+function DriverLeftVehicle(Vehicle V, Pawn P)
+{
+    local PawnCollisionCopy C;
+    C = PCC;
+    while(C != None)
+    {
+        if(C.CopiedPawn == V)
+        {
+            C.SetPawn(P);
+            break;
+        }
+        C = C.Next;
+    }
+
+    if( NextMutator != none )
+		NextMutator.DriverLeftVehicle(V, P);
+}
+
 function SpawnCollisionCopy(Pawn Other)
 {
 
@@ -530,7 +567,8 @@ simulated function Tick(float DeltaTime)
     local Mutator M;
     local int x;
 
-    if(Level.NetMode==NM_DedicatedServer)
+    //if(Level.NetMode==NM_DedicatedServer)
+    if(Level.NetMode==NM_DedicatedServer || Level.NetMode == NM_ListenServer)
     {
         if(bEnhancedNetCodeEnabledAtStartOfMap)
         {
@@ -665,6 +703,7 @@ function SpawnReplicationClass()
     RepInfo.NewNetUpdateFrequency = NewNetUpdateFrequency;
     RepInfo.NodeIsolateBonusPct=NodeIsolateBonusPct;
     RepInfo.VehicleHealScore=VehicleHealScore;
+    RepInfo.VehicleDamagePoints=VehicleDamagePoints;
     RepInfo.PowerCoreScore=PowerCoreScore;
     RepInfo.PowerNodeScore=PowerNodeScore;
     RepInfo.NodeHealBonusPct=NodeHealBonusPct;
@@ -681,10 +720,7 @@ function SpawnReplicationClass()
     || Level.Game.IsA('xMutantGame') || Level.Game.IsA('xLastManStandingGame') || Level.Game.IsA('xDoubleDom') || Level.Game.IsA('Invasion'))
     {
        bEnableTimedOvertime=False;
-       bEnableReady=False;
     }
-
-    RepInfo.bEnableReady = bEnableReady;
 }
 
 function PostBeginPlay()
@@ -713,6 +749,9 @@ function PostBeginPlay()
         ONSGameRules = Spawn(Class'UTComp_ONSGameRules', self);
         ONSGameRules.OPInitialise();
         Level.Game.AddGameModifier(ONSGameRules);
+
+		ONSOnslaughtGame(Level.Game).GameUMenuType = string(Class'UTComp_ONSLoginMenu');
+
     }
 
     if(StampInfo == none && bEnhancedNetCodeEnabledAtStartOfMap)
@@ -1019,7 +1058,7 @@ function ServerTraveling(string URL, bool bItems)
 
     class'Onslaught.ONSGrenadeLauncher'.default.FireModeClass[0] =Class'UTComp_ONSGrenadeFire';
 
-    class'OnsLaught.ONSAvril'.default.FireModeClass[0] =Class'Onslaught.ONSAvrilFire';
+    class'Onslaught.ONSAVRiL'.default.FireModeClass[0] =Class'Onslaught.ONSAVRiLFire';
 
     class'xWeapons.SuperShockRifle'.default.FireModeClass[0]=class'xWeapons.SuperShockBeamFire';
     class'xWeapons.SuperShockRifle'.default.FireModeClass[1]=class'xWeapons.SuperShockBeamFire';
@@ -1401,6 +1440,7 @@ defaultproperties
      //ONS
      NodeIsolateBonusPct=20
      VehicleHealScore=500
+     VehicleDamagePoints=400
      PowerCoreScore=10
      PowerNodeScore=5
      NodeHealBonusPct=60
@@ -1409,9 +1449,9 @@ defaultproperties
 
      NewNetUpdateFrequency=200
 
-     FriendlyName="UTComp Version 1.22 (Omni)"
+     FriendlyName="UTComp Version 1.26 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.22"
+     FriendlyVersionNumber=")o(mni 1.26"
      Description="A mutator for brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
@@ -1425,7 +1465,6 @@ defaultproperties
      bEnableEnhancedNetCodeVoting=false
      MinNetUpdateRate=60
      MaxNetUpdateRate=250
-     bEnableReady=true
 
      //original weapons
      WeaponClassNames(0)="xWeapons.ShockRifle"

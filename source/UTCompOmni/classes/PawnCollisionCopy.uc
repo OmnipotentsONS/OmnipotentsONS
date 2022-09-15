@@ -27,7 +27,7 @@ struct PawnHistoryElement
     var rotator Rotation;
     var bool bCrouched;
     var float TimeStamp;
-    var EPhysics Physics;
+//    var EPhysics Physics;
 };
 
 var array<PawnHistoryElement> PawnHistory;
@@ -67,7 +67,10 @@ function SetPawn(Pawn Other)
     if(!bUseCylinderCollision)
         LinkMesh(CopiedPawn.Mesh);
     else
+    {
+        LinkMesh(None); //if there was a mesh linked, unlink it
         SetCollisionSize(CopiedPawn.CollisionRadius, CopiedPawn.CollisionHeight);
+    }
 }
 
 /*
@@ -312,6 +315,7 @@ function tick(float DeltaTime)
 {
     if(CopiedPawn==None)
         return;
+
     AddHistory();
     RemoveOutdatedHistory();
 }
@@ -327,7 +331,7 @@ function AddHistory()
     PawnHistory[i].Rotation = CopiedPawn.Rotation;
     PawnHistory[i].bCrouched = CopiedPawn.bIsCrouched;
     PawnHistory[i].TimeStamp = M.ClientTimeStamp;
-    PawnHistory[i].Physics = CopiedPawn.Physics;
+    //PawnHistory[i].Physics = CopiedPawn.Physics;
 
     XPoint.InVal = M.ClientTimeStamp;
     XPoint.OutVal = CopiedPawn.Location.X;

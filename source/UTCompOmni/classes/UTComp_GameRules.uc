@@ -17,19 +17,7 @@ function int NetDamage( int OriginalDamage, int Damage, pawn injured, pawn insti
     {
         if(UTCompMutator.EnableHitSoundsMode>0)
         {
-            if(BS_xPlayer(InstigatedBy.Controller).bWantsStats && UTCompMutator.bEnableWeaponStats)
-                BS_xPlayer(InstigatedBy.Controller).ReceiveHit(DamageType, Damage, Injured);
-            else  //send less info
-            {
-                if(InstigatedBy==Injured)
-                    HitSoundType=0;
-                else if(InstigatedBy.GetTeamNum()==255 || InstigatedBy.GetTeamNum() != Injured.GetTeamNum())
-                    HitSoundType=1;
-                else
-                    HitSoundType=2;
-                if(InstigatedBy.LineOfSightTo(Injured))
-                    BS_xPlayer(InstigatedBy.Controller).ReceiveHitSound(Damage, HitSoundType);
-            }
+            BS_xPlayer(InstigatedBy.Controller).ReceiveHit(DamageType, Damage, Injured);
 
             if(InstigatedBy==Injured)
                 HitSoundType=0;

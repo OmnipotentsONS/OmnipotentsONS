@@ -116,6 +116,8 @@ var float LastWeaponEffectSent;
 
 var float LastVRequestTime;
 
+var UTComp_NodeDamageHook NodeDamageHook;
+
 replication
 {
     unreliable if(Role==Role_Authority)
@@ -149,7 +151,8 @@ replication
 simulated function SaveSettings()
 {
     Log("Saving settings");
-    Settings.SaveConfig();
+    //Settings.SaveConfig();
+    Settings.Save();
     HUDSettings.SaveConfig();
 }
 
@@ -241,6 +244,47 @@ simulated function PostBeginPlay()
 
     if (HUDSettings == none)
         HUDSettings = new(none, "ClientHUDSettings") class'UTComp_HUDSettings';
+
+    if(NodeDamageHook == None)
+    {
+        NodeDamageHook = spawn(class'UTComp_NodeDamageHook', self);
+        NodeDamageHook.Tag = 'UTComp_ONSNodeDamaged';
+    }
+}
+
+simulated function PostNetBeginPlay()
+{
+    super.PostNetBeginPlay();
+
+    //snarf
+    //instance is used globally by all newnet weapons
+    class'UTComp_Settings'.default.instance = Settings;
+
+    SetInitialNetSpeed();
+}
+
+simulated function Destroyed()
+{
+    if(NodeDamageHook != none)
+    {
+        NodeDamageHook.Destroy();
+        NodeDamageHook = none;
+    }
+
+    super.Destroyed();
+}
+
+simulated function SetInitialNetSpeed()
+{
+    local int netspeed;
+    if(Role < ROLE_Authority)
+    {
+        netspeed = class'Player'.default.ConfiguredInternetSpeed;
+        if(netspeed > 10000)
+        {
+            ConsoleCommand("netspeed "$netspeed);
+        }
+    }
 }
 
 // Variable PlayerInput of Engine.PlayerController is private.
@@ -276,7 +320,7 @@ simulated function ChangeDeathMessageOrder()
         class'DamTypeHoverBikeHeadshot'.default.DeathString = "%o was run over by %k";
         class'DamRanOver'.default.DeathString = "%o was run over by %k";
         class'DamTypeHoverBikePlasma'.default.DeathString ="%o was killed by %k with a Manta's Plasma.";
-        class'DamTypeONSAvriLRocket'.default.DeathString="%o was blown away by %k with an Avril.";
+        class'DamTypeONSAVRiLRocket'.default.DeathString="%o was blown away by %k with an Avril.";
         class'DamTypeONSVehicleExplosion'.default.DeathString="%o was taken out by %k with a vehicle explosion.";
         class'DamTypePRVLaser'.default.DeathString="%o was laser shocked by %k";
         class'DamTypeRoadkill'.default.DeathString="%o was run over by %k";
@@ -378,7 +422,8 @@ simulated function InitializeStuff()
         Settings.bEnableEnhancedNetCode=false;
         Settings.PreferredSkinColorRedTeammate=3;
         Settings.PreferredSkinColorBlueEnemy=3;
-        Settings.SaveConfig();
+        //Settings.SaveConfig();
+        Settings.Save();
     }
 
     MatchHudColor();
@@ -2942,8 +2987,8 @@ exec function GetWeapon(class<Weapon> NewWeaponClass )
             NewWeaponClass = class'NewNet_LinkGun';
         else if (NewWeaponClass == class'MiniGun')
             NewWeaponClass = class'NewNet_MiniGun';
-        else if (NewWeaponClass == class'ONSAvril')
-            NewWeaponClass = class'NewNet_ONSAvril';
+        else if (NewWeaponClass == class'ONSAVRiL')
+            NewWeaponClass = class'NewNet_ONSAVRiL';
         else if (NewWeaponClass == class'ONSGrenadeLauncher')
             NewWeaponClass = class'NewNet_ONSGrenadeLauncher';
         else if (NewWeaponClass == class'ONSMineLayer')
@@ -2969,8 +3014,8 @@ exec function GetWeapon(class<Weapon> NewWeaponClass )
             NewWeaponClass = class'UTComp_LinkGun';
         else if (NewWeaponClass == class'MiniGun')
             NewWeaponClass = class'UTComp_MiniGun';
-        else if (NewWeaponClass == class'ONSAvril')
-            NewWeaponClass = class'UTComp_ONSAvril';
+        else if (NewWeaponClass == class'ONSAVRiL')
+            NewWeaponClass = class'UTComp_ONSAVRiL';
         else if (NewWeaponClass == class'ONSGrenadeLauncher')
             NewWeaponClass = class'UTComp_ONSGrenadeLauncher';
         else if (NewWeaponClass == class'ONSMineLayer')
@@ -3180,7 +3225,7 @@ function UTComp_ReplicateMove(
 ) {
     local SavedMove NewMove, OldMove, AlmostLastMove, LastMove;
     local byte ClientRoll;
-    local float OldTimeDelta;
+    local float OldTimeDelta, NetMoveDelta;
     local int OldAccel;
     local vector BuildAccel, AccelNorm, MoveLoc, CompareAccel;
     local bool bPendingJumpStatus;
@@ -3301,9 +3346,34 @@ function UTComp_ReplicateMove(
 
     if (PendingMove == None) {
         // Decide whether to hold off on move
-        if ((Level.TimeSeconds - ClientUpdateTime) * Level.TimeDilation * 0.91 < TimeBetweenUpdates) {
-            PendingMove = NewMove;
-            return;
+        //snarf check useNewNet
+        if(RepInfo != None && RepInfo.bEnableEnhancedNetCode)
+        {
+            //snarf only use TimeBetweenUpdates if client net speed > 10000
+            if (Player.CurrentNetSpeed > 10000)
+                NetMoveDelta = TimeBetweenUpdates;
+            else
+                NetMoveDelta = FMax(0.0222,2 * Level.MoveRepSize/Player.CurrentNetSpeed);
+
+            //if ((Level.TimeSeconds - ClientUpdateTime) * Level.TimeDilation * 0.91 < TimeBetweenUpdates) {
+            if ((Level.TimeSeconds - ClientUpdateTime) * Level.TimeDilation * 0.91 < NetMoveDelta) {
+                PendingMove = NewMove;
+                return;
+            }
+        }
+        else
+        {
+            //snarf use old calc from PlayerController
+            if ( (Player.CurrentNetSpeed > 10000) && (GameReplicationInfo != None) && (GameReplicationInfo.PRIArray.Length <= 10) )
+                NetMoveDelta = 0.011;
+            else
+                NetMoveDelta = FMax(0.0222,2 * Level.MoveRepSize/Player.CurrentNetSpeed);
+
+            if ( (Level.TimeSeconds - ClientUpdateTime) * Level.TimeDilation * 0.91 < NetMoveDelta )
+            {
+                PendingMove = NewMove;
+                return;
+            }
         }
     }
 
@@ -3905,4 +3975,7 @@ defaultproperties
 
      TimeBetweenUpdates=0.0111111;
      LastWeaponEffectSent=-1
+
+     LoadedEnemySound=sound'UTCompOmni.Sounds.HitSound'
+     LoadedFriendlySound=sound'UTCompOmni.Sounds.HitSoundFriendly'
 }

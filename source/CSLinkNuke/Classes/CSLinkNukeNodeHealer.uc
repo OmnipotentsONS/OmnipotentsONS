@@ -172,9 +172,10 @@ function bool HealNode()
         return false;
     }
 
-    PowerNode.Health = Min(PowerNode.Health + healthInc * PowerNode.LinkHealMult, PowerNode.DamageCapacity);
+    Amount = healthInc * PowerNode.LinkHealMult;
+    PowerNode.Health = Min(PowerNode.Health + Amount, PowerNode.DamageCapacity);
 	if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None)
-		ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(float(Amount) / PowerNode.DamageCapacity * PowerNode.Score);
+		ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(Amount * 0.5 / PowerNode.DamageCapacity * PowerNode.Score);
 
 	PowerNode.NetUpdateTime = Level.TimeSeconds - 1;
     PowerNode.HealingTime = Level.TimeSeconds;

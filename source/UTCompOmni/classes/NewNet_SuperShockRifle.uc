@@ -232,7 +232,6 @@ function bool IsReasonable(Vector V)
 
 DefaultProperties
 {
-    ItemName="NewNet SSR"
     FireModeClass(0)=class'NewNet_SuperShockBeamFire'
     FireModeClass(1)=class'NewNet_SuperShockBeamFire'
 }

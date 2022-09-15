@@ -10,7 +10,8 @@ var UTComp_HUDSettings HUDSettings;
 simulated function SaveSettings()
 {
     Log("Saving settings");
-    Settings.SaveConfig();
+    //Settings.SaveConfig();
+    Settings.Save();
 }
 
 simulated function SaveHUDSettings()

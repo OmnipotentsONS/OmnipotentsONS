@@ -74,6 +74,7 @@ var config bool bEnemyBasedModels;
 var config bool bUseNewEyeHeightAlgorithm;
 var config float DesiredNetUpdateRate;
 
+var UTComp_Settings instance;
 //var config bool bEnemyBasedSkins;
 //this messes up team games when changing teams if turned on, hard code it for now
 var bool bEnemyBasedSkins;
@@ -84,12 +85,19 @@ function CheckSettings() {
     PackageName = string(self.Class);
     PackageName = Left(PackageName, InStr(PackageName, "."));
 
-    if (Left(FriendlySound, 6) ~= "UTComp")
+    if (Left(FriendlySound, 10) ~= "UTCompOmni")
         FriendlySound = PackageName$Mid(FriendlySound, InStr(FriendlySound, "."));
-    if (Left(EnemySound, 6) ~= "UTComp")
+    if (Left(EnemySound, 10) ~= "UTCompOmni")
         EnemySound = PackageName$Mid(EnemySound, InStr(EnemySound, "."));
 
+    //SaveConfig();
+    Save();
+}
+
+function Save()
+{
     SaveConfig();
+    default.instance=self;
 }
 
 defaultproperties
@@ -144,4 +152,6 @@ defaultproperties
     DesiredNetUpdateRate=90
 
     bEnemyBasedSkins=false
+
+    instance=none
 }

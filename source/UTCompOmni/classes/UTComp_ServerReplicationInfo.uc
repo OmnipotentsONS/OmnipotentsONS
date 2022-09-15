@@ -46,12 +46,12 @@ var int NewNetUpdateFrequency;
 
 var int NodeIsolateBonusPct;
 var int VehicleHealScore;
+var int VehicleDamagePoints;
 var int PowerNodeScore;
 var int PowerCoreScore;
 var int NodeHealBonusPct;
 var bool bNodeHealBonusForLockedNodes;
 var bool bNodeHealBonusForConstructor;
-var bool bEnableReady;
 
 
 replication
@@ -66,8 +66,8 @@ replication
         MaxPlayersClone, bEnableAdvancedVotingOptions, VotingOptions, LinePRI, bEnableTimedOvertimeVoting,
         bEnableEnhancedNetCodeVoting,bEnableEnhancedNetCode,NewNetUpdateFrequency,
         bAllowRestartVoteEvenIfMapVotingIsTurnedOff, MaxMultiDodges, MinNetSpeed, MaxNetSpeed,
-        NodeIsolateBonusPct, VehicleHealScore, PowerNodeScore, PowerCoreScore, NodeHealBonusPct, 
-        bNodeHealBonusForLockedNodes, bNodeHealBonusForConstructor, bEnableReady;
+        NodeIsolateBonusPct, VehicleHealScore, VehicleDamagePoints, PowerNodeScore, PowerCoreScore, NodeHealBonusPct, 
+        bNodeHealBonusForLockedNodes, bNodeHealBonusForConstructor;
 }
 
 defaultproperties
@@ -95,10 +95,10 @@ defaultproperties
 
      NodeIsolateBonusPct=20
      VehicleHealScore=500
+     VehicleDamagePoints=200
      PowerNodeScore=10
      PowerCoreScore=5
      NodeHealBonusPct=60
-     bEnableReady=true
      bNodeHealBonusForConstructor=false
 }
 

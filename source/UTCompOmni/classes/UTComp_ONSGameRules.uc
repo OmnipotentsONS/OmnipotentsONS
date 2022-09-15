@@ -46,11 +46,18 @@ function OPInitialise()
     IsolateBonusPctPerNode=MutatorOwner.RepInfo.NodeIsolateBonusPct;
 
 	// Setup the node monitors
-	//if (MutatorOwner.bNodeIsolateBonus)
 	if (true)
 	{
 		for (n=Level.NavigationPointList; n!=none; n=n.NextNavigationPoint)
 		{
+            if(ONSPowerCore(n) != none)
+            {
+                // snarf
+                // event is triggered when node is damaged, used for hit sound
+                ONSPowerCore(n).TakeDamageEvent = 'UTComp_ONSNodeDamaged';
+                ONSPowerCore(n).DamageEventThreshold = 8;                 
+            }
+
 			if (ONSPowerNode(n) != none)
 			{
                 //setup new score (snarf)
@@ -60,6 +67,7 @@ function OPInitialise()
 
 				// Hook the nodes NotifyUpdateLinks delegate
 				ONSPowerNode(n).UpdateLinkState = UpdateLinkStateHook;
+
 
 				// Give the node an event name if it doesn't already have one
 				if (ONSPowerNode(n).DestroyedEventName == '')
@@ -239,9 +247,7 @@ function UpdateLinkStateHook(ONSPowerCore Node)
 	}
 }
 
-// this is *only* for adding score points for causing damage to vehicles (not healing)
-// we don't want this at all, so commenting out for now (snarf)
-/*
+//points for damaging vehicles 
 function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
 	local float CurDamage;
@@ -261,18 +267,20 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
 		{
 			if (Vehicle(injured).Team != instigatedBy.Controller.PlayerReplicationInfo.TeamID)
             {
-				UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(CurDamage / DamageScoreQuota);
+				UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(CurDamage / MutatorOwner.RepInfo.VehicleDamagePoints);
             }
 			else
             {
-				UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(-1.0 * CurDamage / DamageScoreQuota);
+				UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(-1.0 * CurDamage / MutatorOwner.RepInfo.VehicleDamagePoints);
             }
 		}
 	}
+    
+    if ( NextGameRules != None )
+		return NextGameRules.NetDamage( OriginalDamage,Damage,injured,instigatedBy,HitLocation,Momentum,DamageType );
 
 	return CurDamage;
 }
-*/
 
 function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam, optional string incomingName)
 {

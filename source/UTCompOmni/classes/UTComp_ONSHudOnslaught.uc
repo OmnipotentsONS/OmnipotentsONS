@@ -706,6 +706,71 @@ simulated function DrawRadarMap(Canvas C, float CenterPosX, float CenterPosY, fl
 }
 
 
+simulated function Actor LocateSpawnArea(float PosX, float PosY, float RadarWidth)
+{
+	local float WorldToMapScaleFactor, Distance, LowestDistance;
+	local vector WorldLocation, DistanceVector;
+	local ONSPowerCore Core;
+	local int i;
+	local actor BestSpawnArea;
+
+	if (Node == none)
+		return None;
+
+	WorldToMapScaleFactor = RadarRange / RadarWidth;
+
+	WorldLocation.X = PosX * WorldToMapScaleFactor;
+	WorldLocation.Y = PosY * WorldToMapScaleFactor;
+
+	LowestDistance = 2500.0;
+
+
+	// Search for nearest powercore
+	Core = Node;
+
+	do
+	{
+		DistanceVector = Core.Location - WorldLocation;
+		DistanceVector.Z = 0;
+		Distance = VSize(DistanceVector);
+
+		if (Distance < LowestDistance)
+		{
+			BestSpawnArea = Core;
+			LowestDistance = Distance;
+		}
+
+		Core = Core.NextCore;
+	} until (Core == None || Core == Node);
+
+
+	// If the lowest distance hasn't changed then set it to a half of the original size so that vehicle factory selection area is smaller
+	LowestDistance = 1250;
+
+	if (OPPRI == none && PlayerOwner != none && PlayerOwner.PlayerReplicationInfo != none && UTComp_ONSPlayerReplicationInfo(PlayerOwner.PlayerReplicationInfo) != none)
+		OPPRI = UTComp_ONSPlayerReplicationInfo(PlayerOwner.PlayerReplicationInfo);
+
+	// See if there is a vehiclespawn even closer-by (note: this will also account for team-based selections)
+	for (i=0; i<OPPRI.ClientVSpawnList.Length; i++)
+	{
+		if (OPPRI.ClientVSpawnList[i].CurFactoryTeam == PlayerOwner.GetTeamNum() && OPPRI.ClientVSpawnList[i].bSpawned)
+		{
+			DistanceVector = OPPRI.ClientVSpawnList[i].Factory.Location - WorldLocation;
+			DistanceVector.Z = 0;
+			Distance = VSize(DistanceVector);
+
+			if (Distance < LowestDistance)
+			{
+				BestSpawnArea = OPPRI.ClientVSpawnList[i].Factory;
+				LowestDistance = Distance;
+			}
+		}
+	}
+
+	return BestSpawnArea;
+}
+
+
 defaultproperties
 {
 }
