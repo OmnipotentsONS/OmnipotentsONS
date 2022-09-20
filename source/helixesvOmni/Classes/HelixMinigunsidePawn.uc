@@ -1,5 +1,20 @@
 class HelixMinigunsidePawn extends ONSWeaponPawn;
 
+
+//========================================================================
+// this code enables the hover mode
+function KDriverEnter(Pawn P)
+{
+	super.KDriverEnter(P);
+	 Driver.CreateInventory("APVerIV.edo_ChuteInv");
+	// Give the Gunner a chute!
+	
+	if (!VehicleBase.bDriving)
+		VehicleBase.bDriving = true;
+	
+	
+}
+
 function AltFire(optional float F)
 {
 	local PlayerController PC;
