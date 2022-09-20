@@ -126,7 +126,7 @@ defaultproperties
      DamageType=Class'helixesvOmni.DamTypeHelix'
      DamageMin=23
      DamageMax=25
-     TraceRange=17500.000000
+     TraceRange=15000.000000
      ShakeRotMag=(X=50.000000,Y=50.000000,Z=50.000000)
      ShakeRotRate=(X=10000.000000,Y=10000.000000,Z=10000.000000)
      ShakeRotTime=2.000000

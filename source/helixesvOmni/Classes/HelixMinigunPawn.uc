@@ -5,8 +5,13 @@ class HelixMinigunPawn extends ONSWeaponPawn;
 function KDriverEnter(Pawn P)
 {
 	super.KDriverEnter(P);
+	 Driver.CreateInventory("APVerIV.edo_ChuteInv");
+	// Give the Gunner a chute!
+	
 	if (!VehicleBase.bDriving)
 		VehicleBase.bDriving = true;
+	
+	
 }
 
 event bool KDriverLeave( bool bForceLeave )

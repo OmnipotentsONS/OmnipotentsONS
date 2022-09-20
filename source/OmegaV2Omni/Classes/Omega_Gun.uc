@@ -251,7 +251,8 @@ defaultproperties
      FireSoundClass=Sound'WeaponSounds.BaseImpactAndExplosions.BExplosion5'
      DamageMin=100
      DamageMax=100
-     TraceRange=20000.000000
+     TraceRange=10000.000000
+     // Was 20000
      AIInfo(0)=(bTrySplash=True,bLeadTarget=True,WarnTargetPct=0.990000,RefireRate=0.990000)
      Mesh=SkeletalMesh'ONSWeapons-A.PlasmaGun'
      SoundPitch=112

@@ -427,7 +427,7 @@ defaultproperties
      MaxRandForce=3.000000
      RandForceInterval=0.750000
      DriverWeapons(0)=(WeaponClass=Class'Omega_Gun',WeaponBone="PlasmaGunAttachment")
-     bShowChargingBar=true
+     bShowChargingBar=True
      RedSkin=Texture'Cas-Omega.OmegaTextures.OmegaRed'
      BlueSkin=Texture'Cas-Omega.OmegaTextures.OmegaBlue'
      IdleSound=Sound'ONSVehicleSounds-S.AttackCraft.AttackCraftIdle'
@@ -460,7 +460,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="Obtained the Omega"
-     VehicleNameString="Omega 2.0"
+     VehicleNameString="Omega 2.1"
      CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
      MaxDesireability=0.600000
      FlagBone="PlasmaGunAttachment"
@@ -468,7 +468,7 @@ defaultproperties
      FlagRotation=(Yaw=32768)
      HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.Horn03'
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.Horn07'
-     GroundSpeed=2000.000000
+     GroundSpeed=1800.000000
      HealthMax=225.000000
      Health=225
      Mesh=SkeletalMesh'ONSVehicles-A.AttackCraft'

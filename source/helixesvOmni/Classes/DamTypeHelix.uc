@@ -6,7 +6,7 @@ class DamTypeHelix extends VehicleDamageType;
 defaultproperties
 {
      VehicleClass=Class'helixesvOmni.HelixMinigunPawn'
-     DeathString="%k used a duel minigun turret to make swiss cheese of %o."
+     DeathString="%k used a dual bad-ass minigun turret to make swiss cheese of %o."
      FemaleSuicide="%o turned the minigun on herself."
      MaleSuicide="%o turned the minigun on himself."
      bRagdollBullet=True

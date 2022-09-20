@@ -6,7 +6,7 @@
 // -and all ppl from the ICE (infensus Clan Europe) Clan that helped me test this vehicle
 // Edits for OMNI, removed annoying giant muzzle flashes..left int the tracers...
 //-----------------------------------------------------------
-class HelixESVOmni extends ONSchopperCraft
+class HelixESVOmni extends ONSChopperCraft
     placeable;
 //The Plane pre-load options                                           // <- files and packages that will be loaded with the vehicle
 #exec OBJ LOAD FILE=..\textures\VMVehicles-TX.utx
@@ -752,7 +752,7 @@ defaultproperties
      MomentumMult=0.250000
      DriverDamageMult=0.000000
      VehiclePositionString="in a OmniHelix"
-     VehicleNameString="OmniHelix 1.1"
+     VehicleNameString="OmniHelix 1.2"
      RanOverDamageType=Class'helixesvOmni.DamTypeHelixRoadkill'
      CrushedDamageType=Class'helixesvOmni.DamTypeHelixPancake'
      FlagBone="PlasmaGunAttachment"
