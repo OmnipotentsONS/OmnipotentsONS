@@ -460,7 +460,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="Obtained the Omega"
-     VehicleNameString="Omega 2.1"
+     VehicleNameString="Omega 2.2"
      CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
      MaxDesireability=0.600000
      FlagBone="PlasmaGunAttachment"

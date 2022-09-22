@@ -251,8 +251,8 @@ defaultproperties
      FireSoundClass=Sound'WeaponSounds.BaseImpactAndExplosions.BExplosion5'
      DamageMin=100
      DamageMax=100
-     TraceRange=10000.000000
-     // Was 20000
+     TraceRange=12500.000000
+     // Was 20000, 15000 is avril lock on range...so range plus half blast radius
      AIInfo(0)=(bTrySplash=True,bLeadTarget=True,WarnTargetPct=0.990000,RefireRate=0.990000)
      Mesh=SkeletalMesh'ONSWeapons-A.PlasmaGun'
      SoundPitch=112
