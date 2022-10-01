@@ -137,7 +137,7 @@ simulated function EnableAfterburners(bool bEnable)
 	// Don't bother on dedicated server, this controls graphics only
 	if (Level.NetMode != NM_DedicatedServer)
 	{
-		//Because we want the trail emitters to look right (proper team color and not sMtrangely angled at startup) we need to create our emitters every time we boost
+		//Because we want the trail emitters to look right (proper team color and not strangely angled at startup) we need to create our emitters every time we boost
         if (bEnable)
         {
             Afterburners.Length = TrailEffectPositions.Length;
