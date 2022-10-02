@@ -547,8 +547,8 @@ simulated function DodgeRight()
 
 function KDriverEnter(Pawn P)
 {
-	p.ReceiveLocalizedMessage(class'CSBomber.CSBomberBoostMessage', 0);
-	
+	//p.ReceiveLocalizedMessage(class'CSBomber.CSBomberBoostMessage', 0);
+	// Turn off for now boost doesn't work on server.
 	Super.KDriverEnter(P);
 }
 

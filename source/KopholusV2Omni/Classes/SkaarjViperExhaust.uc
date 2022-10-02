@@ -60,7 +60,7 @@ defaultproperties
          StartSizeRange=(X=(Min=-0.500000,Max=-0.750000))
          LifetimeRange=(Min=0.100000,Max=0.200000)
      End Object
-     Emitters(0)=MeshEmitter'Kopholus.SkaarjViperExhaust.MeshEmitter2'
+     Emitters(0)=MeshEmitter'KopholusV2Omni.SkaarjViperExhaust.MeshEmitter2'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter3
          UseColorScale=True
@@ -85,7 +85,7 @@ defaultproperties
          LifetimeRange=(Min=0.200000,Max=0.200000)
          StartVelocityRange=(X=(Min=150.000000,Max=150.000000))
      End Object
-     Emitters(1)=SpriteEmitter'Kopholus.SkaarjViperExhaust.SpriteEmitter3'
+     Emitters(1)=SpriteEmitter'KopholusV2Omni.SkaarjViperExhaust.SpriteEmitter3'
 
      AutoDestroy=True
      CullDistance=12000.000000
