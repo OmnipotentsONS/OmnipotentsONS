@@ -61,7 +61,7 @@ replication
   reliable if(Role == Role_Authority) //for thrusting consider !bNetOwner as its possibly redundant?
            bIsBoosting, bIsThrusting;
   reliable if(Role < Role_Authority)   //fixes dodge nicely
-           DodgeLeft,DodgeRight;
+           DodgeLeft,DodgeRight,ServerBoost;
 }
 
 function Pawn CheckForHeadShot(Vector loc, Vector ray, float AdditionalScale)
@@ -374,10 +374,11 @@ simulated function SwitchWeapon(byte F)
 {
     super.SwitchWeapon(F);
     //if(F == 10 && !bIsBoosting && BoostRechargeCounter>=BoostRechargeTime)
-    if(F == 10 && !bIsBoosting)
-    {
-        Boost();
-    }
+// Doesn't work on dedicated server?!
+//    if(F == 10 && !bIsBoosting && (RechargeTime / default.RechargeTime >= 0.98))
+//    {
+//        Boost();
+//    }
 }
 
 
@@ -406,11 +407,19 @@ function Boost()
             {
             bIsBoosting = true;
       	    RechargeTime = 0.0;
-     	    SetBoostAndRechargeTime();  //set these on the client please
- 	    BoostTime = default.BoostTime;
+     	      SetBoostAndRechargeTime();  //set these on the client please
+ 	          BoostTime = default.BoostTime;
+ 	          ServerBoost();
             }
   
 }
+
+simulated function ServerBoost()
+{
+    RechargeTime=0.0;
+    bIsBoosting=true;
+}
+
 function SetBoostAndRechargeTime() //executed on the client / instant action runs | should move to alt-fire
 {
    PlaySound(BoosterSound, SLOT_None, 2*TransientSoundVolume);
@@ -550,7 +559,8 @@ simulated function DodgeRight()
 
 function KDriverEnter(Pawn P)
 {
-	p.ReceiveLocalizedMessage(class'CSBomber.CSBomberBoostMessage', 0);
+	//p.ReceiveLocalizedMessage(class'CSBomber.CSBomberBoostMessage', 0);
+	// Turn off for now boost doesn't work on server.
 	Super.KDriverEnter(P);
 }
 
