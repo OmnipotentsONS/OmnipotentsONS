@@ -18,7 +18,7 @@ function BlowUp(vector HitLocation)
 	start = Location;
 	if ( Role == ROLE_Authority )
 	{
-		HurtRadius(damage, 220, MyDamageType, MomentumTransfer, HitLocation);	
+		HurtRadius(Damage, 220, MyDamageType, MomentumTransfer, HitLocation);	
 		for (i=0; i<10; i++)
 		{
 			rot = Rotation;
@@ -40,8 +40,7 @@ ignores Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling, 
 	function BlowUp(vector HitLocation) {}
 	function ServerBlowUp() {}
 	function Timer() {}
-	function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
-							Vector momentum, class<DamageType> damageType) {}
+	function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation, Vector momentum, class<DamageType> damageType) {}
 
     function BeginState()
     {

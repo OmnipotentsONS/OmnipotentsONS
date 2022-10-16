@@ -29,8 +29,8 @@ function BlowUp(vector HitLocation)
 	start = Location;
 	if ( Role == ROLE_Authority )
 	{
-		HurtRadius(damage, 220, MyDamageType, MomentumTransfer, HitLocation);	
-		for (i=0; i<12; i++)
+		HurtRadius(Damage, 220, MyDamageType, MomentumTransfer, HitLocation);	
+		for (i=0; i<13; i++)
 		{
 			rot = Rotation;
 			rot.yaw += FRand()*32000-14000;

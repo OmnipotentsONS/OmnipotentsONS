@@ -365,7 +365,7 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in an Arbalest Nova"
-     VehicleNameString="Arbalest Nova 2.1"
+     VehicleNameString="Arbalest Nova 2.2"
      RanOverDamageType=Class'Onslaught.DamTypeTankRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeTankPancake'
      MaxDesireability=0.800000

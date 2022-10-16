@@ -214,7 +214,7 @@ defaultproperties
      FireModeNames(1)="Weak Redeemers"
      FireModeNames(2)="Nova Missile"
      canFireMEGADeemer=True
-     MEGADeemerReload=120.000000
+     MEGADeemerReload=90.000000
      WeaponFireAttachmentBone="TankBarrel"
      FireInterval=0.500000
      AltFireInterval=1.000000
