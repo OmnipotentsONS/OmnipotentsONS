@@ -687,3 +687,16 @@ function Reset()
 		}
 	}
 }
+
+// This is the only hook we have after the engine caps the client net speed
+simulated function ClientPrepareToReceivePowerLinks()
+{
+    local PlayerController PC;
+    super.ClientPrepareToReceivePowerLinks();
+
+    PC = Level.GetLocalPlayerController();
+    if(PC != None && BS_xPlayer(PC) != None)
+    {
+        BS_XPlayer(PC).SetInitialNetSpeed();
+    }
+}

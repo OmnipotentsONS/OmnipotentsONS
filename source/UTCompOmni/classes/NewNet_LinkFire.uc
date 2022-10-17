@@ -388,6 +388,7 @@ simulated function ModeTick(float dt)
 			if ( (Beam == None) && bIsFiring )
 			{
 				Beam = Weapon.Spawn( BeamEffectClass, Instigator );
+
 				// vary link volume to make sure it gets replicated (in case owning player changed it client side)
 				if ( SentLinkVolume == Default.LinkVolume )
 					SentLinkVolume = Default.LinkVolume + 1;

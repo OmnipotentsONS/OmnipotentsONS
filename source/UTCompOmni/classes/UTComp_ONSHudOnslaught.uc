@@ -1,6 +1,6 @@
 
 
-class UTComp_ONSHudOnslaught extends ONSHudOnslaught;
+class UTComp_ONSHudOnslaught extends ONSHudOnslaught config (UTCompOmni);
 
 var UTComp_HUDSettings HUDSettings;
 
@@ -8,14 +8,13 @@ var UTComp_ONSPlayerReplicationInfo OPPRI;
 
 struct VehicleDescription
 {
-	var class VehicleClass;
-	var color RadarColour;
+	//var class VehicleClass;
+	var config string Name;
+	var config color RadarColor;
 };
 
-var array<VehicleDescription> VehicleData;
+var config array<VehicleDescription> VehicleData;
 var color TempColour;
-
-var array<object> DataHolders;
 
 struct NodeData
 {
@@ -37,6 +36,8 @@ simulated event PostBeginPlay() {
         break;
     if (HUDSettings == none)
         Warn(self@"HUDSettings object not found!");
+
+    SaveConfig();
 }
 
 simulated function UpdatePrecacheMaterials()
@@ -366,67 +367,39 @@ function SetVehicleData(class<Vehicle> VehicleClass, out color RadarColour)
 
 function SetVehicleData(class<Vehicle> VehicleClass, out color RadarColour, out float U, out float V)
 {
+    local int i;
+
+    U=0;
+    V=0;
+    RadarColour.R=0;
+    RadarColour.G=0;
+    RadarColour.B=0;
+    RadarColour.A=255;
+
+    for(i=0;i<VehicleData.Length;i++)
+    {
+        if(string(VehicleClass.Name) == VehicleData[i].Name)
+        {
+            RadarColour=VehicleData[i].RadarColor;
+            RadarColour.A=255;
+            return;
+        }
+    }
+
+    SetVehicleDataFallback(VehicleClass, RadarColour,U,V);
+}
+
+function SetVehicleDataFallback(class<Vehicle> VehicleClass, out color RadarColour, out float U, out float V)
+{
     local color RC;
     RC.R=0;
     RC.G=0;
     RC.B=0;
+    RC.A=255;
     U=0;
     V=0;
 
-    if(VehicleClass.name == 'Minotaur' || VehicleClass.name == 'Omnitaur' || VehicleClass.name == 'Badgertaur')
-    {
-        //special classes
-        RC.R=255;
-        RC.G=255;
-        RC.B=255;
-    }
-    else if(ClassIsChildOf(VehicleClass, class'ONSHoverTank'))
-    {
-        //goliath
-        RC.R=128;
-        RC.G=0;
-        RC.B=128;
-    }
-    else if(ClassIsChildOf(VehicleClass, class'ONSHoverBike'))
-    {
-        //manta
-        RC.R=0;
-        RC.G=128;
-        RC.B=0;
-
-        U=32;
-    }
-    else if(ClassIsChildOf(VehicleClass, class'ONSAttackCraft'))
-    {
-        //raptor
-        RC.R=128;
-        RC.G=128;
-        RC.B=0;
-    }
-    else if(ClassIsChildOf(VehicleClass, class'ONSDualAttackCraft'))
-    {
-        //cicada
-        RC.R=128;
-        RC.G=128;
-        RC.B=0;
-    }
-    else if(ClassIsChildOf(VehicleClass, class'ONSPRV'))
-    {
-        //bender
-        RC.R=0;
-        RC.G=128;
-        RC.B=128;
-    }
-    else if(ClassIsChildOf(VehicleClass, class'ONSRV'))
-    {
-        //scorpion
-        RC.R=0;
-        RC.G=32;
-        RC.B=32;
-
-        U=32;
-    }
-    else if(ClassIsChildOf(VehicleClass, class'ONSTreadCraft'))
+    if(ClassIsChildOf(VehicleClass, class'ONSTreadCraft'))
     {
         //tank variant
         RC.R=128;
@@ -446,8 +419,6 @@ function SetVehicleData(class<Vehicle> VehicleClass, out color RadarColour, out 
         RC.R=128;
         RC.G=128;
         RC.B=32;
-
-        U=32;
     }
     else if(ClassIsChildOf(VehicleClass, class'ONSWheeledCraft'))
     {
@@ -773,4 +744,13 @@ simulated function Actor LocateSpawnArea(float PosX, float PosY, float RadarWidt
 
 defaultproperties
 {
+    VehicleData(0)=(Name="Minotaur",RadarColor=(R=255,G=255,B=255,A=255))
+    VehicleData(1)=(Name="Omnitaur",RadarColor=(R=255,G=255,B=255,A=255))
+    VehicleData(2)=(Name="Badgertaur",RadarColor=(R=255,G=255,B=255,A=255))
+    VehicleData(3)=(Name="ONSHoverTank",RadarColor=(R=128,G=0,B=128,A=255))
+    VehicleData(4)=(Name="ONSHoverBike",RadarColor=(R=0,G=128,B=0,A=255))
+    VehicleData(5)=(Name="ONSAttackCraft",RadarColor=(R=128,G=128,B=0,A=255))
+    VehicleData(6)=(Name="ONSDualAttackCraft",RadarColor=(R=128,G=128,B=0,A=255))
+    VehicleData(7)=(Name="ONSPRV",RadarColor=(R=0,G=128,B=128,A=255))
+    VehicleData(8)=(Name="ONSRV",RadarColor=(R=0,G=32,B=32,A=255))
 }

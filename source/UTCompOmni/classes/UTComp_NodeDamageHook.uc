@@ -5,7 +5,7 @@ function Trigger(Actor Other, Pawn EventInstigator)
     local ONSPowerCore N;
     N = ONSPowerCore(Other);
 
-    if(EventInstigator.Controller != None && EventInstigator.Controller == Owner)
+    if(EventInstigator != None && N != None && EventInstigator.Controller != None && EventInstigator.Controller == Owner)
     {
         BS_xPlayer(EventInstigator.Controller).ReceiveHitSound(N.AccumulatedDamage, 1);
     }

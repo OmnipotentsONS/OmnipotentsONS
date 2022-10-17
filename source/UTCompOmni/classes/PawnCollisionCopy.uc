@@ -65,10 +65,13 @@ function SetPawn(Pawn Other)
 
     //If we cant use simple collisions, set up the mesh
     if(!bUseCylinderCollision)
-        LinkMesh(CopiedPawn.Mesh);
+    {
+        //snarf LinkMesh is causing crashes, works ok without it
+        //LinkMesh(CopiedPawn.Mesh);
+        SetCollisionSize(CopiedPawn.CollisionRadius, CopiedPawn.CollisionHeight);
+    }
     else
     {
-        LinkMesh(None); //if there was a mesh linked, unlink it
         SetCollisionSize(CopiedPawn.CollisionRadius, CopiedPawn.CollisionHeight);
     }
 }
@@ -228,8 +231,9 @@ function TurnOffCollision()
 function AddPawnToList(Pawn Other)
 {
     // Already got it, dont bother.
-  /*  if(Other == CopiedPawn)
-        return;         */
+    // snarf this was commented out, uncommenting since it might be needed?
+    if(Other == CopiedPawn)
+        return;         
 
     if(next==None)
     {
@@ -295,6 +299,7 @@ event destroyed()
 {
   /* if(!bNormalDestroy)
       Warn("DESTROYED WITHOUT SETTING UP LIST");     */
+
    super.Destroyed();
 }
 

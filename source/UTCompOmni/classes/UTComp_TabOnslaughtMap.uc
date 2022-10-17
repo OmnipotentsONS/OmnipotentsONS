@@ -89,11 +89,14 @@ function DrawVehicleFactoryHint(UTComp_ONSPlayerReplicationInfo OPPRI, ONSVehicl
 
 			TempColour.A = 255;
 
-			l_HelpText.Style.FontColors[0] = TempColour;
-			l_HelpText.Style.FontColors[1] = TempColour;
-			l_HelpText.Style.FontColors[2] = TempColour;
-			l_HelpText.Style.FontColors[3] = TempColour;
-			l_HelpText.Style.FontColors[4] = TempColour;
+            if(l_HelpText.Style != None)
+            {
+                l_HelpText.Style.FontColors[0] = TempColour;
+                l_HelpText.Style.FontColors[1] = TempColour;
+                l_HelpText.Style.FontColors[2] = TempColour;
+                l_HelpText.Style.FontColors[3] = TempColour;
+                l_HelpText.Style.FontColors[4] = TempColour;
+            }
 
 			break;
 		}
@@ -102,11 +105,14 @@ function DrawVehicleFactoryHint(UTComp_ONSPlayerReplicationInfo OPPRI, ONSVehicl
 
 function PostDrawHintText(canvas Canvas)
 {
-	l_HelpText.Style.FontColors[0] = l_HelpText.Style.default.FontColors[0];
-	l_HelpText.Style.FontColors[1] = l_HelpText.Style.default.FontColors[1];
-	l_HelpText.Style.FontColors[2] = l_HelpText.Style.default.FontColors[2];
-	l_HelpText.Style.FontColors[3] = l_HelpText.Style.default.FontColors[3];
-	l_HelpText.Style.FontColors[4] = l_HelpText.Style.default.FontColors[4];
+    if(l_HelpText.Style != None)
+    {
+        l_HelpText.Style.FontColors[0] = l_HelpText.Style.default.FontColors[0];
+        l_HelpText.Style.FontColors[1] = l_HelpText.Style.default.FontColors[1];
+        l_HelpText.Style.FontColors[2] = l_HelpText.Style.default.FontColors[2];
+        l_HelpText.Style.FontColors[3] = l_HelpText.Style.default.FontColors[3];
+        l_HelpText.Style.FontColors[4] = l_HelpText.Style.default.FontColors[4];
+    }
 
 	Super.OnRendered(Canvas);
 }
@@ -241,7 +247,9 @@ defaultproperties
 		TextAlign=TXTA_Left
 		TextColor=(B=255,G=255,R=255)
 		Caption=""
-		//StyleName="DifferentFontColour_Equals_PainInMyAss"
+		StyleName="TextLabel"
+        ShadowOffsetX=1
+        ShadowOffsetY=1
 		WinWidth=0.274188
 		WinLeft=0.719388
 		WinTop=0.035141

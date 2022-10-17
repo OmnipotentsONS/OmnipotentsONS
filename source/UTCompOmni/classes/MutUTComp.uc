@@ -441,7 +441,6 @@ function ModifyPlayer(Pawn Other)
 
 
 /*
-// snarf comment out for now since we don't really want this...
 function DriverEnteredVehicle(Vehicle V, Pawn P)
 {
 	SpawnCollisionCopy(V);
@@ -449,50 +448,45 @@ function DriverEnteredVehicle(Vehicle V, Pawn P)
     if( NextMutator != none )
 		NextMutator.DriverEnteredVehicle(V, P);
 }
-
-//snarf attempt to fix crashing
-//this does fix crashing but there is performance degradation
-function DriverLeftVehicle(Vehicle V, Pawn P)
-{
-    PCC = PCC.RemovePawnFromList(V, PCC);
-
-    if( NextMutator != none )
-		NextMutator.DriverLeftVehicle(V, P);
-}
 */
 
 function DriverEnteredVehicle(Vehicle V, Pawn P)
 {
     local PawnCollisionCopy C;
-    C = PCC;
-    while(C != None)
+    if(RepInfo != none && RepInfo.bEnableEnhancedNetCode)
     {
-        if(C.CopiedPawn == P)
+        C = PCC;
+        while(C != None)
         {
-            C.SetPawn(V);
-            break;
+            if(C.CopiedPawn == P)
+            {
+                C.SetPawn(V);
+                break;
+            }
+            C = C.Next;
         }
-        C = C.Next;
     }
 
     if( NextMutator != none )
 		NextMutator.DriverEnteredVehicle(V, P);
 }
 
-//snarf attempt to fix crashing
-//this does fix crashing but there is performance degradation
 function DriverLeftVehicle(Vehicle V, Pawn P)
 {
     local PawnCollisionCopy C;
-    C = PCC;
-    while(C != None)
+
+    if(RepInfo != None && RepInfo.bEnableEnhancedNetCode)
     {
-        if(C.CopiedPawn == V)
+        C = PCC;
+        while(C != None)
         {
-            C.SetPawn(P);
-            break;
+            if(C.CopiedPawn == V)
+            {
+                C.SetPawn(P);
+                break;
+            }
+            C = C.Next;
         }
-        C = C.Next;
     }
 
     if( NextMutator != none )
@@ -1449,9 +1443,9 @@ defaultproperties
 
      NewNetUpdateFrequency=200
 
-     FriendlyName="UTComp Version 1.26 (Omni)"
+     FriendlyName="UTComp Version 1.29 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.26"
+     FriendlyVersionNumber=")o(mni 1.29"
      Description="A mutator for brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
