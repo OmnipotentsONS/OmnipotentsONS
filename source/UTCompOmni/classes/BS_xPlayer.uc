@@ -50,6 +50,8 @@ var bool bInTimedOvertime;
 var float LastBroadcastVoteTime;
 var float LastBroadcastReadyTime;
 
+var float LastSaturatedTime;
+
 //Stats Variables
 struct WepStats
 {
@@ -118,6 +120,8 @@ var float LastVRequestTime;
 
 var UTComp_NodeDamageHook NodeDamageHook;
 
+var int PreferredExitPoint;
+
 replication
 {
     unreliable if(Role==Role_Authority)
@@ -140,7 +144,7 @@ replication
         SendCTFStats;
 
     unreliable if (Role < ROLE_Authority)
-        UTComp_ServerMove, UTComp_DualServerMove, UTComp_ShortServerMove;
+        UTComp_ServerMove, UTComp_DualServerMove, UTComp_ShortServerMove, UTComp_ServerUse;
 
     reliable if (RemoteRole == ROLE_AutonomousProxy)
         ReceiveWeaponEffect;
@@ -257,10 +261,8 @@ simulated function PostNetBeginPlay()
     super.PostNetBeginPlay();
 
     //snarf
-    //instance is used globally by all newnet weapons
+    //instance is used globally by all newnet weapons (optimization)
     class'UTComp_Settings'.default.instance = Settings;
-
-    SetInitialNetSpeed();
 }
 
 simulated function Destroyed()
@@ -274,6 +276,7 @@ simulated function Destroyed()
     super.Destroyed();
 }
 
+//called after engine caps the netspeed at 10000
 simulated function SetInitialNetSpeed()
 {
     local int netspeed;
@@ -282,7 +285,7 @@ simulated function SetInitialNetSpeed()
         netspeed = class'Player'.default.ConfiguredInternetSpeed;
         if(netspeed > 10000)
         {
-            ConsoleCommand("netspeed "$netspeed);
+            SetNetSpeed(netspeed);
         }
     }
 }
@@ -376,6 +379,12 @@ event PlayerTick(float deltatime)
     }
     oldbShowScoreBoard=myHud.bShowScoreBoard;
 
+    if(bWasSaturated && LastSaturatedTime<Level.TimeSeconds)
+    {
+        log("UTComp: WARN net is saturated");
+        LastSaturatedTime = Level.TimeSeconds + 3.0;
+    }
+
     Super.PlayerTick(deltatime);
 }
 
@@ -415,14 +424,21 @@ simulated function InitializeStuff()
         }
         SaveSettings();
     }
-    if(Settings.Version <= 0)
+
+    //change some defaults with this release
+    if(Settings.Version <= 1)
     {
-        //with the new release we want to default to this being off
-        Settings.Version=1;
-        Settings.bEnableEnhancedNetCode=false;
-        Settings.PreferredSkinColorRedTeammate=3;
-        Settings.PreferredSkinColorBlueEnemy=3;
-        //Settings.SaveConfig();
+        Settings.Version=2;
+        Settings.bEnableEnhancedNetCode=true;
+        
+        //force team based brighter skins 
+        Settings.bEnemyBasedSkins=false;
+        Settings.bEnemyBasedModels=false;
+        Settings.ClientSkinModeRedTeammate=2;
+        Settings.ClientSkinModeBlueEnemy=2;
+        Settings.PreferredSkinColorRedTeammate=5;
+        Settings.PreferredSkinColorBlueEnemy=6;
+
         Settings.Save();
     }
 
@@ -3911,6 +3927,181 @@ function GetVInfoUpdate()
 	}
 }
 
+exec function SetPreferredExit(string Direction, optional bool bPermenant, optional int Duration)
+{
+	local int Dir;
+
+	if (Direction ~= "Left")
+		Dir = 1;
+	else if (Direction ~= "Right")
+		Dir = 2;
+	else if (Direction ~= "Forward" || Direction ~= "Front")
+		Dir = 3;
+	else if (Direction ~= "Back" || Direction ~= "Backwards")
+		Dir = 4;
+	else if (Direction ~= "1" || Direction ~= "2" || Direction ~= "3" || Direction ~= "4")
+		Dir = int(Direction);
+
+	SelectExitPointServer(Dir);
+}
+
+function SelectExitPointServer(int Point)
+{
+	if (Role < ROLE_Authority)
+        return;
+
+    PreferredExitPoint=Point;
+}
+
+function DoPreferredExit(Vehicle DrivenVehicle)
+{
+    local array<Vector> OldExits;
+    local int i, exitIndex;
+    local float X,Y;
+    local bool exited;
+    local vector exit, oldV;
+
+    // save exits
+    for(i=0;i<DrivenVehicle.ExitPositions.Length;i++)
+    {
+        OldExits[i]=DrivenVehicle.ExitPositions[i];
+    }
+
+    exitIndex=-1;
+    if(PreferredExitPoint==1)
+    {
+        // find the left most exit
+        for(i=0;i<DrivenVehicle.ExitPositions.Length;i++)
+        {
+            if(DrivenVehicle.ExitPositions[i].Y < Y)
+            {
+                exitIndex = i;
+                Y = DrivenVehicle.ExitPositions[i].Y;
+            }
+        }
+    }
+    else if(PreferredExitPoint==2)
+    {
+        // find the right most exit
+        for(i=0;i<DrivenVehicle.ExitPositions.Length;i++)
+        {
+            if(DrivenVehicle.ExitPositions[i].Y > Y)
+            {
+                exitIndex = i;
+                Y = DrivenVehicle.ExitPositions[i].Y;
+            }
+        }
+    }
+    else if(PreferredExitPoint==3)
+    {
+        // find the forward most exit
+        for(i=0;i<DrivenVehicle.ExitPositions.Length;i++)
+        {
+            if(DrivenVehicle.ExitPositions[i].X < X)
+            {
+                exitIndex = i;
+                X = DrivenVehicle.ExitPositions[i].X;
+            }
+        }
+    }
+    else if(PreferredExitPoint==4)
+    {
+        // find the back most exit
+        for(i=0;i<DrivenVehicle.ExitPositions.Length;i++)
+        {
+            if(DrivenVehicle.ExitPositions[i].X > X)
+            {
+                exitIndex = i;
+                X = DrivenVehicle.ExitPositions[i].X;
+            }
+        }
+    }
+
+    if(exitIndex>=0)
+    {
+        // update all vehicle exits to be the preferred exit
+        exit = DrivenVehicle.ExitPositions[exitIndex];
+        DirectionHint=vect(0,0,0);
+        if(DrivenVehicle.Controller != None)
+            DrivenVehicle.Controller.DirectionHint=vect(0,0,0);
+        for(i=0;i<DrivenVehicle.ExitPositions.Length;i++)
+        {
+            DrivenVehicle.ExitPositions[i] = exit;
+        }
+
+        // call kdriverleave after updating all exits to the preferred exit
+        oldV = DrivenVehicle.Velocity;
+        DrivenVehicle.Velocity = vect(0,0,0); //hack 
+        exited = DrivenVehicle.KDriverLeave(false);
+        DrivenVehicle.Velocity=oldV;
+    }
+
+
+    // restore exits
+    for(i=0;i<DrivenVehicle.ExitPositions.Length;i++)
+    {
+        DrivenVehicle.ExitPositions[i]=OldExits[i];
+    }
+
+    if(!exited) 
+    {
+        // if we couldn't exit our preferred exit, call driver leave after old exits restored
+        DrivenVehicle.KDriverLeave(false);
+    }
+}
+
+exec function Use()
+{
+    UTComp_ServerUse();
+}
+
+function UTComp_ServerUse()
+{
+    local Actor A;
+	local Vehicle DrivenVehicle, EntryVehicle, V;
+
+	if ( Role < ROLE_Authority )
+		return;
+
+    if ( Level.Pauser == PlayerReplicationInfo )
+    {
+        SetPause(false);
+        return;
+    }
+
+    if (Pawn == None || !Pawn.bCanUse)
+        return;
+
+	DrivenVehicle = Vehicle(Pawn);
+	if( DrivenVehicle != None )
+	{
+        if(PreferredExitPoint>=1)
+        {
+            DoPreferredExit(DrivenVehicle);
+            PreferredExitPoint=-1;
+            return;
+        }
+
+		DrivenVehicle.KDriverLeave(false);
+		return;
+	}
+
+    // Check for nearby vehicles
+    ForEach Pawn.VisibleCollidingActors(class'Vehicle', V, VehicleCheckRadius)
+    {
+        // Found a vehicle within radius
+        EntryVehicle = V.FindEntryVehicle(Pawn);
+        if (EntryVehicle != None && EntryVehicle.TryToDrive(Pawn))
+            return;
+    }
+
+    // Send the 'DoUse' event to each actor player is touching.
+    ForEach Pawn.TouchingActors(class'Actor', A)
+        A.UsedBy(Pawn);
+
+	if ( Pawn.Base != None )
+		Pawn.Base.UsedBy( Pawn );
+}
 
 defaultproperties
 {
@@ -3978,4 +4169,6 @@ defaultproperties
 
      LoadedEnemySound=sound'UTCompOmni.Sounds.HitSound'
      LoadedFriendlySound=sound'UTCompOmni.Sounds.HitSoundFriendly'
+
+     PreferredExitPoint=-1
 }

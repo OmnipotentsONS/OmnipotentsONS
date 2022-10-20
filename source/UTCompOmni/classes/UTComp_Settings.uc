@@ -57,6 +57,7 @@ struct ClanSkinTripple
 };
 
 var config string FallbackCharacterName;
+
 var config byte ClientSkinModeRedTeammate;
 var config byte ClientSkinModeBlueEnemy;
 var config byte PreferredSkinColorRedTeammate;
@@ -65,6 +66,7 @@ var config color BlueEnemyUTCompSkinColor;
 var config color RedTeammateUTCompSkinColor;
 var config bool bBlueEnemyModelsForced;
 var config bool bRedTeammateModelsForced;
+
 var config string BlueEnemyModelName;
 var config string RedTeammateModelName;
 var config bool bEnableDarkSkinning;
@@ -73,11 +75,9 @@ var config array<string> DisallowedEnemyNames;
 var config bool bEnemyBasedModels;
 var config bool bUseNewEyeHeightAlgorithm;
 var config float DesiredNetUpdateRate;
+var config bool bEnemyBasedSkins;
 
 var UTComp_Settings instance;
-//var config bool bEnemyBasedSkins;
-//this messes up team games when changing teams if turned on, hard code it for now
-var bool bEnemyBasedSkins;
 
 function CheckSettings() {
     local string PackageName;
@@ -140,10 +140,10 @@ defaultproperties
     ColorName(18)=(R=255,G=255,B=255,A=255)
     ColorName(19)=(R=255,G=255,B=255,A=255)
     FallbackCharacterName="Arclite"
-    ClientSkinModeRedTeammate=3
-    ClientSkinModeBlueEnemy=3
-    PreferredSkinColorRedTeammate=3
-    PreferredSkinColorBlueEnemy=3
+    ClientSkinModeRedTeammate=2
+    ClientSkinModeBlueEnemy=2
+    PreferredSkinColorRedTeammate=5
+    PreferredSkinColorBlueEnemy=6
     BlueEnemyUTCompSkinColor=(R=0,G=0,B=128,A=255)
     RedTeammateUTCompSkinColor=(R=128,G=0,B=0,A=255)
     BlueEnemyModelName="Arclite"
@@ -151,7 +151,7 @@ defaultproperties
     bEnableDarkSkinning=True
     DesiredNetUpdateRate=90
 
-    bEnemyBasedSkins=false
+    bEnemyBasedSkins=True
 
     instance=none
 }

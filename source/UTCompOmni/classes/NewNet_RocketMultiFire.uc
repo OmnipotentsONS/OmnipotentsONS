@@ -54,7 +54,7 @@ simulated function FindFPM()
 simulated function ModeTick(float DT)
 {
     super.ModeTick(dt);
-    if(LEvel.NetMode!=NM_Client)
+    if(Level.NetMode!=NM_Client)
         return;
     if(bAltTimerActive && Level.TimeSeconds > NextAltTimerTime)
     {

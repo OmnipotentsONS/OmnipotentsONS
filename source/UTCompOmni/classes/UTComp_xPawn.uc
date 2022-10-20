@@ -989,7 +989,7 @@ simulated function bool ShouldUseModel(string S)
     }
     return true;
 }
-
+// 
 simulated function ClientRestart()
 {
     super.ClientRestart();
@@ -999,7 +999,7 @@ simulated function ClientRestart()
 simulated function Touch(Actor Other) {
     super.Touch(Other);
 
-    if (Other.IsA('Teleporter'))
+    if (Other != None && Other.IsA('Teleporter'))
         IgnoreZChangeTicks = 2;
 }
 
@@ -1056,27 +1056,10 @@ event UpdateEyeHeight( float DeltaTime )
 }
 
 // snarf attempt color fix
-function NotifyTeamChanged()
+simulated function NotifyTeamChanged()
 {
-    if(Controller!=None && Controller.PlayerReplicationInfo != none && Controller.PlayerReplicationInfo.Team!=None && Controller.PlayerReplicationInfo.Team.TeamIndex!=OldTeam)
-    {
-        ColorSkins();
-    }
     super.NotifyTeamChanged();
-}
-
-// snarf attempt color fix
-simulated event PostNetReceive()
-{
-    super.PostNetReceive();
-
-    if(LocalPC==None)
-        LocalPC=Level.GetLocalPlayerController();
-
-    if(LocalPC!=None && LocalPC.PlayerReplicationInfo != none && LocalPC.PlayerReplicationInfo.Team!=None && LocalPC.PlayerReplicationInfo.Team.TeamIndex!=OldTeam)
-    {
-        ColorSkins();
-    }
+    OldTeam=-1;
 }
 
 defaultproperties

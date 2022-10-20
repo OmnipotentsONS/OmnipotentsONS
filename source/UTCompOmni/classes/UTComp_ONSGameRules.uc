@@ -63,6 +63,13 @@ function OPInitialise()
                 //setup new score (snarf)
                 ONSPowerNode(n).Score = MutatorOwner.RepInfo.PowerNodeScore;
 
+                //setup newnet stuff
+                if(MutatorOwner != None && MutatorOwner.RepInfo != None && MutatorOwner.RepInfo.bEnableEnhancedNetCode)
+                {
+                    //TODO make PawnCollisionCopy work with actors
+                    //MutatorOwner.SpawnCollisionCopy(n);
+                }
+
 				NotifyUpdateLinkStateHook = ONSPowerNode(n).UpdateLinkState;
 
 				// Hook the nodes NotifyUpdateLinks delegate
@@ -305,8 +312,8 @@ function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam
 
 function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 {
-	//Class'ONSOnslaughtGame'.static.AddServerDetail(ServerState, "ONSPlusVersion", Class'ONSPlusMutator'.static.GetONSPlusVersion());
 }
+
 
 defaultproperties
 {
