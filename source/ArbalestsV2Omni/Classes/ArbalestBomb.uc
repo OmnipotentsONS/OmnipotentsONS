@@ -350,7 +350,7 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in an Arbalest Bomber"
-     VehicleNameString="Arbalest Bomber 2.2"
+     VehicleNameString="Arbalest Bomber 2.3"
      RanOverDamageType=Class'Onslaught.DamTypeTankRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeTankPancake'
      MaxDesireability=0.800000

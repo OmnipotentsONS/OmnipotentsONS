@@ -13,7 +13,7 @@ var float MEGADeemerReload;
 replication
 {
   reliable if(Role == Role_Authority) 
-           canFireMEGADeemer, firemode;
+           canFireMEGADeemer, firemode, MEGADeemerReload;
 }
 
 
@@ -163,6 +163,7 @@ state ProjectileFireMode
 		if (firemode>maxfiremode)
 			firemode=1;
     	}
+	
 	simulated function timer()
 	{
 		canFireMEGADeemer=true;
@@ -214,10 +215,11 @@ defaultproperties
      FireModeNames(1)="Weak Redeemers"
      FireModeNames(2)="Nova Missile"
      canFireMEGADeemer=True
-     MEGADeemerReload=90.000000
+     MEGADeemerReload=75.000000
      WeaponFireAttachmentBone="TankBarrel"
      FireInterval=0.500000
      AltFireInterval=1.000000
      FireSoundClass=Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01'
      ProjectileClass=Class'ArbalestsV2Omni.ArbalestRocketNovaPrime'
+     
 }

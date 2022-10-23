@@ -22,10 +22,9 @@ simulated function DrawHUD(Canvas Canvas)
 	local float xl,yl,posy;
 	local PlayerController PC;
 	local HudCDeathmatch H;
-
 	local float DeltaTime;
-
 	local string CoPilot;
+	local float MegaDeemerCount;
 
     DeltaTime = Level.TimeSeconds - LastHudRenderTime;
 	LastHudRenderTime = Level.TimeSeconds;
@@ -50,10 +49,15 @@ simulated function DrawHUD(Canvas Canvas)
 		Canvas.SetDrawColor(255,255,255,255);
 		Canvas.DrawText(CoPilot);
 
+	
+		// Works. MegaDeemerCount =ArbalestRocketLauncherNova(weapons[0]).MEGADeemerReload; 
+		MegaDeemerCount =ArbalestRocketLauncherNova(weapons[0]).TimerCounter;
+		
 		if (ArbalestRocketLauncherNova(weapons[0]).canFireMEGADeemer)
 			CoPilotLabel="Nova Missile Loaded";
 		else
-			CoPilotLabel="Nova Missile Loading";
+			CoPilotLabel="Nova Missile Loading Countdown " $ (ArbalestRocketLauncherNova(weapons[0]).MEGADeemerReload - MegaDeemerCount);
+			
 		Canvas.Font = H.GetConsoleFont(Canvas);
         	Canvas.StrLen(CoPilotLabel,xl,yl);
         	Canvas.SetPos(Canvas.ClipX-xl-5,posy-5-yl);
@@ -365,7 +369,7 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in an Arbalest Nova"
-     VehicleNameString="Arbalest Nova 2.2"
+     VehicleNameString="Arbalest Nova 2.3"
      RanOverDamageType=Class'Onslaught.DamTypeTankRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeTankPancake'
      MaxDesireability=0.800000
