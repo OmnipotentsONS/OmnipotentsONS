@@ -572,16 +572,17 @@ simulated function GamePPH ShuffleTeams(optional bool killPlayers)
 		if ((Index & 1) != 0) {
 			PRI = PRIs[0];
 			PPH = PPHs[0];
-			if (Rand(2) == 0) {
+			if (BluePPH > RedPPH)
+            {
 				if (EvenMatchMutator.bDebug)
-					log("Odd player count, randomly assigning " $ PRI.PlayerName $ " to red (" $ PPH $ " PPH)", 'EvenMatchDebug');
+					log("Odd player count, Blue has higher PPH, assigning " $ PRI.PlayerName $ " to red (" $ PPH $ " PPH)", 'EvenMatchDebug');
 				
 				RedPRIs[RedPRIs.Length] = PRI;
 				RedPPH += PPH;
 			}
 			else {
 				if (EvenMatchMutator.bDebug)
-					log("Odd player count, randomly assigning " $ PRI.PlayerName $ " to blue (" $ PPH $ " PPH)", 'EvenMatchDebug');
+					log("Odd player count, Red has higher PPH, assigning " $ PRI.PlayerName $ " to blue (" $ PPH $ " PPH)", 'EvenMatchDebug');
 				
 				BluePRIs[BluePRIs.Length] = PRI;
 				BluePPH += PPH;
@@ -761,6 +762,12 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 			PastPPHMap = RecentMap.PPH[IndexMap].PastPPH;
 		}
 	}
+
+    // snarf allow ignoring map specific PPH
+    if(EvenMatchMutator.bIgnoreMapSpecificPPH)
+    {
+        PastPPHMap = -1;
+    }
 	
 	// combine current and past PPH values in a meaningful way
 	switch (int(PPH == -1) + 2 * int(PastPPH == -1) + 4 * int(PastPPHMap == -1)) {
@@ -781,7 +788,7 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
             break;
 			
 		case 4: // no past map-specific PPH
-			retval = 0.5 * (PPH + PastPPHMap);
+			retval = 0.5 * (PPH + PastPPH);
             break;
 			
 		case 5: // only past generic PPH

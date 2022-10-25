@@ -52,6 +52,7 @@ var config float TeamImbalancePPHThreshold;
 var config bool bCustomScoring;
 var config int CustomRegulationPoints;
 var config int CustomOvertimePoints;
+var config bool bIgnoreMapSpecificPPH;
 
 var config bool bDebug;
 
@@ -1139,7 +1140,7 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
 defaultproperties
 {
-	Build = "3.1"
+	Build = "3.3"
 	FriendlyName = "Omnip)o(tents Team Balance (Onslaught-only)"
 	Description  = "Special team balancing rules for public Onslaught matches."
 	bAddToServerPackages = True
@@ -1175,6 +1176,7 @@ defaultproperties
     bCustomScoring                        = False
     CustomRegulationPoints                = 1
     CustomOvertimePoints                  = 1
+    bIgnoreMapSpecificPPH                 = true
 	
 	bDebug = True
 	
