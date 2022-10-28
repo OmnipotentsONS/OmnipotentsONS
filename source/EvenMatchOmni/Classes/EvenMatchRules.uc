@@ -742,7 +742,9 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 				if (RecentMap.PPH[IndexMap].PastPPH == -1)
 					RecentMap.PPH[IndexMap].PastPPH = RecentMap.PPH[IndexMap].CurrentPPH;
 				else
-					RecentMap.PPH[IndexMap].PastPPH = 0.5 * (RecentMap.PPH[IndexMap].PastPPH + RecentMap.PPH[IndexMap].CurrentPPH);
+					//RecentMap.PPH[IndexMap].PastPPH = 0.5 * (RecentMap.PPH[IndexMap].PastPPH + RecentMap.PPH[IndexMap].CurrentPPH);
+					// updated by pOOty to use same formula above, slower change on MapPPH just like regular PPH
+					RecentMap.PPH[IndexMap].PastPPH = 0.32 * (2.125 * RecentMap.PPH[IndexMap].PastPPH + RecentMap.PPH[IndexMap].CurrentPPH);
 				RecentMap.PPH[IndexMap].TS = MatchStartTS;
 				bSaveNeeded = True;
 			}
