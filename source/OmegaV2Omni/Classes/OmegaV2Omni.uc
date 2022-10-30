@@ -123,8 +123,20 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Mo
        if (DamageType == class'OmegaV2Omni.DamTypeOmegaIonBlast')
                 return;
 
-        Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
+		if (DamageType == class'DamTypeShockBeam')
+				Damage *= 1.25;
+				
+		if (DamageType == class'DamTypeSniperShot')
+			Damage *= 1.25;
+
+       
+       Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
+
+
 }
+
+
+
 simulated event DrivingStatusChanged()
 {
 	local vector RotX, RotY, RotZ;
@@ -410,7 +422,7 @@ defaultproperties
      LongDamping=0.050000
      MaxStrafeForce=80.000000
      LatDamping=0.050000
-     MaxRiseForce=50.000000
+     MaxRiseForce=70.000000
      UpDamping=0.050000
      TurnTorqueFactor=600.000000
      TurnTorqueMax=200.000000
@@ -460,7 +472,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="Obtained the Omega"
-     VehicleNameString="Omega 2.2"
+     VehicleNameString="Omega 2.4"
      CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
      MaxDesireability=0.600000
      FlagBone="PlasmaGunAttachment"
@@ -469,8 +481,8 @@ defaultproperties
      HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.Horn03'
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.Horn07'
      GroundSpeed=1800.000000
-     HealthMax=225.000000
-     Health=225
+     HealthMax=275.000000
+     Health=275
      Mesh=SkeletalMesh'ONSVehicles-A.AttackCraft'
      SoundVolume=160
      CollisionRadius=150.000000

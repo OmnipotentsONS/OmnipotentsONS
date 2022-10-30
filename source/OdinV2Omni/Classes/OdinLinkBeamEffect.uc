@@ -9,7 +9,7 @@ Feel free to reuse this code. Send me a note if you found it helpful or want
 to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
-
+#exec obj load File=LinkScorpionTex.utx
 class OdinLinkBeamEffect extends xEmitter;
 
 
@@ -30,17 +30,59 @@ var float ScorchTime;
 var xEmitter MuzFlash;
 var OdinLinkBeamEndEffect BeamEndEffect;
 
+replication
+{
+    unreliable if (Role == ROLE_Authority)
+       LinkColor, LinkedActor,  bLockedOn, bHitSomething;
+
+    unreliable if ( (Role == ROLE_Authority) && (!bNetOwner || bDemoRecording || bRepClientDemo)  )
+        StartEffect, EndEffect;
+}
+
+simulated function Destroyed()
+{
+	local int i;
+
+	for (i = 0; i < Children.Length; i++)
+	{
+		if (Children[i] != None)
+			Children[i].Destroy();
+	}
+	Children.Length = 0;
+
+	if (MuzFlash != None)
+	{
+		MuzFlash.mRegen = false;
+	}
+	MuzFlash = None;
+
+	if (BeamEndEffect != None)
+	{
+		BeamEndEffect.Destroy();
+	}
+	BeamEndEffect = None;
+
+	Super.Destroyed();
+}
+
 
 function SetUpBeam(byte BeamColor, bool bLeft)
 {
 	local int i, NumChildren;
-
+  local float LocDiff, RotDiff, WiggleMe;
+	
 	bLeftBeam = bLeft;
 	LinkColor = BeamColor;
 
 	Skins[0] = TeamBeamSkins[LinkColor];
 	LightHue = TeamLightHues[LinkColor];
-
+  LocDiff        = VSize((Location - PrevLoc) * Vect(1,1,5));
+	RotDiff        = VSize(Vector(Rotation) - Vector(PrevRot));
+	WiggleMe       = FMax(LocDiff * 0.02, RotDiff * 4.0);
+	mWaveAmplitude = default.mWaveAmplitude;
+	mWaveAmplitude = FMin(16.0, mWaveAmplitude + WiggleMe);
+  mWaveShift=default.mWaveShift;
+	
 	if (Level.NetMode != NM_DedicatedServer)
 	{
 		if (MuzFlash == None)
@@ -70,31 +112,7 @@ function SetUpBeam(byte BeamColor, bool bLeft)
 	}
 }
 
-simulated function Destroyed()
-{
-	local int i;
 
-	for (i = 0; i < Children.Length; i++)
-	{
-		if (Children[i] != None)
-			Children[i].Destroy();
-	}
-	Children.Length = 0;
-
-	if (MuzFlash != None)
-	{
-		MuzFlash.mRegen = false;
-	}
-	MuzFlash = None;
-
-	if (BeamEndEffect != None)
-	{
-		BeamEndEffect.Destroy();
-	}
-	BeamEndEffect = None;
-
-	Super.Destroyed();
-}
 
 simulated function SetBeamPosition()
 {
@@ -155,22 +173,27 @@ simulated function Tick(float DeltaTime)
 		Destroy();
 		return;
 	}
-
+ 
+ LinkColor = Instigator.GetTeamNum();
 	// set beam start location
 	SetBeamPosition();
-	//StartEffect = Location;
+	StartEffect = Location;
 	BeamDir = Normal(EndEffect - Location);
 
 	if (LinkedActor != None)
 	{
 		EndEffect = LinkedActor.Location;
-		/*
 		if (!LinkedActor.TraceThisActor(HitLocation, HitNormal, LinkedActor.Location + LinkedActor.CollisionRadius * BeamDir, LinkedActor.Location - 1.5 * LinkedActor.CollisionRadius * BeamDir))
 			EndEffect = HitLocation;
 		else
 			EndEffect = HitActor.Location;
-		*/
+		bLockedOn = True;	
+	}		
+	else 
+	{
+	  bLockedOn = False;
 	}
+	
 
 	mSpawnVecA = EndEffect;
 	if (bLeftBeam && (bHitSomething || LinkedActor != None))
@@ -197,14 +220,20 @@ simulated function Tick(float DeltaTime)
 	if (bLockedOn)
 	{
 		mWaveAmplitude = FMax(1.0, mWaveAmplitude - (mWaveAmplitude + 5) * 4.0 * DeltaTime);
+		mWaveShift = default.mWaveShift * 3;
+    LightHue = TeamLightHues[2];  // show different hue for lock
+    Skins[0] = TeamBeamSkins[4]; // Purple!
 	}
 	else
 	{
+		Skins[0] = TeamBeamSkins[LinkColor]; // reset to normal teams
+		LightHue = TeamLightHues[LinkColor]; // reset to normal hue
 		LocDiff        = VSize((Location - PrevLoc) * Vect(1,1,5));
 		RotDiff        = VSize(Vector(Rotation) - Vector(PrevRot));
 		WiggleMe       = FMax(LocDiff * 0.02, RotDiff * 4.0);
 		mWaveAmplitude = FMax(2.0, mWaveAmplitude - mWaveAmplitude * 0.5 * DeltaTime);
 		mWaveAmplitude = FMin(16.0, mWaveAmplitude + WiggleMe);
+		mWaveShift=default.mWaveShift;
 	}
 
 	PrevLoc = Location;
@@ -240,12 +269,14 @@ defaultproperties
      TeamBeamSkins(1)=FinalBlend'XEffectMat.Link.LinkBeamBlueFB'
      TeamBeamSkins(2)=FinalBlend'XEffectMat.Link.LinkBeamGreenFB'
      TeamBeamSkins(3)=FinalBlend'XEffectMat.Link.LinkBeamYellowFB'
+     TeamBeamSkins(4)=FinalBlend'LinkScorpionTex.LinkBeamPurpleFB'
      TeamMuzzleFlashSkins(0)=Texture'XEffectMat.Link.link_muz_red'
      TeamMuzzleFlashSkins(1)=Texture'XEffectMat.Link.link_muz_blue'
      TeamMuzzleFlashSkins(2)=Texture'XEffectMat.Link.link_muz_green'
      TeamMuzzleFlashSkins(3)=Texture'XEffectMat.Link.link_muz_yellow'
-     TeamLightHues(1)=160
-     TeamLightHues(2)=100
+     TeamLightHues(0)=120
+     TeamLightHues(1)=100
+     TeamLightHues(2)=210
      TeamLightHues(3)=40
      mParticleType=PT_Beam
      mMaxParticles=3
@@ -267,6 +298,9 @@ defaultproperties
      LightBrightness=255.000000
      LightRadius=4.000000
      bDynamicLight=True
+     RemoteRole=ROLE_SimulatedProxy
+     bNetTemporary=false
+     bReplicateInstigator=true
      Skins(0)=FinalBlend'XEffectMat.Link.LinkBeamGreenFB'
      Style=STY_Additive
 }

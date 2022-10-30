@@ -10,36 +10,36 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 #exec obj load File=LinkScorpionTex.utx
-class WraithLinkBeamEffect extends xEmitter;
-
+//class WraithLinkBeamEffect extends xEmitter;
+class WraithLinkBeamEffect extends LinkBeamEffect;
 
 var array<Material> TeamBeamSkins, TeamMuzzleFlashSkins;
 var array<byte> TeamLightHues;
 
 
-var vector StartEffect, EndEffect;
+//var vector StartEffect, EndEffect;
 var Actor LinkedActor;  //why is this actor and not Pawn like in linkbeameffect?
-var byte LinkColor, OldLinkColor;
+//var byte LinkColor, OldLinkColor;
 var bool bLeftBeam;
-var bool bLockedOn, bHitSomething;
+//var bool bLockedOn, bHitSomething;
 
 var array<LinkBeamChild> Children;
-var vector PrevLoc;
-var rotator PrevRot;
-var float ScorchTime;
-var xEmitter MuzFlash;
+//var vector PrevLoc;
+//var rotator PrevRot;
+//var float ScorchTime;
+//var xEmitter MuzFlash;
 var WraithLinkBeamEndEffect BeamEndEffect;
 
-// from LinkBeamEffect
+/* Use from LinkBeamEffect
 replication
-{
+/{
     unreliable if (Role == ROLE_Authority)
        LinkColor, LinkedActor,  bLockedOn, bHitSomething;
 
     unreliable if ( (Role == ROLE_Authority) && (!bNetOwner || bDemoRecording || bRepClientDemo)  )
         StartEffect, EndEffect;
 }
-
+*/
 
 simulated function Destroyed()
 {
@@ -163,7 +163,7 @@ simulated function bool CheckMaxEffectDistance(PlayerController P, vector SpawnL
 {
 	return !P.BeyondViewDistance(SpawnLocation, 2000);
 }
- 
+
 simulated function Tick(float DeltaTime)
 {
 	local float LocDiff, RotDiff, WiggleMe;

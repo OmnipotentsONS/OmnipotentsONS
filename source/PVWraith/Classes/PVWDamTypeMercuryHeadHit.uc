@@ -6,7 +6,7 @@
 //=============================================================================
 
 
-class PVDamTypeMercuryHeadHit extends PVDamTypeMercuryDirectHit abstract;
+class PVWDamTypeMercuryHeadHit extends PVWDamTypeMercuryDirectHit abstract;
 
 
 //=============================================================================
@@ -27,7 +27,7 @@ static function IncrementKills(Controller Killer)
 
 defaultproperties
 {
-     DeathString="%k drove a mercury missile into %o's head."
+     DeathString="%k drove a Wraith mercury missile into %o's big ol' melon."
      FemaleSuicide="%o somehow managed to take off her head with her own mercury missile."
      MaleSuicide="%o somehow managed to take off his head with his own mercury missile."
      bAlwaysSevers=True

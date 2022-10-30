@@ -1,16 +1,3 @@
-/******************************************************************************
-BansheeSideGun
-
-Creation date: 2010-10-05 17:50
-Last change: $Id$
-Copyright © 2010, Wormbo
-Website: http://www.koehler-homepage.de/Wormbo/
-Feel free to reuse this code. Send me a note if you found it helpful or want
-to report bugs/provide improvements.
-Please ask for permission first, if you intend to make money off reused code.
-
-Extended to Wraith
-******************************************************************************/
 
 class WraithSideGun extends ONSDualACSideGun;
 
@@ -100,11 +87,11 @@ defaultproperties
      MaxShotCount=30
      RotationsPerSecond=0.150000
      bInstantRotation=False
-     Spread=0.010000
+     Spread=0.150000  // does this do anything
      FireInterval=0.200000
      FireSoundClass=Sound'PVWraith.Effects_MercIgnite'
      AltFireSoundClass=None
-     ProjectileClass=Class'PVWraith.WVMercuryMissile'
+     ProjectileClass=Class'PVWraith.PVWMercuryMissile'
      AltFireProjectileClass=None
      AIInfo(0)=(RefireRate=0.900000)
 }

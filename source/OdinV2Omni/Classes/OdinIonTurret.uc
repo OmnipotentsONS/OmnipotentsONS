@@ -334,13 +334,13 @@ function TraceFire(Vector Start, Rotator Dir)
 			if (Other.TraceThisActor(HitLocation, HitNormal, TraceEnd, TraceStart))
 			{
 				// grazing shot, reduce damage
-				Damage *= 0.5;
+				Damage *= 0.75;
 			}
 			HitLocation = Hits[i].HitLocation;
 			HitNormal = Hits[i].Hitnormal;
 			if (Pawn(Other) != None && Pawn(Other).Weapon != None && Pawn(Other).Weapon.CheckReflect(HitLocation, RefNormal, (DamageMin + DamageMax) / 3)) {
 				// successfully blocked by shieldgun, apply reduced damage but increased momentum
-				Other.TakeDamage(Damage * 0.3, Instigator, HitLocation, 1.5 * Momentum * Normal(HitLocation - Start), DamageType);
+				Other.TakeDamage(Damage * 0.4, Instigator, HitLocation, 2.5 * Momentum * Normal(HitLocation - Start), DamageType);
 			}
 			else {
 				Other.TakeDamage(Damage, Instigator, HitLocation, Momentum * Normal(HitLocation - Start), DamageType);
@@ -371,7 +371,7 @@ defaultproperties
      BlastBuildUpDelay=0.25000
      EffectsAttachBone="Muzzle"
      OuterTraceOffset=35.000000
-     TraceThickness=120.000000
+     TraceThickness=180.000000
      FireRecoilAmount=80000.000000
      YawBone="PlasmaGunBarrel"
      YawEndConstraint=0.000000
@@ -386,8 +386,8 @@ defaultproperties
      DamageType=Class'OdinV2Omni.DamTypeOdinIonBeam'
      DamageMin=500
      DamageMax=625
-     TraceRange=20000.000000
-     Momentum=120000.000000
+     TraceRange=22000.000000
+     Momentum=150000.000000
      AIInfo(0)=(bInstantHit=True,WarnTargetPct=0.900000,RefireRate=0.100000)
      Mesh=SkeletalMesh'WVHoverTankV2.Odin.IonTurretDummy'
      bForceSkelUpdate=True

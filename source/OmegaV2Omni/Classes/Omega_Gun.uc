@@ -1,7 +1,8 @@
 class Omega_Gun extends ONSWeapon;
 
+
 var()	class<FX_Turret_IonCannon_BeamFire> BeamEffectClass;
-var		float	StartHoldTime, MaxHoldTime, ShockMomentum, ShockRadius;
+var		float	StartHoldTime, MaxHoldTime, ShockMomentum, ShockRadius, SecDamage, SecDamageRadius, SecMomentum,PrimaryDamage, PrimaryDamageRadius, PrimaryMomentum;
 var		bool	bHoldingFire, bFireMode;
 var		int		BeamCount, OldBeamCount;
 
@@ -12,7 +13,7 @@ var	FX_IonPlasmaTank_AimLaser	AimLaser;
 replication
 {
     reliable if ( bNetDirty && !bNetOwner && Role == ROLE_Authority )
-		bFireMode, BeamCount;
+		bFireMode, BeamCount, OldBeamCount, bHoldingFire;
 }
 
 simulated function Destroyed()
@@ -36,7 +37,7 @@ function PlayChargeUp()
 function PlayRelease()
 {
 	AmbientSound = None;
-	PlaySound(sound'WeaponSounds.TranslocatorModuleRegeneration', SLOT_None, FireSoundVolume/255.0,,,, False);
+  PlaySound(sound'WeaponSounds.TranslocatorModuleRegeneration', SLOT_None, FireSoundVolume/255.0,,,, False);
 }
 
 simulated event FlashMuzzleFlash()
@@ -78,10 +79,14 @@ simulated function float ChargeBar()
 
 function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector HitNormal, int ReflectNum)
 {
-    local FX_Turret_IonCannon_BeamFire Beam;
+   local FX_Turret_IonCannon_BeamFire Beam;
 
+    
     Beam = Spawn(BeamEffectClass,,, Start, Dir);
     if (ReflectNum != 0) Beam.Instigator = None; // prevents client side repositioning of beam start
+    Beam.Damage = PrimaryDamage;   // defaults below in props
+    Beam.DamageRadius = PrimaryDamageRadius;
+    Beam.MomentumTransfer = PrimaryMomentum;
     Beam.AimAt(HitLocation, HitNormal);
 }
 
@@ -214,8 +219,10 @@ state ProjectileFireMode
 		local actor		Shock;
 		super.ShakeView();
 		PlaySound(ShockSound, SLOT_None, 128/255.0,,, 2.5, False);
-                Shock = Spawn(class'FX_IonPlasmaTank_ShockWave', Self,, Location);
-                HurtRadius(200, 1000, class'OmegaV2Omni.DamTypeOmegaIonBlast', 300000, Location);
+    Shock = Spawn(class'FX_IonPlasmaTank_ShockWave', Self,, Location);
+    //  Weapon.HurtRadius(DamageAmount, DamageRadius, DamageType, Momentum, HitLocation);
+    //HurtRadius(200, 1000, class'OmegaV2Omni.DamTypeOmegaIonBlast', 300000, Location);
+    HurtRadius(SecDamage, SecDamageRadius, class'OmegaV2Omni.DamTypeOmegaIonBlast', SecMomentum, Location);
 		Shock.SetBase( Instigator );
 	}
 
@@ -241,20 +248,51 @@ state ProjectileFireMode
 defaultproperties
 {
      BeamEffectClass=Class'OnslaughtFull.ONSHoverTank_IonPlasma_BeamFire'
-     MaxHoldTime=2.000000
+     
      ShockMomentum=50000.000000
      ShockRadius=2500.000000
-     ChargingSound=Sound'AssaultSounds.AssaultRifle.IonPowerUp'
+     //ChargingSound=Sound'AssaultSounds.AssaultRifle.IonPowerUp'
+     ChargingSound=Sound'ONSVehicleSounds-S.RV.RVChargeUp01'
      ShockSound=Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01'
-     FireInterval=5.000000
+     
+     // Hold time is the time on charging bar
+     MaxHoldTime=4.50000
+     // time it takes to restart charging.
+     FireInterval=1.00000
+     
      AltFireInterval=3.000000
      FireSoundClass=Sound'WeaponSounds.BaseImpactAndExplosions.BExplosion5'
+     // primary fire damage
+     PrimaryDamage = 100 // 200 default
+     PrimaryDamageRadius = 1750 // 2000 default
+     PrimaryMomentum = 80000 // 150000 default
+     
+     // secondary fire damage
+     SecDamage = 200
+     SecDamageRadius = 1000
+     SecMomentum = 300000
+     // Not sure what the below is?!  They are set at 0 in ION tank.
      DamageMin=100
      DamageMax=100
-     TraceRange=12500.000000
-     // Was 20000, 15000 is avril lock on range...so range plus half blast radius
+     //TraceRange=12500.000000
+     // Was too short and upset Enyo
+     TraceRange=14000.000000
+    
+     // Was 20000, 15000 is avril lock on range...so range plus half blast radius (which is now 1000 in Omega_IonCannon_BeamFire.uc
      AIInfo(0)=(bTrySplash=True,bLeadTarget=True,WarnTargetPct=0.990000,RefireRate=0.990000)
      Mesh=SkeletalMesh'ONSWeapons-A.PlasmaGun'
      SoundPitch=112
      SoundRadius=512.000000
+     
+     // Pitch limits..this is based on ONSWeapon, not a vehicle weapon like ONSAttackCraftGUN
+     // ONSWeaponDefault
+     //  PitchUpLimit=5000
+     //  PitchDownLimit=60000
+     // ONSAttackCRaftDefault
+     //PitchUpLimit=18000
+     // PitchDownLimit=49153
+     
+     PitchUpLimit=18000
+     PitchDownLimit=49153
 }
+

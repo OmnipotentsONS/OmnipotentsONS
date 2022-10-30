@@ -6,7 +6,7 @@
 //=============================================================================
 
 
-class PVMercuryExplosionLight extends Effects;
+class PVWMercuryExplosionLight extends Effects;
 
 
 simulated function PostNetBeginPlay()

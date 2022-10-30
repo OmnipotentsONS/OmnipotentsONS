@@ -1,5 +1,5 @@
 /******************************************************************************
-BansheeFactory
+Ban shee Factory converted to Wraith Factory
 
 Creation date: 2010-11-11 08:19
 Last change: $Id$

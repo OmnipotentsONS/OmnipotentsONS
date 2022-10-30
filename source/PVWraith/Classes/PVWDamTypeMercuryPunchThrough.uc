@@ -6,7 +6,7 @@
 //=============================================================================
 
 
-class WVDamTypeMercuryPunchThrough extends WVDamTypeMercuryDirectHit abstract;
+class PVWDamTypeMercuryPunchThrough extends PVWDamTypeMercuryDirectHit abstract;
 
 
 /**
@@ -21,7 +21,7 @@ static function GetHitEffects(out class<xEmitter> HitEffects[4], int VictimHealt
 
 defaultproperties
 {
-     DeathString="%k drove a mercury missile through %o."
+     DeathString="%k drove a Wraith mercury missile right damn through %o."
      GibModifier=2.000000
      GibPerterbation=0.500000
      KDeathVel=400.000000

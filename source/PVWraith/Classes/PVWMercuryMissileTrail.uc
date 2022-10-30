@@ -6,7 +6,7 @@
 //=============================================================================
 
 
-class PVMercuryMissileTrail extends Emitter notplaceable;
+class PVWMercuryMissileTrail extends Emitter notplaceable;
 
 
 /**
@@ -72,7 +72,7 @@ defaultproperties
          WarmupTicksPerSecond=20.000000
          RelativeWarmupTime=0.500000
      End Object
-     Emitters(0)=SpriteEmitter'PVWraith.PVMercuryMissileTrail.ThrusterSmoke'
+     Emitters(0)=SpriteEmitter'PVWraith.PVWMercuryMissileTrail.ThrusterSmoke'
 
      Begin Object Class=TrailEmitter Name=MissileTrail
          TrailShadeType=PTTST_PointLife
@@ -93,7 +93,7 @@ defaultproperties
          SecondsBeforeInactive=0.000000
          LifetimeRange=(Min=10.000000,Max=10.000000)
      End Object
-     Emitters(1)=TrailEmitter'PVWraith.PVMercuryMissileTrail.MissileTrail'
+     Emitters(1)=TrailEmitter'PVWraith.PVWMercuryMissileTrail.MissileTrail'
 
      Begin Object Class=MeshEmitter Name=ThrusterFlame
          StaticMesh=StaticMesh'PVWraith.SMeshes.MercuryThrusterMesh'
@@ -116,7 +116,7 @@ defaultproperties
          WarmupTicksPerSecond=20.000000
          RelativeWarmupTime=1.000000
      End Object
-     Emitters(2)=MeshEmitter'PVWraith.PVMercuryMissileTrail.ThrusterFlame'
+     Emitters(2)=MeshEmitter'PVWraith.PVWMercuryMissileTrail.ThrusterFlame'
 
      AutoDestroy=True
      bNoDelete=False

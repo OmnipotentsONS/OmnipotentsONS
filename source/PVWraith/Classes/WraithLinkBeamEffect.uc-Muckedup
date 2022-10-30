@@ -1,5 +1,5 @@
 /******************************************************************************
-BansheeLinkBeamEffect
+WraithLinkBeamEffect
 
 Creation date: 2012-10-24 15:12
 Last change: $Id$
@@ -9,38 +9,52 @@ Feel free to reuse this code. Send me a note if you found it helpful or want
 to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
-
-class BansheeLinkBeamEffect extends xEmitter;
-
+#exec obj load File=LinkScorpionTex.utx
+//class WraithLinkBeamEffect extends xEmitter;
+class WraithLinkBeamEffect extends LinkBeamEffect;
 
 var array<Material> TeamBeamSkins, TeamMuzzleFlashSkins;
 var array<byte> TeamLightHues;
 
 
-var vector StartEffect, EndEffect;
+//;var vector StartEffect, EndEffect;
 var Actor LinkedActor;
-var byte LinkColor;
+//;var byte LinkColor;
 var bool bLeftBeam;
-var bool bLockedOn, bHitSomething;
+//;var bool bLockedOn, bHitSomething;
 
 var array<LinkBeamChild> Children;
-var vector PrevLoc;
-var rotator PrevRot;
-var float ScorchTime;
-var xEmitter MuzFlash;
-var BansheeLinkBeamEndEffect BeamEndEffect;
+//;var vector PrevLoc;
+//;var rotator PrevRot;
+//;var float ScorchTime;
+//;var xEmitter MuzFlash;
+//;var WraithLinkBeamEndEffect BeamEndEffect;
+
+// added fix from snarf for invisible beam on server
+//replication
+//{
+//    unreliable if (Role == ROLE_Authority)
+//        LinkColor, LinkedActor, bLockedOn, bHitSomething;
+
+//    unreliable if ( (Role == ROLE_Authority) && (!bNetOwner || bDemoRecording || bRepClientDemo)  )
+//        StartEffect, EndEffect;
+//}
+
+
 
 
 function SetUpBeam(byte BeamColor, bool bLeft)
 {
-	local int i, NumChildren;
+	//local int i, NumChildren;
+ 
 
 	bLeftBeam = bLeft;
 	LinkColor = BeamColor;
 
-	Skins[0] = TeamBeamSkins[LinkColor];
-	LightHue = TeamLightHues[LinkColor];
+	Skins[0] = TeamBeamSkins[BeamColor];
+	LightHue = TeamLightHues[BeamColor];
 
+/*
 	if (Level.NetMode != NM_DedicatedServer)
 	{
 		if (MuzFlash == None)
@@ -68,8 +82,11 @@ function SetUpBeam(byte BeamColor, bool bLeft)
 			Children[i].Skins[0] = Skins[0];
 		}
 	}
+*/
 }
 
+
+/*
 simulated function Destroyed()
 {
 	local int i;
@@ -142,6 +159,7 @@ simulated function bool CheckMaxEffectDistance(PlayerController P, vector SpawnL
 {
 	return !P.BeyondViewDistance(SpawnLocation, 2000);
 }
+*/
 
 simulated function Tick(float DeltaTime)
 {
@@ -156,20 +174,45 @@ simulated function Tick(float DeltaTime)
 		return;
 	}
 
+	Super.tick(DeltaTime);
 	// set beam start location
-	SetBeamPosition();
-	//StartEffect = Location;
-	BeamDir = Normal(EndEffect - Location);
+//SetBeamPosition();
+//	StartEffect = Location;  // was commented out?!
+//	BeamDir = Normal(EndEffect - Location);
+
+ if ( LinkColor == 0 )
+        {
+            Skins[0] = FinalBlend'LinkScorpionTex.LinkBeamPurpleFB'; //green
+                if ( MuzFlash != None )
+	                MuzFlash.Skins[0] = Texture'LinkScorpionTex.link_muz_purple';
+                LightHue = 179;
+            
+        }
+        else if ( LinkColor == 1 )
+        {
+            Skins[0] = FinalBlend'XEffectMat.LinkBeamRedFB';
+            if ( MuzFlash != None )
+				MuzFlash.Skins[0] = Texture'XEffectMat.link_muz_red';
+            LightHue = 0;
+        }
+        else
+        {
+            Skins[0] = FinalBlend'XEffectMat.LinkBeamBlueFB';
+            if ( MuzFlash != None )
+	            MuzFlash.Skins[0] = Texture'XEffectMat.link_muz_blue';
+            LightHue = 160;
+        }
 
 	if (LinkedActor != None)
 	{
 		EndEffect = LinkedActor.Location;
-		/*
-		if (!LinkedActor.TraceThisActor(HitLocation, HitNormal, LinkedActor.Location + LinkedActor.CollisionRadius * BeamDir, LinkedActor.Location - 1.5 * LinkedActor.CollisionRadius * BeamDir))
-			EndEffect = HitLocation;
-		else
+		
+		// not sure why this is commented out -- pooty.  I might try uncommenting it?
+		//if (!LinkedActor.TraceThisActor(HitLocation, HitNormal, LinkedActor.Location + LinkedActor.CollisionRadius * BeamDir, LinkedActor.Location - 1.5 * LinkedActor.CollisionRadius * BeamDir))
+		//EndEffect = HitLocation;
+		//else
 			EndEffect = HitActor.Location;
-		*/
+		
 	}
 
 	mSpawnVecA = EndEffect;
@@ -177,7 +220,7 @@ simulated function Tick(float DeltaTime)
 	{
 		if (BeamEndEffect == None)
 		{
-			BeamEndEffect = Spawn(class'BansheeLinkBeamEndEffect', Self,, EndEffect);
+			BeamEndEffect = Spawn(class'WraithLinkBeamEndEffect', Self,, EndEffect);
 			BeamEndEffect.LightHue = TeamLightHues[LinkColor];
 		}
 		else
@@ -227,7 +270,9 @@ simulated function Tick(float DeltaTime)
 		if (HitActor != None && HitActor.bWorldGeometry)
 			Spawn(class'LinkScorch',,, HitLocation, rotator(-HitNormal));
 	}
-}
+
+} // End Tick
+
 
 
 //=============================================================================
@@ -267,6 +312,7 @@ defaultproperties
      LightBrightness=255.000000
      LightRadius=4.000000
      bDynamicLight=True
-     Skins(0)=FinalBlend'XEffectMat.Link.LinkBeamGreenFB'
+     //Skins(0)=FinalBlend'XEffectMat.Link.LinkBeamRedFB'
+     Skins(0)=FinalBlend'LinkScorpionTex.LinkBeamPurpleFB';
      Style=STY_Additive
 }

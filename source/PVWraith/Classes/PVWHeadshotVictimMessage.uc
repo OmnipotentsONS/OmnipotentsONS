@@ -6,7 +6,7 @@
 //=============================================================================
 
 
-class WVHeadshotVictimMessage extends SpecialKillMessage abstract;
+class PVWHeadshotVictimMessage extends SpecialKillMessage abstract;
 
 
 //=============================================================================
@@ -37,5 +37,5 @@ static function string GetString(optional int Switch, optional PlayerReplication
 
 defaultproperties
 {
-     DecapitationByString="Head Shot by %k !!"
+     DecapitationByString="Amazing f'ing Head Shot by %k !!"
 }

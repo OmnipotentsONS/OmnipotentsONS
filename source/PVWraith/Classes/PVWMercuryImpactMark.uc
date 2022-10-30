@@ -6,15 +6,15 @@
 //=============================================================================
 
 
-class WVMercuryImpactMark extends RocketMark;
+class PVWMercuryImpactMark extends RocketMark;
 
-
+#exec TEXTURE IMPORT NAME=Decals_MercImpactMark FILE=Textures\Decals_MercImpactMark.tga DXT=5
 //=============================================================================
 // Default properties
 //=============================================================================
 
 defaultproperties
 {
-     ProjTexture=Texture'PVWraith.Decals.MercImpactMark'
+     ProjTexture=Texture'PVWraith.Decals_MercImpactMark'
      DrawScale=0.800000
 }

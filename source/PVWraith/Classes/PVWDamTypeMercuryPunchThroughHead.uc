@@ -6,7 +6,7 @@
 //=============================================================================
 
 
-class WVDamTypeMercuryPunchThroughHead extends WVDamTypeMercuryHeadHit abstract;
+class PVWDamTypeMercuryPunchThroughHead extends PVWDamTypeMercuryHeadHit abstract;
 
 
 /**
@@ -21,6 +21,6 @@ static function GetHitEffects(out class<xEmitter> HitEffects[4], int VictimHealt
 
 defaultproperties
 {
-     DeathString="%k drove a mercury missile through %o's head."
+     DeathString="%k drove a mercury missile through %o's big ol' Melon."
      KDeathVel=400.000000
 }

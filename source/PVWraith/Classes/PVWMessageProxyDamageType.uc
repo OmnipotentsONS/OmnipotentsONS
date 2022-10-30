@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class PVMessageProxyDamageType extends VehicleDamageType abstract;
+class PVWMessageProxyDamageType extends VehicleDamageType abstract;
 
 
 var() class<DamageType> MessageSourceDamageType;

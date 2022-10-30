@@ -7,7 +7,7 @@
 //=============================================================================
 
 
-class PVMercuryExplosion extends Emitter notplaceable;
+class PVWMercuryExplosion extends Emitter notplaceable;
 
 
 #exec audio import File=Sounds\Effects_MercWaterImpact.wav
@@ -46,8 +46,8 @@ simulated event PostNetBeginPlay()
 	if (Level.NetMode == NM_DedicatedServer || PC == None) {
 		return;
 	}
-	if (!PC.BeyondViewDistance(Location, class'PVMercuryExplosionLight'.default.CullDistance)) {
-		Spawn(class'PVMercuryExplosionLight');
+	if (!PC.BeyondViewDistance(Location, class'PVWMercuryExplosionLight'.default.CullDistance)) {
+		Spawn(class'PVWMercuryExplosionLight');
 	}
 
 	if (Emitters.Length > 2) {
@@ -112,7 +112,7 @@ defaultproperties
          VelocityLossRange=(X=(Min=1.500000,Max=2.500000),Y=(Min=1.500000,Max=2.500000),Z=(Min=1.500000,Max=2.500000))
          GetVelocityDirectionFrom=PTVD_AddRadial
      End Object
-     Emitters(0)=SpriteEmitter'PVWraith.PVMercuryExplosion.ExplosionRing'
+     Emitters(0)=SpriteEmitter'PVWraith.PVWMercuryExplosion.ExplosionRing'
 
      Begin Object Class=SpriteEmitter Name=ExplosionSmokeRing
          FadeOut=True
@@ -144,7 +144,7 @@ defaultproperties
          VelocityLossRange=(X=(Min=1.000000,Max=1.000000),Y=(Min=1.000000,Max=1.000000),Z=(Min=1.000000,Max=1.000000))
          GetVelocityDirectionFrom=PTVD_AddRadial
      End Object
-     Emitters(1)=SpriteEmitter'PVWraith.PVMercuryExplosion.ExplosionSmokeRing'
+     Emitters(1)=SpriteEmitter'PVWraith.PVWMercuryExplosion.ExplosionSmokeRing'
 
      AutoDestroy=True
      bNoDelete=False

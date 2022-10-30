@@ -1,5 +1,5 @@
 /******************************************************************************
-Banshee
+Orignally Ban shee converted to Wraith
 
 Creation date: 2010-10-05 17:20
 Last change: $Id$
@@ -22,7 +22,10 @@ Thanks to Wormbo for his original work
 class Wraith extends ONSDualAttackCraft;
 
 
-//#exec obj load WVMercuryMissiles.u package=PVWraith
+// obj load WVMercuryMissiles.u package=PVWraith
+// embedded MercuryMissles in this vehicle
+// allows better config/control and avoid class collisions
+
 #exec audio import File=Sounds\WraithEngine.wav
 #exec audio import File=Sounds\WraithStart.wav
 #exec audio import File=Sounds\WraithStop.wav
@@ -269,10 +272,8 @@ defaultproperties
      IdleSound=Sound'PVWraith.WraithEngine'
      StartUpSound=Sound'PVWraith.WraithStart'
      ShutDownSound=Sound'PVWraith.WraithStop'
-     bDesiredBehindView=False
-     TPCamDistance=150.000000
      VehiclePositionString="in a Wraith"
-     VehicleNameString="Wraith 1.0"
+     VehicleNameString="Wraith 1.1"
      RanOverDamageType=Class'PVWraith.DamTypeWraithRoadkill'
      CrushedDamageType=Class'PVWraith.DamTypeWraithPancake'
 }

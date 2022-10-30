@@ -1,14 +1,3 @@
-/******************************************************************************
-OdinLinkTurret
-
-Creation date: 2012-10-22 15:02
-Last change: $Id$
-Copyright © 2012, Wormbo
-Website: http://www.koehler-homepage.de/Wormbo/
-Feel free to reuse this code. Send me a note if you found it helpful or want
-to report bugs/provide improvements.
-Please ask for permission first, if you intend to make money off reused code.
-******************************************************************************/
 
 class OdinLinkTurret extends HoverTankWeapon;
 
@@ -30,6 +19,13 @@ var Actor LinkedActor;
 var float SavedDamage, SavedHeal;
 var float DamageModifier;
 
+replication
+{
+    reliable if (Role == ROLE_Authority)
+		bFiringBeam;
+		
+	
+}
 
 simulated function DestroyEffects()
 {
@@ -176,8 +172,10 @@ simulated event OwnerEffects()
 
 simulated function Tick(float DeltaTime)
 {
+	local int TeamNum;
 	Super.Tick(DeltaTime);
 
+	TeamNum=Instigator.GetTeamNum();
 	if (bFiringBeam != bClientTrigger)
 	{
 		UpdateBeamState();
@@ -196,6 +194,9 @@ simulated function ClientTrigger()
 
 simulated function UpdateBeamState()
 {
+	local int TeamNum;
+	
+	TeamNum=Instigator.GetTeamNum();
 	if (bFiringBeam && !bClientTrigger)
 	{
 		if (Beam1 != None)
@@ -213,7 +214,7 @@ simulated function UpdateBeamState()
 			if (Beam1 == None)
 			{
 				Beam1 = Spawn(BeamEffectClass, Self);
-				Beam1.SetUpBeam(Team, False);
+				Beam1.SetUpBeam(TeamNum, False);
 			}
 			//AttachToBone(Beam1, WeaponFireAttachmentBone);
 			//Beam1.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset + vect(0,1,0) * DualFireOffset) * DrawScale);
@@ -221,7 +222,7 @@ simulated function UpdateBeamState()
 			if (Beam2 == None)
 			{
 				Beam2 = Spawn(BeamEffectClass, Self);
-				Beam2.SetUpBeam(Team, True);
+				Beam2.SetUpBeam(TeamNum, True);
 			}
 			//AttachToBone(Beam2, WeaponFireAttachmentBone);
 			//Beam2.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset - vect(0,1,0) * DualFireOffset) * DrawScale);
@@ -460,9 +461,9 @@ defaultproperties
      DamageType=Class'OdinV2Omni.DamTypeOdinLinkBeam'
      DamageMin=15
      DamageMax=15
-     TraceRange=2000.000000
+     TraceRange=4000.000000
      Momentum=-30000.000000
-     ProjectileClass=Class'WVHoverTankV2.OdinLinkPlasmaProjectile'
+     ProjectileClass=Class'OdinV2Omni.OdinLinkPlasmaProjectile'
      AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.200000,RefireRate=0.700000)
      AIInfo(1)=(bInstantHit=True,WarnTargetPct=0.200000)
      Mesh=SkeletalMesh'ONSFullAnimations.MASPassengerGun'

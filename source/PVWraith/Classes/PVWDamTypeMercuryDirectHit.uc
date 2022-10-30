@@ -1,12 +1,12 @@
 //=============================================================================
-// DamTypeMercuryDirectHit
+// WVDamTypeDirectHit
 // Copyright 2003-2010 by Wormbo <wormbo@online.de>
 //
-// Damage type for mercury missile splash damage.
+// Damage type for direct mercury missile hit with missile blowing up.
 //=============================================================================
 
 
-class PVDamTypeMercurySplashDamage extends VehicleDamageType abstract;
+class PVWDamTypeMercuryDirectHit extends VehicleDamageType abstract;
 
 
 /**
@@ -16,7 +16,7 @@ static function GetHitEffects(out class<xEmitter> HitEffects[4], int VictimHealt
 {
 	HitEffects[0] = class'HitSmoke';
 
-	if (VictimHealth <= 0)
+	if (VictimHealth <= 0 && FRand() < 0.5)
 		HitEffects[1] = class'HitFlameBig';
 	else if (FRand() < 0.5)
 		HitEffects[1] = class'HitFlame';
@@ -30,13 +30,16 @@ static function GetHitEffects(out class<xEmitter> HitEffects[4], int VictimHealt
 defaultproperties
 {
      VehicleClass=Class'PVWraith.Wraith'
-     DeathString="%o was way too slow for %k's Wraith missile."
-     FemaleSuicide="%o checked if her Wraith's rocket launchers were loaded."
-     MaleSuicide="%o checked if his Wraith's rocket launchers were loaded."
+     DeathString="%k drove a Wraith missile into %o."
+     FemaleSuicide="%o somehow managed to get hit by her own Wraith missile."
+     MaleSuicide="%o somehow managed to get hit by his own Wraith missile."
      bDetonatesGoop=True
      bKUseOwnDeathVel=True
      bDelayedDamage=True
-     GibPerterbation=0.150000
-     KDeathVel=150.000000
-     KDeathUpKick=50.000000
+     bRagdollBullet=True
+     bBulletHit=True
+     GibPerterbation=0.350000
+     KDamageImpulse=20000.000000
+     KDeathVel=550.000000
+     KDeathUpKick=100.000000
 }

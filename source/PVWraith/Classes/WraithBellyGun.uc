@@ -1,19 +1,5 @@
-/******************************************************************************
-BansheeBellyGun
-
-Creation date: 2010-10-05 19:48
-Last change: $Id$
-Copyright © 2010, Wormbo
-Website: http://www.koehler-homepage.de/Wormbo/
-Feel free to reuse this code. Send me a note if you found it helpful or want
-to report bugs/provide improvements.
-Please ask for permission first, if you intend to make money off reused code.
-
-Extended to Wraith
-******************************************************************************/
 
 class WraithBellyGun extends ONSDualACGatlingGun;
-
 
 #exec audio import file=Sounds\WraithLinkAmbient.wav
 
@@ -23,15 +9,27 @@ var() int MinDamageAmount;
 var() float HealMultiplier;
 var() float SelfHealMultiplier;
 var() float LinkBreakError;
+
 var class<WraithLinkBeamEffect> BeamEffectClass;
 var array<class<Projectile> > TeamProjectileClasses;
 
 var WraithLinkBeamEffect Beam1, Beam2;
+
+
 var bool bFiringBeam;
 var Actor LinkedActor;
 var float SavedDamage, SavedHeal;
 var float DamageModifier;
 
+
+
+replication
+{
+    reliable if (Role == ROLE_Authority)
+		bFiringBeam;
+		
+	
+}
 
 simulated function DestroyEffects()
 {
@@ -62,7 +60,6 @@ function bool CanAttack(Actor Other)
 
 	return false;
 }
-
 
 simulated function CalcWeaponFire()
 {
@@ -179,6 +176,11 @@ simulated event OwnerEffects()
 
 simulated function Tick(float DeltaTime)
 {
+	local int TeamNum;
+	Super.Tick(DeltaTime);
+	
+	
+	TeamNum = Instigator.GetTeamNum();
 	if (bFiringBeam != bClientTrigger)
 	{
 		UpdateBeamState();
@@ -197,7 +199,10 @@ simulated function ClientTrigger()
 
 simulated function UpdateBeamState()
 {
-	if (bFiringBeam && !bClientTrigger)
+	local int TeamNum;
+	
+	TeamNum=Instigator.GetTeamNum();
+  if (bFiringBeam && !bClientTrigger)
 	{
 		if (Beam1 != None)
 			Beam1.Destroy();
@@ -209,24 +214,26 @@ simulated function UpdateBeamState()
 	}
 	else if (!bFiringBeam && bClientTrigger)
 	{
-		if (Level.NetMode != NM_DedicatedServer)
-		{
+		// on Wraith this HAS to be commented out to work on server, 
+		// on Odin it can be commented out, not sure why?!
+//		if (Level.NetMode != NM_DedicatedServer)
+//		{
 			if (Beam1 == None)
 			{
 				Beam1 = Spawn(BeamEffectClass, Self);
-				Beam1.SetUpBeam(Team, False);
+				Beam1.SetUpBeam(TeamNum, False);
 			}
-			//AttachToBone(Beam1, WeaponFireAttachmentBone);
-			//Beam1.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset + vect(0,1,0) * DualFireOffset) * DrawScale);
+	//		AttachToBone(Beam1, WeaponFireAttachmentBone);
+	//		Beam1.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset + vect(0,1,0) * DualFireOffset) * DrawScale);
 
 			if (Beam2 == None)
 			{
 				Beam2 = Spawn(BeamEffectClass, Self);
-				Beam2.SetUpBeam(Team, True);
-			}
-			//AttachToBone(Beam2, WeaponFireAttachmentBone);
-			//Beam2.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset - vect(0,1,0) * DualFireOffset) * DrawScale);
-		}
+				Beam2.SetUpBeam(TeamNum, True);
+			}	
+	//		AttachToBone(Beam2, WeaponFireAttachmentBone);
+  //		Beam2.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset - vect(0,1,0) * DualFireOffset) * DrawScale);
+// 		}
 	}
 	bFiringBeam = bClientTrigger;
 	MaxRange();
@@ -448,11 +455,13 @@ defaultproperties
      BeamEffectClass=Class'PVWraith.WraithLinkBeamEffect'
      TeamProjectileClasses(0)=Class'PVWraith.WraithLinkPlasmaProjectileRed'
      TeamProjectileClasses(1)=Class'PVWraith.WraithLinkPlasmaProjectileBlue'
+     
      DamageModifier=1.000000
      RotationsPerSecond=2.000000
      bInstantRotation=False
      bInstantFire=False
      bAmbientAltFireSound=True
+     FireInterval=0.30000
      AltFireInterval=0.100000
      FireSoundClass=Sound'ONSVehicleSounds-S.LaserSounds.Laser17'
      AltFireSoundClass=Sound'PVWraith.WraithLinkAmbient'
@@ -464,4 +473,8 @@ defaultproperties
      ProjectileClass=Class'PVWraith.WraithLinkPlasmaProjectile'
      AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.200000,RefireRate=0.800000)
      AIInfo(1)=(bInstantHit=True,WarnTargetPct=0.200000)
+     
+   
+
+
 }

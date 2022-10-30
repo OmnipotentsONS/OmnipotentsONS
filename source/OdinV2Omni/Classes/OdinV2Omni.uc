@@ -195,7 +195,7 @@ defaultproperties
      EnginePitchRange=25
      CrouchedHoverPenScale=1.500000
      DustEmitterClass=Class'WVHoverTankV2.LargeHoverTankDustEmitter'
-     MaxGroundSpeed=1300.000000
+     MaxGroundSpeed=1400.000000
      TurretSocketClass=Class'OdinV2Omni.IonTurretSocket'
      TurnTorqueFactor=1700.000000
      TurnTorqueMax=450.000000
@@ -222,7 +222,7 @@ defaultproperties
      FPCamPos=(X=-150.000000,Y=0.000000,Z=320.000000)
      TPCamWorldOffset=(Z=350.000000)
      VehiclePositionString="in an Odin"
-     VehicleNameString="Odin 2.0"
+     VehicleNameString="Odin 2.1"
      VehicleDescription="Odin, the chief god of Norse mythology. His spear, Gungnir, is said to never miss its target. The Odin hover tank is equipped with a focused ion turret and two plasma turrets."
      RanOverDamageType=Class'OdinV2Omni.DamTypeOdinRoadkill'
      CrushedDamageType=Class'OdinV2Omni.DamTypeOdinPancake'
