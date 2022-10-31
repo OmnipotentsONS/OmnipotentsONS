@@ -256,9 +256,9 @@ defaultproperties
      ShockSound=Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01'
      
      // Hold time is the time on charging bar
-     MaxHoldTime=4.50000
+     MaxHoldTime=2.0000
      // time it takes to restart charging.
-     FireInterval=1.00000
+     FireInterval=1.5000
      
      AltFireInterval=3.000000
      FireSoundClass=Sound'WeaponSounds.BaseImpactAndExplosions.BExplosion5'
@@ -276,9 +276,9 @@ defaultproperties
      DamageMax=100
      //TraceRange=12500.000000
      // Was too short and upset Enyo
-     TraceRange=14000.000000
+     TraceRange=14500.000000
     
-     // Was 20000, 15000 is avril lock on range...so range plus half blast radius (which is now 1000 in Omega_IonCannon_BeamFire.uc
+     // Was 20000, 15000 is avril lock on range...so range plus half blast radius (give or take)
      AIInfo(0)=(bTrySplash=True,bLeadTarget=True,WarnTargetPct=0.990000,RefireRate=0.990000)
      Mesh=SkeletalMesh'ONSWeapons-A.PlasmaGun'
      SoundPitch=112
