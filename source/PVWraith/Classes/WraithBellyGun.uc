@@ -23,13 +23,11 @@ var float DamageModifier;
 
 
 
-replication
-{
-    reliable if (Role == ROLE_Authority)
-		bFiringBeam;
-		
-	
-}
+//replication
+//{
+//    reliable if (Role == ROLE_Authority)
+//		bFiringBeam;
+//}
 
 simulated function DestroyEffects()
 {
@@ -216,8 +214,8 @@ simulated function UpdateBeamState()
 	{
 		// on Wraith this HAS to be commented out to work on server, 
 		// on Odin it can be commented out, not sure why?!
-//		if (Level.NetMode != NM_DedicatedServer)
-//		{
+		if (Level.NetMode != NM_DedicatedServer)
+		{
 			if (Beam1 == None)
 			{
 				Beam1 = Spawn(BeamEffectClass, Self);
@@ -233,7 +231,7 @@ simulated function UpdateBeamState()
 			}	
 	//		AttachToBone(Beam2, WeaponFireAttachmentBone);
   //		Beam2.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset - vect(0,1,0) * DualFireOffset) * DrawScale);
-// 		}
+ 		}
 	}
 	bFiringBeam = bClientTrigger;
 	MaxRange();
@@ -372,10 +370,11 @@ simulated function TraceBeamFire(float DeltaTime)
 			}
 			else if (HitActor != None && !HitActor.bWorldGeometry)
 			{
-				Node = DestroyableObjective(HitActor);
-				if (Node == None)
-					Node = DestroyableObjective(HitActor.Owner);
-				if (Node != None && Node.Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax && (ONSPowerCore(Node) == None || ONSPowerCore(Node).PoweredBy(Team) && !Node.IsInState('NeutralCore')))
+//				Node = DestroyableObjective(HitActor);
+//				if (Node == None)
+//					Node = DestroyableObjective(HitActor.Owner);
+//				if (Node != None && Node.Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax && (ONSPowerCore(Node) == None || ONSPowerCore(Node).PoweredBy(Team) && !Node.IsInState('NeutralCore')))
+				if (DestroyableObjective(HitActor) != None && DestroyableObjective(HitActor).Health > 0 || DestroyableObjective(HitActor.Owner) != None && DestroyableObjective(HitActor.Owner).Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax)
 				{
 					BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
 				}
@@ -396,7 +395,7 @@ function byte BestMode()
 	if (Instigator == None || Instigator.Controller == None)
 		return 0;
 
-	if (Projectile(Instigator.Controller.Target) != None && VSize(Instigator.Controller.Target.Location - Location) < TraceRange)
+	if (Instigator.Controller.Target != None && VSize(Instigator.Controller.Target.Location - Location) < TraceRange)
 		return 1;
 
 	if (Instigator.Controller.Enemy != None && VSize(Instigator.Controller.Enemy.Location - Location) < TraceRange)
@@ -460,6 +459,8 @@ defaultproperties
      RotationsPerSecond=2.000000
      bInstantRotation=False
      bInstantFire=False
+     WeaponFireOffset=30.000000
+     DualFireOffset=18.000000
      bAmbientAltFireSound=True
      FireInterval=0.30000
      AltFireInterval=0.100000

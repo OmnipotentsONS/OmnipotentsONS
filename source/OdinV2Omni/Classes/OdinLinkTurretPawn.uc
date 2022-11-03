@@ -79,7 +79,7 @@ function Timer()
 
 defaultproperties
 {
-     GunClass=Class'WVHoverTankV2.OdinLinkTurret'
+     GunClass=Class'OdinV2Omni.OdinLinkTurret'
      CameraBone="Object85"
      bDrawDriverInTP=False
      ExitPositions(0)=(Y=-250.000000,Z=100.000000)

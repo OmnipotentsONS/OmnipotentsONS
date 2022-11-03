@@ -6,9 +6,9 @@
 //=============================================================================
 
 
-class PVWMercuryMissileTrail extends Emitter notplaceable;
-
+class MBMercuryMissileTrail extends Emitter notplaceable;
 #exec obj load file=WVMercuryMissiles_Tex.utx
+
 
 /**
 Make sure the trail emitter really reaches the explosion location and fade out
@@ -73,7 +73,7 @@ defaultproperties
          WarmupTicksPerSecond=20.000000
          RelativeWarmupTime=0.500000
      End Object
-     Emitters(0)=SpriteEmitter'PVWraith.PVWMercuryMissileTrail.ThrusterSmoke'
+     Emitters(0)=SpriteEmitter'Mobreaker.MBMercuryMissileTrail.ThrusterSmoke'
 
      Begin Object Class=TrailEmitter Name=MissileTrail
          TrailShadeType=PTTST_PointLife
@@ -94,7 +94,7 @@ defaultproperties
          SecondsBeforeInactive=0.000000
          LifetimeRange=(Min=10.000000,Max=10.000000)
      End Object
-     Emitters(1)=TrailEmitter'PVWraith.PVWMercuryMissileTrail.MissileTrail'
+     Emitters(1)=TrailEmitter'Mobreaker.MBMercuryMissileTrail.MissileTrail'
 
      Begin Object Class=MeshEmitter Name=ThrusterFlame
          StaticMesh=StaticMesh'WVMercuryMissileResources.SMeshes.MercuryThrusterMesh'
@@ -117,7 +117,7 @@ defaultproperties
          WarmupTicksPerSecond=20.000000
          RelativeWarmupTime=1.000000
      End Object
-     Emitters(2)=MeshEmitter'PVWraith.PVWMercuryMissileTrail.ThrusterFlame'
+     Emitters(2)=MeshEmitter'Mobreaker.MBMercuryMissileTrail.ThrusterFlame'
 
      AutoDestroy=True
      bNoDelete=False

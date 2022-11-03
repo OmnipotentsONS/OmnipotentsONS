@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class DamTypeOdinIonBeam extends VehicleProxyDamageType abstract;
+class DamTypeOdinIonBeam extends OVVehicleProxyDamageType abstract;
 
 
 static function GetHitEffects(out class<xEmitter> HitEffects[4], int VictimHealth)

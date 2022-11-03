@@ -6,7 +6,7 @@
 //=============================================================================
 
 
-class PVWMercuryMissile extends Projectile;
+class MBMercuryMissile extends Projectile;
 
 
 //=============================================================================
@@ -68,7 +68,7 @@ Replicated direction of flight to get around inaccurate rotator replication.
 */
 var int Direction;
 
-var PVWMercuryMissileTrail Trail;
+var MBMercuryMissileTrail Trail;
 
 var vector PrevTouchLocation;
 
@@ -118,7 +118,7 @@ simulated function PostBeginPlay()
 		Velocity *= 0.6;
 
 	if (Level.NetMode != NM_DedicatedServer)
-		Trail = Spawn(class'PVWMercuryMissileTrail', self,, Location, Rotation);
+		Trail = Spawn(class'MBMercuryMissileTrail', self,, Location, Rotation);
 
 	Super.PostBeginPlay();
 
@@ -433,7 +433,7 @@ simulated function ProcessContact(bool bPenetrate, Actor Other, vector HitLocati
 	}
 
 	if (PC != None && (HeadshotPawn == None || HeadshotPawn.bDeleteMe || HeadshotPawn.Health <= 0)) {
-		PC.ReceiveLocalizedMessage(class'PVWHeadshotVictimMessage',, InstigatorController.PlayerReplicationInfo);
+		PC.ReceiveLocalizedMessage(class'MBHeadshotVictimMessage',, InstigatorController.PlayerReplicationInfo);
 	}
 }
 
@@ -575,7 +575,7 @@ Spawns explosion/punch-through effects.
 simulated function SpawnExplosionEffects(Actor Other, vector HitLocation, vector HitNormal)
 {
 	local PlayerController PC;
-	local class<PVWMercuryExplosion> ExplosionClass;
+	local class<MBMercuryExplosion> ExplosionClass;
 	local rotator EffectRotationOffset;
 
 	if (UnrealPawn(Other) != None && !Other.IsInState('Frozen')) {
@@ -627,7 +627,7 @@ function PlayBroadcastedSound(Actor SoundOwner, Sound Sound)
 Return an explosion effect class with dirt or snow particles if a corresponding surface was hit.
 Non-simulated so effect is only spawned on server.
 */
-simulated function class<PVWMercuryExplosion> GetExplosionClass(Actor HitActor, vector HitLocation, vector HitNormal, out rotator EffectRotationOffset)
+simulated function class<MBMercuryExplosion> GetExplosionClass(Actor HitActor, vector HitLocation, vector HitNormal, out rotator EffectRotationOffset)
 {
 	local Material HitMaterial;
 	local vector HL, HN;
@@ -635,7 +635,7 @@ simulated function class<PVWMercuryExplosion> GetExplosionClass(Actor HitActor, 
 	EffectRotationOffset = rot(16384,0,16384);
 
 	if (PhysicsVolume.bWaterVolume) {
-		return class'PVWMercuryExplosion';
+		return class'MBMercuryExplosion';
 	}
 
 	if (HitActor == None || HitActor.bWorldGeometry) {
@@ -647,10 +647,10 @@ simulated function class<PVWMercuryExplosion> GetExplosionClass(Actor HitActor, 
 			case EST_Dirt:
 			case EST_Wood:
 			case EST_Plant:
-				return class'PVWMercuryExplosionDirt';
+				return class'MBMercuryExplosionDirt';
 			case EST_Ice:
 			case EST_Snow:
-				return class'PVWMercuryExplosionSnow';
+				return class'MBMercuryExplosionSnow';
 		}
 	}
 	else if (HitActor != None) {
@@ -659,13 +659,13 @@ simulated function class<PVWMercuryExplosion> GetExplosionClass(Actor HitActor, 
 			case EST_Dirt:
 			case EST_Wood:
 			case EST_Plant:
-				return class'PVWMercuryExplosionDirt';
+				return class'MBMercuryExplosionDirt';
 			case EST_Ice:
 			case EST_Snow:
-				return class'PVWMercuryExplosionSnow';
+				return class'MBMercuryExplosionSnow';
 		}
 	}
-	return class'PVWMercuryExplosion';
+	return class'MBMercuryExplosion';
 }
 
 
@@ -675,14 +675,14 @@ simulated function class<PVWMercuryExplosion> GetExplosionClass(Actor HitActor, 
 
 defaultproperties
 {
-     SplashDamageType=Class'PVWraith.PVWDamTypeMercurySplashDamage'
+     SplashDamageType=Class'Mobreaker.MBDamTypeMercurySplashDamage'
      SplashMomentum=10000.000000
      TransferDamageAmount=0.003000
-     ImpactDamageAmount=40.000000
-     HeadHitDamage=Class'PVWraith.PVWDamTypeMercuryHeadHit'
-     DirectHitDamage=Class'PVWraith.PVWDamTypeMercuryDirectHit'
-     PunchThroughDamage=Class'PVWraith.PVWDamTypeMercuryPunchThrough'
-     ThroughHeadDamage=Class'PVWraith.PVWDamTypeMercuryPunchThroughHead'
+     ImpactDamageAmount=50.000000
+     HeadHitDamage=Class'Mobreaker.MBDamTypeMercuryHeadHit'
+     DirectHitDamage=Class'Mobreaker.MBDamTypeMercuryDirectHit'
+     PunchThroughDamage=Class'Mobreaker.MBDamTypeMercuryPunchThrough'
+     ThroughHeadDamage=Class'Mobreaker.MBDamTypeMercuryPunchThroughHead'
      AccelRate=15000.000000
      HeadShotDamageMult=2.500000
      HeadShotSizeAdjust=1.200000
@@ -691,7 +691,7 @@ defaultproperties
      UDamageMomentumBoost=1.500000
      RocketJumpBoost=3.000000
      Team=255
-      ExplodeOnPlayerSound=Sound'WVMercuryMissilesSounds.Effects.MercHitArmor'
+     ExplodeOnPlayerSound=Sound'WVBanshee.Effects.MercHitArmor'
      TeamSkins(0)=TexScaler'WVMercuryMissiles_Tex.Skins.MercuryMissileTexRed'
      TeamSkins(1)=TexScaler'WVMercuryMissiles_Tex.Skins.MercuryMissileTexBlue'
      TeamSkins(2)=TexScaler'WVMercuryMissiles_Tex.Skins.MercuryMissileTexGreen'
@@ -706,14 +706,14 @@ defaultproperties
      DopplerStrength=1.500000
      DopplerBaseSpeed=3000.000000
      direction=-1
-     Speed=5000.000000
+     Speed=8000.000000
      MaxSpeed=25000.000000
-     Damage=50.000000
+     Damage=65.000000
      DamageRadius=500.000000
-     MomentumTransfer=4.000000
-     MyDamageType=Class'PVWraith.PVWDamTypeMercuryDirectHit'
+     MomentumTransfer=20.000000
+     MyDamageType=Class'Mobreaker.MBDamTypeMercuryDirectHit'
      ImpactSound=Sound'WVMercuryMissilesSounds.Effects.MercPunchThrough'
-     ExplosionDecal=Class'PVWraith.PVWMercuryImpactMark'
+     ExplosionDecal=Class'Mobreaker.MBMercuryImpactMark'
      LightType=LT_Steady
      LightEffect=LE_QuadraticNonIncidence
      LightHue=20
@@ -739,6 +739,6 @@ defaultproperties
      bFixedRotationDir=True
      Mass=4.000000
      ForceType=FT_Constant
-     ForceRadius=100.000000
+     ForceRadius=250.000000
      ForceScale=5.000000
 }

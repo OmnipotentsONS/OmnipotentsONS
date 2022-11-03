@@ -7,12 +7,9 @@
 //=============================================================================
 
 
-class PVWMercuryExplosion extends Emitter notplaceable;
-
-
+class MBMercuryExplosion extends Emitter notplaceable;
 
 #exec obj load file=WVMercuryMissles_Tex.utx
-#exec obj load file=WVMercuryMissilesSounds.uax
 
 //=============================================================================
 // Variables
@@ -46,8 +43,8 @@ simulated event PostNetBeginPlay()
 	if (Level.NetMode == NM_DedicatedServer || PC == None) {
 		return;
 	}
-	if (!PC.BeyondViewDistance(Location, class'PVWMercuryExplosionLight'.default.CullDistance)) {
-		Spawn(class'PVWMercuryExplosionLight');
+	if (!PC.BeyondViewDistance(Location, class'MBMercuryExplosionLight'.default.CullDistance)) {
+		Spawn(class'MBMercuryExplosionLight');
 	}
 
 	if (Emitters.Length > 2) {
@@ -62,13 +59,13 @@ simulated event PostNetBeginPlay()
 	}
 }
 
-auto simulated state ExplWraithg
+auto simulated state ExplBansheeg
 {
 Begin:
 	if (PhysicsVolume.bWaterVolume || bWaterExplosion)
-		PlaySound(Sound'WVMercuryMissilesSounds.Effects.MercWaterImpact');
+		PlaySound(Sound'MercWaterImpact');
 	else
-		PlaySound(Sound'WVMercuryMissilesSounds.Effects.MercImpact');
+		PlaySound(Sound'MercImpact');
 }
 
 
@@ -112,7 +109,7 @@ defaultproperties
          VelocityLossRange=(X=(Min=1.500000,Max=2.500000),Y=(Min=1.500000,Max=2.500000),Z=(Min=1.500000,Max=2.500000))
          GetVelocityDirectionFrom=PTVD_AddRadial
      End Object
-     Emitters(0)=SpriteEmitter'PVWraith.PVWMercuryExplosion.ExplosionRing'
+     Emitters(0)=SpriteEmitter'Mobreaker.MBMercuryExplosion.ExplosionRing'
 
      Begin Object Class=SpriteEmitter Name=ExplosionSmokeRing
          FadeOut=True
@@ -144,7 +141,7 @@ defaultproperties
          VelocityLossRange=(X=(Min=1.000000,Max=1.000000),Y=(Min=1.000000,Max=1.000000),Z=(Min=1.000000,Max=1.000000))
          GetVelocityDirectionFrom=PTVD_AddRadial
      End Object
-     Emitters(1)=SpriteEmitter'PVWraith.PVWMercuryExplosion.ExplosionSmokeRing'
+     Emitters(1)=SpriteEmitter'Mobreaker.MBMercuryExplosion.ExplosionSmokeRing'
 
      AutoDestroy=True
      bNoDelete=False

@@ -89,7 +89,7 @@ defaultproperties
      bInstantRotation=False
      Spread=0.150000  // does this do anything
      FireInterval=0.200000
-     FireSoundClass=Sound'PVWraith.Effects_MercIgnite'
+     FireSoundClass=Sound'WVMercuryMissilesSounds.Effects.MercIgnite'
      AltFireSoundClass=None
      ProjectileClass=Class'PVWraith.PVWMercuryMissile'
      AltFireProjectileClass=None

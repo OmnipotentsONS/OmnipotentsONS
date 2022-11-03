@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class TurretSocket extends Actor abstract;
+class OVTurretSocket extends Actor abstract;
 
 
 //=============================================================================

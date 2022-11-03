@@ -19,13 +19,11 @@ var Actor LinkedActor;
 var float SavedDamage, SavedHeal;
 var float DamageModifier;
 
-replication
-{
-    reliable if (Role == ROLE_Authority)
-		bFiringBeam;
-		
-	
-}
+//replication
+//{
+//    reliable if (Role == ROLE_Authority)
+//		bFiringBeam;
+//}
 
 simulated function DestroyEffects()
 {
@@ -278,6 +276,7 @@ simulated function TraceBeamFire(float DeltaTime)
 	local ONSWeaponPawn WeaponPawn;
 	local Vehicle BaseVehicle;
 	local int DamageAmount;
+	local DestroyableObjective Node;
 
 	CalcWeaponFire();
 
