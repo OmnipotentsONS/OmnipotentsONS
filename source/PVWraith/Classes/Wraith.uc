@@ -265,7 +265,8 @@ defaultproperties
      MaxStrafeForce=95.000000
      DriverWeapons(0)=(WeaponClass=Class'PVWraith.WraithSideGun')
      DriverWeapons(1)=(WeaponClass=Class'PVWraith.WraithSideGun')
-     PassengerWeapons(0)=(WeaponPawnClass=Class'PVWraith.WraithBellyGunPawn')
+     //PassengerWeapons(0)=(WeaponPawnClass=Class'PVWraith.WraithBellyGunPawn')
+     PassengerWeapons(0)=(WeaponPawnClass=Class'PVWraith.WraithLinkTurretPawn')
      bHasAltFire=False
      RedSkin=Texture'PVWraith_Tex.Skins.WraithRed'
      BlueSkin=Texture'PVWraith_Tex.Skins.WraithBlue'
@@ -273,7 +274,7 @@ defaultproperties
      StartUpSound=Sound'PVWraith.WraithStart'
      ShutDownSound=Sound'PVWraith.WraithStop'
      VehiclePositionString="in a Wraith"
-     VehicleNameString="Wraith 1.2"
+     VehicleNameString="Wraith 1.4"
      RanOverDamageType=Class'PVWraith.DamTypeWraithRoadkill'
      CrushedDamageType=Class'PVWraith.DamTypeWraithPancake'
 }

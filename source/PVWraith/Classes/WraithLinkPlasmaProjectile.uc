@@ -142,7 +142,8 @@ defaultproperties
      Speed=1000.000000
      MaxSpeed=15000.000000
      Damage=20.000000
-     DamageRadius=100.000000
+     DamageRadius=175.000000
+     MomentumTransfer=10000.000000
      MyDamageType=Class'PVWraith.DamTypeWraithLinkPlasma'
      LifeSpan=2.000000
      bBounce=True

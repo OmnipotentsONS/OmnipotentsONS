@@ -24,6 +24,7 @@ var bool bLeftBeam;
 var bool bLockedOn, bHitSomething;
 
 var array<LinkBeamChild> Children;
+var int NumChildren;
 var vector PrevLoc;
 var rotator PrevRot;
 var float ScorchTime;
@@ -34,7 +35,7 @@ var WraithLinkBeamEndEffect BeamEndEffect;
 replication
 {
     unreliable if (Role == ROLE_Authority)
-       LinkColor, LinkedActor,  bLockedOn, bHitSomething;
+       LinkColor, LinkedActor,  bLockedOn, bHitSomething, bLeftBeam;
 
     unreliable if ( (Role == ROLE_Authority) && (!bNetOwner || bDemoRecording || bRepClientDemo)  )
         StartEffect, EndEffect;
@@ -70,9 +71,10 @@ simulated function Destroyed()
 
 function SetUpBeam(byte BeamColor, bool bLeft)
 {
-	local int i, NumChildren;
+	local int i;
 	local float LocDiff, RotDiff, WiggleMe;
-	
+
+  //Log("Wraith UpdateBeamState-SetupBeam");	
 	bLeftBeam = bLeft;
 	LinkColor = BeamColor;
 
@@ -85,6 +87,7 @@ function SetUpBeam(byte BeamColor, bool bLeft)
 	mWaveAmplitude = FMin(16.0, mWaveAmplitude + WiggleMe);
   mWaveShift=default.mWaveShift;
 
+ 
 	if (Level.NetMode != NM_DedicatedServer)
 	{
 		if (MuzFlash == None)
@@ -122,6 +125,7 @@ simulated function SetBeamPosition()
 	local vector NewLocation, X, Y, Z;
 	local coords WeaponBoneCoords;
 
+  //Log("Wraith UpdateBeamState-SetBeamPosition bLeftBeam"@bLeftBeam);
 	if (ONSWeaponPawn(Instigator) == None)
 	{
 		SetLocation(StartEffect);
@@ -132,17 +136,20 @@ simulated function SetBeamPosition()
 		Gun = ONSWeaponPawn(Instigator).Gun;
 		if (Gun != None)
 		{
+			//Log("Wraith UpdateBeamState-SetBeamPosition-have Gun, setting up");
 			WeaponBoneCoords = Gun.GetBoneCoords(Gun.WeaponFireAttachmentBone);
 			NewLocation = WeaponBoneCoords.Origin + Gun.WeaponFireOffset * WeaponBoneCoords.XAxis;
 			if (bLeftBeam)
 				NewLocation -= Abs(Gun.DualFireOffset) * WeaponBoneCoords.YAxis;
 			else
 				NewLocation += Abs(Gun.DualFireOffset) * WeaponBoneCoords.YAxis;
+			//Log("Wraith UpdateBeamState-SetBeamPostion-NewLocation"@NewLocation);	
 			SetLocation(NewLocation);
 			SetRotation(OrthoRotation(WeaponBoneCoords.XAxis, WeaponBoneCoords.YAxis, WeaponBoneCoords.ZAxis));
 		}
 		else
 		{
+			// if theres no gun why do anything!!
 			GetAxes(rotator(EndEffect - Instigator.Location), X, Y, Z);
 			NewLocation = Instigator.Location + 30 * X;
 			if (bLeftBeam)
@@ -179,8 +186,9 @@ simulated function Tick(float DeltaTime)
 
   LinkColor = Instigator.GetTeamNum();
 	// set beam start location
+	//Log("Calling SetBeamPosition from Tick()");
 	SetBeamPosition();
-	StartEffect = Location;
+// not in LinkBeamcode	StartEffect = Location;
 	BeamDir = Normal(EndEffect - Location);
 
 	if (LinkedActor != None)
@@ -218,7 +226,6 @@ simulated function Tick(float DeltaTime)
 	}
 
 
-	mWaveLockEnd = bLockedOn;
 
 	// magic wiggle code
 	
@@ -231,13 +238,14 @@ simulated function Tick(float DeltaTime)
 	}
 	else
 	{
-		
+		// not locked reset from locked type
     Skins[0] = TeamBeamSkins[LinkColor]; // reset to normal teams
 		LightHue = TeamLightHues[LinkColor]; // reset to normal hue
 		LocDiff        = VSize((Location - PrevLoc) * Vect(1,1,5));
 		RotDiff        = VSize(Vector(Rotation) - Vector(PrevRot));
 		WiggleMe       = FMax(LocDiff * 0.02, RotDiff * 4.0);
-		mWaveAmplitude = FMax(2.0, mWaveAmplitude - mWaveAmplitude * 0.5 * DeltaTime);
+		mWaveAmplitude = default.mWaveAmplitude;
+		//mWaveAmplitude = FMax(2.0, mWaveAmplitude - mWaveAmplitude * 0.5 * DeltaTime);
 		mWaveAmplitude = FMin(16.0, mWaveAmplitude + WiggleMe);
     mWaveShift=default.mWaveShift;
 	}
@@ -245,7 +253,7 @@ simulated function Tick(float DeltaTime)
 	PrevLoc = Location;
 	PrevRot = Rotation;
 
-//	mWaveLockEnd = bLockedOn;
+	mWaveLockEnd = bLockedOn;
   mSpawnVecA = EndEffect;
 
 	for (i = 0; i < Children.Length; i++)

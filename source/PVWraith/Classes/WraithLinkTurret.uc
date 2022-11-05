@@ -1,5 +1,6 @@
 
-class WraithBellyGun extends ONSDualACGatlingGun;
+class WraithLinkTurret extends WraithWeapon;
+
 
 #exec audio import file=Sounds\WraithLinkAmbient.wav
 
@@ -9,19 +10,14 @@ var() int MinDamageAmount;
 var() float HealMultiplier;
 var() float SelfHealMultiplier;
 var() float LinkBreakError;
-
 var class<WraithLinkBeamEffect> BeamEffectClass;
 var array<class<Projectile> > TeamProjectileClasses;
 
 var WraithLinkBeamEffect Beam1, Beam2;
-
-
 var bool bFiringBeam;
 var Actor LinkedActor;
 var float SavedDamage, SavedHeal;
 var float DamageModifier;
-
-
 
 //replication
 //{
@@ -176,9 +172,8 @@ simulated function Tick(float DeltaTime)
 {
 	local int TeamNum;
 	Super.Tick(DeltaTime);
-	
-	
-	TeamNum = Instigator.GetTeamNum();
+
+	TeamNum=Instigator.GetTeamNum();
 	if (bFiringBeam != bClientTrigger)
 	{
 		UpdateBeamState();
@@ -200,7 +195,7 @@ simulated function UpdateBeamState()
 	local int TeamNum;
 	
 	TeamNum=Instigator.GetTeamNum();
-  if (bFiringBeam && !bClientTrigger)
+	if (bFiringBeam && !bClientTrigger)
 	{
 		if (Beam1 != None)
 			Beam1.Destroy();
@@ -212,8 +207,6 @@ simulated function UpdateBeamState()
 	}
 	else if (!bFiringBeam && bClientTrigger)
 	{
-		// on Wraith this HAS to be commented out to work on server, 
-		// on Odin it can be commented out, not sure why?!
 		if (Level.NetMode != NM_DedicatedServer)
 		{
 			if (Beam1 == None)
@@ -221,17 +214,17 @@ simulated function UpdateBeamState()
 				Beam1 = Spawn(BeamEffectClass, Self);
 				Beam1.SetUpBeam(TeamNum, False);
 			}
-	//		AttachToBone(Beam1, WeaponFireAttachmentBone);
-	//		Beam1.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset + vect(0,1,0) * DualFireOffset) * DrawScale);
+			//AttachToBone(Beam1, WeaponFireAttachmentBone);
+			//Beam1.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset + vect(0,1,0) * DualFireOffset) * DrawScale);
 
 			if (Beam2 == None)
 			{
 				Beam2 = Spawn(BeamEffectClass, Self);
 				Beam2.SetUpBeam(TeamNum, True);
-			}	
-	//		AttachToBone(Beam2, WeaponFireAttachmentBone);
-  //		Beam2.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset - vect(0,1,0) * DualFireOffset) * DrawScale);
- 		}
+			}
+			//AttachToBone(Beam2, WeaponFireAttachmentBone);
+			//Beam2.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset - vect(0,1,0) * DualFireOffset) * DrawScale);
+		}
 	}
 	bFiringBeam = bClientTrigger;
 	MaxRange();
@@ -259,8 +252,8 @@ simulated function float MaxRange()
 simulated function bool IsValidLinkTarget(Actor Target)
 {
 	local DestroyableObjective HealObjective;
-
-	if (Target == None || !Target.bCollideActors || !Target.bProjTarget)
+	
+	if (Target == None || !Target.bCollideActors || !Target.bProjTarget )
 		return false;
 
 	if (Vehicle(Target) != None && Vehicle(Target).Health > 0)
@@ -283,8 +276,8 @@ simulated function TraceBeamFire(float DeltaTime)
 	local ONSWeaponPawn WeaponPawn;
 	local Vehicle BaseVehicle;
 	local int DamageAmount;
-	local DestroyableObjective Node;
-
+	//local DestroyableObjective Node;
+  //Log("In WraithLinkTurret=TraceBeamFire");
 	CalcWeaponFire();
 
 	WeaponPawn = ONSWeaponPawn(Owner);
@@ -292,8 +285,10 @@ simulated function TraceBeamFire(float DeltaTime)
 		BaseVehicle = WeaponPawn.VehicleBase;
 	else
 		BaseVehicle = Vehicle(Owner);
-
+  //Log("In WraithLinkTurret=TraceBeamFire-AfterWeaponPawn");
 	HitActor = Trace(HL, HN, WeaponFireLocation + vector(WeaponFireRotation) * TraceRange, WeaponFireLocation, True, vect(10,10,10));
+	 //Log("In WraithLinkTurret=TraceBeamFire-AfterHitActorSet"@HitActor);
+	
 	if (HitActor == None || HitActor == BaseVehicle || HitActor.bWorldGeometry)
 	{
 		// try again with zero extent
@@ -304,6 +299,7 @@ simulated function TraceBeamFire(float DeltaTime)
 			HN = vector(WeaponFireRotation);
 		}
 	}
+	//Log("In WraithLinkTurret=TraceBeamFire-AfterHitActorSetZE"@HitActor);
 	if (HitActor != BaseVehicle && IsValidLinkTarget(HitActor))
 	{
 		NewLinkedActor = HitActor;
@@ -328,6 +324,7 @@ simulated function TraceBeamFire(float DeltaTime)
 	}
 
 	LinkedActor = NewLinkedActor;
+  //Log("In WraithLinkTurret=TraceBeamFire-AfterLinkedActor"@HitActor);
 
 	if (Beam1 != None)
 	{
@@ -365,19 +362,17 @@ simulated function TraceBeamFire(float DeltaTime)
 					{
 						BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
 					}
+					 //Log("In WraithLinkTurret=TakeDamage1");
 					LinkedActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
 				}
 			}
-			else if (HitActor != None && !HitActor.bWorldGeometry)
+			else if (HitActor != None && !HitActor.bWorldGeometry && HitActor != BaseVehicle)
 			{
-//				Node = DestroyableObjective(HitActor);
-//				if (Node == None)
-//					Node = DestroyableObjective(HitActor.Owner);
-//				if (Node != None && Node.Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax && (ONSPowerCore(Node) == None || ONSPowerCore(Node).PoweredBy(Team) && !Node.IsInState('NeutralCore')))
 				if (DestroyableObjective(HitActor) != None && DestroyableObjective(HitActor).Health > 0 || DestroyableObjective(HitActor.Owner) != None && DestroyableObjective(HitActor.Owner).Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax)
 				{
 					BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
 				}
+				//Log("In WraithLinkTurret=TakeDamage2");
 				HitActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
 			}
 		}
@@ -454,28 +449,38 @@ defaultproperties
      BeamEffectClass=Class'PVWraith.WraithLinkBeamEffect'
      TeamProjectileClasses(0)=Class'PVWraith.WraithLinkPlasmaProjectileRed'
      TeamProjectileClasses(1)=Class'PVWraith.WraithLinkPlasmaProjectileBlue'
-     
      DamageModifier=1.000000
-     RotationsPerSecond=2.000000
-     bInstantRotation=False
-     bInstantFire=False
-     WeaponFireOffset=30.000000
-     DualFireOffset=18.000000
+     //YawBone="Object83"
+     //PitchBone="Object84"
+     //PitchUpLimit=15000
+     
+     YawBone="GatlingGun"
+     PitchBone="GatlingGun"
+     PitchUpLimit=-1250  // 0 is fine on client, but on Server it hits the vehicle hitbox
+     PitchDownLimit=50000
+     WeaponFireAttachmentBone="GatlingGunFirePoint"
+     
+     //WeaponFireAttachmentBone="Object85"
+     //GunnerAttachmentBone="Object83"
+     WeaponFireOffset=6.000000  // 30
+     DualFireOffset=5.000000 //18
      bAmbientAltFireSound=True
-     FireInterval=0.30000
+     FireInterval=0.200000
      AltFireInterval=0.100000
      FireSoundClass=Sound'ONSVehicleSounds-S.LaserSounds.Laser17'
      AltFireSoundClass=Sound'PVWraith.WraithLinkAmbient'
+     FireForce="Laser01"
      DamageType=Class'PVWraith.DamTypeWraithLinkBeam'
      DamageMin=15
      DamageMax=15
      TraceRange=4000.000000
-     Momentum=-100000.000000
+     Momentum=-30000.000000
      ProjectileClass=Class'PVWraith.WraithLinkPlasmaProjectile'
-     AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.200000,RefireRate=0.800000)
+     AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.200000,RefireRate=0.700000)
      AIInfo(1)=(bInstantHit=True,WarnTargetPct=0.200000)
-     
-   
-
-
+     //Mesh=SkeletalMesh'ONSFullAnimations.MASPassengerGun'
+     Mesh=SkeletalMesh'ONSBPAnimations.DualAttackCraftGatlingGunMesh'
+     DrawScale=0.600000
+     CullDistance=15000
+     Skins(0)=Texture'ONSFullTextures.MASGroup.LEVnoColor'
 }

@@ -9,7 +9,7 @@ class DamTypeWraithLinkPlasma extends PVWMessageProxyDamageType abstract;
 defaultproperties
 {
      MessageSourceDamageType=Class'XWeapons.DamTypeLinkPlasma'
-     VehicleClass=Class'PVWraith.WraithBellyGunPawn'
+     VehicleClass=Class'PVWraith.WraithLinkTurretPawn'
      bDetonatesGoop=True
      bDelayedDamage=True
      FlashFog=(X=700.000000)

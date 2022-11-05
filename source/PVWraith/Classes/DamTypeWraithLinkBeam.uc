@@ -10,7 +10,7 @@ class DamTypeWraithLinkBeam extends PVWMessageProxyDamageType abstract;
 defaultproperties
 {
      MessageSourceDamageType=Class'XWeapons.DamTypeLinkShaft'
-     VehicleClass=Class'PVWraith.WraithBellyGunPawn'
+     VehicleClass=Class'PVWraith.WraithLinkTurretPawn'
      bDetonatesGoop=True
      bSkeletize=True
      bCausesBlood=False
