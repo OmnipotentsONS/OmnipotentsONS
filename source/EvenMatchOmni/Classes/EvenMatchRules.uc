@@ -462,7 +462,7 @@ simulated function GamePPH GetGamePPH()
             else if(Team == 1)
                 CurrentGamePPH.BluePPH += PPH;
 
-            log("GamePPH: PlayerName: "$PRI.Name$" Initial PPH: "$PPH$"Multiplier "$KPM$" applied ="$PPH , 'EvenMatchOmni');
+            log("GamePPH: PlayerName: "$PRI.Name$" Initial PPH: "$iPPH$"Multiplier "$KPM$" applied ="$PPH , 'EvenMatchOmni');
         }
     }
     log("GamePPH:End   Red:"$CurrentGamePPH.RedPPH$" Blue:"$CurrentGamePPH.BluePPH, 'EvenMatchOmni');
@@ -479,7 +479,7 @@ simulated function GamePPH ShuffleTeams(optional bool killPlayers)
 	local array<float> PPHs;
 	local int Index, OldNumBots, OldMinPlayers;
 	local int Low, High, Middle;
-	local float PPH, PPH2, RedPPH, BluePPH, TotalPPH;
+	local float PPH, PPH2, RedPPH, BluePPH, TotalPPH, iPPH, KPM;
     local Pawn P;
 
 	//retval = new class'GamePPH';
@@ -501,11 +501,12 @@ simulated function GamePPH ShuffleTeams(optional bool killPlayers)
 			PRI = Level.GRI.PRIArray[Index];
 			if (!PRI.bOnlySpectator && PlayerController(PRI.Owner) != None && PlayerController(PRI.Owner).bIsPlayer) {
 			
-				PPH = GetPointsPerHour(PRI); // binary search O(log m)
-        PPH = PPH * GetKnownPlayerMultplier(PRI);
+				iPPH = GetPointsPerHour(PRI); // binary search O(log m)
+				KPM = GetKnownPlayerMultplier(PRI);
+        PPH = iPPH * KPM;
 				TotalPPH += PPH;
 				if (EvenMatchMutator.bDebug)
-					log(PRI.PlayerName @ PPH $ " PPH, currently on " $ PRI.Team.GetHumanReadableName(), 'EvenMatchDebug');
+					log(PRI.PlayerName @ iPPH $ " Initial PPH, Mutlipler "$KPM$" applied ="$PPH$", currently on " $ PRI.Team.GetHumanReadableName(), 'EvenMatchDebug');
 				
 				// binary search O(log n)
 				Low = 0;
