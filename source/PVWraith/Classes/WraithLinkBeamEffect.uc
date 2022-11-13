@@ -53,14 +53,12 @@ simulated function Destroyed()
 	}
 	Children.Length = 0;
 
-	if (MuzFlash != None)
-	{
+	if (MuzFlash != None) 	{
 		MuzFlash.mRegen = false;
 	}
 	MuzFlash = None;
 
-	if (BeamEndEffect != None)
-	{
+	if (BeamEndEffect != None) 	{
 		BeamEndEffect.Destroy();
 	}
 	BeamEndEffect = None;
@@ -74,7 +72,7 @@ function SetUpBeam(byte BeamColor, bool bLeft)
 	local int i;
 	local float LocDiff, RotDiff, WiggleMe;
 
-  //Log("Wraith UpdateBeamState-SetupBeam");	
+  //Log("WraithLinkBeamEffect-SetupBeam");	
 	bLeftBeam = bLeft;
 	LinkColor = BeamColor;
 
@@ -150,12 +148,15 @@ simulated function SetBeamPosition()
 		else
 		{
 			// if theres no gun why do anything!!
+			// maybe serverside?
+			// WeaponFireOffset=6.000000  // 30
+      //DualFireOffset=5.000000 //18
 			GetAxes(rotator(EndEffect - Instigator.Location), X, Y, Z);
-			NewLocation = Instigator.Location + 30 * X;
+			NewLocation = Instigator.Location + 6 * X;
 			if (bLeftBeam)
-				NewLocation -= 18 * Y;
+				NewLocation -= 5 * Y;
 			else
-				NewLocation += 18 * Y;
+				NewLocation += 5 * Y;
 			SetLocation(NewLocation);
 			SetRotation(Instigator.Rotation);
 		}
@@ -317,8 +318,8 @@ defaultproperties
      LightRadius=4.000000
      bDynamicLight=True
      RemoteRole=ROLE_SimulatedProxy
-     bNetTemporary=false
-     bReplicateInstigator=true
+     bNetTemporary=False
+     bReplicateInstigator=True
      Skins(0)=FinalBlend'XEffectMat.Link.LinkBeamGreenFB'
      Style=STY_Additive
 }
