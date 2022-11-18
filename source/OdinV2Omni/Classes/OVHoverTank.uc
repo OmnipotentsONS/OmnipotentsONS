@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class HoverTank extends ONSHoverCraft abstract;
+class OVHoverTank extends ONSHoverCraft abstract;
 
 
 //=============================================================================
@@ -42,7 +42,7 @@ var float MaxGroundSpeed, MaxAirSpeed;
 var array<name> HiddenBones, ThrusterBones;
 var float StartupSoundAlpha, SmoothSoundPitch;
 
-var class<TurretSocket> TurretSocketClass;
+var class<OVTurretSocket> TurretSocketClass;
 
 var float DrivenBuoyancy, UndrivenBuoyancy;
 
@@ -51,7 +51,7 @@ var float DrivenBuoyancy, UndrivenBuoyancy;
 // Variables
 //=============================================================================
 
-var TurretSocket Socket;
+var OVTurretSocket Socket;
 var array<HoverTankDustEmitter> HoverDust;
 var array<vector> HoverDustLastNormal;
 
@@ -205,27 +205,30 @@ simulated event DrivingStatusChanged()
 		KarmaParams(KParams).KBuoyancy = DrivenBuoyancy;
 	else
 		KarmaParams(KParams).KBuoyancy = UndrivenBuoyancy;
+/*
+  if (HoverDust != None) {
+		if (bDriving && Level.NetMode != NM_DedicatedServer && HoverDust.Length == 0) {
+			HoverDust.Length = HoverDustOffset.Length;
+			HoverDustLastNormal.Length = HoverDustOffset.Length;
 
-	if (bDriving && Level.NetMode != NM_DedicatedServer && HoverDust.Length == 0) {
-		HoverDust.Length = HoverDustOffset.Length;
-		HoverDustLastNormal.Length = HoverDustOffset.Length;
-
-		for (i = 0; i < HoverDust.Length; i++) {
-			if (HoverDust[i] == None) {
-				HoverDust[i] = Spawn(DustEmitterClass, self,, Location + (DrawScale * (DrawScale3D * HoverDustOffset[i]) >> Rotation));
-				HoverDust[i].SetDrawScale(DrawScale);
-				HoverDust[i].SetDrawScale3D(DrawSCale3D);
-				HoverDust[i].SetDustColor(Level.DustColor);
-				HoverDustLastNormal[i] = vect(0,0,1);
+			for (i = 0; i < HoverDust.Length; i++) {
+				if (HoverDust[i] == None) {
+					HoverDust[i] = Spawn(DustEmitterClass, self,, Location + (DrawScale * (DrawScale3D * HoverDustOffset[i]) >> Rotation));
+					HoverDust[i].SetDrawScale(DrawScale);
+					HoverDust[i].SetDrawScale3D(DrawSCale3D);
+					HoverDust[i].SetDustColor(Level.DustColor);
+					HoverDustLastNormal[i] = vect(0,0,1);
+				}
 			}
 		}
-	}
-	else if (!bDriving && Level.NetMode != NM_DedicatedServer) {
-		for(i = 0; i < HoverDust.Length; i++) {
-			HoverDust[i].Destroy();
+		else if (!bDriving && Level.NetMode != NM_DedicatedServer) {
+			for(i = 0; i < HoverDust.Length; i++) {
+				HoverDust[i].Destroy();
+			}
+			HoverDust.Length = 0;
 		}
-		HoverDust.Length = 0;
-	}
+	} // None Hoverdust	
+*/
 
 	if (!bDriving && bWasInWater) {
 		// without the repulsors, this is taken care of by buoyancy
@@ -323,8 +326,8 @@ simulated function TurnOff()
 
 	for (i = 0; i < Weapons.Length; i++)
 	{
-		if (HoverTankWeapon(Weapons[i]) != None)
-			HoverTankWeapon(Weapons[i]).bturnedOff = True;
+		if (OVHoverTankWeapon(Weapons[i]) != None)
+			OVHoverTankWeapon(Weapons[i]).bturnedOff = True;
 	}
 
 	Super.TurnOff();
@@ -406,49 +409,52 @@ simulated function Tick(float DeltaTime)
 		SoundPitch = Round(SmoothSoundPitch);
 	}
 
-	for (i = 0; i < HoverDust.Length; i++) {
+   /*
+	if (bDriving && Level.NetMode != NM_DedicatedServer && HoverDust.Length == 0) {
+		for (i = 0; i < HoverDust.Length; i++) {
 
-		TraceStart = Location + (HoverDustOffset[i] >> Rotation);
-		TraceEnd = TraceStart - Z * HoverDustTraceDistance;
+			TraceStart = Location + (HoverDustOffset[i] >> Rotation);
+			TraceEnd = TraceStart - Z * HoverDustTraceDistance;
 
-		HitActor = Trace(HitLocation, HitNormal, TraceEnd, TraceStart, true,, HitMaterial);
+			HitActor = Trace(HitLocation, HitNormal, TraceEnd, TraceStart, true,, HitMaterial);
 
-		if (HitActor == None) {
-			HoverDust[i].bDustActive = false;
-			HoverDust[i].UpdateHoverDust(false, 0);
-		}
-		else {
-			bOnWater = False;
-			if (PhysicsVolume(HitActor) != None && PhysicsVolume(HitActor).bWaterVolume)
-				bOnWater = True;
-			else if (HitMaterial != None)
-				bOnWater = HitMaterial.SurfaceType == EST_Water;
-			else
-				bOnWater = HitActor.SurfaceType == EST_Water;
+			if (HitActor == None) {
+				HoverDust[i].bDustActive = false;
+				HoverDust[i].UpdateHoverDust(false, 0);
+			}
+			else {
+				bOnWater = False;
+				if (PhysicsVolume(HitActor) != None && PhysicsVolume(HitActor).bWaterVolume)
+					bOnWater = True;
+				else if (HitMaterial != None)
+					bOnWater = HitMaterial.SurfaceType == EST_Water;
+				else
+					bOnWater = HitActor.SurfaceType == EST_Water;
 
-			if (bOnWater)
-				HoverDust[i].SetDustColor(Level.WaterDustColor);
-			else
-				HoverDust[i].SetDustColor(Level.DustColor);
-			HoverDust[i].SetLocation(HitLocation + 10 * HitNormal);
+				if (bOnWater)
+					HoverDust[i].SetDustColor(Level.WaterDustColor);
+				else
+					HoverDust[i].SetDustColor(Level.DustColor);
+				HoverDust[i].SetLocation(HitLocation + 10 * HitNormal);
 
-			HoverDustLastNormal[i] = Normal(3 * HoverDustLastNormal[i] + HitNormal);
-			Y = Normal(HitLocation - Location);
-			X = Normal(HoverDustLastNormal[i] Cross Y);
-			Y = X Cross HoverDustLastNormal[i]; // should be normalized already
-			DustRotation = OrthoRotation(HoverDustLastNormal[i], Y, X);
-			HoverDust[i].SetRotation(DustRotation);
+				HoverDustLastNormal[i] = Normal(3 * HoverDustLastNormal[i] + HitNormal);
+				Y = Normal(HitLocation - Location);
+				X = Normal(HoverDustLastNormal[i] Cross Y);
+				Y = X Cross HoverDustLastNormal[i]; // should be normalized already
+				DustRotation = OrthoRotation(HoverDustLastNormal[i], Y, X);
+				HoverDust[i].SetRotation(DustRotation);
 
-			HoverDust[i].UpdateHoverDust(true, VSize(HitLocation - TraceStart) / HoverDustTraceDistance);
+				HoverDust[i].UpdateHoverDust(true, VSize(HitLocation - TraceStart) / HoverDustTraceDistance);
 
-			// If dust is just turning on, set OldLocation to current Location to avoid spawn interpolation.
-			if (!HoverDust[i].bDustActive)
-				HoverDust[i].OldLocation = HoverDust[i].Location;
+				// If dust is just turning on, set OldLocation to current Location to avoid spawn interpolation.
+				if (!HoverDust[i].bDustActive)
+					HoverDust[i].OldLocation = HoverDust[i].Location;
 
-			HoverDust[i].bDustActive = true;
-		}
-	}
-
+				HoverDust[i].bDustActive = true;
+			  }
+			} // for loop
+	}	// if 
+	*/
 	Super.Tick(DeltaTime);
 }
 /*

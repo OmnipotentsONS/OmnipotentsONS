@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class HoverTankWeaponPawn extends ONSWeaponPawn abstract;
+class OVHoverTankWeaponPawn extends ONSWeaponPawn abstract;
 
 
 var bool bTurnedOff;
@@ -19,8 +19,8 @@ var bool bTurnedOff;
 simulated function TurnOff()
 {
 	bTurnedOff = True;
-	if (HoverTankWeapon(Gun) != None)
-		HoverTankWeapon(Gun).bTurnedOff = True;
+	if (OVHoverTankWeapon(Gun) != None)
+		OVHoverTankWeapon(Gun).bTurnedOff = True;
 
 	Super.TurnOff();
 }

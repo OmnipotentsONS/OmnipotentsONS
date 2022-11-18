@@ -161,8 +161,9 @@ defaultproperties
      AccelerationMagnitude=10000.000000
      Speed=1000.000000
      MaxSpeed=15000.000000
-     Damage=35.000000
+     Damage=25.000000
      DamageRadius=200.000000
+     MomentumTransfer=12000.000000
      MyDamageType=Class'OdinV2Omni.DamTypeOdinLinkPlasma'
      LifeSpan=2.000000
      bBounce=True

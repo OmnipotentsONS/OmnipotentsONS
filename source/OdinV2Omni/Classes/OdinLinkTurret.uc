@@ -1,5 +1,5 @@
 
-class OdinLinkTurret extends HoverTankWeapon;
+class OdinLinkTurret extends OdinHoverTankWeapon;
 
 
 #exec audio import file=Sounds\OdinLinkAmbient.wav
@@ -14,29 +14,95 @@ var class<OdinLinkBeamEffect> BeamEffectClass;
 var array<class<Projectile> > TeamProjectileClasses;
 
 var OdinLinkBeamEffect Beam1, Beam2;
-var bool bFiringBeam;
+var bool bIsFiringBeam;
 var Actor LinkedActor;
 var float SavedDamage, SavedHeal;
 var float DamageModifier;
 
-//replication
-//{
-//    reliable if (Role == ROLE_Authority)
-//		bFiringBeam;
-//}
+replication
+{
+    reliable if (Role == ROLE_Authority)
+		bIsFiringBeam;
+	
+}
+
+/*  Not needed spawns extra beams on the client. - pooty
+simulated function ClientStopFire(Controller C, bool bWasAltFire)
+{
+	Super.ClientStopfire(C,bWasAltFire);
+	//if(!bWasAltFire) 	{
+		bIsFiringBeam=False; // Always turn off beam
+		DestroyEffects(); // Try this kill extra client effects?
+	//}
+}
+
+simulated function ClientStartFire(Controller C, bool bWasAltFire)
+{
+	Super.ClientStartfire(C,bWasAltFire);
+	if(bWasAltFire) 	{
+		bIsFiringBeam=True;
+	}
+	else {
+		bIsFiringBeam=False;
+	}
+	
+}  
+*/
+
+function byte BestMode()
+{
+	if (Instigator == None || Instigator.Controller == None)
+		return 0;
+
+	if (Instigator.Controller.Target != None && VSize(Instigator.Controller.Target.Location - Location) < TraceRange)
+		return 1;
+
+	if (Instigator.Controller.Enemy != None && VSize(Instigator.Controller.Enemy.Location - Location) < TraceRange)
+		return 1;
+
+	return 0;
+}
+
+
+simulated function float MaxRange()
+{
+	if (bIsFiringBeam) 	{
+		if (Instigator != None && Instigator.Region.Zone != None && Instigator.Region.Zone.bDistanceFog)
+			TraceRange = FClamp(Instigator.Region.Zone.DistanceFogEnd, 8000, default.TraceRange);
+		else
+			TraceRange = default.TraceRange;
+
+		AimTraceRange = TraceRange;
+	}
+	else if (ProjectileClass != None)
+		AimTraceRange = ProjectileClass.static.GetRange();
+	else
+		AimTraceRange = 10000;
+
+	return AimTraceRange;
+}
+
 
 simulated function DestroyEffects()
 {
-	if (Beam1 != None)
-		Beam1.Destroy();
-	if (Beam2 != None)
-		Beam2.Destroy();
-
+	
+	Super.DestroyEffects();
+	//Log("Odin-DestroyEffects");
+	//if ( Level.NetMode != NM_Client ) 	 {
+		if (Beam1 != None) {
+		//  Log("Odin-DestroyEffects-DestroyBeam1");
+			Beam1.Destroy();
+		}	
+		if (Beam2 != None) {
+			Beam2.Destroy();
+		}	
+	//}		
 	Beam1 = None;
 	Beam2 = None;
 
-	Super.DestroyEffects();
+	
 }
+
 
 function bool CanAttack(Actor Other)
 {
@@ -55,6 +121,7 @@ function bool CanAttack(Actor Other)
 	return false;
 }
 
+
 simulated function CalcWeaponFire()
 {
 	local coords WeaponBoneCoords;
@@ -63,54 +130,51 @@ simulated function CalcWeaponFire()
 	// Calculate fire offset in world space
 	WeaponBoneCoords = GetBoneCoords(WeaponFireAttachmentBone);
 	CurrentFireOffset = WeaponFireOffset * WeaponBoneCoords.XAxis;
-
 	// Calculate rotation of the gun
 	WeaponFireRotation = rotator(vector(CurrentAim) >> Rotation);
-
 	// Calculate exact fire location
-	WeaponFireLocation = WeaponBoneCoords.Origin + (CurrentFireOffset /*>> WeaponFireRotation*/);
+//	WeaponFireLocation = WeaponBoneCoords.Origin + (CurrentFireOffset /*>> WeaponFireRotation*/);
+	WeaponFireLocation = WeaponBoneCoords.Origin + (CurrentFireOffset >> WeaponFireRotation);
 }
 
+//------------------------------------------
 function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 {
 	local Projectile P1, P2;
 	local ONSWeaponPawn WeaponPawn;
 	local vector StartLocation, HitLocation, HitNormal, Extent, X, Y, Z;
 
+
 	if (bDoOffsetTrace)
 	{
 		Extent = ProjClass.default.CollisionRadius * vect(1,1,0);
 		Extent.Z = ProjClass.default.CollisionHeight;
 		WeaponPawn = ONSWeaponPawn(Owner);
-		if (WeaponPawn != None && WeaponPawn.VehicleBase != None)
-		{
+		if (WeaponPawn != None && WeaponPawn.VehicleBase != None) 	{
 			if (!WeaponPawn.VehicleBase.TraceThisActor(HitLocation, HitNormal, WeaponFireLocation, WeaponFireLocation + vector(WeaponFireRotation) * (WeaponPawn.VehicleBase.CollisionRadius * 1.5), Extent))
 				StartLocation = HitLocation;
 			else
 				StartLocation = WeaponFireLocation + vector(WeaponFireRotation) * (ProjClass.default.CollisionRadius * 1.1);
 		}
-		else
-		{
+		else 	{
 			if (!Owner.TraceThisActor(HitLocation, HitNormal, WeaponFireLocation, WeaponFireLocation + vector(WeaponFireRotation) * (Owner.CollisionRadius * 1.5), Extent))
 				StartLocation = HitLocation;
 			else
 				StartLocation = WeaponFireLocation + vector(WeaponFireRotation) * (ProjClass.default.CollisionRadius * 1.1);
 		}
 	}
-	else
-	{
+	else 	{
 		StartLocation = WeaponFireLocation;
 	}
 
 	GetAxes(WeaponFireRotation, X, Y, Z);
-
+	
+  //Log("OdinSpawnProjectile: ProjClass="@ProjClass);
 	P1 = Spawn(ProjClass, self,, StartLocation + DualFireOffset * Y, WeaponFireRotation);
 	P2 = Spawn(ProjClass, self,, StartLocation - DualFireOffset * Y, WeaponFireRotation);
 
-	if (P1 != None || P2 != None)
-	{
-		if (bInheritVelocity)
-		{
+	if (P1 != None || P2 != None) 	{
+		if (bInheritVelocity) 		{
 			if (P1 != None)
 				P1.Velocity += Instigator.Velocity;
 			if (P2 != None)
@@ -119,15 +183,13 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 		FlashMuzzleFlash();
 
 		// Play firing noise
-		if (bAltFire)
-		{
+		if (bAltFire) 	{
 			if (bAmbientAltFireSound)
 				AmbientSound = AltFireSoundClass;
 			else
 				PlayOwnedSound(AltFireSoundClass, SLOT_None, FireSoundVolume/255.0,, AltFireSoundRadius,, false);
 		}
-		else
-		{
+		else 		{
 			if (bAmbientFireSound)
 				AmbientSound = FireSoundClass;
 			else
@@ -143,8 +205,7 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 
 simulated event OwnerEffects()
 {
-	if (!bIsRepeatingFF)
-	{
+	if (!bIsRepeatingFF) 	{
 		if (bIsAltFire)
 			ClientPlayForceFeedback( AltFireForce );
 		else
@@ -152,108 +213,78 @@ simulated event OwnerEffects()
 	}
 	ShakeView();
 
-	if (Role < ROLE_Authority && !bIsAltFire)
-	{
+	if (Role < ROLE_Authority && !bIsAltFire) 	{
 		FireCountdown = FireInterval;
-
 		AimLockReleaseTime = Level.TimeSeconds + FireCountdown * FireIntervalAimLock;
-
 		FlashMuzzleFlash();
-
 		if (AmbientEffectEmitter != None)
 			AmbientEffectEmitter.SetEmitterStatus(true);
-
 		if (!bAmbientFireSound)
 			PlaySound(FireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius,, false);
 	}
 }
 
-simulated function Tick(float DeltaTime)
+
+//simulated function UpdateBeamState()
+// THIS SHOULD NOT HAVE BEEN simultaed.. it doesn't need to run on both!!!
+function UpdateBeamState()
 {
 	local int TeamNum;
-	Super.Tick(DeltaTime);
-
-	TeamNum=Instigator.GetTeamNum();
-	if (bFiringBeam != bClientTrigger)
-	{
-		UpdateBeamState();
-	}
-
-	if (bFiringBeam)
-	{
-		TraceBeamFire(DeltaTime);
-	}
-}
-
-simulated function ClientTrigger()
-{
-	UpdateBeamState();
-}
-
-simulated function UpdateBeamState()
-{
-	local int TeamNum;
-	
-	TeamNum=Instigator.GetTeamNum();
-	if (bFiringBeam && !bClientTrigger)
-	{
-		if (Beam1 != None)
+	//local vector StartLocation, X, Y, Z;
+  
+  //Log("Odin-UpdateBeamState-bIsFiring "$bIsFiringBeam$"Beam1="@Beam1);
+	if (!bIsFiringBeam) 	{
+		
+		if (Beam1 != None) {
 			Beam1.Destroy();
+			//g("Odin-UpdateBeamState-DestoryBeam1");
+		}	
 		if (Beam2 != None)
 			Beam2.Destroy();
 		Beam1 = None;
 		Beam2 = None;
 		LinkedActor = None;
+		
 	}
-	else if (!bFiringBeam && bClientTrigger)
+	else if (bIsFiringBeam && (Beam1 == None))  //we'll just check beam1 but we create destroy in pairs
 	{
-		if (Level.NetMode != NM_DedicatedServer)
-		{
-			if (Beam1 == None)
-			{
+		//if (Level.NetMode != NM_DedicatedServer)
+		//{
+		  TeamNum = Instigator.GetTeamNum(); // for beam colors
+		  //Log("Odin-UpdateBeamState-Firing");
+			//TraceBeamFire(0);
+			if (Beam1 == None) 	{
+				//Log("Odin-UpdateBeamState-SpawnBeam1");
 				Beam1 = Spawn(BeamEffectClass, Self);
 				Beam1.SetUpBeam(TeamNum, False);
+				Beam1.SetBeamPosition();
 			}
 			//AttachToBone(Beam1, WeaponFireAttachmentBone);
 			//Beam1.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset + vect(0,1,0) * DualFireOffset) * DrawScale);
 
-			if (Beam2 == None)
-			{
+			if (Beam2 == None)	{
 				Beam2 = Spawn(BeamEffectClass, Self);
-				Beam2.SetUpBeam(TeamNum, True);
+				Beam2.SetUpBeam(TeamNum, True);  //Left
+				Beam2.SetBeamPosition();
 			}
 			//AttachToBone(Beam2, WeaponFireAttachmentBone);
 			//Beam2.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset - vect(0,1,0) * DualFireOffset) * DrawScale);
-		}
+		//} //Dedicated
+		//bIsFiringBeam = True;
+		MaxRange();
 	}
-	bFiringBeam = bClientTrigger;
-	MaxRange();
 }
 
-simulated function float MaxRange()
-{
-	if (bFiringBeam)
-	{
-		if (Instigator != None && Instigator.Region.Zone != None && Instigator.Region.Zone.bDistanceFog)
-			TraceRange = FClamp(Instigator.Region.Zone.DistanceFogEnd, 8000, default.TraceRange);
-		else
-			TraceRange = default.TraceRange;
 
-		AimTraceRange = TraceRange;
-	}
-	else if (ProjectileClass != None)
-		AimTraceRange = ProjectileClass.static.GetRange();
-	else
-		AimTraceRange = 10000;
 
-	return AimTraceRange;
-}
-
-simulated function bool IsValidLinkTarget(Actor Target)
+//simulated function bool IsValidLinkTarget(Actor Target, Actor ThisVehicle)
+function bool IsValidLinkTarget(Actor Target, Actor ThisVehicle)
 {
 	local DestroyableObjective HealObjective;
-
-	if (Target == None || !Target.bCollideActors || !Target.bProjTarget)
+	
+	
+	//Log("Odin-IsValidLinkTarget Target"$Target$" ThisVehicle"$ThisVehicle);
+	if (Target == None || !Target.bCollideActors || !Target.bProjTarget || ThisVehicle == Target ) // Added Vehicle(Instigator)== Target so it doesn't lock itself to itself
 		return false;
 
 	if (Vehicle(Target) != None && Vehicle(Target).Health > 0)
@@ -261,7 +292,7 @@ simulated function bool IsValidLinkTarget(Actor Target)
 
 	HealObjective = DestroyableObjective(Target);
 	if (HealObjective == None)
-		HealObjective = DestroyableObjective(Target.Owner);
+		HealObjective = DestroyableObjective(Target.Owner);  // Energy sphere or any other class with healable owner
 
 	if (HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()))
 		return true;
@@ -269,161 +300,201 @@ simulated function bool IsValidLinkTarget(Actor Target)
 	return false;
 }
 
-simulated function TraceBeamFire(float DeltaTime)
+function TraceBeamFire(float DeltaTime)
+
 {
-	local vector HL, HN, Dir, HL2, HN2;
+	local vector HL, HN, Dir, HL2, HN2, EndPoint;
 	local Actor HitActor, NewLinkedActor;
 	local ONSWeaponPawn WeaponPawn;
 	local Vehicle BaseVehicle;
 	local int DamageAmount;
-	local DestroyableObjective Node;
+	//local DestroyableObjective Node;
+  //Log("In OdinLinkTurret=TraceBeamFire");
+  
+  
 
+  LinkedActor = None;
 	CalcWeaponFire();
-
+  EndPoint = WeaponFireLocation + vector(WeaponFireRotation) * TraceRange;
 	WeaponPawn = ONSWeaponPawn(Owner);
+	
+	
 	if (WeaponPawn != None && WeaponPawn.VehicleBase != None)
 		BaseVehicle = WeaponPawn.VehicleBase;
 	else
 		BaseVehicle = Vehicle(Owner);
+  
+  //Log("In OdinLinkTurret=TraceBeamFire-AfterWeaponPawn-BaseVehicle"@BaseVehicle);
+  
+   //skip past vehicle driver, not sure this works, but from DualACGatlingGun
+    if (ONSVehicle(Instigator) != None && ONSVehicle(Instigator).Driver != None)
+    {
+       ONSVehicle(Instigator).Driver.bBlockZeroExtentTraces = False;
+       HitActor = Trace(HL, HN, EndPoint, WeaponFireLocation, True,vect(10,10,10));
+       ONSVehicle(Instigator).Driver.bBlockZeroExtentTraces = true;
+    }
+    else
+       HitActor = Trace(HL, HN, EndPoint, WeaponFireLocation, True, vect(10,10,10));
 
-	HitActor = Trace(HL, HN, WeaponFireLocation + vector(WeaponFireRotation) * TraceRange, WeaponFireLocation, True, vect(10,10,10));
-	if (HitActor == None || HitActor == BaseVehicle || HitActor.bWorldGeometry)
-	{
+         
+	//HitActor = Trace(HL, HN, EndPoint, WeaponFireLocation, True, vect(0,0,0));
+	// Log("In OdinLinkTurret=TraceBeamFire-AfterHitActorSet"@HitActor$"HL="$HL);
+	
+	//if (HitActor == None || HitActor == BaseVehicle || HitActor.bWorldGeometry) 	{
+	if (HitActor == None || HitActor == BaseVehicle || HitActor.bWorldGeometry) 	{
 		// try again with zero extent
 		HitActor = Trace(HL, HN, WeaponFireLocation + vector(WeaponFireRotation) * TraceRange, WeaponFireLocation, True, vect(0,0,0));
-		if (HitActor == None)
-		{
+		if (HitActor == None) 		{
 			HL = WeaponFireLocation + vector(WeaponFireRotation) * TraceRange;
 			HN = vector(WeaponFireRotation);
 		}
 	}
-	if (HitActor != BaseVehicle && IsValidLinkTarget(HitActor))
-	{
+	
+	
+	//Log("In OdinLinkTurret=TraceBeamFire-AfterHitActorSetZE"@HitActor$"HL"@HL);
+	if (HitActor != BaseVehicle && IsValidLinkTarget(HitActor, BaseVehicle)) 	{
 		NewLinkedActor = HitActor;
 	}
-	else if (IsValidLinkTarget(LinkedActor))
-	{
-		Dir = LinkedActor.Location - WeaponFireLocation;
-		if (VSize(Dir) < TraceRange && Normal(Dir) dot vector(WeaponFireRotation) > LinkBreakError)
-		{
-			HitActor = Trace(HL2, HN, LinkedActor.Location, WeaponFireLocation, True, vect(0,0,0));
-			if (HitActor == None || HitActor == LinkedActor)
-			{
-				HL = HL2;
-				HN = HN2;
-				NewLinkedActor = LinkedActor;
+	else if (IsValidLinkTarget(LinkedActor,BaseVehicle))	{
+				Dir = LinkedActor.Location - WeaponFireLocation;
+				if (VSize(Dir) < TraceRange && Normal(Dir) dot vector(WeaponFireRotation) > LinkBreakError)		{
+					HitActor = Trace(HL2, HN, LinkedActor.Location, WeaponFireLocation, True, vect(0,0,0));
+					if (HitActor == None || HitActor == LinkedActor) 			{
+						HL = HL2;
+						HN = HN2;
+						NewLinkedActor = LinkedActor;
+					}
+				}
 			}
-		}
-	}
-	else
-	{
-		NewLinkedActor = None;
-	}
-
+			else 	{
+				NewLinkedActor = None;
+			}
+	
+	
 	LinkedActor = NewLinkedActor;
+	
+ //Log("In OdinLinkTurret=TraceBeamFire-SettingBEam LA="@LinkedActor$" HA="$HitActor$" HL="$HL);
 
-	if (Beam1 != None)
-	{
+	if (Beam1 != None ) 	{ 
 		Beam1.EndEffect = HL;
-		Beam1.bLockedOn = HitActor != None;
 		Beam1.LinkedActor = LinkedActor;
+		Beam1.bLockedOn = LinkedActor != None;
 		Beam1.bHitSomething = HitActor != None && HitActor.bWorldGeometry;
 	}
-	if (Beam2 != None)
-	{
+	if (Beam2 != None ) 	{
 		Beam2.EndEffect = HL;
-		Beam2.bLockedOn = HitActor != None;
 		Beam2.LinkedActor = LinkedActor;
+		Beam2.bLockedOn = LinkedActor != None;
 		Beam2.bHitSomething = HitActor != None && HitActor.bWorldGeometry;
 	}
 
-	if (Role == ROLE_Authority)
-	{
+	if (Role == ROLE_Authority) 	{
 		SavedDamage += DamagePerSecond * DeltaTime * DamageModifier;
 		DamageAmount = int(SavedDamage);
 
-		if (DamageAmount > MinDamageAmount)
-		{
+		if (DamageAmount > MinDamageAmount) 		{
 			SavedDamage -= DamageAmount;
-
-			if (LinkedActor != None)
-			{
-				if (Level.Game.bTeamGame && (Vehicle(LinkedActor) != None && Vehicle(LinkedActor).GetTeamNum() == Instigator.GetTeamNum()) || DestroyableObjective(LinkedActor) != None || DestroyableObjective(LinkedActor.Owner) != None)
-				{
-					LinkedActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
+							
+			if (LinkedActor != None)	{
+				if (Level.Game.bTeamGame && (Vehicle(LinkedActor) != None && Vehicle(LinkedActor).GetTeamNum() == Instigator.GetTeamNum()) || DestroyableObjective(LinkedActor) != None || DestroyableObjective(LinkedActor.Owner) != None)	{
+				
+				// Bug was here... LinkedActor might be EnergySphere, or shield on locked node, ..redirect to allow node building faster
+				// both do have healdamage function but they do NOTHING.
+				  if ((ONSPowerNodeEnergySphere(LinkedActor) != None) || (ONSPowerNodeShield(LinkedActor) != None)) {
+				  		LinkedActor = DestroyableObjective(LinkedActor.Owner);
+							LinkedActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
+						}
+					else { // other healable actors (powernode itself or vehicles
+							LinkedActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);		
+					}		
+		//			log("Odin OdinLinkTurret HealDamage"@LinkedActor);
 				}
-				else
-				{
-					if (Vehicle(LinkedActor) != None && BaseVehicle.Health < BaseVehicle.HealthMax)
-					{
+				else	{
+					if (Vehicle(LinkedActor) != None && BaseVehicle.Health < BaseVehicle.HealthMax) 					{
 						BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
 					}
+			//		 Log("In OdinLinkTurret=TakeDamage1");
 					LinkedActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
 				}
 			}
-			else if (HitActor != None && !HitActor.bWorldGeometry && HitActor != BaseVehicle)
-			{
-				if (DestroyableObjective(HitActor) != None && DestroyableObjective(HitActor).Health > 0 || DestroyableObjective(HitActor.Owner) != None && DestroyableObjective(HitActor.Owner).Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax)
-				{
+			else if (HitActor != None && !HitActor.bWorldGeometry && HitActor != BaseVehicle)	{
+				if (DestroyableObjective(HitActor) != None && DestroyableObjective(HitActor).Health > 0 || DestroyableObjective(HitActor.Owner) != None && DestroyableObjective(HitActor.Owner).Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax) {
 					BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
 				}
+		//		Log("In OdinLinkTurret=TakeDamage2");
 				HitActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
 			}
 		}
 	}
 }
 
-simulated function SetFireRateModifier(float Modifier)
+
+//----------------------------------------- State INSTANT FIRE
+
+state InstantFireMode
 {
-	FireInterval = default.FireInterval / Modifier;
-	DamageModifier = Modifier;
-}
+	  simulated function ClientSpawnHitEffects()
+    {
+    }
 
-function byte BestMode()
-{
-	if (Instigator == None || Instigator.Controller == None)
-		return 0;
+    function SpawnHitEffects(Actor HitActor, vector HitLocation, vector HitNormal)
+    {
+    }
+    
+		simulated function Tick(float DeltaTime)
+		{
+			
+			Super.Tick(DeltaTime);
 
-	if (Instigator.Controller.Target != None && VSize(Instigator.Controller.Target.Location - Location) < TraceRange)
-		return 1;
+		  UpdateBeamState();  // Turns on/off beam based on bIsFiring
+			if (bIsFiringBeam  && Beam1 != None)
+			{
+				TraceBeamFire(DeltaTime);
+			}
+			
+		} // End Tick
 
-	if (Instigator.Controller.Enemy != None && VSize(Instigator.Controller.Enemy.Location - Location) < TraceRange)
-		return 1;
-
-	return 0;
-}
-
-state ProjectileFireMode
-{
 	function Fire(Controller C)
 	{
-		if (!bClientTrigger)
-		{
+		//if (!bClientTrigger)
+		//{
+		  //Log("Odin-ProjectileFire");
+			bIsFiringBeam = False;
 			if (Team < TeamProjectileClasses.Length && TeamProjectileClasses[Team] != None)
 				SpawnProjectile(TeamProjectileClasses[Team], False);
 			else
 				SpawnProjectile(ProjectileClass, False);
 		}
-	}
 
 	function AltFire(Controller C)
 	{
+		//Log("Odin-InstantFire-AltFire");
 		AmbientSound = AltFireSoundClass;
-		bClientTrigger = True;
-		UpdateBeamState();
+    bIsFiringBeam = True;
 
-		NetUpdateTime = Level.TimeSeconds - 1;
+		// NetUpdateTime = Level.TimeSeconds - 1;
+		// Why was this messing with NetUpdateTime?!
+		// Doesn't seem to change anything and not seen it in other weapons.
 	}
 
 	function WeaponCeaseFire(Controller C, bool bWasAltFire)
 	{
-		if (bWasAltFire)
+		Super.WeaponCeaseFire(C,bWasAltFire);
+		
+		//if (Odin(Owner)!=None)
+    //    Beam=Odin(Owner).Beam;
+        
+		if (bWasAltFire && (Beam1 != None))
 		{
 			AmbientSound = None;
-			bClientTrigger = False;
+//			bClientTrigger = False;
+		  //Log("OdinLinkTurret-WeaponCeaseFire:bWasAltFire"@bWasAltFire);
+			bIsFiringBeam = False;
 			UpdateBeamState();
-
-			NetUpdateTime = Level.TimeSeconds - 1;
+			// destory beams.
+			
+			//NetUpdateTime = Level.TimeSeconds - 1;
+			// in ONSLinkTank, but not in UT2004 LinkFire, so not sure what it does?
 		}
 	}
 }
@@ -449,10 +520,10 @@ defaultproperties
      PitchUpLimit=15000
      WeaponFireAttachmentBone="Object85"
      GunnerAttachmentBone="Object83"
-     WeaponFireOffset=30.000000
-     DualFireOffset=18.000000
+     WeaponFireOffset=10.000000  // was 30
+     DualFireOffset=16.000000
      bAmbientAltFireSound=True
-     FireInterval=0.300000
+     FireInterval=0.200000
      AltFireInterval=0.100000
      FireSoundClass=Sound'ONSVehicleSounds-S.LaserSounds.Laser17'
      AltFireSoundClass=Sound'OdinV2Omni.OdinLinkAmbient'
@@ -467,5 +538,10 @@ defaultproperties
      AIInfo(1)=(bInstantHit=True,WarnTargetPct=0.200000)
      Mesh=SkeletalMesh'ONSFullAnimations.MASPassengerGun'
      DrawScale=0.600000
+     CullDistance=15000
      Skins(0)=Texture'ONSFullTextures.MASGroup.LEVnoColor'
+     
+          // Added for InstantFire
+     bInstantRotation=True
+     bInstantFire=True
 }

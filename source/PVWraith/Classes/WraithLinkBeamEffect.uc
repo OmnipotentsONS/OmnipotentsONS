@@ -34,6 +34,7 @@ var WraithLinkBeamEndEffect BeamEndEffect;
 // from LinkBeamEffect
 replication
 {
+      
     unreliable if (Role == ROLE_Authority)
        LinkColor, LinkedActor,  bLockedOn, bHitSomething, bLeftBeam;
 
@@ -115,6 +116,16 @@ function SetUpBeam(byte BeamColor, bool bLeft)
 	}
 }
 
+simulated function Vector SetBeamRotation()
+{
+    if ( (Instigator != None) && PlayerController(Instigator.Controller) != None )
+        SetRotation( Instigator.Controller.GetViewRotation() );
+    else
+        SetRotation( Rotator(EndEffect - Location) );
+
+	return Normal(EndEffect - Location);
+}
+
 
 
 simulated function SetBeamPosition()
@@ -134,7 +145,7 @@ simulated function SetBeamPosition()
 		Gun = ONSWeaponPawn(Instigator).Gun;
 		if (Gun != None)
 		{
-			//Log("Wraith UpdateBeamState-SetBeamPosition-have Gun, setting up");
+		//Log("Wraith UpdateBeamState-SetBeamPosition-have Gun, setting up");
 			WeaponBoneCoords = Gun.GetBoneCoords(Gun.WeaponFireAttachmentBone);
 			NewLocation = WeaponBoneCoords.Origin + Gun.WeaponFireOffset * WeaponBoneCoords.XAxis;
 			if (bLeftBeam)
@@ -152,7 +163,7 @@ simulated function SetBeamPosition()
 			// WeaponFireOffset=6.000000  // 30
       //DualFireOffset=5.000000 //18
 			GetAxes(rotator(EndEffect - Instigator.Location), X, Y, Z);
-			NewLocation = Instigator.Location + 6 * X;
+			NewLocation = Instigator.Location; // + 6 * X;
 			if (bLeftBeam)
 				NewLocation -= 5 * Y;
 			else
@@ -171,15 +182,17 @@ simulated function bool CheckMaxEffectDistance(PlayerController P, vector SpawnL
 {
 	return !P.BeyondViewDistance(SpawnLocation, 2000);
 }
- 
+
+
+// ************************** TICK
 simulated function Tick(float DeltaTime)
 {
 	local float LocDiff, RotDiff, WiggleMe;
 	local int i;
 	local vector BeamDir, HitLocation, HitNormal;
 	local Actor HitActor;
-
-	if (Role == ROLE_Authority && (Instigator == None || Instigator.Controller == None))
+   
+	if (Role == ROLE_Authority && (Instigator == None || Instigator.Controller == None ))
 	{
 		Destroy();
 		return;
@@ -190,24 +203,36 @@ simulated function Tick(float DeltaTime)
 	//Log("Calling SetBeamPosition from Tick()");
 	SetBeamPosition();
 // not in LinkBeamcode	StartEffect = Location;
-	BeamDir = Normal(EndEffect - Location);
+	//BeamDir = Normal(EndEffect - Location);
+	BeamDir = SetBeamRotation();
 
-	if (LinkedActor != None)
-	{
-		EndEffect = LinkedActor.Location;
-		if (!LinkedActor.TraceThisActor(HitLocation, HitNormal, LinkedActor.Location + LinkedActor.CollisionRadius * BeamDir, LinkedActor.Location - 1.5 * LinkedActor.CollisionRadius * BeamDir))
-			EndEffect = HitLocation;
-		else
-			EndEffect = HitActor.Location;
+//  Log("Calling SetBeamPosition from WraithLinkBeamEffect Tick()"$LinkedActor$" EndEffect"$EndEffect);
+  
+  if ( LinkedActor != None )
+    {
+        EndEffect = LinkedActor.Location  - BeamDir*30.0;
+    }
+    
+	/*if (LinkedActor != None){
 		bLockedOn = True;
-	  }
-	else 
-	  {
+		HitActor = LinkedActor;
+		EndEffect = LinkedActor.Location;  
+		// Problem here.. 
+		if (!LinkedActor.TraceThisActor(HitLocation, HitNormal, LinkedActor.Location + LinkedActor.CollisionRadius * BeamDir, LinkedActor.Location - 1.5 * LinkedActor.CollisionRadius * BeamDir))
+		  	EndEffect = HitLocation;
+		//else
+		//	  EndEffect = HitActor.Location;
+	}
+	else 	{  // No Linked Actor
 	   bLockedOn = False;
-	  }
+	   // Not locked but where does EndEffect get set?
+	}
+*/
 
-
+ //Log("After bLockedOn Setting from WraithLinkBeamEffect Tick()"$bLockedOn$"EndEffect "$EndEffect);
 	mSpawnVecA = EndEffect;
+	 
+	 
 	if (bLeftBeam && (bHitSomething || LinkedActor != None))
 	{
 		if (BeamEndEffect == None)
@@ -229,7 +254,7 @@ simulated function Tick(float DeltaTime)
 
 
 	// magic wiggle code
-	
+	 //Log("In Wiggle Code SetBeamPosition from WraithLinkBeamEffect Tick() bLockedOn"$bLockedOn);
 	if (bLockedOn)
 	{
 		mWaveAmplitude = FMax(1.0, mWaveAmplitude - (mWaveAmplitude + 5) * 4.0 * DeltaTime);

@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class HoverTankFactory extends ONSVehicleFactory abstract;
+class OVHoverTankFactory extends ONSVehicleFactory abstract;
 
 
 var() float AirControlOverride;
@@ -18,11 +18,11 @@ var() float AirControlOverride;
 
 function SpawnVehicle()
 {
-	local HoverTank HT;
+	local OVHoverTank HT;
 
 	Super.SpawnVehicle();
 
-	HT = HoverTank(LastSpawned);
+	HT = OVHoverTank(LastSpawned);
 	if (HT != None && AirControlOverride >= 0.0)
 	{
 		HT.AirControl = AirControlOverride;

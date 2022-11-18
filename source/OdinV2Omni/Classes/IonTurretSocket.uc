@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class IonTurretSocket extends TurretSocket;
+class IonTurretSocket extends OVTurretSocket;
 
 
 //=============================================================================

@@ -19,11 +19,12 @@ var array<byte> TeamLightHues;
 
 var vector StartEffect, EndEffect;
 var Actor LinkedActor;
-var byte LinkColor;
+var byte LinkColor, OldLinkColor;
 var bool bLeftBeam;
 var bool bLockedOn, bHitSomething;
 
 var array<LinkBeamChild> Children;
+var int NumChildren;
 var vector PrevLoc;
 var rotator PrevRot;
 var float ScorchTime;
@@ -33,10 +34,15 @@ var OdinLinkBeamEndEffect BeamEndEffect;
 replication
 {
     unreliable if (Role == ROLE_Authority)
-       LinkColor, LinkedActor,  bLockedOn, bHitSomething;
+       LinkColor, LinkedActor,  bLockedOn, bHitSomething, bLeftBeam;
 
-    unreliable if ( (Role == ROLE_Authority) && (!bNetOwner || bDemoRecording || bRepClientDemo)  )
+    //unreliable if ( (Role == ROLE_Authority) && (!bNetOwner || bDemoRecording || bRepClientDemo)  )
+    //    StartEffect, EndEffect;
+        
+    // For some reason the ODin needs a different replication than Wraith Turrets?!    
+    reliable if (Role == ROLE_Authority)
         StartEffect, EndEffect;
+        
 }
 
 simulated function Destroyed()
@@ -68,7 +74,7 @@ simulated function Destroyed()
 
 function SetUpBeam(byte BeamColor, bool bLeft)
 {
-	local int i, NumChildren;
+	local int i;
   local float LocDiff, RotDiff, WiggleMe;
 	
 	bLeftBeam = bLeft;
@@ -112,7 +118,15 @@ function SetUpBeam(byte BeamColor, bool bLeft)
 	}
 }
 
+simulated function Vector SetBeamRotation()
+{
+    if ( (Instigator != None) && PlayerController(Instigator.Controller) != None )
+        SetRotation( Instigator.Controller.GetViewRotation() );
+    else
+        SetRotation( Rotator(EndEffect - Location) );
 
+	return Normal(EndEffect - Location);
+}
 
 simulated function SetBeamPosition()
 {
@@ -130,6 +144,7 @@ simulated function SetBeamPosition()
 		Gun = ONSWeaponPawn(Instigator).Gun;
 		if (Gun != None)
 		{
+		 // Log("OdinLinkBeamEffect:UpdateBeamState-SetBeamPosition-have Gun, setting up");
 			WeaponBoneCoords = Gun.GetBoneCoords(Gun.WeaponFireAttachmentBone);
 			NewLocation = WeaponBoneCoords.Origin + Gun.WeaponFireOffset * WeaponBoneCoords.XAxis;
 			if (bLeftBeam)
@@ -161,6 +176,7 @@ simulated function bool CheckMaxEffectDistance(PlayerController P, vector SpawnL
 	return !P.BeyondViewDistance(SpawnLocation, 2000);
 }
 
+// *********************** TICK
 simulated function Tick(float DeltaTime)
 {
 	local float LocDiff, RotDiff, WiggleMe;
@@ -177,23 +193,32 @@ simulated function Tick(float DeltaTime)
  LinkColor = Instigator.GetTeamNum();
 	// set beam start location
 	SetBeamPosition();
-	StartEffect = Location;
-	BeamDir = Normal(EndEffect - Location);
-
+	//StartEffect = Location;
+	//BeamDir = Normal(EndEffect - Location);
+	BeamDir = SetBeamRotation();
+	
+	 if ( LinkedActor != None )
+    {
+        EndEffect = LinkedActor.Location  - BeamDir*30.0;
+    }
+ // log("OdinLinkBeamEffect:Tick() EndEffect"$EndEffect);
+  /*  
 	if (LinkedActor != None)
 	{
-		EndEffect = LinkedActor.Location;
-		if (!LinkedActor.TraceThisActor(HitLocation, HitNormal, LinkedActor.Location + LinkedActor.CollisionRadius * BeamDir, LinkedActor.Location - 1.5 * LinkedActor.CollisionRadius * BeamDir))
-			EndEffect = HitLocation;
-		else
-			EndEffect = HitActor.Location;
 		bLockedOn = True;	
+		EndEffect = LinkedActor.Location; 
+		 // Shouldn't trace here..
+		//if (!LinkedActor.TraceThisActor(HitLocation, HitNormal, LinkedActor.Location + LinkedActor.CollisionRadius * BeamDir, LinkedActor.Location - 1.5 * LinkedActor.CollisionRadius * BeamDir))
+		//	EndEffect = HitLocation;
+		//else
+		//	EndEffect = HitActor.Location;
+		
 	}		
 	else 
 	{
 	  bLockedOn = False;
 	}
-	
+	*/
 
 	mSpawnVecA = EndEffect;
 	if (bLeftBeam && (bHitSomething || LinkedActor != None))
@@ -214,7 +239,7 @@ simulated function Tick(float DeltaTime)
 		BeamEndEffect = None;
 	}
 
-	mWaveLockEnd = bLockedOn;
+	//mWaveLockEnd = bLockedOn;
 
 	// magic wiggle code
 	if (bLockedOn)
@@ -231,13 +256,17 @@ simulated function Tick(float DeltaTime)
 		LocDiff        = VSize((Location - PrevLoc) * Vect(1,1,5));
 		RotDiff        = VSize(Vector(Rotation) - Vector(PrevRot));
 		WiggleMe       = FMax(LocDiff * 0.02, RotDiff * 4.0);
-		mWaveAmplitude = FMax(2.0, mWaveAmplitude - mWaveAmplitude * 0.5 * DeltaTime);
+		mWaveAmplitude = default.mWaveAmplitude;
+		//mWaveAmplitude = FMax(2.0, mWaveAmplitude - mWaveAmplitude * 0.5 * DeltaTime);
 		mWaveAmplitude = FMin(16.0, mWaveAmplitude + WiggleMe);
 		mWaveShift=default.mWaveShift;
 	}
 
 	PrevLoc = Location;
 	PrevRot = Rotation;
+
+  mWaveLockEnd = bLockedOn;
+  mSpawnVecA = EndEffect;
 
 	for (i = 0; i < Children.Length; i++)
 	{
@@ -299,8 +328,8 @@ defaultproperties
      LightRadius=4.000000
      bDynamicLight=True
      RemoteRole=ROLE_SimulatedProxy
-     bNetTemporary=false
-     bReplicateInstigator=true
+     bNetTemporary=False
+     bReplicateInstigator=True
      Skins(0)=FinalBlend'XEffectMat.Link.LinkBeamGreenFB'
      Style=STY_Additive
 }

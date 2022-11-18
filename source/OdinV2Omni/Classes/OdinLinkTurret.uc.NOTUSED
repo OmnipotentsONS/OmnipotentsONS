@@ -1,7 +1,8 @@
 
-class WraithLinkTurret extends WraithWeapon;
+class OdinLinkTurret extends HoverTankWeapon;
 
-#exec audio import file=Sounds\WraithLinkAmbient.wav
+
+#exec audio import file=Sounds\OdinLinkAmbient.wav
 
 
 var() float DamagePerSecond;
@@ -9,10 +10,10 @@ var() int MinDamageAmount;
 var() float HealMultiplier;
 var() float SelfHealMultiplier;
 var() float LinkBreakError;
-var class<WraithLinkBeamEffect> BeamEffectClass;
+var class<OdinLinkBeamEffect> BeamEffectClass;
 var array<class<Projectile> > TeamProjectileClasses;
 
-var WraithLinkBeamEffect Beam1, Beam2;
+var OdinLinkBeamEffect Beam1, Beam2;
 var bool bIsFiringBeam;
 var Actor LinkedActor;
 var float SavedDamage, SavedHeal;
@@ -24,28 +25,27 @@ replication
 		bIsFiringBeam;
 }
 
-/*  Not needed spawns extra beams on the client. - pooty
 simulated function ClientStopFire(Controller C, bool bWasAltFire)
 {
+
 	Super.ClientStopfire(C,bWasAltFire);
-	//if(!bWasAltFire) 	{
-		bIsFiringBeam=False; // Always turn off beam
-		DestroyEffects(); // Try this kill extra client effects?
-	//}
+	if(!bWasAltFire)
+	{
+		bIsFiringBeam=False;
+	}
+
 }
 
 simulated function ClientStartFire(Controller C, bool bWasAltFire)
 {
+
 	Super.ClientStartfire(C,bWasAltFire);
-	if(bWasAltFire) 	{
-		bIsFiringBeam=True;
+	if(!bWasAltFire)
+	{
+		bIsFiringBeam=true;
 	}
-	else {
-		bIsFiringBeam=False;
-	}
-	
-}  
-*/
+
+}
 
 function byte BestMode()
 {
@@ -60,7 +60,6 @@ function byte BestMode()
 
 	return 0;
 }
-
 
 simulated function float MaxRange()
 {
@@ -80,27 +79,26 @@ simulated function float MaxRange()
 	return AimTraceRange;
 }
 
-
 simulated function DestroyEffects()
 {
 	
 	Super.DestroyEffects();
 	//Log("Wraith-DestroyEffects");
-	//if ( Level.NetMode != NM_Client ) 	 {
+	if ( Level.NetMode != NM_Client )
+	 {
 		if (Beam1 != None) {
-		//  Log("Wraith-DestroyEffects-DestroyBeam1");
+		// Log("Wraith-DestroyEffects-DestroyBeam1");
 			Beam1.Destroy();
 		}	
 		if (Beam2 != None) {
 			Beam2.Destroy();
-		}	
-	//}		
+		}
+	 }		
+	// Beam1,Beam2 get turned off. .Destroy just stops effects.
 	Beam1 = None;
 	Beam2 = None;
-
 	
 }
-
 
 function bool CanAttack(Actor Other)
 {
@@ -128,33 +126,33 @@ simulated function CalcWeaponFire()
 	// Calculate fire offset in world space
 	WeaponBoneCoords = GetBoneCoords(WeaponFireAttachmentBone);
 	CurrentFireOffset = WeaponFireOffset * WeaponBoneCoords.XAxis;
+
 	// Calculate rotation of the gun
 	WeaponFireRotation = rotator(vector(CurrentAim) >> Rotation);
+
 	// Calculate exact fire location
 	//WeaponFireLocation = WeaponBoneCoords.Origin + (CurrentFireOffset /*>> WeaponFireRotation*/);
 	WeaponFireLocation = WeaponBoneCoords.Origin + (CurrentFireOffset >> WeaponFireRotation);
 }
 
-//------------------------------------------
 function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 {
 	local Projectile P1, P2;
 	local ONSWeaponPawn WeaponPawn;
 	local vector StartLocation, HitLocation, HitNormal, Extent, X, Y, Z;
 
-
 	if (bDoOffsetTrace)
 	{
 		Extent = ProjClass.default.CollisionRadius * vect(1,1,0);
 		Extent.Z = ProjClass.default.CollisionHeight;
 		WeaponPawn = ONSWeaponPawn(Owner);
-		if (WeaponPawn != None && WeaponPawn.VehicleBase != None) 	{
+		if (WeaponPawn != None && WeaponPawn.VehicleBase != None) {
 			if (!WeaponPawn.VehicleBase.TraceThisActor(HitLocation, HitNormal, WeaponFireLocation, WeaponFireLocation + vector(WeaponFireRotation) * (WeaponPawn.VehicleBase.CollisionRadius * 1.5), Extent))
 				StartLocation = HitLocation;
 			else
 				StartLocation = WeaponFireLocation + vector(WeaponFireRotation) * (ProjClass.default.CollisionRadius * 1.1);
 		}
-		else 	{
+		else 		{
 			if (!Owner.TraceThisActor(HitLocation, HitNormal, WeaponFireLocation, WeaponFireLocation + vector(WeaponFireRotation) * (Owner.CollisionRadius * 1.5), Extent))
 				StartLocation = HitLocation;
 			else
@@ -166,8 +164,7 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 	}
 
 	GetAxes(WeaponFireRotation, X, Y, Z);
-	
-  //Log("WraithSpawnProjectile: ProjClass="@ProjClass);
+
 	P1 = Spawn(ProjClass, self,, StartLocation + DualFireOffset * Y, WeaponFireRotation);
 	P2 = Spawn(ProjClass, self,, StartLocation - DualFireOffset * Y, WeaponFireRotation);
 
@@ -181,7 +178,7 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 		FlashMuzzleFlash();
 
 		// Play firing noise
-		if (bAltFire) 	{
+		if (bAltFire)		{
 			if (bAmbientAltFireSound)
 				AmbientSound = AltFireSoundClass;
 			else
@@ -203,7 +200,8 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 
 simulated event OwnerEffects()
 {
-	if (!bIsRepeatingFF) 	{
+	if (!bIsRepeatingFF)
+	{
 		if (bIsAltFire)
 			ClientPlayForceFeedback( AltFireForce );
 		else
@@ -222,67 +220,64 @@ simulated event OwnerEffects()
 	}
 }
 
-
-//simulated function UpdateBeamState()
-// THIS SHOULD NOT HAVE BEEN simultaed.. it doesn't need to run on both!!!
-function UpdateBeamState()
+simulated function UpdateBeamState()
 {
 	local int TeamNum;
+	local vector StartLocation, X, Y, Z;
 	
-  
+  TeamNum = Instigator.GetTeamNum(); // for beam colors
   //Log("Wraith-UpdateBeamState-bIsFiring "$bIsFiringBeam$"Beam1="@Beam1);
-	if (!bIsFiringBeam) 	{
-		
+	if (!bIsFiringBeam)
+	{
 		if (Beam1 != None) {
 			Beam1.Destroy();
-			//g("Wraith-UpdateBeamState-DestoryBeam1");
+			//Log("Wraith-UpdateBeamState-DestoryBeam1");
 		}	
-		if (Beam2 != None)
+		if (Beam2 != None) {
 			Beam2.Destroy();
+			//Log("Wraith-UpdateBeamState-DestoryBeam2");
+		}	
 		Beam1 = None;
 		Beam2 = None;
 		LinkedActor = None;
-		
+		bIsFiringBeam = False;
 	}
 	else if (bIsFiringBeam && (Beam1 == None))  //we'll just check beam1 but we create destroy in pairs
 	{
 		//if (Level.NetMode != NM_DedicatedServer)
 		//{
-		  TeamNum = Instigator.GetTeamNum(); // for beam colors
-		  //Log("Wraith-UpdateBeamState-Firing");
-			//TraceBeamFire(0);
+		  CalcWeaponFire();
+		  GetAxes(WeaponFireRotation, X, Y, Z);
 			if (Beam1 == None) 	{
 				//Log("Wraith-UpdateBeamState-SpawnBeam1");
-				Beam1 = Spawn(BeamEffectClass, Self);
+				Beam1 = Spawn(BeamEffectClass, Self,, WeaponFireLocation + DualFireOffset * Y, WeaponFireRotation);
 				Beam1.SetUpBeam(TeamNum, False);
 				Beam1.SetBeamPosition();
 			}
 			//AttachToBone(Beam1, WeaponFireAttachmentBone);
 			//Beam1.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset + vect(0,1,0) * DualFireOffset) * DrawScale);
 
-			if (Beam2 == None)	{
-				Beam2 = Spawn(BeamEffectClass, Self);
-				Beam2.SetUpBeam(TeamNum, True);  //Left
+			if (Beam2 == None) {
+				//Log("Wraith-UpdateBeamState-SpawnBeam1");
+				Beam2 = Spawn(BeamEffectClass, Self,, WeaponFireLocation - DualFireOffset * Y, rot(0,0,16384));
+				Beam2.SetUpBeam(TeamNum, True);
 				Beam2.SetBeamPosition();
 			}
 			//AttachToBone(Beam2, WeaponFireAttachmentBone);
 			//Beam2.SetRelativeLocation((vect(1,0,0) * WeaponFireOffset - vect(0,1,0) * DualFireOffset) * DrawScale);
-		//} //Dedicated
-		//bIsFiringBeam = True;
+			//}
+		bIsFiringBeam = True;
 		MaxRange();
 	}
 }
 
 
 
-//simulated function bool IsValidLinkTarget(Actor Target, Actor ThisVehicle)
-function bool IsValidLinkTarget(Actor Target, Actor ThisVehicle)
+simulated function bool IsValidLinkTarget(Actor Target)
 {
 	local DestroyableObjective HealObjective;
-	
-	
-	//Log("Wraith-IsValidLinkTarget Target"$Target$" ThisVehicle"$ThisVehicle);
-	if (Target == None || !Target.bCollideActors || !Target.bProjTarget || ThisVehicle == Target ) // Added Vehicle(Instigator)== Target so it doesn't lock itself to itself
+
+	if (Target == None || !Target.bCollideActors || !Target.bProjTarget)
 		return false;
 
 	if (Vehicle(Target) != None && Vehicle(Target).Health > 0)
@@ -290,7 +285,7 @@ function bool IsValidLinkTarget(Actor Target, Actor ThisVehicle)
 
 	HealObjective = DestroyableObjective(Target);
 	if (HealObjective == None)
-		HealObjective = DestroyableObjective(Target.Owner);  // Energy sphere or any other class with healable owner
+		HealObjective = DestroyableObjective(Target.Owner);
 
 	if (HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()))
 		return true;
@@ -298,205 +293,155 @@ function bool IsValidLinkTarget(Actor Target, Actor ThisVehicle)
 	return false;
 }
 
-//simulated function TraceBeamFire(float DeltaTime)
-function TraceBeamFire(float DeltaTime)
+simulated function TraceBeamFire(float DeltaTime)
 {
-	local vector HL, HN, Dir, HL2, HN2, EndPoint;
+	local vector HL, HN, Dir, HL2, HN2;
 	local Actor HitActor, NewLinkedActor;
 	local ONSWeaponPawn WeaponPawn;
 	local Vehicle BaseVehicle;
 	local int DamageAmount;
 	//local DestroyableObjective Node;
-  //Log("In WraithLinkTurret=TraceBeamFire");
-  
-  
 
-  LinkedActor = None;
 	CalcWeaponFire();
-  EndPoint = WeaponFireLocation + vector(WeaponFireRotation) * TraceRange;
+
 	WeaponPawn = ONSWeaponPawn(Owner);
-	
-	
 	if (WeaponPawn != None && WeaponPawn.VehicleBase != None)
 		BaseVehicle = WeaponPawn.VehicleBase;
 	else
 		BaseVehicle = Vehicle(Owner);
-  
-  //Log("In WraithLinkTurret=TraceBeamFire-AfterWeaponPawn-BaseVehicle"@BaseVehicle);
-  
-   //skip past vehicle driver, not sure this works, but from DualACGatlingGun
-    if (ONSVehicle(Instigator) != None && ONSVehicle(Instigator).Driver != None)
-    {
-        ONSVehicle(Instigator).Driver.bBlockZeroExtentTraces = False;
-        HitActor = Trace(HL, HN, EndPoint, WeaponFireLocation, True,vect(10,10,10));
-        ONSVehicle(Instigator).Driver.bBlockZeroExtentTraces = true;
-    }
-    else
-        HitActor = Trace(HL, HN, EndPoint, WeaponFireLocation, True, vect(10,10,10));
 
-         
-	//HitActor = Trace(HL, HN, EndPoint, WeaponFireLocation, True, vect(10,10,10));
-	 //Log("In WraithLinkTurret=TraceBeamFire-AfterHitActorSet"@HitActor);
-	
-	//if (HitActor == None || HitActor == BaseVehicle || HitActor.bWorldGeometry) 	{
+	HitActor = Trace(HL, HN, WeaponFireLocation + vector(WeaponFireRotation) * TraceRange, WeaponFireLocation, True, vect(10,10,10));
 	if (HitActor == None || HitActor == BaseVehicle || HitActor.bWorldGeometry) 	{
 		// try again with zero extent
-		HitActor = Trace(HL, HN, WeaponFireLocation + vector(WeaponFireRotation) * TraceRange, WeaponFireLocation, True, vect(10,10,10));
+		HitActor = Trace(HL, HN, WeaponFireLocation + vector(WeaponFireRotation) * TraceRange, WeaponFireLocation, True, vect(0,0,0));
 		if (HitActor == None) 		{
 			HL = WeaponFireLocation + vector(WeaponFireRotation) * TraceRange;
 			HN = vector(WeaponFireRotation);
 		}
 	}
-	
-	
-	//Log("In WraithLinkTurret=TraceBeamFire-AfterHitActorSetZE"@HitActor$"BaseVehicle"@BaseVehicle);
-	if (HitActor != BaseVehicle && IsValidLinkTarget(HitActor, BaseVehicle)) 	{
+	if (HitActor != BaseVehicle && IsValidLinkTarget(HitActor)) 	{
 		NewLinkedActor = HitActor;
-		//Log("In WraithLinkTurret=TraceBeamFire-ValidLinkActor"@HitActor);
 	}
-	else if (IsValidLinkTarget(LinkedActor,BaseVehicle))	{
-				Dir = LinkedActor.Location - WeaponFireLocation;
-				if (VSize(Dir) < TraceRange && Normal(Dir) dot vector(WeaponFireRotation) > LinkBreakError)		{
-					HitActor = Trace(HL2, HN, LinkedActor.Location, WeaponFireLocation, True, vect(0,0,0));
-					if (HitActor == None || HitActor == LinkedActor) 			{
-						HL = HL2;
-						HN = HN2;
-						NewLinkedActor = LinkedActor;
-					}
-				}
+	else if (IsValidLinkTarget(LinkedActor))	{
+		Dir = LinkedActor.Location - WeaponFireLocation;
+		if (VSize(Dir) < TraceRange && Normal(Dir) dot vector(WeaponFireRotation) > LinkBreakError)		{
+			HitActor = Trace(HL2, HN, LinkedActor.Location, WeaponFireLocation, True, vect(0,0,0));
+			if (HitActor == None || HitActor == LinkedActor)	{
+				HL = HL2;
+				HN = HN2;
+				NewLinkedActor = LinkedActor;
 			}
-			else 	{
-				NewLinkedActor = None;
-			}
-	
-	
-	LinkedActor = NewLinkedActor;
-	
- //Log("In WraithLinkTurret=TraceBeamFire-AfterLinkedActor"@LinkedActor);
+		}
+	}
+	else
+	{
+		NewLinkedActor = None;
+	}
 
-	if (Beam1 != None ) 	{ 
+	LinkedActor = NewLinkedActor;
+
+	if (Beam1 != None)
+	{
 		Beam1.EndEffect = HL;
+		Beam1.bLockedOn = HitActor != None;
 		Beam1.LinkedActor = LinkedActor;
-		Beam1.bLockedOn = LinkedActor != None;
 		Beam1.bHitSomething = HitActor != None && HitActor.bWorldGeometry;
 	}
-	if (Beam2 != None ) 	{
+	if (Beam2 != None)
+	{
 		Beam2.EndEffect = HL;
+		Beam2.bLockedOn = HitActor != None;
 		Beam2.LinkedActor = LinkedActor;
-		Beam2.bLockedOn = LinkedActor != None;
 		Beam2.bHitSomething = HitActor != None && HitActor.bWorldGeometry;
 	}
 
-	if (Role == ROLE_Authority) 	{
+	if (Role == ROLE_Authority)
+	{
 		SavedDamage += DamagePerSecond * DeltaTime * DamageModifier;
 		DamageAmount = int(SavedDamage);
-
-		if (DamageAmount > MinDamageAmount) 		{
+		if (DamageAmount > MinDamageAmount)		{
 			SavedDamage -= DamageAmount;
-							
-			if (LinkedActor != None)	{
-				if (Level.Game.bTeamGame && (Vehicle(LinkedActor) != None && Vehicle(LinkedActor).GetTeamNum() == Instigator.GetTeamNum()) || DestroyableObjective(LinkedActor) != None || DestroyableObjective(LinkedActor.Owner) != None)	{
-				
-				// Bug was here... LinkedActor might be EnergySphere, or shield on locked node, ..redirect to allow node building faster
-				// both do have healdamage function but they do NOTHING.
-				  if ((ONSPowerNodeEnergySphere(LinkedActor) != None) || (ONSPowerNodeShield(LinkedActor) != None)) {
-				  		LinkedActor = DestroyableObjective(LinkedActor.Owner);
-							LinkedActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
-						}
-					else { // other healable actors (powernode itself or vehicles
-							LinkedActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);		
-					}		
-		//			log("Wraith WraithLinkTurret HealDamage"@LinkedActor);
+			if (LinkedActor != None) 			{
+				if (Level.Game.bTeamGame && (Vehicle(LinkedActor) != None && Vehicle(LinkedActor).GetTeamNum() == Instigator.GetTeamNum()) || DestroyableObjective(LinkedActor) != None || DestroyableObjective(LinkedActor.Owner) != None) 	{
+					LinkedActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
 				}
-				else	{
-					if (Vehicle(LinkedActor) != None && BaseVehicle.Health < BaseVehicle.HealthMax) 					{
+				else 		{
+					if (Vehicle(LinkedActor) != None && BaseVehicle.Health < BaseVehicle.HealthMax) 	{
 						BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
 					}
-			//		 Log("In WraithLinkTurret=TakeDamage1");
 					LinkedActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
 				}
 			}
-			else if (HitActor != None && !HitActor.bWorldGeometry && HitActor != BaseVehicle)	{
-				if (DestroyableObjective(HitActor) != None && DestroyableObjective(HitActor).Health > 0 || DestroyableObjective(HitActor.Owner) != None && DestroyableObjective(HitActor.Owner).Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax) {
+			else if (HitActor != None && !HitActor.bWorldGeometry && HitActor != BaseVehicle) 		{
+				if (DestroyableObjective(HitActor) != None && DestroyableObjective(HitActor).Health > 0 || DestroyableObjective(HitActor.Owner) != None && DestroyableObjective(HitActor.Owner).Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax)				{
 					BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
 				}
-		//		Log("In WraithLinkTurret=TakeDamage2");
 				HitActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
 			}
 		}
 	}
 }
 
+// -------------------------------------------------------------
 
-//----------------------------------------- State INSTANT FIRE
-
-state InstantFireMode
+state ProjectileFireMode
 {
-	  simulated function ClientSpawnHitEffects()
-    {
-    }
-
-    function SpawnHitEffects(Actor HitActor, vector HitLocation, vector HitNormal)
-    {
-    }
-    
-		simulated function Tick(float DeltaTime)
+	
+	
+	
+	
+	
+	
+	simulated function Tick(float DeltaTime)
 		{
 			
 			Super.Tick(DeltaTime);
-
-		  UpdateBeamState();  // Turns on/off beam based on bIsFiring
-			if (bIsFiringBeam  && Beam1 != None)
+      //Log("Odin-ProjectileTick-Before TraceBeamFire IF="$bIsFiringBeam$"AltFire");
+			if (bIsFiringBeam)
 			{
 				TraceBeamFire(DeltaTime);
+				//Log("Odin-ProjectileTick-TraceBeamFire");
 			}
-			
 		} // End Tick
-
+	
+	
+	
+	
 	function Fire(Controller C)
 	{
-		//if (!bClientTrigger)
-		//{
-		  //Log("Wraith-ProjectileFire");
-			bIsFiringBeam = False;
+		  bIsFiringBeam = False;
 			if (Team < TeamProjectileClasses.Length && TeamProjectileClasses[Team] != None)
 				SpawnProjectile(TeamProjectileClasses[Team], False);
 			else
 				SpawnProjectile(ProjectileClass, False);
-		}
+	}
 
-	function AltFire(Controller C)
+function AltFire(Controller C)
 	{
-		//Log("Wraith-InstantFire-AltFire");
 		AmbientSound = AltFireSoundClass;
     bIsFiringBeam = True;
-
-		// NetUpdateTime = Level.TimeSeconds - 1;
-		// Why was this messing with NetUpdateTime?!
-		// Doesn't seem to change anything and not seen it in other weapons.
+		UpdateBeamState(); // Turn on Beam if AltFire
+		NetUpdateTime = Level.TimeSeconds - 1;
 	}
 
 	function WeaponCeaseFire(Controller C, bool bWasAltFire)
 	{
 		Super.WeaponCeaseFire(C,bWasAltFire);
-		
-		//if (Wraith(Owner)!=None)
-    //    Beam=Wraith(Owner).Beam;
         
-		if (bWasAltFire && (Beam1 != None))
-		{
+		if (bWasAltFire && (Beam1 != None)) 		{
 			AmbientSound = None;
-//			bClientTrigger = False;
-		  //Log("WraithLinkTurret-WeaponCeaseFire:bWasAltFire"@bWasAltFire);
+		  //Log("Odin-WeaponCeaseFire:bWasAltFire"@bWasAltFire);
 			bIsFiringBeam = False;
 			UpdateBeamState();
 			// destory beams.
-			
-			//NetUpdateTime = Level.TimeSeconds - 1;
-			// in ONSLinkTank, but not in UT2004 LinkFire, so not sure what it does?
+			NetUpdateTime = Level.TimeSeconds - 1;
 		}
 	}
 }
+
+
+
+
 //=============================================================================
 // Default values
 //=============================================================================
@@ -508,45 +453,32 @@ defaultproperties
      HealMultiplier=0.800000
      SelfHealMultiplier=0.800000
      LinkBreakError=0.950000
-     BeamEffectClass=Class'PVWraith.WraithLinkBeamEffect'
-     TeamProjectileClasses(0)=Class'PVWraith.WraithLinkPlasmaProjectileRed'
-     TeamProjectileClasses(1)=Class'PVWraith.WraithLinkPlasmaProjectileBlue'
+     BeamEffectClass=Class'OdinV2Omni.OdinLinkBeamEffect'
+     TeamProjectileClasses(0)=Class'OdinV2Omni.OdinLinkPlasmaProjectileRed'
+     TeamProjectileClasses(1)=Class'OdinV2Omni.OdinLinkPlasmaProjectileBlue'
      DamageModifier=1.000000
-     //YawBone="Object83"
-     //PitchBone="Object84"
-     //PitchUpLimit=15000
-     
-     YawBone="GatlingGun"
-     PitchBone="GatlingGun"
-     PitchUpLimit=-1950  // 0 is fine on client, but on Server it hits the vehicle hitbox
-     PitchDownLimit=50000
-     WeaponFireAttachmentBone="GatlingGunFirePoint"
-
-     //WeaponFireAttachmentBone="Object85"
-     //GunnerAttachmentBone="Object83"
-     WeaponFireOffset=0.000000  // was 30, doesn't need to be offset want it centered on the turret
-     DualFireOffset=5.000000 //18
+     YawBone="Object83"
+     PitchBone="Object84"
+     PitchUpLimit=15000
+     WeaponFireAttachmentBone="Object85"
+     GunnerAttachmentBone="Object83"
+     WeaponFireOffset=0.000000  // was 30
+     DualFireOffset=18.000000
      bAmbientAltFireSound=True
      FireInterval=0.200000
      AltFireInterval=0.100000
      FireSoundClass=Sound'ONSVehicleSounds-S.LaserSounds.Laser17'
-     AltFireSoundClass=Sound'PVWraith.WraithLinkAmbient'
+     AltFireSoundClass=Sound'OdinV2Omni.OdinLinkAmbient'
      FireForce="Laser01"
-     DamageType=Class'PVWraith.DamTypeWraithLinkBeam'
+     DamageType=Class'OdinV2Omni.DamTypeOdinLinkBeam'
      DamageMin=15
      DamageMax=15
      TraceRange=4000.000000
      Momentum=-30000.000000
-     ProjectileClass=Class'PVWraith.WraithLinkPlasmaProjectile'
+     ProjectileClass=Class'OdinV2Omni.OdinLinkPlasmaProjectile'
      AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.200000,RefireRate=0.700000)
      AIInfo(1)=(bInstantHit=True,WarnTargetPct=0.200000)
-     //Mesh=SkeletalMesh'ONSFullAnimations.MASPassengerGun'
-     Mesh=SkeletalMesh'ONSBPAnimations.DualAttackCraftGatlingGunMesh'
+     Mesh=SkeletalMesh'ONSFullAnimations.MASPassengerGun'
      DrawScale=0.600000
-     CullDistance=15000
      Skins(0)=Texture'ONSFullTextures.MASGroup.LEVnoColor'
-     
-     // Added for InstantFire
-     bInstantRotation=True
-     bInstantFire=True
 }

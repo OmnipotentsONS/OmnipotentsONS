@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class HoverTankWeapon extends ONSWeapon abstract;
+class OVHoverTankWeapon extends ONSWeapon abstract;
 
 
 var bool bTurnedOff;

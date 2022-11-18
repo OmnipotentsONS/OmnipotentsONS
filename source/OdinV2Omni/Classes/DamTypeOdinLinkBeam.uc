@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class DamTypeOdinLinkBeam extends VehicleProxyDamageType abstract;
+class DamTypeOdinLinkBeam extends OVVehicleProxyDamageType abstract;
 
 
 //=============================================================================
@@ -20,7 +20,7 @@ class DamTypeOdinLinkBeam extends VehicleProxyDamageType abstract;
 defaultproperties
 {
      MessageSourceDamageType=Class'XWeapons.DamTypeLinkShaft'
-     VehicleClass=Class'WVHoverTankV2.OdinLinkTurretPawn'
+     VehicleClass=Class'OdinV2Omni.OdinLinkTurretPawn'
      bDetonatesGoop=True
      bSkeletize=True
      bCausesBlood=False

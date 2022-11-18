@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class OdinLinkTurretPawn extends HoverTankWeaponPawn CacheExempt;
+class OdinLinkTurretPawn extends OVHoverTankWeaponPawn CacheExempt;
 
 
 var Pawn SwitchRequester;
@@ -72,7 +72,46 @@ function Timer()
 	}
 }
 
+// From ACDualGatlingGunPAwn
+function KDriverEnter(Pawn P)
+{
+    super.KDriverEnter(P);
+    if (!VehicleBase.bDriving)
+        VehicleBase.bDriving = true;
+}
 
+event bool KDriverLeave( bool bForceLeave )
+{
+    local bool b;
+    b  = super.KDriverLeave(bForceLeave);
+    if (b && VehicleBase.IsVehicleEmpty() )
+        VehicleBase.bDriving = false;
+
+    return b;
+
+}
+
+simulated function AttachDriver(Pawn P)
+{
+    local coords GunnerAttachmentBoneCoords;
+
+    if (Gun == None)
+        return;
+
+    //ONSDualAttackCraft(VehicleBase).OutputThrust = 0;
+    //ONSDualAttackCraft(VehicleBase).OutputStrafe = 0;
+    //ONSDualAttackCraft(VehicleBase).OutputRise = 0;
+    P.bHardAttach = True;
+    GunnerAttachmentBoneCoords = Gun.GetBoneCoords(Gun.GunnerAttachmentBone);
+    P.SetLocation(VehicleBase.Location);
+    P.SetBase(VehicleBase);
+    P.SetPhysics(PHYS_None);
+    P.SetPhysics(PHYS_None);    // Do it twice to handle the bug.
+    Gun.AttachToBone(P, Gun.GunnerAttachmentBone);
+    P.SetRelativeLocation(DrivePos);
+    P.SetRelativeRotation( DriveRot );
+
+}
 //=============================================================================
 // Default values
 //=============================================================================

@@ -149,7 +149,7 @@ defaultproperties
      TPCamDistance=0.000000
      TPCamLookat=(X=5.000000,Z=-50.000000)
      TPCamDistRange=(Min=0.000000,Max=0.000000)
-      
+       
      DriverDamageMult=0.000000
      VehiclePositionString="in an Wraith Link Turret"
      VehicleNameString="Wraith Link Turret"

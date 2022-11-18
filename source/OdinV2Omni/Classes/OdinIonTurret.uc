@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class OdinIonTurret extends HoverTankWeapon dependson(ThickTraceHelper);
+class OdinIonTurret extends OVHoverTankWeapon dependson(ThickTraceHelper);
 
 
 //=============================================================================

@@ -1,16 +1,40 @@
 /******************************************************************************
-OdinTankFactory
+HoverTankWeapon
 
-Creation date: 2012-08-14 10:24
+Creation date: 2013-02-16 13:27
 Last change: $Id$
-Copyright © 2012, Wormbo
+Copyright © 2013, Wormbo
 Website: http://www.koehler-homepage.de/Wormbo/
 Feel free to reuse this code. Send me a note if you found it helpful or want
 to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class OdinTankFactory extends OVHoverTankFactory;
+class OdinHoverTankWeapon extends ONSWeapon abstract;
+
+
+var bool bTurnedOff;
+
+
+simulated function Tick(float DeltaTime)
+{
+	if (bTurnedOff)
+		return;
+
+	if (Instigator != None && Instigator.PlayerReplicationInfo != None)
+	{
+		bForceCenterAim = False;
+	}
+	else if (!bActive && CurrentAim != rot(0,0,0))
+	{
+		bForceCenterAim = True;
+		bActive = True;
+	}
+	else if (bActive && CurrentAim == rot(0,0,0))
+	{
+		bActive = False;
+	}
+}
 
 
 //=============================================================================
@@ -19,9 +43,4 @@ class OdinTankFactory extends OVHoverTankFactory;
 
 defaultproperties
 {
-     RespawnTime=45.000000
-     VehicleClass=Class'WVHoverTankV2.OdinHoverTank'
-     DrawScale=1.200000
-     Skins(0)=Shader'WVHoverTankV2.Skins.TankShaderRed'
-     CollisionRadius=300.000000
 }
