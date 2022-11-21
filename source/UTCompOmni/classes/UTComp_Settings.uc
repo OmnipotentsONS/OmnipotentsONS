@@ -81,13 +81,18 @@ var UTComp_Settings instance;
 
 function CheckSettings() {
     local string PackageName;
+    local string CheckPackageName;
+    local int CheckLen;
+
+    CheckPackageName = "UTCompOmni";
+    CheckLen = Len(CheckPackageName);
 
     PackageName = string(self.Class);
     PackageName = Left(PackageName, InStr(PackageName, "."));
 
-    if (Left(FriendlySound, 10) ~= "UTCompOmni")
+    if (Left(FriendlySound, CheckLen) ~= CheckPackageName)
         FriendlySound = PackageName$Mid(FriendlySound, InStr(FriendlySound, "."));
-    if (Left(EnemySound, 10) ~= "UTCompOmni")
+    if (Left(EnemySound, CheckLen) ~= CheckPackageName)
         EnemySound = PackageName$Mid(EnemySound, InStr(EnemySound, "."));
 
     //SaveConfig();
@@ -151,7 +156,9 @@ defaultproperties
     bEnableDarkSkinning=True
     DesiredNetUpdateRate=90
 
-    bEnemyBasedSkins=True
+    bEnemyBasedSkins=False
+    bEnemyBasedModels=False
+    bUseDefaultScoreboard=True
 
     instance=none
 }

@@ -449,6 +449,8 @@ simulated function DrawRadarMapVehicles(Canvas C, float CenterPosX, float Center
         BS_xPlayer(PlayerOwner).GetVInfoUpdate();
 	}
 
+	SavedModulation = C.ColorModulate;
+
     C.ColorModulate.X = 1;
 	C.ColorModulate.Y = 1;
 	C.ColorModulate.Z = 1;
