@@ -74,6 +74,7 @@ var config bool bNodeHealBonusForLockedNodes;
 var Config bool bNodeHealBonusForConstructor;
 
 var config int NewNetUpdateFrequency;
+var config float PingTweenTime;
 
 
 struct MapVotePair
@@ -695,6 +696,7 @@ function SpawnReplicationClass()
     RepInfo.bAllowRestartVoteEvenIfMapVotingIsTurnedOff = bAllowRestartVoteEvenIfMapVotingIsTurnedOff;
 
     RepInfo.NewNetUpdateFrequency = NewNetUpdateFrequency;
+    RepInfo.PingTweenTime = PingTweenTime;
     RepInfo.NodeIsolateBonusPct=NodeIsolateBonusPct;
     RepInfo.VehicleHealScore=VehicleHealScore;
     RepInfo.VehicleDamagePoints=VehicleDamagePoints;
@@ -781,6 +783,11 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
     if (Controller(Other) != None && MessagingSpectator(Other) == None && ONSOnslaughtGame(Level.Game) != none )
 		Controller(Other).PlayerReplicationInfoClass = class'UTComp_ONSPlayerReplicationInfo';
     
+    if ( GameReplicationInfo(Other) != None )
+    {
+        GameReplicationInfo(Other).bFastWeaponSwitching = true;
+    }
+
     if(bEnhancedNetCodeEnabledAtStartOfMap)
     {
         // use NewNet weapons
@@ -957,6 +964,8 @@ function ModifyLogin(out string Portal, out string Options)
         }
         else if(ONSOnslaughtGame(Level.Game) == none) // no custom scoreboard at all for Onslaught 
         {
+            //if scoreboard is disabled and NOT and ONS game, then use this scoreboard
+            //for ONS game don't touch ScoreBoardType with scoreboard disabled
             Level.Game.ScoreBoardType=string(class'UTComp_ScoreBoardTDM');
         }
     }
@@ -1410,7 +1419,7 @@ defaultproperties
      bEnableClanSkins=True
      bEnablePowerupsOverlay=True
      EnableHitSoundsMode=1
-     bEnableScoreboard=False
+     bEnableScoreboard=True
      bEnableWeaponStats=True
      bEnablePowerupStats=True
 
@@ -1442,10 +1451,11 @@ defaultproperties
      bNodeHealBonusForConstructor=false
 
      NewNetUpdateFrequency=200
+     PingTweenTime=3.0
 
-     FriendlyName="UTComp Version 1.29 (Omni)"
+     FriendlyName="UTComp Version 1.33 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.29"
+     FriendlyVersionNumber=")o(mni 1.33"
      Description="A mutator for brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True

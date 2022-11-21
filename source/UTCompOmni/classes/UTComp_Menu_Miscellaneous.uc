@@ -34,6 +34,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     ch_WepStats.Checked(class'UTComp_Scoreboard'.default.bDrawStats);
     ch_PickupStats.Checked(class'UTComp_Scoreboard'.default.bDrawPickups);
     ch_FootSteps.Checked(class'UTComp_xPawn'.default.bPlayOwnFootSteps);
+    ch_FootSteps.bVisible=false; // bPlayOwnFootSteps doesn't actually work, even in base engine code
     ch_MatchHudColor.Checked(HUDSettings.bMatchHudColor);
     ch_UseEyeHeightAlgo.Checked(Settings.bUseNewEyeHeightAlgorithm);
     ch_UseNewNet.Checked(Settings.bEnableEnhancedNetCode);
@@ -50,11 +51,23 @@ function InternalOnChange( GUIComponent C )
 {
     switch(C)
     {
-        case ch_UseScoreboard: Settings.bUseDefaultScoreboard=!ch_UseScoreBoard.IsChecked(); break;
+        case ch_UseScoreboard: Settings.bUseDefaultScoreboard=!ch_UseScoreBoard.IsChecked(); 
+            if(Settings.bUseDefaultScoreboard)
+            {
+                class'UTComp_Scoreboard'.default.bDrawStats=false;
+                ch_WepStats.Checked(class'UTComp_Scoreboard'.default.bDrawStats);
+                BS_xPlayer(PlayerOwner()).SetBStats(class'UTComp_Scoreboard'.default.bDrawStats);
+                class'UTComp_Scoreboard'.default.bDrawPickups=false;
+                ch_PickupStats.Checked(class'UTComp_Scoreboard'.default.bDrawPickups);
+            }
+            break;
         case ch_WepStats:  class'UTComp_Scoreboard'.default.bDrawStats=ch_WepStats.IsChecked();
                            BS_xPlayer(PlayerOwner()).SetBStats(class'UTComp_Scoreboard'.default.bDrawStats);break;
         case ch_PickupStats:  class'UTComp_Scoreboard'.default.bDrawPickups=ch_PickupStats.IsChecked(); break;
-        case ch_FootSteps: class'UTComp_xPawn'.default.bPlayOwnFootSteps=ch_FootSteps.IsChecked(); break;
+        case ch_FootSteps: 
+            class'UTComp_xPawn'.default.bPlayOwnFootSteps=ch_FootSteps.IsChecked(); 
+            UTComp_xPawn(BS_xPlayer(PlayerOwner()).Pawn).bPlayOwnFootSteps = ch_FootSteps.IsChecked();
+            break;
         case ch_MatchHudColor:  HUDSettings.bMatchHudColor=ch_MatchHudColor.IsChecked(); break;
         case ch_UseEyeHeightAlgo:
             Settings.bUseNewEyeHeightAlgorithm=ch_UseEyeHeightAlgo.IsChecked();

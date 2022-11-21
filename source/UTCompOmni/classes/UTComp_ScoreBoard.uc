@@ -391,6 +391,7 @@ simulated function DrawPlayerInformation(Canvas C, PlayerReplicationInfo PRI, fl
     // Draw Player name
 
     C.Font = NotReducedFont;
+    
     C.SetPos(C.ClipX*0.188+XOffset, (C.ClipY*0.159)+YOffset);
     oldClipX=C.ClipX;
     C.ClipX=C.ClipX*0.470+XOffset;
@@ -502,7 +503,7 @@ defaultproperties
      tmp2=0.172000
      tmp3=0.189000
      bEnableColoredNamesOnScoreboard=True
-     bDrawStats=True
-     bDrawPickups=True
+     bDrawStats=False
+     bDrawPickups=False
      bOverrideDisplayStats=false
 }

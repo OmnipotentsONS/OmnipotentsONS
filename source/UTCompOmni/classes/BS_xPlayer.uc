@@ -121,6 +121,7 @@ var float LastVRequestTime;
 var UTComp_NodeDamageHook NodeDamageHook;
 
 var int PreferredExitPoint;
+var bool bTempSpec;
 
 replication
 {
@@ -129,7 +130,7 @@ replication
     reliable if (Role==Role_Authority)
         StartDemo, SetClockTime, NotifyRestartMap, SetClockTimeOnly, SetEndTimeOnly, TimeBetweenUpdates;
     reliable if(Role<Role_Authority)
-        SetbStats, TurnOffNetCode, ServerSetEyeHeightAlgorithm, ServerSetNetUpdateRate;
+        SetbStats, TurnOffNetCode, ServerSetEyeHeightAlgorithm, ServerSetNetUpdateRate, ServerViewPlayer;
     unreliable if(Role<Role_Authority)
         ServerNextPlayer, ServerGoToPlayer, ServerFindNextNode,
         serverfindprevnode, servergotonode, ServerGoToWepBase, speclockRed, speclockBlue, ServerGoToTarget, CallVote;
@@ -400,6 +401,24 @@ function SetBStats(bool b)
 
 simulated function InitializeStuff()
 {
+    //change some defaults with this release
+    if(Settings.Version <= 2) // 1.30 -> 1.31
+    {
+        Settings.Version=3;
+        Settings.bEnableEnhancedNetCode=false;
+    }
+    if(Settings.Version <= 3) // 1.31 -> 1.32
+    {
+        Settings.Version=4;
+        Settings.bUseDefaultScoreboard=True;
+
+        Settings.Save();
+
+        class'UTComp_Scoreboard'.default.bDrawPickups=false;
+        class'UTComp_Scoreboard'.default.bDrawStats=false;
+        class'UTComp_Scoreboard'.static.StaticSaveConfig();
+    }
+
     InitializeScoreboard();
     SetInitialColoredName();
     SetShowSelf(Settings.bShowSelfInTeamOverlay);
@@ -425,22 +444,6 @@ simulated function InitializeStuff()
         SaveSettings();
     }
 
-    //change some defaults with this release
-    if(Settings.Version <= 1)
-    {
-        Settings.Version=2;
-        Settings.bEnableEnhancedNetCode=true;
-        
-        //force team based brighter skins 
-        Settings.bEnemyBasedSkins=false;
-        Settings.bEnemyBasedModels=false;
-        Settings.ClientSkinModeRedTeammate=2;
-        Settings.ClientSkinModeBlueEnemy=2;
-        Settings.PreferredSkinColorRedTeammate=5;
-        Settings.PreferredSkinColorBlueEnemy=6;
-
-        Settings.Save();
-    }
 
     MatchHudColor();
     GetMapList();
@@ -742,8 +745,8 @@ simulated function ReceiveHitSound(int Damage, byte iTeam)
 {
     if (Level.NetMode==NM_DedicatedServer)
         return;
-    if (bBehindView)
-        return;
+//    if (bBehindView)
+//        return;
     if (iTeam==1)
         PlayEnemyHitSound(Damage);
     else if (iTeam==2)
@@ -3942,13 +3945,14 @@ exec function SetPreferredExit(string Direction, optional bool bPermenant, optio
 	else if (Direction ~= "1" || Direction ~= "2" || Direction ~= "3" || Direction ~= "4")
 		Dir = int(Direction);
 
+    PreferredExitPoint=Dir;
 	SelectExitPointServer(Dir);
 }
 
 function SelectExitPointServer(int Point)
 {
-	if (Role < ROLE_Authority)
-        return;
+	//if (Role < ROLE_Authority)
+  //      return;
 
     PreferredExitPoint=Point;
 }
@@ -4052,16 +4056,19 @@ function DoPreferredExit(Vehicle DrivenVehicle)
 
 exec function Use()
 {
-    UTComp_ServerUse();
+    UTComp_ServerUse(PreferredExitPoint);
 }
 
-function UTComp_ServerUse()
+function UTComp_ServerUse(int Dir)
 {
     local Actor A;
 	local Vehicle DrivenVehicle, EntryVehicle, V;
 
 	if ( Role < ROLE_Authority )
 		return;
+
+    PreferredExitPoint=Dir;
+    log("serveruse, preferredexit = "$PreferredExitPoint);
 
     if ( Level.Pauser == PlayerReplicationInfo )
     {
@@ -4101,6 +4108,72 @@ function UTComp_ServerUse()
 
 	if ( Pawn.Base != None )
 		Pawn.Base.UsedBy( Pawn );
+}
+
+function ServerViewNextPlayer()
+{
+	bTempSpec = True;
+
+	Super.ServerViewNextPlayer();
+
+	bTempSpec = False;
+}
+
+
+function ServerViewPlayer(int PlayerID)
+{
+	local Controller C, Found;
+	local bool bRealSpec, bWasSpec;
+	local TeamInfo RealTeam;
+
+	if (!IsInState('Spectating'))
+		return;
+
+	bTempSpec = True;
+	bRealSpec = PlayerReplicationInfo.bOnlySpectator;
+	bWasSpec = !bBehindView && ViewTarget != Pawn && ViewTarget != self;
+	PlayerReplicationInfo.bOnlySpectator = True;
+	RealTeam = PlayerReplicationInfo.Team;
+
+	// Find and view the specified player
+	for (c=Level.ControllerList; C!=None; C=C.NextController)
+	{
+		if (C.PlayerReplicationInfo != none && C.PlayerReplicationInfo.PlayerID == PlayerID)
+		{
+			if (bRealSpec)
+				PlayerReplicationInfo.Team = C.PlayerReplicationInfo.Team;
+
+			if (Level.Game.CanSpectate(self, bRealSpec, C))
+				Found = C;
+
+			break;
+		}
+	}
+
+	PlayerReplicationInfo.Team = RealTeam;
+
+	if (Found != None)
+	{
+		SetViewTarget(Found);
+		ClientSetViewTarget(Found);
+	}
+
+	if (ViewTarget == self || bWasSpec)
+		bBehindView = false;
+	else
+		bBehindView = true;
+
+	ClientSetBehindView(bBehindView);
+	PlayerReplicationInfo.bOnlySpectator = bRealSpec;
+	bTempSpec = False;
+}
+
+simulated function ClientReceiveLoginMenu(string MenuClass, bool bForce)
+{
+	if (/*GameReplicationInfo.GameClass ~= "Onslaught.ONSOnslaughtGame" || */MenuClass ~= "GUI2k4.UT2K4OnslaughtLoginMenu")
+		LoginMenuClass = string(Class'UTComp_ONSLoginMenu');//"ONSPlus.ONSPlusLoginMenu";
+
+	bForceLoginMenu = bForce;
 }
 
 defaultproperties

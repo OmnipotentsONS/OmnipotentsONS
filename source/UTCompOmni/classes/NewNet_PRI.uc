@@ -24,7 +24,7 @@ var bool bPingReceived;
 var int numPings;
 var UTComp_ServerReplicationInfo RepInfo;
 
-const PING_TWEEN_TIME = 3.0;
+var float PingTweenTime;
 
 replication
 {
@@ -43,7 +43,15 @@ simulated function PostBeginPlay()
     if(RepInfo != none)
     {
         if(RepInfo.NewNetUpdateFrequency > 0)
+        {
             NetUpdateFrequency=RepInfo.NewNetUpdateFrequency;
+        }
+
+        if(RepInfo.PingTweenTime > 0)
+        {
+            PingTweenTime=RepInfo.PingTweenTime;
+        }
+
     }
 }
 
@@ -55,7 +63,7 @@ simulated function Ping()
 simulated function Pong()
 {
     bPingReceived = true;
-    PredictedPing = (2.0*PredictedPing + (Level.TimeSeconds - PingSendTime))/3.0;
+    PredictedPing = (2.0*PredictedPing + (Level.TimeSeconds - PingSendTime))/PingTweenTime;
     default.predictedping=predictedping;
     numPings++;
     if(NumPings < 8)
@@ -67,7 +75,7 @@ simulated function Tick(float deltatime)
     super.Tick(deltatime);
     if(Level.NetMode!=NM_Client)
         return;
-    if(bPingReceived && Level.TimeSeconds > PingSendTime + PING_TWEEN_TIME)
+    if(bPingReceived && Level.TimeSeconds > PingSendTime + PingTweenTime)
     {
         PingSendTime = Level.TimeSeconds;
         bPingReceived = false;
@@ -80,4 +88,5 @@ defaultproperties
      bPingReceived=True
      NetUpdateFrequency=200.000000
      NetPriority=5.000000
+     PingTweenTime=3.0
 }

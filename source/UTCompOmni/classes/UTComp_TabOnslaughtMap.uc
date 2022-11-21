@@ -17,6 +17,10 @@ function bool InternalOnPreDraw(Canvas C)
 	local UTComp_ONSHudOnslaught ONSHUD;
 	local actor TempSelectedSpawn;
 
+    local plane ColorModulate;
+
+    ColorModulate = C.ColorModulate;
+
 	ONSHUD = UTComp_ONSHudOnslaught(PlayerOwner().myHud);
 
 	TempSelectedSpawn = ONSHUD.LocateSpawnArea(Controller.MouseX - OnslaughtMapCenterX + 3.5, Controller.MouseY - OnslaughtMapCenterY + 3.5, OnslaughtMapRadius);
@@ -67,6 +71,8 @@ function bool InternalOnPreDraw(Canvas C)
 		}
 	}
 
+    C.ColorModulate = ColorModulate;
+
 	return false;
 }
 
@@ -89,6 +95,9 @@ function DrawVehicleFactoryHint(UTComp_ONSPlayerReplicationInfo OPPRI, ONSVehicl
 
 			TempColour.A = 255;
 
+            /*
+            disabled for now, this messes up the ESC -> scoreboard
+            if  you hover over colored dot, scoreboard text was colored too!
             if(l_HelpText.Style != None)
             {
                 l_HelpText.Style.FontColors[0] = TempColour;
@@ -97,14 +106,17 @@ function DrawVehicleFactoryHint(UTComp_ONSPlayerReplicationInfo OPPRI, ONSVehicl
                 l_HelpText.Style.FontColors[3] = TempColour;
                 l_HelpText.Style.FontColors[4] = TempColour;
             }
+            */
 
 			break;
 		}
 	}
 }
 
-function PostDrawHintText(canvas Canvas)
+function PostDrawHintText(canvas C)
 {
+    /*
+    disabled for now, this messes up the ESC -> scoreboard
     if(l_HelpText.Style != None)
     {
         l_HelpText.Style.FontColors[0] = l_HelpText.Style.default.FontColors[0];
@@ -113,8 +125,10 @@ function PostDrawHintText(canvas Canvas)
         l_HelpText.Style.FontColors[3] = l_HelpText.Style.default.FontColors[3];
         l_HelpText.Style.FontColors[4] = l_HelpText.Style.default.FontColors[4];
     }
+    */
 
-	Super.OnRendered(Canvas);
+	Super.OnRendered(C);
+
 }
 
 // Left Click, Overrides normal spawn selection for clicking nodes

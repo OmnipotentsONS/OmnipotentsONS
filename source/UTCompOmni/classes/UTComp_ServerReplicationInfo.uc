@@ -43,6 +43,7 @@ var int MinNetSpeed;
 var int MaxNetSpeed;
 
 var int NewNetUpdateFrequency;
+var float PingTweenTime;
 
 var int NodeIsolateBonusPct;
 var int VehicleHealScore;
@@ -64,7 +65,7 @@ replication
         bEnableMapVoting, bEnableGametypeVoting, VotingNames,
         benableDoubleDamage, ServerMaxPlayers, bEnableTimedOvertime,
         MaxPlayersClone, bEnableAdvancedVotingOptions, VotingOptions, LinePRI, bEnableTimedOvertimeVoting,
-        bEnableEnhancedNetCodeVoting,bEnableEnhancedNetCode,NewNetUpdateFrequency,
+        bEnableEnhancedNetCodeVoting,bEnableEnhancedNetCode,NewNetUpdateFrequency,PingTweenTime,
         bAllowRestartVoteEvenIfMapVotingIsTurnedOff, MaxMultiDodges, MinNetSpeed, MaxNetSpeed,
         NodeIsolateBonusPct, VehicleHealScore, VehicleDamagePoints, PowerNodeScore, PowerCoreScore, NodeHealBonusPct, 
         bNodeHealBonusForLockedNodes, bNodeHealBonusForConstructor;
@@ -78,7 +79,7 @@ defaultproperties
      bEnableTeamOverlay=True
      bEnablePowerupsOverlay=True;
      EnableHitSoundsMode=1
-     bEnableScoreboard=False
+     bEnableScoreboard=True
      bEnableWeaponStats=True
      bEnablePowerupStats=True
      bEnableBrightskinsVoting=True
@@ -92,6 +93,7 @@ defaultproperties
      bEnableTimedOvertimeVoting=True
      bEnableTimedOvertime=False
      NewNetUpdateFrequency=200
+     PingTweenTime=3.0
 
      NodeIsolateBonusPct=20
      VehicleHealScore=500
