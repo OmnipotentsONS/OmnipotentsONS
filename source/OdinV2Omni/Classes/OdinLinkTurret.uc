@@ -294,7 +294,7 @@ function bool IsValidLinkTarget(Actor Target, Actor ThisVehicle)
 	if (HealObjective == None)
 		HealObjective = DestroyableObjective(Target.Owner);  // Energy sphere or any other class with healable owner
 
-	if (HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()))
+	if (HealObjective != None && !HealObjective.IsInState('NeutralCore'))
 		return true;
 
 	return false;
@@ -307,10 +307,10 @@ function TraceBeamFire(float DeltaTime)
 	local Actor HitActor, NewLinkedActor;
 	local ONSWeaponPawn WeaponPawn;
 	local Vehicle BaseVehicle;
-	local int DamageAmount;
-	//local DestroyableObjective Node;
+	local int DamageAmount, PrevHealth;
+	local DestroyableObjective Node;
   //Log("In OdinLinkTurret=TraceBeamFire");
-  
+  local int TeamNum;
   
 
   LinkedActor = None;
@@ -394,7 +394,74 @@ function TraceBeamFire(float DeltaTime)
 
 		if (DamageAmount > MinDamageAmount) 		{
 			SavedDamage -= DamageAmount;
+
+			TeamNum = Instigator.GetTeamNum();
+			
+			If (LinkedActor != None) HitActor = LinkedActor; 
+			
+			if (HitActor != None && !HitActor.bWorldGeometry && Level.Game.bTeamGame) {
+				
+				 //log("OdinLinkTurret:HitActor"$HitActor$"MyTeam="$TeamNum);
+				 if (Vehicle(HitActor) != None  && Vehicle(HitActor).Health > 0) { // VEhicle
+				 	  if (Vehicle(HitActor).GetTeamNum() == TeamNum) { // Team Vehicle
+				 	  	//log("OdinLinkTurret:HealFriendlyVehicle");
+				 	  	HitActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
+				 	  }
+				 	  else { // Enemy Vehicle
+				 	  	if (Vehicle(HitActor).GetTeamNum() < 2 && Vehicle(HitActor).Health > 0) {  //Check for enemy Turrets are neutral 255, Team is either 0 red or 1 blue
+				 	  		//log("OdinLinkTurret:DamageEnemyVehicle Team="$Vehicle(HitActor).GetTeamNum());
+				 	  		HitActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
+				   	 		if (BaseVehicle.Health < BaseVehicle.HealthMax) BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+				   	 	}	
+				 	  } // Enemy Vehicle
+				 }//Vehicle
+				 else { // Node or Other Actor
+				 	
+				 	 Node = DestroyableObjective(HitActor);
+				 	 // shield or sphere Make the hit the node itself, so heals can construct
+				 	 if ((ONSPowerNodeEnergySphere(HitActor) != None) || (ONSPowerNodeShield(HitActor) != None)) Node = DestroyableObjective(HitActor.Owner);
+				  		
+				  if (Node != None) {
+				  	//log("OdinLinkTurret:HitActorNode"$HitActor$"ONSPowerCore(Node).PoweredBy(TeamNum"$TeamNum$")="$ONSPowerCore(Node).PoweredBy(TeamNum));
+				  	// While its constructing PoweredBy(TeamNum) doesn't get set right.  It only gets set when node fully powers up.
+				  				 
+              if (ONSPowerNode(Node) != None && (Node.DefenderTeamIndex == TeamNum) && Node.Health > 0 )
+						  //if (ONSPowerNode(Node) != None && ONSPowerNode(Node).PoweredBy(TeamNum) && Node.Health > 0 )
+				  		{ // Friendly Node
+				  			//log("OdinLinkTurret:HealFriendlyNode");
+				  	   	Node.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
+				     	}
+				   	else { // Enemy Node, core or team core.
+				   		 PrevHealth = Node.Health;
+				   		 //log("OdinLinkTurret:EnemyNode" );
+				   		 if (!Node.IsInState('NeutralCore') && Node.Health > 0 && !(Node.DefenderTeamIndex == TeamNum) ) {
+				   	 			//log("OdinLinkTurret:EnemyNode-TakeDamage" );
+				   	 	 		Node.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
+				   	 	 		// Only heal if damage was dealt
+				   	 	 		if (BaseVehicle.Health < BaseVehicle.HealthMax && Node.Health < PrevHealth) BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+				   	 		} 
+				   	} // Enemy Node
+				  } // Node 	
+				  else { // some other actor, not linkable 
+				  	if (Pawn(HitActor)!=None) {
+				  		PrevHealth = Pawn(HitActor).Health;
+				  	}
+				  	HitActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
+				  	if (Pawn(HitActor) != None && BaseVehicle.Health < BaseVehicle.HealthMax && PrevHealth > Pawn(HitActor).Health) {
+				  		BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+				  	}
+				  	//log("OdinLinkTurret:SomeActor="$HitActor);
+				  	// bots xPawn.  real players?
+				  } // Other Actor
+				} // Node or ACTOR
+			}	// Hit
+		} // Damage Amount
+	} // Role_Authority
+			
+} // Trace BeamFire END							
 							
+   //Old shit code, mix of orignal code and few tweaks by pooty.
+	    /*
 			if (LinkedActor != None)	{
 				if (Level.Game.bTeamGame && (Vehicle(LinkedActor) != None && Vehicle(LinkedActor).GetTeamNum() == Instigator.GetTeamNum()) || DestroyableObjective(LinkedActor) != None || DestroyableObjective(LinkedActor.Owner) != None)	{
 				
@@ -418,8 +485,11 @@ function TraceBeamFire(float DeltaTime)
 				}
 			}
 			else if (HitActor != None && !HitActor.bWorldGeometry && HitActor != BaseVehicle)	{
-				if (DestroyableObjective(HitActor) != None && DestroyableObjective(HitActor).Health > 0 || DestroyableObjective(HitActor.Owner) != None && DestroyableObjective(HitActor.Owner).Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax) {
-					BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+				Node = DestroyableObjective(HitActor);
+				if (Node == None)
+					Node = DestroyableObjective(HitActor.Owner);
+				if (Node != None && Node.Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax && (ONSPowerCore(Node) == None || ONSPowerCore(Node).PoweredBy(Team) && !Node.IsInState('NeutralCore'))) {
+						BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
 				}
 		//		Log("In OdinLinkTurret=TakeDamage2");
 				HitActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
@@ -427,7 +497,7 @@ function TraceBeamFire(float DeltaTime)
 		}
 	}
 }
-
+*/
 
 //----------------------------------------- State INSTANT FIRE
 

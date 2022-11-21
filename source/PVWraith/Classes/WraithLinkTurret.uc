@@ -292,8 +292,11 @@ function bool IsValidLinkTarget(Actor Target, Actor ThisVehicle)
 	if (HealObjective == None)
 		HealObjective = DestroyableObjective(Target.Owner);  // Energy sphere or any other class with healable owner
 
-	if (HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()))
+	//if (HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()))
+	if (HealObjective != None && !HealObjective.IsInState('NeutralCore'))
+		 // lock on to enemy nodes, but whether damage/heal is determined by trace, don't lock neutral nodes
 		return true;
+	
 
 	return false;
 }
@@ -305,10 +308,10 @@ function TraceBeamFire(float DeltaTime)
 	local Actor HitActor, NewLinkedActor;
 	local ONSWeaponPawn WeaponPawn;
 	local Vehicle BaseVehicle;
-	local int DamageAmount;
-	//local DestroyableObjective Node;
+	local int DamageAmount, PrevHealth;
+	local DestroyableObjective Node;
   //Log("In WraithLinkTurret=TraceBeamFire");
-  
+  local int TeamNum;
   
 
   LinkedActor = None;
@@ -393,10 +396,78 @@ function TraceBeamFire(float DeltaTime)
 
 		if (DamageAmount > MinDamageAmount) 		{
 			SavedDamage -= DamageAmount;
+			TeamNum = Instigator.GetTeamNum();
+			
+			If (LinkedActor != None) HitActor = LinkedActor; 
+			
+			if (HitActor != None && !HitActor.bWorldGeometry && Level.Game.bTeamGame) {
+				
+				 //log("WraithLinkTurret:HitActor"$HitActor$"MyTeam="$TeamNum);
+				 if (Vehicle(HitActor) != None  && Vehicle(HitActor).Health > 0) { // VEhicle
+				 	  if (Vehicle(HitActor).GetTeamNum() == TeamNum) { // Team Vehicle
+				 	  	//log("WraithLinkTurret:HealFriendlyVehicle");
+				 	  	HitActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
+				 	  }
+				 	  else { // Enemy Vehicle
+				 	  	if (Vehicle(HitActor).GetTeamNum() < 2 && Vehicle(HitActor).Health > 0) {  //Check for enemy Turrets are neutral 255, Team is either 0 red or 1 blue
+				 	  		//log("WraithLinkTurret:DamageEnemyVehicle Team="$Vehicle(HitActor).GetTeamNum());
+				 	  		HitActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
+				   	 		if (BaseVehicle.Health < BaseVehicle.HealthMax) BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+				   	 	}	
+				 	  } // Enemy Vehicle
+				 }//Vehicle
+				 else { // Node or Other Actor
+				 	
+				 	 Node = DestroyableObjective(HitActor);
+				 	 // shield or sphere Make the hit the node itself, so heals can construct
+				 	 if ((ONSPowerNodeEnergySphere(HitActor) != None) || (ONSPowerNodeShield(HitActor) != None)) Node = DestroyableObjective(HitActor.Owner);
+				  		
+				  if (Node != None) {
+				  	//log("WraithLinkTurret:HitActorNode"$HitActor$"ONSPowerCore(Node).PoweredBy(TeamNum"$TeamNum$")="$ONSPowerCore(Node).PoweredBy(TeamNum));
+				  	// While its constructing PoweredBy(TeamNum) doesn't get set right.  It only gets set when node fully powers up.
+				  				 
+              if (ONSPowerNode(Node) != None && (Node.DefenderTeamIndex == TeamNum) && Node.Health > 0 )
+						  //if (ONSPowerNode(Node) != None && ONSPowerNode(Node).PoweredBy(TeamNum) && Node.Health > 0 )
+				  		{ // Friendly Node
+				  			//log("WraithLinkTurret:HealFriendlyNode");
+				  	   	Node.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
+				     	}
+				   	else { // Enemy Node, core or team core.
+				   		 PrevHealth = Node.Health;
+				   		 //log("WraithLinkTurret:EnemyNode" );
+				   		 if (!Node.IsInState('NeutralCore') && Node.Health > 0 && !(Node.DefenderTeamIndex == TeamNum) ) {
+				   	 			//log("WraithLinkTurret:EnemyNode-TakeDamage" );
+				   	 	 		Node.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
+				   	 	 		// Only heal if damage was dealt
+				   	 	 		if (BaseVehicle.Health < BaseVehicle.HealthMax && Node.Health < PrevHealth) BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+				   	 		} 
+				   	} // Enemy Node
+				  } // Node 	
+				  else { // some other actor, not linkable 
+				  	if (Pawn(HitActor)!=None) {
+				  		PrevHealth = Pawn(HitActor).Health;
+				  	}
+				  	HitActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
+				  	if (Pawn(HitActor) != None && BaseVehicle.Health < BaseVehicle.HealthMax && PrevHealth > Pawn(HitActor).Health) {
+				  		BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+				  	}
+				  	//log("WraithLinkTurret:SomeActor="$HitActor);
+				  	// bots xPawn.  real players?
+				  } // Other Actor
+				} // Node or ACTOR
+			}	// Hit
+		} // Damage Amount
+	} // Role_Authority
+			
+} // Trace BeamFire END							
 							
+							
+
+							
+	    //Old shit code, mix of orignal code and few tweaks by pooty.
+	    /*
 			if (LinkedActor != None)	{
 				if (Level.Game.bTeamGame && (Vehicle(LinkedActor) != None && Vehicle(LinkedActor).GetTeamNum() == Instigator.GetTeamNum()) || DestroyableObjective(LinkedActor) != None || DestroyableObjective(LinkedActor.Owner) != None)	{
-				
 				// Bug was here... LinkedActor might be EnergySphere, or shield on locked node, ..redirect to allow node building faster
 				// both do have healdamage function but they do NOTHING.
 				  if ((ONSPowerNodeEnergySphere(LinkedActor) != None) || (ONSPowerNodeShield(LinkedActor) != None)) {
@@ -411,21 +482,30 @@ function TraceBeamFire(float DeltaTime)
 				else	{
 					if (Vehicle(LinkedActor) != None && BaseVehicle.Health < BaseVehicle.HealthMax) 					{
 						BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+		//				Log("Wraith:WraithLinkTurret-HealDamage1");
 					}
 			//		 Log("In WraithLinkTurret=TakeDamage1");
 					LinkedActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
 				}
 			}
 			else if (HitActor != None && !HitActor.bWorldGeometry && HitActor != BaseVehicle)	{
-				if (DestroyableObjective(HitActor) != None && DestroyableObjective(HitActor).Health > 0 || DestroyableObjective(HitActor.Owner) != None && DestroyableObjective(HitActor.Owner).Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax) {
+				Node = DestroyableObjective(HitActor);
+				if (Node == None)
+					Node = DestroyableObjective(HitActor.Owner);
+				if (Node != None && Node.Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax && (ONSPowerCore(Node) == None || ONSPowerCore(Node).PoweredBy(Team) && !Node.IsInState('NeutralCore')))
+				{
+				//if (DestroyableObjective(HitActor) != None && DestroyableObjective(HitActor).Health > 0 || DestroyableObjective(HitActor.Owner) != None && DestroyableObjective(HitActor.Owner).Health > 0 && BaseVehicle.Health < BaseVehicle.HealthMax) {
 					BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+					//Need to check if its locked powernode/core...
+	//				Log("Wraith:WraithLinkTurret-HealDamage2");
 				}
 		//		Log("In WraithLinkTurret=TakeDamage2");
 				HitActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
 			}
 		}
 	}
-}
+	*/
+
 
 
 //----------------------------------------- State INSTANT FIRE
