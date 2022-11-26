@@ -80,9 +80,9 @@ defaultproperties
      ExitPositions(0)=(Z=100.000000)
      EntryPosition=(X=-50.000000)
      EntryRadius=170.000000
-     TPCamDistance=350.000000
-     TPCamLookat=(X=0.000000,Z=30.000000)
-     DriverDamageMult=0.400000
+     TPCamDistance=400.000000
+     TPCamLookat=(X=0.000000,Z=45.000000)
+     DriverDamageMult=0.000000
      VehiclePositionString="in a Viper's Rear turret"
      VehicleNameString="Viper Rear Turret"
 }

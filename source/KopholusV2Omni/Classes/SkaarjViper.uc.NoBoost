@@ -56,6 +56,8 @@ var float SendToDrivingTime;
 
 replication
 {
+  reliable if(Role == Role_Authority) //server calls this on client
+            SetBoostAndRechargeTime;
   reliable if(Role == Role_Authority) //for thrusting consider !bNetOwner as its possibly redundant?
            bIsBoosting, bIsThrusting;
   reliable if(Role < Role_Authority)   //fixes dodge nicely
@@ -371,11 +373,12 @@ function Vehicle FindEntryVehicle(Pawn P)
 simulated function SwitchWeapon(byte F)
 {
     super.SwitchWeapon(F);
-    // Doesn't work on dedicated server?!
-   if(F == 10 && !bIsBoosting && (RechargeTime / default.RechargeTime >= 0.98))
-   {
-       Boost();
-   }
+    //if(F == 10 && !bIsBoosting && BoostRechargeCounter>=BoostRechargeTime)
+// Doesn't work on dedicated server?!
+//    if(F == 10 && !bIsBoosting && (RechargeTime / default.RechargeTime >= 0.98))
+//    {
+//        Boost();
+//    }
 }
 
 
@@ -390,31 +393,40 @@ function Boost()
 
 
 	 if(!PhysicsVolume.bWaterVolume)  //hack for gliding boat or UT rapidly switching volumes
-	 {
-        foreach TraceActors(class'WaterVolume',WV,HitLoc,HitNorm,Location - (vect(0,0,1)*WaterSearchDistance),Location)
-        {
-        if(WV != None)
-            WaterNearby = true;
-        }
-    }
-    else
-        WaterNearby = true;
-            
-    if (!bIsBoosting && (RechargeTime / default.RechargeTime >= 0.98) && WaterNearby)
-    {
-        RechargeTime=0.0;
-        PlaySound(BoosterSound, SLOT_None, 2*TransientSoundVolume);
-        ServerBoost();
-    }
+	    {
+               foreach TraceActors(class'WaterVolume',WV,HitLoc,HitNorm,Location - (vect(0,0,1)*WaterSearchDistance),Location)
+               {
+               if(WV != None)
+                  WaterNearby = true;
+               }
+            }
+            else
+               WaterNearby = true;
+
+            if (!bIsBoosting && (RechargeTime / default.RechargeTime >= 0.98) && WaterNearby)
+            {
+            bIsBoosting = true;
+      	    RechargeTime = 0.0;
+     	      SetBoostAndRechargeTime();  //set these on the client please
+ 	          BoostTime = default.BoostTime;
+ 	          ServerBoost();
+            }
+  
 }
 
 simulated function ServerBoost()
 {
     RechargeTime=0.0;
-    BoostTime = default.BoostTime;
     bIsBoosting=true;
 }
 
+function SetBoostAndRechargeTime() //executed on the client / instant action runs | should move to alt-fire
+{
+   PlaySound(BoosterSound, SLOT_None, 2*TransientSoundVolume);
+   bIsBoosting = true;
+   BoostTime = default.BoostTime;
+   RechargeTime = 0.0;
+}
 simulated function KApplyForce(out vector Force, out vector Torque)
 {
         local float ApplyThisForce;

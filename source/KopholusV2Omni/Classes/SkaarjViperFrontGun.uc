@@ -169,7 +169,7 @@ defaultproperties
      MinAim=0.925000
      YawBone="SIDEgunBASE"
      PitchBone="SIDEgunBARREL"
-     PitchUpLimit=8000
+     PitchUpLimit=16400
 //     PitchDownLimit=62500
      WeaponFireAttachmentBone="Firepoint"
 //     GunnerAttachmentBone="SideGunnerLocation"
@@ -187,7 +187,7 @@ defaultproperties
      AltFireForce="PRVSideAltFire"
      DamageType=Class'CSHellHound.HellHoundLaser'
      DamageMin=25
-     DamageMax=25
+     DamageMax=40
      ProjectileClass=Class'CSHellHound.HellHoundSkyMine'
      ShakeRotMag=(X=60.000000,Y=20.000000)
      ShakeRotRate=(X=1000.000000,Y=1000.000000)
@@ -197,5 +197,6 @@ defaultproperties
      CullDistance=6000.000000
      Mesh=SkeletalMesh'ONSWeapons-A.PRVsideGun'
      DrawScale=0.800000
+     
 }
 

@@ -79,13 +79,13 @@ defaultproperties
      PitchDownLimit=0
      WeaponFireAttachmentBone="VTFire"
      GunnerAttachmentBone="VHull"
-     DualFireOffset=5.000000
+     DualFireOffset=3.000000
      bDualIndependantTargeting=True
-     FireInterval=0.800000
+     FireInterval=0.500000
      FireSoundClass=Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01'
      FireForce="RocketLauncherFire"
      //ProjectileClass=Class'KopholusV2Omni.SkaarjViperProjectile'
-     ProjectileClass=Class'Mobreaker.WVMercuryMissile'
+     ProjectileClass=Class'KopholusV2Omni.KBMercuryMissile'
      AIInfo(0)=(bLeadTarget=True)
      Mesh=SkeletalMesh'KASPvehicles.SVTurret'
 }

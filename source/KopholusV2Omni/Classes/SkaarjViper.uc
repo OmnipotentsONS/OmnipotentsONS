@@ -547,7 +547,7 @@ simulated function DodgeRight()
 
 function KDriverEnter(Pawn P)
 {
-	p.ReceiveLocalizedMessage(class'CSBomber.CSBomberBoostMessage', 0);
+	p.ReceiveLocalizedMessage(class'KopholusV2Omni.KBBoostMessage', 0);
 	
 	Super.KDriverEnter(P);
 }
@@ -600,6 +600,57 @@ simulated function UpdatePrecacheMaterials()
 	Super.UpdatePrecacheMaterials();
 }
 
+// For Driver gun zoom
+function AltFire(optional float F)
+{
+	local PlayerController PC;
+
+	PC = PlayerController(Controller);
+	if (PC == None)
+		return;
+
+	bWeaponIsAltFiring = true;
+	PC.ToggleZoom();
+}
+
+function ClientVehicleCeaseFire(bool bWasAltFire)
+{
+	local PlayerController PC;
+
+	if (!bWasAltFire)
+	{
+		Super.ClientVehicleCeaseFire(bWasAltFire);
+		return;
+	}
+
+	PC = PlayerController(Controller);
+	if (PC == None)
+		return;
+
+	bWeaponIsAltFiring = false;
+	PC.StopZoom();
+}
+
+simulated function ClientKDriverLeave(PlayerController PC)
+{
+	Super.ClientKDriverLeave(PC);
+
+	bWeaponIsAltFiring = false;
+	PC.EndZoom();
+}
+
+
+function ShouldTargetMissile(Projectile P)
+{
+	if ( Bot(Controller) != None && Bot(Controller).Skill >= 5.0 )
+	{
+		if ( (Controller.Enemy != None) && Bot(Controller).EnemyVisible() && (Bot(Controller).Skill < 5) )
+			return;
+		ShootMissile(P);
+	}
+}
+
+
 defaultproperties
 {
      MaxPitchSpeed=2000.000000
@@ -645,7 +696,8 @@ defaultproperties
      StopThreshold=100.000000
      MaxRandForce=3.000000
      RandForceInterval=0.750000
-     DriverWeapons(0)=(WeaponClass=Class'CSBadgerFix.BadgerMinigun',WeaponBone="VFrontGun")
+     DriverWeapons(0)=(WeaponClass=Class'KopholusV2Omni.KBMachineGunTurret',WeaponBone="VFrontGun")
+     bHasAltFire=False
      PassengerWeapons(0)=(WeaponPawnClass=Class'KopholusV2Omni.SkaarjViperFrontGunPawn',WeaponBone="VFrontGun")
      PassengerWeapons(1)=(WeaponPawnClass=Class'KopholusV2Omni.SkaarjViperRearGunPawn',WeaponBone="VRearGun")
      IdleSound=Sound'ONSVehicleSounds-S.AttackCraft.AttackCraftIdle'
@@ -680,12 +732,17 @@ defaultproperties
      EntryRadius=250.000000
      FPCamPos=(X=115.000000,Z=100.000000)
      TPCamDistance=750.000000
-     TPCamLookat=(X=0.000000,Z=0.000000)
-     TPCamWorldOffset=(Z=120.000000)
+     //TPCamLookat=(X=0.000000,Z=0.000000)
+     //TPCamWorldOffset=(Z=120.000000)
+     
+     TPCamLookat=(X=0.000000,Z=60.000000)
+     TPCamWorldOffset=(Z=180.000000)
+     
+     
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Skaarj Viper"
-     VehicleNameString="Skaarj Viper 2.0"
+     VehicleNameString="Skaarj Viper 2.2"
      RanOverDamageType=Class'KopholusV2Omni.DamTypeSkaarjViperRoadkill'
      CrushedDamageType=Class'KopholusV2Omni.DamTypeSkaarjViperPancake'
      FlagBone="VHull"
@@ -698,7 +755,7 @@ defaultproperties
      bCanBeBaseForPawns=True
      GroundSpeed=2000.000000
      HealthMax=300.000000
-     Health=400
+     Health=650
      Mesh=SkeletalMesh'KASPvehicles.SkaarjViper'
      SoundVolume=160
      CollisionRadius=150.000000
