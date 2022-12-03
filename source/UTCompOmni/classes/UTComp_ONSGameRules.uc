@@ -156,8 +156,13 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
     local Controller C;
     local ONSOnslaughtGame ONS;
     local int deadCore;
-    deadCore = -1;
+    local bool retval;
 
+    retval = false;
+    if(NextGameRules != none)
+        retval = NextGameRules.CheckScore(Scorer);
+
+    deadCore = -1;
     ONS = ONSOnslaughtGame(Level.Game);
     if(ONS != none && ONS.PowerCores[ONS.FinalCore[0]].Health <= 0)
         deadCore = 0;
@@ -178,14 +183,13 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
                 PC.ClientRoundEnded();
 
             }
-            C.RoundHasEnded();
+
+            if(C != None)
+                C.RoundHasEnded();
         }
     }
 
-    if(NextGameRules != none)
-        return NextGameRules.CheckScore(Scorer);
-    
-    return false;
+    return retval;
 }
 
 // Initialise the vehicle spawn list for a certain player

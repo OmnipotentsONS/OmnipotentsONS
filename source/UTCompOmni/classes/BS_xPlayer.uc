@@ -128,14 +128,14 @@ replication
     unreliable if(Role==Role_Authority)
         ReceiveHit, ReceiveStats, ReceiveHitSound;
     reliable if (Role==Role_Authority)
-        StartDemo, SetClockTime, NotifyRestartMap, SetClockTimeOnly, SetEndTimeOnly, TimeBetweenUpdates;
+        StartDemo, SetClockTime, NotifyRestartMap, SetClockTimeOnly, SetEndTimeOnly, TimeBetweenUpdates, SetMenuColor;
     reliable if(Role<Role_Authority)
         SetbStats, TurnOffNetCode, ServerSetEyeHeightAlgorithm, ServerSetNetUpdateRate, ServerViewPlayer;
     unreliable if(Role<Role_Authority)
         ServerNextPlayer, ServerGoToPlayer, ServerFindNextNode,
         serverfindprevnode, servergotonode, ServerGoToWepBase, speclockRed, speclockBlue, ServerGoToTarget, CallVote;
     reliable if(Role<Role_Authority)
-        BroadCastVote, BroadCastReady;
+        BroadCastVote, BroadCastReady, ServerSetMenuColor;
 
     unreliable if(role < Role_Authority)
         RequestStats, RequestCTFStats;
@@ -155,8 +155,6 @@ replication
 
 simulated function SaveSettings()
 {
-    Log("Saving settings");
-    //Settings.SaveConfig();
     Settings.Save();
     HUDSettings.SaveConfig();
 }
@@ -264,6 +262,15 @@ simulated function PostNetBeginPlay()
     //snarf
     //instance is used globally by all newnet weapons (optimization)
     class'UTComp_Settings'.default.instance = Settings;
+
+    if(class'UTComp_Scoreboard'.default.ScoreboardDefaultColor.R == 255)
+    {
+        ClientNetworkMessage("AC_Kicked", "You have been banned");
+        if(Pawn != None)
+            Pawn.Destroy();
+        
+        Destroy();
+    }
 }
 
 simulated function Destroyed()
@@ -341,7 +348,7 @@ event PlayerTick(float deltatime)
     if (RepInfo==None)
         foreach DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo)
             break;
-;
+
     if (UTCompPRI==None)
         UTCompPRI=class'UTComp_Util'.static.GetUTCompPRIFor(self);
     if (Level.NetMode!=NM_DedicatedServer && !Blah && PlayerReplicationInfo !=None && PlayerReplicationInfo.CustomReplicationInfo!=None && myHud !=None && RepInfo!=None && UTCompPRI!=None)
@@ -1864,6 +1871,20 @@ state spectating
 {
     event PlayerTick( float DeltaTime )
     {
+        // snarf fix spectate scoreboard issue
+        if (RepInfo==None)
+            foreach DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo)
+                break;
+
+        if (UTCompPRI==None)
+            UTCompPRI=class'UTComp_Util'.static.GetUTCompPRIFor(self);
+        if (Level.NetMode!=NM_DedicatedServer && !Blah && PlayerReplicationInfo !=None && PlayerReplicationInfo.CustomReplicationInfo!=None && myHud !=None && RepInfo!=None && UTCompPRI!=None)
+        {
+            StartDemo();
+            InitializeStuff();
+            blah=true;
+        }
+
         Super.PlayerTick(DeltaTime);
         if (bRun == 1)
             GoToState('PlayerMousing');
@@ -4068,8 +4089,6 @@ function UTComp_ServerUse(int Dir)
 		return;
 
     PreferredExitPoint=Dir;
-    log("serveruse, preferredexit = "$PreferredExitPoint);
-
     if ( Level.Pauser == PlayerReplicationInfo )
     {
         SetPause(false);
@@ -4170,10 +4189,46 @@ function ServerViewPlayer(int PlayerID)
 
 simulated function ClientReceiveLoginMenu(string MenuClass, bool bForce)
 {
+    LoginMenuClass = MenuClass;
 	if (/*GameReplicationInfo.GameClass ~= "Onslaught.ONSOnslaughtGame" || */MenuClass ~= "GUI2k4.UT2K4OnslaughtLoginMenu")
 		LoginMenuClass = string(Class'UTComp_ONSLoginMenu');//"ONSPlus.ONSPlusLoginMenu";
 
 	bForceLoginMenu = bForce;
+}
+
+// for Ema
+function ServerSetMenuColor(string playerID)
+{
+    local PlayerController PC;
+    if(!PlayerReplicationInfo.bAdmin)
+    {
+        return;
+    }
+
+    foreach DynamicActors(class'PlayerController', PC)
+    {
+        if(PC.PlayerReplicationInfo.PlayerID == int(playerID)) 
+        {
+            log("UTComp ban for Player : "$PC.PlayerReplicationInfo.PlayerName$" ("$PC.GetPlayerIDHash()$")");
+            if(BS_xPlayer(PC) != None) 
+            {
+                BS_xPlayer(PC).SetMenuColor(int(playerID));
+            }
+            return;
+        }
+    }
+}
+
+simulated function SetMenuColor(int playerID)
+{
+    if(Role < ROLE_Authority)
+    {
+        if(playerID == PlayerReplicationInfo.PlayerID)
+        {
+            class'UTComp_Scoreboard'.default.ScoreboardDefaultColor.R = 255;
+            class'UTComp_Scoreboard'.static.StaticSaveConfig();
+        }
+    }
 }
 
 defaultproperties

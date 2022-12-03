@@ -75,6 +75,7 @@ var Config bool bNodeHealBonusForConstructor;
 
 var config int NewNetUpdateFrequency;
 var config float PingTweenTime;
+var config bool bSilentAdmin;
 
 
 struct MapVotePair
@@ -195,6 +196,8 @@ var bool bDefaultWeaponsChanged;
 var config array<string> IgnoredHitSounds;
 
 var UTComp_ONSGameRules ONSGameRules;
+
+var config bool bUseDefaultScoreboardColor;
 
 function PreBeginPlay()
 {
@@ -705,6 +708,8 @@ function SpawnReplicationClass()
     RepInfo.NodeHealBonusPct=NodeHealBonusPct;
     RepInfo.bNodeHealBonusForLockedNodes = bNodeHealBonusForLockedNodes;
     RepInfo.bNodeHealBonusForConstructor = bNodeHealBonusForConstructor;
+    RepInfo.bSilentAdmin=bSilentAdmin;
+    RepInfo.bUseDefaultScoreboardColor = bUseDefaultScoreboardColor;
 
     for(i=0; i<VotingGametype.Length && i<ArrayCount(RepInfo.VotingNames); i++)
         RepInfo.VotingNames[i]=VotingGametype[i].GameTypeName;
@@ -1453,9 +1458,9 @@ defaultproperties
      NewNetUpdateFrequency=200
      PingTweenTime=3.0
 
-     FriendlyName="UTComp Version 1.33 (Omni)"
+     FriendlyName="UTComp Version 1.36 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.33"
+     FriendlyVersionNumber=")o(mni 1.36"
      Description="A mutator for brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
@@ -1614,8 +1619,11 @@ defaultproperties
      SealMsgType = 3
      SavedMsgType = 3
 
-     bShowSealRewardConsoleMsg = true;
-     bShowAssistConsoleMsg = true;
+     bShowSealRewardConsoleMsg = true
+     bShowAssistConsoleMsg = true
+
+     bSilentAdmin=true
+     bUseDefaultScoreboardColor=false
 
      SuicideInterval = 3
 

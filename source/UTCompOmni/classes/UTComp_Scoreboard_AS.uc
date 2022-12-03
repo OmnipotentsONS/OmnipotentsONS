@@ -3,6 +3,7 @@
 class UTComp_Scoreboard_AS extends Scoreboard_Assault;
 
 var font Smallerfont;
+var UTComp_ServerReplicationInfo RepInfo;
 
 function DrawNetInfo(Canvas Canvas,int FontReduction,int HeaderOffsetY,int PlayerBoxSizeY,int BoxSpaceY,int BoxTextOffsetY,int OwnerOffset,int PlayerCount, int NetXPos)
 {
@@ -16,12 +17,12 @@ function DrawNetInfo(Canvas Canvas,int FontReduction,int HeaderOffsetY,int Playe
 	{
 		Canvas.DrawColor = HUDClass.default.RedColor;
 		for ( i=0; i<PlayerCount; i++ )
-			if ( PRIArray[i].bAdmin )
+			if ( PRIArray[i].bAdmin && RepInfo != None && !RepInfo.bSilentAdmin )
 				{
 					Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*i + BoxTextOffsetY);
 					Canvas.DrawText(AdminText,true);
 				}
-		if ( (OwnerOffset >= PlayerCount) && PRIArray[OwnerOffset].bAdmin )
+		if ( (OwnerOffset >= PlayerCount) && PRIArray[OwnerOffset].bAdmin && RepInfo != None && !RepInfo.bSilentAdmin )
 		{
 			Canvas.SetPos(NetXPos, (PlayerBoxSizeY + BoxSpaceY)*PlayerCount + BoxTextOffsetY);
 			Canvas.DrawText(AdminText,true);
@@ -79,7 +80,7 @@ function DrawNetInfo(Canvas Canvas,int FontReduction,int HeaderOffsetY,int Playe
 	for ( i=0; i<PlayerCount; i++ )
 	{
     	uPRI=class'UTComp_Util'.static.GetUTCompPRI(PRIArray[i]);
-        if ( !PRIArray[i].bAdmin && !PRIArray[i].bOutOfLives )
+        if ( (!PRIArray[i].bAdmin || RepInfo.bSilentAdmin) && !PRIArray[i].bOutOfLives )
  			{
  				if ( bDrawPL )
  				{
@@ -115,7 +116,7 @@ function DrawNetInfo(Canvas Canvas,int FontReduction,int HeaderOffsetY,int Playe
 				}
 			}
 		}
-	if ( (OwnerOffset >= PlayerCount) && !PRIArray[OwnerOffset].bAdmin && !PRIArray[OwnerOffset].bOutOfLives )
+	if ( (OwnerOffset >= PlayerCount) && (!PRIArray[OwnerOffset].bAdmin || RepInfo.bSilentAdmin) && !PRIArray[OwnerOffset].bOutOfLives )
 	{
  		 uPRI=class'UTComp_Util'.static.GetUTCompPRI(PRIArray[OwnerOffset]);
          if ( bDrawFPH )
@@ -169,6 +170,11 @@ simulated event UpdateScoreBoard(Canvas Canvas)
 	OwnerPRI = PlayerController(Owner).PlayerReplicationInfo;
 	RedOwnerOffset = -1;
 	BlueOwnerOffset = -1;
+
+    if (RepInfo==None)
+        foreach DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo)
+            break;
+
     for (i=0; i<GRI.PRIArray.Length; i++)
 	{
 		PRI = GRI.PRIArray[i];

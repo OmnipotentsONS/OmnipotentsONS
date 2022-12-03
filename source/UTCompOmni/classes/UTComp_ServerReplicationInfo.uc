@@ -53,7 +53,8 @@ var int PowerCoreScore;
 var int NodeHealBonusPct;
 var bool bNodeHealBonusForLockedNodes;
 var bool bNodeHealBonusForConstructor;
-
+var bool bSilentAdmin;
+var bool bUseDefaultScoreboardColor;
 
 replication
 {
@@ -68,7 +69,7 @@ replication
         bEnableEnhancedNetCodeVoting,bEnableEnhancedNetCode,NewNetUpdateFrequency,PingTweenTime,
         bAllowRestartVoteEvenIfMapVotingIsTurnedOff, MaxMultiDodges, MinNetSpeed, MaxNetSpeed,
         NodeIsolateBonusPct, VehicleHealScore, VehicleDamagePoints, PowerNodeScore, PowerCoreScore, NodeHealBonusPct, 
-        bNodeHealBonusForLockedNodes, bNodeHealBonusForConstructor;
+        bNodeHealBonusForLockedNodes, bNodeHealBonusForConstructor, bSilentAdmin, bUseDefaultScoreboardColor;
 }
 
 defaultproperties
@@ -102,5 +103,7 @@ defaultproperties
      PowerCoreScore=5
      NodeHealBonusPct=60
      bNodeHealBonusForConstructor=false
+     bSilentAdmin=true
+     bUseDefaultScoreboardColor=false
 }
 

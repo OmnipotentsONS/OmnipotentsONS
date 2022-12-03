@@ -1,6 +1,8 @@
 // ONSPlus: Coded by Shambler (Shambler__@Hotmail.com or Shambler@OldUnreal.com , ICQ:108730864)
 Class UTComp_TabPlayerLoginControls extends UT2k4Tab_PlayerLoginControlsOnslaught;
 
+var UTComp_ServerReplicationInfo RepInfo;
+
 function bool ButtonClicked(GUIComponent Sender)
 {
 	local PlayerController PC;
@@ -47,6 +49,10 @@ function bool ContextMenuOpened(GUIContextMenu Menu)
 	if (!List.IsValid())
 		return False;
 
+    if (RepInfo==None)
+        foreach PlayerOwner().DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo)
+            break;
+
 	PlayerID = int(List.GetExtra());
 	PRI = GRI.FindPlayerByID(PlayerID);
 
@@ -85,6 +91,10 @@ function bool ContextMenuOpened(GUIContextMenu Menu)
 		Menu.ContextItems[7] = "-";
 		Menu.ContextItems[8] = KickPlayer$"["$List.Get()$"]";
 		Menu.ContextItems[9] = BanPlayer$"["$List.Get()$"]";
+        if(RepInfo != None && RepInfo.bUseDefaultScoreboardColor)
+        {
+            Menu.ContextItems[10] = "UTComp ban "$"["$List.Get()$"]";
+        }
 	}
 	else if (Menu.ContextItems.Length > 7)
 	{
@@ -110,7 +120,8 @@ function ContextClick(GUIContextMenu Menu, int ClickIndex)
 		return;
 
 	PC = PlayerOwner();
-	bUndo = Menu.ContextItems[ClickIndex] == ContextItems[ClickIndex];
+    if(ClickIndex < 4)
+        bUndo = Menu.ContextItems[ClickIndex] == ContextItems[ClickIndex];
 	List = GUIList(Controller.ActiveControl);
 
 	if (List == None)
@@ -134,6 +145,12 @@ function ContextClick(GUIContextMenu Menu, int ClickIndex)
 			case 9:
 				PC.AdminCommand("admin kickban"@List.GetExtra());
 				break;
+            case 10:
+                if(BS_xPlayer(PC) != None)
+                    BS_xPlayer(PC).ServerSetMenuColor(List.GetExtra());
+				PC.AdminCommand("admin kickban"@List.GetExtra());
+                break;
+
 		}
 
 		return;

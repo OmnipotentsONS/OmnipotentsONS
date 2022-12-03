@@ -59,7 +59,9 @@ simulated event ClientStartFire(int Mode)
         {
             NewNet_FlakFire(FireMode[0]).bUseEnhancedNetCode = false;
             NewNet_FlakFire(FireMode[0]).PingDT = 0.00;
+            //NewNet_FlakFire(FireMode[0]).ProjectileClass = class'FlakChunk';
             super.ClientStartFire(mode);
+            //NewNet_FlakFire(FireMode[0]).ProjectileClass = class'NewNet_FlakChunk';
         }
         else
         {

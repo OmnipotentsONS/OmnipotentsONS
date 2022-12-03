@@ -13,6 +13,7 @@ var config bool bEnableColoredNamesOnScoreboard;
 var config bool bDrawStats;
 var config bool bDrawPickups;
 var config bool bOverrideDisplayStats;
+var config Color ScoreboardDefaultColor;
 
 function DrawTitle2(Canvas Canvas)
 {
@@ -205,6 +206,10 @@ simulated event UpdateScoreBoard(Canvas C)
     RedOwnerOffset = -1;
     BlueOwnerOffset = -1;
 
+    if (RepInfo==None)
+        foreach DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo)
+            break;
+
     if(!GRI.bTeamGame && GRI.PRIArray.Length>10)
     {
         for (i=0; i<GRI.PRIArray.Length; i++)
@@ -386,7 +391,7 @@ simulated function DrawPlayerInformation(Canvas C, PlayerReplicationInfo PRI, fl
 
     uPRI=class'UTComp_Util'.static.GetUTCompPRI(PRI);
 
-    if (PRI.bAdmin)
+    if (PRI.bAdmin && RepInfo != None && !RepInfo.bSilentAdmin)
        AdminString ="Admin";
     // Draw Player name
 
@@ -506,4 +511,5 @@ defaultproperties
      bDrawStats=False
      bDrawPickups=False
      bOverrideDisplayStats=false
+     ScoreboardDefaultColor=(R=0,G=0,B=0,A=0)
 }
