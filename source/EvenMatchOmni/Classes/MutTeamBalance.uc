@@ -1140,7 +1140,7 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
 defaultproperties
 {
-	Build = "3.6"
+	Build = "3.61"
 	FriendlyName = "Omnip)o(tents Team Balance (Onslaught-only)"
 	Description  = "Special team balancing rules for public Onslaught matches."
 	bAddToServerPackages = True

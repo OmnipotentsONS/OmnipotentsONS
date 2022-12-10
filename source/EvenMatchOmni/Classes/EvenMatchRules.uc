@@ -321,9 +321,15 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 {
 	local int i;
 
-    if (EvenMatchMutator.bCustomScoring && Scorer != None) CustomScore(Scorer);
+  if (bBalancing) return True;
+  // if balancing return, we don't need to do anything else.
+  if (EvenMatchMutator.bCustomScoring && Scorer != None) CustomScore(Scorer);
 
-	if (bBalancing || Super.CheckScore(Scorer)) {
+	//if (bBalancing || Super.CheckScore(Scorer)) {
+		
+		
+		/* Removed for 3.61 Might have been crashing.   on Super.CheckScore(Scorer)
+		Plus its redundant below if no mulligan (MinDesiredFirstRoundDuration, it updates PPH Scores (if bBalancing = False from line above)
 		if (!bBalancing) {
 			// just update recent PPH values
 			for (i = 0; i < Level.GRI.PRIArray.Length; ++i) {
@@ -333,6 +339,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 		}
 		return true;
 	}
+	*/
 	if (Level.GRI.ElapsedTime < MinDesiredFirstRoundDuration && Level.GRI.Teams[0].Score + Level.GRI.Teams[1].Score > 0) {
 		MinDesiredFirstRoundDuration = 0; // one restart is enough
 		bBalancing = True;
@@ -371,10 +378,10 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 		}
 	}
 
-    if ( NextGameRules != none )
+  if ( NextGameRules != none )
 	{
 		return NextGameRules.CheckScore( Scorer );
-    }
+  }
     
 	return false;
 }
