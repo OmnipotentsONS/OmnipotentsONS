@@ -271,7 +271,7 @@ function CustomScore(PlayerReplicationInfo Scorer)
     local int oldscore, newscore;
     local bool bHasScored, bCoreDestroyed, bEnemyCoreDestroyed;
 
-    if(Role == ROLE_Authority && EvenMatchMutator.bCustomScoring)
+    if(Scorer != None && EvenMatchMutator.bCustomScoring && Role == ROLE_Authority)
     {
         onsgame = ONSOnslaughtGame(Level.Game);
         onsgame.Timer();
@@ -321,7 +321,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 {
 	local int i;
 
-    CustomScore(Scorer);
+    if (EvenMatchMutator.bCustomScoring && Scorer != None) CustomScore(Scorer);
 
 	if (bBalancing || Super.CheckScore(Scorer)) {
 		if (!bBalancing) {
@@ -446,7 +446,7 @@ simulated function GamePPH GetGamePPH()
     CurrentGamePPH.RedPPH = 0;
     CurrentGamePPH.BluePPH = 0;
 
-    log("GamePPH:Start");
+    //log("GamePPH:Start");
     for (i = 0; i < Level.GRI.PRIArray.Length; i++) 
     {
 		if (Level.GRI.PRIArray[i].Team != None && Level.GRI.PRIArray[i].Team.TeamIndex < 2 && !Level.GRI.PRIArray[i].bOnlySpectator)
@@ -461,8 +461,8 @@ simulated function GamePPH GetGamePPH()
                 CurrentGamePPH.RedPPH += PPH;
             else if(Team == 1)
                 CurrentGamePPH.BluePPH += PPH;
-
-            log("GamePPH: PlayerName: "$PRI.Name$" Initial PPH: "$iPPH$"Multiplier "$KPM$" applied ="$PPH , 'EvenMatchOmni');
+						if (EvenMatchMutator.bDebug)
+            	log("GamePPH: PlayerName: "$PRI.PlayerName$" Initial PPH: "$iPPH$" Multiplier "$KPM$" applied ="$PPH , 'EvenMatchOmni');
         }
     }
     log("GamePPH:End   Red:"$CurrentGamePPH.RedPPH$" Blue:"$CurrentGamePPH.BluePPH, 'EvenMatchOmni');
