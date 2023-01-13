@@ -25,7 +25,10 @@ function InitComponent(GUIController MyController, GUIComponent MyComponent)
 	super.InitComponent(MyController, MyComponent);
     Settings = BS_xPlayer(PlayerOwner()).Settings;
     HUDSettings = BS_xPlayer(PlayerOwner()).HUDSettings;
+
 }
+
+
 
 function bool InternalOnClick(GUIComponent C)
 {
@@ -53,6 +56,7 @@ function bool InternalOnClick(GUIComponent C)
     else if(C==UTCompMenuButtons[7])
         PlayerOwner().ClientReplaceMenu(string(class'UTComp_Menu_Miscellaneous'));
 
+
     return false;
 }
 
@@ -65,6 +69,11 @@ function OnClose(optional bool bCancelled)
       BS_xPlayer(PlayerOwner()).MatchHudColor();
    }
    super.OnClose(bCancelled);
+}
+
+function bool IsAdmin()
+{
+	return PlayerOwner() != None && PlayerOwner().PlayerReplicationInfo != None && PlayerOwner().PlayerReplicationInfo.bAdmin;
 }
 
 defaultproperties
@@ -149,6 +158,17 @@ defaultproperties
      End Object
      UTCompMenuButtons(7)=GUIButton'MiscButton'
 
+     Begin Object class=GUIButton name=AdminButton
+         Caption="Admin"
+         WinTop=0.720000
+         WinLeft=0.71250000
+         WinWidth=0.180000
+         WinHeight=0.060000
+         OnClick=InternalOnClick
+         bVisible=false
+     End Object
+     UTCompMenuButtons(8)=GUIButton'AdminButton'
+
      Begin Object Class=GUITabControl Name=LoginMenuTC
          bFillSpace=True
          bDockPanels=True
@@ -208,5 +228,4 @@ defaultproperties
 	 WinLeft=0.000000
 	 WinTop=0.114990
 	 bPersistent=true
-
 }

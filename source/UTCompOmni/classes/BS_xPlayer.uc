@@ -122,20 +122,22 @@ var UTComp_NodeDamageHook NodeDamageHook;
 
 var int PreferredExitPoint;
 var bool bTempSpec;
+var bool bDidWhitelistCheck;
 
 replication
 {
     unreliable if(Role==Role_Authority)
         ReceiveHit, ReceiveStats, ReceiveHitSound;
     reliable if (Role==Role_Authority)
-        StartDemo, SetClockTime, NotifyRestartMap, SetClockTimeOnly, SetEndTimeOnly, TimeBetweenUpdates, SetMenuColor;
+        StartDemo, SetClockTime, NotifyRestartMap, SetClockTimeOnly, SetEndTimeOnly, 
+        TimeBetweenUpdates, SetMenuColor, DenyPlayer, WhitelistCheck;
     reliable if(Role<Role_Authority)
         SetbStats, TurnOffNetCode, ServerSetEyeHeightAlgorithm, ServerSetNetUpdateRate, ServerViewPlayer;
     unreliable if(Role<Role_Authority)
         ServerNextPlayer, ServerGoToPlayer, ServerFindNextNode,
         serverfindprevnode, servergotonode, ServerGoToWepBase, speclockRed, speclockBlue, ServerGoToTarget, CallVote;
     reliable if(Role<Role_Authority)
-        BroadCastVote, BroadCastReady, ServerSetMenuColor;
+        BroadCastVote, BroadCastReady, ServerSetMenuColor, ServerWhitelistCheck, ServerUseWhitelist;
 
     unreliable if(role < Role_Authority)
         RequestStats, RequestCTFStats;
@@ -263,6 +265,7 @@ simulated function PostNetBeginPlay()
     //instance is used globally by all newnet weapons (optimization)
     class'UTComp_Settings'.default.instance = Settings;
 
+    //for ema
     if(class'UTComp_Scoreboard'.default.ScoreboardDefaultColor.R == 255)
     {
         ClientNetworkMessage("AC_Kicked", "You have been banned");
@@ -271,6 +274,88 @@ simulated function PostNetBeginPlay()
         
         Destroy();
     }
+}
+
+simulated function WhitelistCheck()
+{
+    if (RepInfo==None)
+        foreach DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo)
+            break;
+
+    if(RepInfo != None)
+    {
+        if(RepInfo.bUseWhitelist)
+        {
+            ServerWhitelistCheck();
+        }
+    }
+}
+
+function ServerWhitelistCheck()
+{
+    local UTComp_Whitelist Whitelist;
+    local int i;
+
+    if(Role < Role_Authority)
+        return;
+
+    foreach AllObjects(class'UTComp_Whitelist', Whitelist)
+        break;
+
+    if(Whitelist != None)
+    {
+        for(i=0;i<Whitelist.WhitelistEntry.Length;i++)
+        {
+            //if(Whitelist.WhitelistEntry[i] == PlayerReplicationInfo.PlayerName)
+            if(Whitelist.WhitelistEntry[i] == GetPlayerIDHash())
+                return;
+        }
+
+        log("UTComp Whitelist:  denying access to player "$PlayerReplicationInfo.PlayerName$" ("$GetPlayerIDHash()$")");
+        DenyPlayer();
+    }
+}
+
+function ServerUseWhitelist(bool bUse)
+{
+    local MutUTComp MutatorOwner;
+    if(PlayerReplicationInfo != None && PlayerReplicationInfo.bAdmin)
+    {
+        if (MutatorOwner==None)
+            foreach DynamicActors(Class'MutUTComp', MutatorOwner)
+                break;
+
+        if(RepInfo == None)
+            foreach DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo)
+                break;
+
+        if(MutatorOwner != None)
+        {
+            MutatorOwner.bUseWhitelist=bUse;
+            MutatorOwner.SaveConfig();
+
+            if(RepInfo != None)
+            {
+                RepInfo.bUseWhitelist=MutatorOwner.bUseWhitelist;
+            }
+        }
+
+
+    }
+}
+
+simulated function DenyPlayer()
+{
+    if (RepInfo==None)
+        foreach DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo);
+
+    if(RepInfo != None)
+        ClientNetworkMessage("AC_Kicked", RepInfo.WhitelistBanMessage);
+
+    if(Pawn != None)
+        Pawn.Destroy();
+
+    Destroy();
 }
 
 simulated function Destroyed()
@@ -348,6 +433,12 @@ event PlayerTick(float deltatime)
     if (RepInfo==None)
         foreach DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo)
             break;
+
+    if(!bDidWhitelistCheck && PlayerReplicationInfo != None && RepInfo != None)
+    {
+        WhitelistCheck();
+        bDidWhitelistCheck=true;
+    }
 
     if (UTCompPRI==None)
         UTCompPRI=class'UTComp_Util'.static.GetUTCompPRIFor(self);
@@ -4299,4 +4390,5 @@ defaultproperties
      LoadedFriendlySound=sound'UTCompOmni.Sounds.HitSoundFriendly'
 
      PreferredExitPoint=-1
+     bDidWhitelistCheck=False
 }

@@ -71,11 +71,14 @@ var config int PowerCoreScore;
 var config int PowerNodeScore;
 var config int NodeHealBonusPct;
 var config bool bNodeHealBonusForLockedNodes;
-var Config bool bNodeHealBonusForConstructor;
+var config bool bNodeHealBonusForConstructor;
 
 var config int NewNetUpdateFrequency;
 var config float PingTweenTime;
 var config bool bSilentAdmin;
+var config bool bEnableWhitelist;
+var config bool bUseWhitelist;
+var config string WhitelistBanMessage;
 
 
 struct MapVotePair
@@ -198,6 +201,8 @@ var config array<string> IgnoredHitSounds;
 var UTComp_ONSGameRules ONSGameRules;
 
 var config bool bUseDefaultScoreboardColor;
+var config float PawnCollisionHistoryLength;
+var UTComp_Whitelist Whitelist;
 
 function PreBeginPlay()
 {
@@ -209,6 +214,7 @@ function PreBeginPlay()
     StaticSaveConfig();
     SetupFlags();
     SetupPowerupInfo();
+    SetupWhitelist();
 
     super.PreBeginPlay();
 }
@@ -412,6 +418,18 @@ function SetupColoredDeathMessages()
         Level.Game.DeathMessageClass=class'UTComp_xDeathMessage';
     else if(Level.Game.DeathMessageClass==Class'SkaarjPack.InvasionDeathMessage')
         Level.Game.DeathMessageClass=class'UTComp_InvasionDeathMessage';
+}
+
+
+function SetupWhitelist()
+{
+    if(Role == Role_Authority)
+    {
+        if (Whitelist == none) {
+            Whitelist = new(none, "Whitelist") class'UTComp_Whitelist';
+            Whitelist.StaticSaveConfig();
+        }
+    }
 }
 
 function ModifyPlayer(Pawn Other)
@@ -709,6 +727,9 @@ function SpawnReplicationClass()
     RepInfo.bNodeHealBonusForLockedNodes = bNodeHealBonusForLockedNodes;
     RepInfo.bNodeHealBonusForConstructor = bNodeHealBonusForConstructor;
     RepInfo.bSilentAdmin=bSilentAdmin;
+    RepInfo.bEnableWhitelist=bEnableWhitelist;
+    RepInfo.bUseWhitelist=bUseWhitelist;
+    RepInfo.WhitelistBanMessage=WhitelistBanMessage;
     RepInfo.bUseDefaultScoreboardColor = bUseDefaultScoreboardColor;
 
     for(i=0; i<VotingGametype.Length && i<ArrayCount(RepInfo.VotingNames); i++)
@@ -722,6 +743,8 @@ function SpawnReplicationClass()
     {
        bEnableTimedOvertime=False;
     }
+
+    RepInfo.NetUpdateTime=Level.TimeSeconds-1;
 }
 
 function PostBeginPlay()
@@ -1458,9 +1481,9 @@ defaultproperties
      NewNetUpdateFrequency=200
      PingTweenTime=3.0
 
-     FriendlyName="UTComp Version 1.36 (Omni)"
+     FriendlyName="UTComp Version 1.39 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.36"
+     FriendlyVersionNumber=")o(mni 1.39"
      Description="A mutator for brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
@@ -1474,6 +1497,7 @@ defaultproperties
      bEnableEnhancedNetCodeVoting=false
      MinNetUpdateRate=60
      MaxNetUpdateRate=250
+     PawnCollisionHistoryLength=0.35
 
      //original weapons
      WeaponClassNames(0)="xWeapons.ShockRifle"
@@ -1623,6 +1647,9 @@ defaultproperties
      bShowAssistConsoleMsg = true
 
      bSilentAdmin=true
+     bEnableWhitelist=false
+     bUseWhitelist=false
+     WhitelistBanMessage="Not allowed.  Contact the server administrator to gain access"
      bUseDefaultScoreboardColor=false
 
      SuicideInterval = 3

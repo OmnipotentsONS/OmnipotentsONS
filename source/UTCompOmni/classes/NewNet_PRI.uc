@@ -37,8 +37,10 @@ replication
 simulated function PostBeginPlay()
 {
     super.PostBeginPlay();
-    ForEach DynamicActors(class'UTComp_ServerReplicationInfo', RepInfo)
-        break;
+
+    if(RepInfo == None)
+        ForEach DynamicActors(class'UTComp_ServerReplicationInfo', RepInfo)
+            break;
     
     if(RepInfo != none)
     {

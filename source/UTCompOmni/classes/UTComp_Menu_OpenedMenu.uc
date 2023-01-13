@@ -3,7 +3,7 @@ class UTComp_Menu_OpenedMenu extends UTComp_Menu_MainMenu;
 
 var automated array<GUILabel> l_Mode;
 var automated GUIImage i_UTCompLogo;
-var automated GUIButton bu_Ready, bu_NotReady;
+var automated GUIButton bu_Ready, bu_NotReady, bu_Admin;
 
 var color GoldColor;
 
@@ -51,7 +51,13 @@ function RandomCrap()
 event opened(GUIComponent Sender)
 {
     super.Opened(Sender);
+
     RandomCrap();
+
+    bu_Admin.SetVisibility(false);
+    if(IsAdmin())
+        bu_Admin.SetVisibility(true);
+
 }
 
 function bool InternalOnClick( GUIComponent C )
@@ -79,6 +85,12 @@ function bool InternalOnClick( GUIComponent C )
                            }
                            PlayerOwner().ClientCloseMenu();
                            return false;
+    
+       case bu_Admin:
+            if(IsAdmin())
+                PlayerOwner().ClientReplaceMenu(string(class'UTComp_Menu_Admin'));
+            return false;
+
     }
 
     return super.internalonclick(C);
@@ -174,6 +186,16 @@ DefaultProperties
      End Object
      i_UTCompLogo=GUIImage'UTCompLogo'
 
+    Begin Object class=GUIButton name=AdminButton
+         Caption="Admin"
+         WinTop=0.720000
+         WinLeft=0.71250000
+         WinWidth=0.180000
+         WinHeight=0.060000
+         OnClick=InternalOnClick
+         bVisible=false
+     End Object
+     bu_Admin=GUIButton'AdminButton'
 
      Begin Object Class=GUILabel Name=NewVersions
          TextColor=(B=255,G=255,R=255)

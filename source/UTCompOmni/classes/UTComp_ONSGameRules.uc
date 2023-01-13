@@ -172,7 +172,10 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
         //round has ended
     if(deadCore >= 0)
     {
-        for (C = Level.ControllerList; C != None; C = C.NextController)
+        if(Level != None)
+            C = Level.ControllerList;
+
+        while(C != None)
         {
             PC = PlayerController(C);
             if (PC != None)
@@ -186,6 +189,8 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 
             if(C != None)
                 C.RoundHasEnded();
+
+            C = C.NextController;
         }
     }
 

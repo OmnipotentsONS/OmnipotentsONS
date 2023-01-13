@@ -54,6 +54,9 @@ var int NodeHealBonusPct;
 var bool bNodeHealBonusForLockedNodes;
 var bool bNodeHealBonusForConstructor;
 var bool bSilentAdmin;
+var bool bEnableWhitelist;
+var bool bUseWhitelist;
+var string WhitelistBanMessage;
 var bool bUseDefaultScoreboardColor;
 
 replication
@@ -69,7 +72,8 @@ replication
         bEnableEnhancedNetCodeVoting,bEnableEnhancedNetCode,NewNetUpdateFrequency,PingTweenTime,
         bAllowRestartVoteEvenIfMapVotingIsTurnedOff, MaxMultiDodges, MinNetSpeed, MaxNetSpeed,
         NodeIsolateBonusPct, VehicleHealScore, VehicleDamagePoints, PowerNodeScore, PowerCoreScore, NodeHealBonusPct, 
-        bNodeHealBonusForLockedNodes, bNodeHealBonusForConstructor, bSilentAdmin, bUseDefaultScoreboardColor;
+        bNodeHealBonusForLockedNodes, bNodeHealBonusForConstructor, bSilentAdmin, bUseDefaultScoreboardColor, 
+        bEnableWhitelist, bUseWhitelist, WhitelistBanMessage;
 }
 
 defaultproperties
@@ -104,6 +108,9 @@ defaultproperties
      NodeHealBonusPct=60
      bNodeHealBonusForConstructor=false
      bSilentAdmin=true
+     bEnableWhitelist=false
+     bUseWhitelist=false
+     WhitelistBanMessage="Not allowed.  Contact the server adminstrator to gain access."
      bUseDefaultScoreboardColor=false
 }
 

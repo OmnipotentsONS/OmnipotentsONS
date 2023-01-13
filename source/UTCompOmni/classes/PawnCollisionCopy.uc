@@ -33,12 +33,25 @@ struct PawnHistoryElement
 var array<PawnHistoryElement> PawnHistory;
 
 //Furthest we will allow backtracking
-const MAX_HISTORY_LENGTH = 0.350;
+var float MAX_HISTORY_LENGTH;
 
 var bool bCrouched;
 
 
 var InterpCurve LocCurveX, LocCurveY,LocCurveZ;
+
+function PostBeginPlay()
+{
+    super.PostBeginPlay();
+    if(M==None)
+        foreach DynamicActors(class'MutUTComp', M)
+            break;
+
+    if(M != None)
+    {
+        MAX_HISTORY_LENGTH = M.PawnCollisionHistoryLength;
+    }
+}
 
 /* Set up the collision properties of our copy */
 function SetPawn(Pawn Other)
@@ -391,4 +404,5 @@ defaultproperties
 
     CrouchHeight=29.000000   //Direct copies from xPawn
     CrouchRadius=25.000000
+    MAX_HISTORY_LENGTH=0.35
 }
