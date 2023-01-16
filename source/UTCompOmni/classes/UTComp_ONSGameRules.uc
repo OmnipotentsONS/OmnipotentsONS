@@ -264,38 +264,64 @@ function UpdateLinkStateHook(ONSPowerCore Node)
 }
 
 //points for damaging vehicles 
+// Updated for 1.40 by pOOty to fix damage points inconsistencies.
 function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
-	local float CurDamage;
+	//local float CurDamage;
+	local int CurDamage;
+	local float DamagePts;
+  local bool bDebug;
 
-	CurDamage = Super.NetDamage(OriginalDamage, Damage, injured, instigatedBy, HitLocation, Momentum, DamageType);
+  bDebug = MutatorOwner.RepInfo.bDebugLogging; // for somereason this always false??
+  // bDebug = True;
+  Log("UTComp:ONSGameRules-Debug "$bDebug$"Vehicle Damage Points="$MutatorOwner.RepInfo.VehicleDamagePoints);
+	//CurDamage = Super.NetDamage(OriginalDamage, Damage, injured, instigatedBy, HitLocation, Momentum, DamageType);
+	CurDamage = Damage;
 
-	if (DamageType != Class'DamTypeLinkShaft' && DamageType != Class'DamTypeLinkPlasma' && injured != None
-		&& Vehicle(injured) != None && !Vehicle(injured).IsVehicleEmpty() && instigatedBy != None
-		&& instigatedBy != injured && CurDamage > 0 && instigatedBy.Controller != none
-		&& instigatedBy.Controller.PlayerReplicationInfo != none
-		&& UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo) != none)
-	{
-		if (OPGRI == none && PlayerController(instigatedBy.Controller) != none && PlayerController(instigatedBy.Controller).GameReplicationInfo != none)
-			OPGRI = PlayerController(instigatedBy.Controller).GameReplicationInfo;
-
-		if (OPGRI != none)
-		{
-			if (Vehicle(injured).Team != instigatedBy.Controller.PlayerReplicationInfo.TeamID)
-            {
-				UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(CurDamage / MutatorOwner.RepInfo.VehicleDamagePoints);
-            }
-			else
-            {
-				UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(-1.0 * CurDamage / MutatorOwner.RepInfo.VehicleDamagePoints);
-            }
-		}
-	}
-    
-    if ( NextGameRules != None )
+//	if (DamageType != Class'DamTypeLinkShaft' && DamageType != Class'DamTypeLinkPlasma' && injured != None
+//		&& Vehicle(injured) != None && !Vehicle(injured).IsVehicleEmpty() && instigatedBy != None
+//		&& instigatedBy != injured && CurDamage > 0 && instigatedBy.Controller != none
+//		&& instigatedBy.Controller.PlayerReplicationInfo != none
+//		&& UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo) != none)
+	if (CurDamage > 0) { // check this first, if 0 or less rest is pointless (ok bad pun)
+		if (DamageType != Class'DamTypeLinkShaft' ) { // ignore linkshaft damage, but lets keep LinkPlasma, shaft might double points on healing/node linking
+			 if (injured != None && Vehicle(injured) != None && !Vehicle(injured).IsVehicleEmpty()) { // vehicle and occupied
+			    if (instigatedBy != None && instigatedBy != injured && instigatedBy.Controller != none) { // have a player who damaged and not themself
+			 			  if (instigatedBy.Controller.PlayerReplicationInfo != none && UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo) != none)  // have PRI objects
+			 			  { // we've passed all the checks award bonus points, refactored the ugly if for debugging
+								if (bDebug) Log("UTComp:ONSGameRules-Passed all DamagePoint Checks, Assigning OPGRI for PlayerName:"$instigatedBy.Controller.PlayerReplicationInfo.PlayerName$" dealt "$CurDamage$" points of Damage");
+								if (OPGRI == none && PlayerController(instigatedBy.Controller) != none && PlayerController(instigatedBy.Controller).GameReplicationInfo != none)
+									OPGRI = PlayerController(instigatedBy.Controller).GameReplicationInfo;
+							     
+									if (OPGRI != none) 	{
+										DamagePts = CurDamage / MutatorOwner.RepInfo.VehicleDamagePoints;
+										if (Vehicle(injured).Team != instigatedBy.Controller.PlayerReplicationInfo.TeamID)
+							        {
+											UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(DamagePts);
+											if (bDebug) Log("UTComp:ONSGameRules-Awarding PlayerName:"$instigatedBy.Controller.PlayerReplicationInfo.PlayerName$" Damage Points ("$DamagePts$") for "$CurDamage$" dealt");
+							        }
+										else
+							        {
+											UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(-1.0 * DamagePts);
+											if (bDebug) Log("UTComp:ONSGameRules-Subtracting  PlayerName:"$instigatedBy.Controller.PlayerReplicationInfo.PlayerName$" Damage Points ("$DamagePts$") for "$CurDamage$" dealt to own team");
+							        }
+								} // OPGRI !none
+								else { if (bDebug) Log("UTComp:ONSGameRules-OPGRI=None ");}	
+							} // end point awards
+							else { if (bDebug) Log("UTComp:ONSGameRules-No PRI ");}	
+						} // player checks
+						else { if (bDebug) Log("UTComp:ONSGameRules-No InstigatedBy, or self, or no controller");}	
+					} // vehicle checks
+					else { if (bDebug) Log("UTComp:ONSGameRules-Not an occupied, injured vehicle ");}	
+				} // Damge type checks
+				else { if (bDebug) Log("UTComp:ONSGameRules-Not allowed Damage Type ");}	
+			} // CurDamage < 0 check
+			else { if (bDebug) Log("UTComp:ONSGameRules-CurDamage < 0 (CurDamage="$CurDamage$")");}	
+     
+  if ( NextGameRules != None )
 		return NextGameRules.NetDamage( OriginalDamage,Damage,injured,instigatedBy,HitLocation,Momentum,DamageType );
 
-	return CurDamage;
+	return Damage;  // Was CurDamge
 }
 
 function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam, optional string incomingName)

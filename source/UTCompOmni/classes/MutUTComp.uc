@@ -67,6 +67,7 @@ var config int SuicideInterval;
 var config int NodeIsolateBonusPct;
 var config int VehicleHealScore;
 var config int VehicleDamagePoints;
+var config bool bDebugLogging;  // config flag to turn on debug logging and/or client messages
 var config int PowerCoreScore;
 var config int PowerNodeScore;
 var config int NodeHealBonusPct;
@@ -731,6 +732,7 @@ function SpawnReplicationClass()
     RepInfo.bUseWhitelist=bUseWhitelist;
     RepInfo.WhitelistBanMessage=WhitelistBanMessage;
     RepInfo.bUseDefaultScoreboardColor = bUseDefaultScoreboardColor;
+    RepInfo.bDebugLogging = bDebugLogging;
 
     for(i=0; i<VotingGametype.Length && i<ArrayCount(RepInfo.VotingNames); i++)
         RepInfo.VotingNames[i]=VotingGametype[i].GameTypeName;
@@ -1477,13 +1479,15 @@ defaultproperties
      NodeHealBonusPct=60
      bNodeHealBonusForLockedNodes=false
      bNodeHealBonusForConstructor=false
+		 bDebugLogging = false
+
 
      NewNetUpdateFrequency=200
      PingTweenTime=3.0
 
-     FriendlyName="UTComp Version 1.39 (Omni)"
+     FriendlyName="UTComp Version 1.40 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.39"
+     FriendlyVersionNumber=")o(mni 1.40"
      Description="A mutator for brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
@@ -1655,4 +1659,7 @@ defaultproperties
      SuicideInterval = 3
 
      IgnoredHitSounds(0)="FireKill"
+     
+     
 }
+ 

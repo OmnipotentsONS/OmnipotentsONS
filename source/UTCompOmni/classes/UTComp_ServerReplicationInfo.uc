@@ -58,6 +58,7 @@ var bool bEnableWhitelist;
 var bool bUseWhitelist;
 var string WhitelistBanMessage;
 var bool bUseDefaultScoreboardColor;
+var bool bDebugLogging;
 
 replication
 {
@@ -73,7 +74,7 @@ replication
         bAllowRestartVoteEvenIfMapVotingIsTurnedOff, MaxMultiDodges, MinNetSpeed, MaxNetSpeed,
         NodeIsolateBonusPct, VehicleHealScore, VehicleDamagePoints, PowerNodeScore, PowerCoreScore, NodeHealBonusPct, 
         bNodeHealBonusForLockedNodes, bNodeHealBonusForConstructor, bSilentAdmin, bUseDefaultScoreboardColor, 
-        bEnableWhitelist, bUseWhitelist, WhitelistBanMessage;
+        bEnableWhitelist, bUseWhitelist, WhitelistBanMessage, bDebugLogging;
 }
 
 defaultproperties
@@ -82,7 +83,7 @@ defaultproperties
      EnableBrightSkinsMode=3
      bEnableClanSkins=True
      bEnableTeamOverlay=True
-     bEnablePowerupsOverlay=True;
+     bEnablePowerupsOverlay=True
      EnableHitSoundsMode=1
      bEnableScoreboard=True
      bEnableWeaponStats=True
@@ -90,7 +91,7 @@ defaultproperties
      bEnableBrightskinsVoting=True
      bEnableHitsoundsVoting=False
      bEnableTeamOverlayVoting=True
-     bEnablePowerupsOverlayVoting=True;
+     bEnablePowerupsOverlayVoting=True
      bEnableMapVoting=True
      bEnableGametypeVoting=True
      bEnableDoubleDamageVoting=True
@@ -112,5 +113,6 @@ defaultproperties
      bUseWhitelist=false
      WhitelistBanMessage="Not allowed.  Contact the server adminstrator to gain access."
      bUseDefaultScoreboardColor=false
+     bDebugLogging = false
 }
 
