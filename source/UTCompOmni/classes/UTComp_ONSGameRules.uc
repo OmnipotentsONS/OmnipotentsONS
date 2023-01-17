@@ -274,7 +274,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
 
   bDebug = MutatorOwner.RepInfo.bDebugLogging; // for somereason this always false??
   // bDebug = True;
-  Log("UTComp:ONSGameRules-Debug "$bDebug$"Vehicle Damage Points="$MutatorOwner.RepInfo.VehicleDamagePoints);
+  Log("UTComp:ONSGameRules-Debug "$bDebug$"Config Vehicle Damage Points="$MutatorOwner.RepInfo.VehicleDamagePoints$",Damage="$Damage$",OriginalDamage="$OriginalDamage$",DamageType="$DamageType);
 	//CurDamage = Super.NetDamage(OriginalDamage, Damage, injured, instigatedBy, HitLocation, Momentum, DamageType);
 	CurDamage = Damage;
 
@@ -294,9 +294,11 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
 									OPGRI = PlayerController(instigatedBy.Controller).GameReplicationInfo;
 							     
 									if (OPGRI != none) 	{
-										DamagePts = CurDamage / MutatorOwner.RepInfo.VehicleDamagePoints;
-										if (Vehicle(injured).Team != instigatedBy.Controller.PlayerReplicationInfo.TeamID)
-							        {
+										DamagePts = float(CurDamage) / float(MutatorOwner.RepInfo.VehicleDamagePoints);
+										// make sure DamagePts is float.
+										if (bDebug) Log("UTComp:ONSGameRules-TeamCheck InstigatoR "$instigatedBy.Controller.PlayerReplicationInfo.TeamID$","$instigatedBy.Controller.GetTeamNum()$" Done to "$Vehicle(injured).VehicleNameString$" on Team "$Vehicle(injured).Team);
+										if (Vehicle(injured).Team != instigatedBy.Controller.GetTeamNum())  
+									    {
 											UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(DamagePts);
 											if (bDebug) Log("UTComp:ONSGameRules-Awarding PlayerName:"$instigatedBy.Controller.PlayerReplicationInfo.PlayerName$" Damage Points ("$DamagePts$") for "$CurDamage$" dealt");
 							        }
