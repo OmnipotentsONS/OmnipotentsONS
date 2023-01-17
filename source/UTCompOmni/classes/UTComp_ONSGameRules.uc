@@ -274,7 +274,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
 
   bDebug = MutatorOwner.RepInfo.bDebugLogging; // for somereason this always false??
   // bDebug = True;
-  Log("UTComp:ONSGameRules-Debug "$bDebug$"Config Vehicle Damage Points="$MutatorOwner.RepInfo.VehicleDamagePoints$",Damage="$Damage$",OriginalDamage="$OriginalDamage$",DamageType="$DamageType);
+  if (bDebug) Log("UTComp:ONSGameRules-Debug "$bDebug$"Config Vehicle Damage Points="$MutatorOwner.RepInfo.VehicleDamagePoints$",Damage="$Damage$",OriginalDamage="$OriginalDamage$",DamageType="$DamageType);
 	//CurDamage = Super.NetDamage(OriginalDamage, Damage, injured, instigatedBy, HitLocation, Momentum, DamageType);
 	CurDamage = Damage;
 
