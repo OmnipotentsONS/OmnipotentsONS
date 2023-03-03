@@ -21,7 +21,8 @@ var() int CoreDamage;
 var() bool bHealNodes;
 var() bool bHealPlayers;
 var() bool bHealVehicles;
-var int NodeKillDamage;
+var() int NodeDamage;
+
 var actor HurtNode;
 
 simulated function Destroyed()
@@ -47,6 +48,7 @@ simulated function PostBeginPlay()
 	bHealPlayers = class'MutUseLinkNuke'.default.bHealPlayers;
 	bHealVehicles = class'MutUseLinkNuke'.default.bHealVehicles;
     CoreDamage = class'MutUseLinkNuke'.default.CoreDamage;
+    NodeDamage = class'MutUseLinkNuke'.default.NodeDamage;
 
     Dir = vector(Rotation);
 	Velocity = speed * Dir;
@@ -279,7 +281,7 @@ simulated function TeamHurtRadius( float DamageAmount, float DamageRadius, class
             //if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).Health > 0)
             if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).CoreStage != 4)
             {
-                appliedDamage = NodeKillDamage;
+                appliedDamage = NodeDamage;
                 HurtNode = Victims;
             }
         }
@@ -334,7 +336,7 @@ simulated function TeamHurtRadius( float DamageAmount, float DamageRadius, class
             //if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).Health > 0)
             if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).CoreStage != 4)
             {
-                appliedDamage = NodeKillDamage;
+                appliedDamage = NodeDamage;
                 HurtNode = Victims;
             }
         }
@@ -366,7 +368,6 @@ simulated function TeamHurtRadius( float DamageAmount, float DamageRadius, class
 simulated function HurtRadius( float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation )
 {
     TeamHurtRadius(DamageAmount, DamageRadius, DamageType, Momentum, HitLocation);
-    log("HurtNode="$HurtNode);
     HealRadius(DamageRadius, HitLocation);
 }
 
@@ -451,6 +452,7 @@ defaultproperties
      MaxSpeed=1000.000000
      Damage=300.000000
      CoreDamage=6000
+     NodeDamage=5000
      DamageRadius=1750.000000
      //MomentumTransfer=200000.000000
      MomentumTransfer=1000000.000000
@@ -486,5 +488,4 @@ defaultproperties
      ForceType=FT_DragAlong
      ForceRadius=100.000000
      ForceScale=5.000000
-     NodeKillDamage=5000
 }

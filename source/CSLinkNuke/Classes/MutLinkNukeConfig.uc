@@ -19,6 +19,7 @@ var() Automated moSlider  e_VehicleHealMax;
 
 var() Automated moSlider  e_Damage;
 var() Automated moSlider  e_CoreDamage;
+var() Automated moSlider  e_NodeDamage;
 var() Automated moSlider  e_RespawnTime;
 
 var() Automated moButton  b_ResetSettings;
@@ -45,7 +46,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 	b_Ok.WinTop=0.910658;
 	b_Ok.TabOrder=22;
 
-	sb_Main.Caption = "YEAAAHHH Nuke Configuration 1.4";
+	sb_Main.Caption = "YEAAAHHH Nuke Configuration 2.1";
 
     b_ResetSettings.OnChange = ResetSettings;
 
@@ -67,6 +68,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 
     e_Damage.SetValue(class'MutUseLinkNuke'.default.Damage);
     e_CoreDamage.SetValue(class'MutUseLinkNuke'.default.CoreDamage);
+    e_NodeDamage.SetValue(class'MutUseLinkNuke'.default.NodeDamage);
     e_RespawnTime.SetValue(class'MutUseLinkNuke'.default.RespawnTime);
 
 }
@@ -97,6 +99,7 @@ function ResetSettings(GUIComponent Sender)
 
     e_Damage.SetValue(250);
     e_CoreDamage.SetValue(6000);
+    e_NodeDamage.SetValue(5000);
     e_RespawnTime.SetValue(60);
 }
 
@@ -119,6 +122,7 @@ function bool SaveLinkNukeConfig(GUIComponent Sender)
 
     class'MutUseLinkNuke'.default.Damage = e_Damage.GetValue();
     class'MutUseLinkNuke'.default.CoreDamage = e_CoreDamage.GetValue();
+    class'MutUseLinkNuke'.default.NodeDamage = e_NodeDamage.GetValue();
     class'MutUseLinkNuke'.default.RespawnTime = e_RespawnTime.GetValue();
 
     class'MutUseLinkNuke'.default.bFlipNodes = cb_bFlipNodes.IsChecked();
@@ -370,6 +374,26 @@ defaultproperties
          bIntSlider=True
      End Object
      e_CoreDamage=moSlider'CSLinkNuke.MutLinkNukeConfig.CoreDamage'
+
+    Begin Object Class=moSlider Name=NodeDamage
+         ComponentWidth=0.7
+         StandardHeight=0.040000
+         CaptionWidth=1.0
+         Caption="NodeDmg:"
+         OnCreateComponent=NukeDamage.InternalOnCreateComponent
+         Hint="Damage applied to power nodes"
+         //WinTop=0.682000
+         WinTop=0.732000
+         WinLeft=0.085136
+         WinWidth=0.193189
+         WinHeight=0.042857
+         TabOrder=13
+         bBoundToParent=True
+         MinValue=0.0
+         MaxValue=6000.0
+         bIntSlider=True
+     End Object
+     e_NodeDamage=moSlider'CSLinkNuke.MutLinkNukeConfig.NodeDamage'
      
     Begin Object Class=moSlider Name=RespawnTime
          StandardHeight=0.040000
@@ -382,7 +406,7 @@ defaultproperties
          WinLeft=0.398325
          WinWidth=0.193189
          WinHeight=0.042857
-         TabOrder=13
+         TabOrder=14
          bBoundToParent=True
          MinValue=1.0
          MaxValue=180.0
@@ -404,7 +428,7 @@ defaultproperties
          WinLeft=0.085136
          WinWidth=0.143189
          WinHeight=0.042857
-         TabOrder=14
+         TabOrder=15
          bBoundToParent=True
      End Object
      cb_bFlipNodes=moCheckBox'CSLinkNuke.MutLinkNukeConfig.FlipNodes'
@@ -416,11 +440,12 @@ defaultproperties
          ButtonCaption="Reset"
          OnCreateComponent=ResetSettingsButton.InternalOnCreateComponent
          Hint="Reset to default settings"
-         WinTop=0.722000
+         //WinTop=0.722000
+         WinTop=0.772000
          WinLeft=0.085136
          WinWidth=0.523189
          WinHeight=0.042857
-         TabOrder=15
+         TabOrder=16
          bBoundToParent=True
      End Object
      b_ResetSettings=moButton'CSLinkNuke.MutLinkNukeConfig.ResetSettingsButton'
