@@ -21,7 +21,8 @@ var() int CoreDamage;
 var() bool bHealNodes;
 var() bool bHealPlayers;
 var() bool bHealVehicles;
-var int NodeKillDamage;
+var() int NodeDamage;
+
 var actor HurtNode;
 
 simulated function Destroyed()
@@ -47,6 +48,7 @@ simulated function PostBeginPlay()
 	bHealPlayers = class'MutUseLinkNuke'.default.bHealPlayers;
 	bHealVehicles = class'MutUseLinkNuke'.default.bHealVehicles;
     CoreDamage = class'MutUseLinkNuke'.default.CoreDamage;
+    NodeDamage = class'MutUseLinkNuke'.default.NodeDamage;
 
     Dir = vector(Rotation);
 	Velocity = speed * Dir;
@@ -207,14 +209,20 @@ function HealRadius(float Radius, vector HitLocation)
     }
 }
 
+/*
 function ApplyMomentum(vector HitLocation, float Radius, float Momentum)
 {
     local actor Victims;
     local float damageScale, dist;
 	local vector momentumDir;
+    local float appliedMomentum;
 
     foreach VisibleCollidingActors( class 'Actor', Victims, Radius, HitLocation )
 	{
+        appliedMomentum = momentum;
+        if(Vehicle(Victims) != None)
+            appliedMomentum = momentum*10.0;
+
         momentumDir = Victims.Location - HitLocation;
 			dist = FMax(1,VSize(momentumDir));
 			momentumDir = momentumDir/dist;
@@ -229,38 +237,51 @@ function ApplyMomentum(vector HitLocation, float Radius, float Momentum)
 			);
     }
 }
+*/
 
 simulated function TeamHurtRadius( float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation )
 {
 	local actor Victims;
 	local float damageScale, dist;
 	local vector dir;
+    local float appliedMomentum;
+    local float appliedDamage;
 
 	if ( bHurtEntry )
 		return;
 
 	bHurtEntry = true;
+    appliedMomentum = momentum;
+    appliedDamage = DamageAmount;
+
 	foreach VisibleCollidingActors( class 'Actor', Victims, DamageRadius, HitLocation )
 	{
         if(Pawn(Victims) != None && Instigator != None)
         {
             if(Pawn(Victims).GetTeamNum() == Instigator.GetTeamNum())
             {
-                DamageAmount = 0;
+                appliedDamage = 0;
+                appliedMomentum = 0;
+            }
+            else if(Vehicle(Victims) != none)
+            {
+                appliedMomentum = momentum *10.0;
+                appliedDamage = DamageAmount *10.0;
             }
         }
         if(ONSPowerCore(Victims) != None && Instigator != None)
         {
             if(ONSPowerCore(Victims).DefenderTeamIndex != Instigator.GetTeamNum())
             {
-                DamageAmount = CoreDamage;
+                appliedDamage = CoreDamage;
             }
         }
         if(ONSPowerNode(Victims) != None && Instigator != None)
         {
-            if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).Health > 0)
+            //if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).Health > 0)
+            if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).CoreStage != 4)
             {
-                DamageAmount = NodeKillDamage;
+                appliedDamage = NodeDamage;
                 HurtNode = Victims;
             }
         }
@@ -272,20 +293,22 @@ simulated function TeamHurtRadius( float DamageAmount, float DamageRadius, class
 			dist = FMax(1,VSize(dir));
 			dir = dir/dist;
 			damageScale = 1 - FMax(0,(dist - Victims.CollisionRadius)/DamageRadius);
+            //damageScale = damageScale *2.0;
+            damageScale = 1.0;
 			if ( Instigator == None || Instigator.Controller == None )
 				Victims.SetDelayedDamageInstigatorController( InstigatorController );
 			if ( Victims == LastTouched )
 				LastTouched = None;
 			Victims.TakeDamage
 			(
-				damageScale * DamageAmount,
+				damageScale * appliedDamage,
 				Instigator,
 				Victims.Location - 0.5 * (Victims.CollisionHeight + Victims.CollisionRadius) * dir,
-				(damageScale * Momentum * dir),
+				(damageScale * appliedMomentum * dir),
 				DamageType
 			);
 			if (Vehicle(Victims) != None && Vehicle(Victims).Health > 0)
-				Vehicle(Victims).DriverRadiusDamage(DamageAmount, DamageRadius, InstigatorController, DamageType, Momentum, HitLocation);
+				Vehicle(Victims).DriverRadiusDamage(appliedDamage, DamageRadius, InstigatorController, DamageType, appliedMomentum, HitLocation);
 
 		}
 	}
@@ -297,21 +320,23 @@ simulated function TeamHurtRadius( float DamageAmount, float DamageRadius, class
         {
             if(Pawn(Victims).GetTeamNum() == Instigator.GetTeamNum())
             {
-                DamageAmount = 0;
+                appliedDamage = 0;
+                appliedMomentum = 0;
             }
         }
         if(ONSPowerCore(Victims) != None && Instigator != None)
         {
             if(ONSPowerCore(Victims).DefenderTeamIndex != Instigator.GetTeamNum())
             {
-                DamageAmount = CoreDamage;
+                appliedDamage = CoreDamage;
             }
         }
         if(ONSPowerNode(Victims) != None && Instigator != None)
         {
-            if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).Health > 0)
+            //if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).Health > 0)
+            if(ONSPowerNode(Victims).DefenderTeamIndex != Instigator.GetTeamNum() && ONSPowerNode(Victims).CoreStage != 4)
             {
-                DamageAmount = NodeKillDamage;
+                appliedDamage = NodeDamage;
                 HurtNode = Victims;
             }
         }
@@ -320,19 +345,20 @@ simulated function TeamHurtRadius( float DamageAmount, float DamageRadius, class
 		dir = Victims.Location - HitLocation;
 		dist = FMax(1,VSize(dir));
 		dir = dir/dist;
-		damageScale = FMax(Victims.CollisionRadius/(Victims.CollisionRadius + Victims.CollisionHeight),1 - FMax(0,(dist - Victims.CollisionRadius)/DamageRadius));
+		//damageScale = FMax(Victims.CollisionRadius/(Victims.CollisionRadius + Victims.CollisionHeight),1 - FMax(0,(dist - Victims.CollisionRadius)/DamageRadius));
+        damageScale = 1.0;
 		if ( Instigator == None || Instigator.Controller == None )
 			Victims.SetDelayedDamageInstigatorController(InstigatorController);
 		Victims.TakeDamage
 		(
-			damageScale * DamageAmount,
+			damageScale * appliedDamage,
 			Instigator,
 			Victims.Location - 0.5 * (Victims.CollisionHeight + Victims.CollisionRadius) * dir,
-			(damageScale * Momentum * dir),
+			(damageScale * appliedMomentum * dir),
 			DamageType
 		);
 		if (Vehicle(Victims) != None && Vehicle(Victims).Health > 0)
-			Vehicle(Victims).DriverRadiusDamage(DamageAmount, DamageRadius, InstigatorController, DamageType, Momentum, HitLocation);
+			Vehicle(Victims).DriverRadiusDamage(appliedDamage, DamageRadius, InstigatorController, DamageType, appliedMomentum, HitLocation);
 	}
 
 	bHurtEntry = false;
@@ -392,24 +418,23 @@ state Dying
         }
     }
 
-
 Begin:
-    Sleep(0.5);
-    ApplyMomentum(Location, DamageRadius*SuckScale*1.0, SuckAmount);
-    Sleep(0.05);
-    ApplyMomentum(Location, DamageRadius*SuckScale*0.9, SuckAmount);
-    Sleep(0.05);
-    ApplyMomentum(Location, DamageRadius*SuckScale*0.8, SuckAmount);
-    Sleep(0.05);
-    ApplyMomentum(Location, DamageRadius*SuckScale*0.7, SuckAmount);
-    Sleep(0.05);
-    ApplyMomentum(Location, DamageRadius*SuckScale*0.6, SuckAmount);
-    Sleep(0.05);
-    ApplyMomentum(Location, DamageRadius*SuckScale*0.5, SuckAmount);
-    Sleep(0.05);
-    ApplyMomentum(Location, DamageRadius*SuckScale*0.4, SuckAmount);
-    Sleep(0.05);
-    ApplyMomentum(Location, DamageRadius*SuckScale*0.3, SuckAmount);
+    Sleep(0.8);
+    //ApplyMomentum(Location, DamageRadius*SuckScale*1.0, SuckAmount);
+    //Sleep(0.05);
+    //ApplyMomentum(Location, DamageRadius*SuckScale*0.9, SuckAmount);
+    //Sleep(0.05);
+    //ApplyMomentum(Location, DamageRadius*SuckScale*0.8, SuckAmount);
+    //Sleep(0.05);
+    //ApplyMomentum(Location, DamageRadius*SuckScale*0.7, SuckAmount);
+    //Sleep(0.05);
+    //ApplyMomentum(Location, DamageRadius*SuckScale*0.6, SuckAmount);
+    //Sleep(0.05);
+    //ApplyMomentum(Location, DamageRadius*SuckScale*0.5, SuckAmount);
+    //Sleep(0.05);
+    //ApplyMomentum(Location, DamageRadius*SuckScale*0.4, SuckAmount);
+    //Sleep(0.05);
+    //ApplyMomentum(Location, DamageRadius*SuckScale*0.3, SuckAmount);
     Destroy();
 }
 
@@ -421,14 +446,16 @@ defaultproperties
      ShakeOffsetMag=(Z=10.000000)
      ShakeOffsetRate=(Z=200.000000)
      ShakeOffsetTime=10.000000
-     SuckAmount=-35000.000000
+     SuckAmount=-40000.000000
      SuckScale=1.800000
      Speed=1000.000000
      MaxSpeed=1000.000000
-     Damage=250.000000
+     Damage=300.000000
      CoreDamage=6000
-     DamageRadius=1550.000000
-     MomentumTransfer=200000.000000
+     NodeDamage=5000
+     DamageRadius=1750.000000
+     //MomentumTransfer=200000.000000
+     MomentumTransfer=1000000.000000
      MyDamageType=Class'CSLinkNuke.CSLinkNukeDamTypeLinkNuke'
      ExplosionDecal=Class'XEffects.ShockImpactScorch'
      MaxEffectDistance=14000.000000
@@ -461,5 +488,4 @@ defaultproperties
      ForceType=FT_DragAlong
      ForceRadius=100.000000
      ForceScale=5.000000
-     NodeKillDamage=5000
 }

@@ -16,6 +16,7 @@ var() config int VehicleHealMax;
 
 var() config int Damage;
 var() config int CoreDamage;
+var() config int NodeDamage;
 var() config int RespawnTime;
 
 var() config bool bFlipNodes;
@@ -42,6 +43,7 @@ defaultproperties
 	VehicleHealDuration=5.0
 	VehicleHealMax=800
     CoreDamage=6000
+    NodeDamage=5000
 	Damage=250
 	RespawnTime=60
 
