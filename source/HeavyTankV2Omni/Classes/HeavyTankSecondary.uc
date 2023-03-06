@@ -2,7 +2,7 @@ class HeavyTankSecondary extends ONSWeapon;
 
 #exec OBJ LOAD FILE=..\Animations\ONSWeapons-A.ukx
 
-var class<ShockBeamEffect> BeamEffectClass;
+var class<HeavyTankSecondaryBeamEffect> BeamEffectClass;
 var ONSSkyMine ComboTarget;
 var float MinAim;
 var float MaxLockRange, LockAim;
@@ -47,7 +47,7 @@ function byte BestMode()
 
 function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector HitNormal, int ReflectNum)
 {
-    local ShockBeamEffect Beam;
+    local HeavyTankSecondaryBeamEffect Beam;
 
     Beam = Spawn(BeamEffectClass,,, Start, Dir);
     Beam.Instigator = None; // prevents client side repositioning of beam start
@@ -139,7 +139,8 @@ simulated function setInitialState()
 
 defaultproperties
 {
-     BeamEffectClass=Class'XWeapons.ShockBeamEffect'
+     //BeamEffectClass=Class'XWeapons.ShockBeamEffect'
+     BeamEffectClass=Class'HeavyTankSecondaryBeamEffect'
      MinAim=0.925000
      MaxLockRange=30000.000000
      LockAim=0.975000
@@ -154,7 +155,7 @@ defaultproperties
      bDoOffsetTrace=True
      RedSkin=Shader'VMVehicles-TX.NEWprvGroup.newPRVredSHAD'
      BlueSkin=Shader'VMVehicles-TX.NEWprvGroup.newPRVshad'
-     FireInterval=0.333333
+     FireInterval=0.75
      AltFireInterval=2.000000
      FlashEmitterClass=Class'Onslaught.ONSPRVSideGunMuzzleFlash'
      FireSoundClass=Sound'ONSVehicleSounds-S.PRV.PRVFire02'
@@ -163,16 +164,17 @@ defaultproperties
      FireForce="PRVSideFire"
      AltFireForce="Explosion05"
      DamageType=Class'HeavyTankV2Omni.DamTypeHeavyChainGun'
-     DamageMin=55
-     DamageMax=55
-     Momentum=12000.000000
+     DamageMin=80
+     DamageMax=90
+     Momentum=88000.000000
      AltFireProjectileClass=Class'HeavyTankV2Omni.HeavyTankMissle'
      ShakeRotMag=(X=60.000000,Y=20.000000)
      ShakeRotRate=(X=1000.000000,Y=1000.000000)
      ShakeRotTime=2.000000
      AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.200000,RefireRate=1.000000)
      AIInfo(1)=(bInstantHit=True,RefireRate=0.000000)
-     CullDistance=6000.000000
+     CullDistance=8000.000000
+     TraceRange=17000.000000
      Mesh=SkeletalMesh'ONSWeapons-A.PRVsideGun'
      DrawScale=2.000000
 }

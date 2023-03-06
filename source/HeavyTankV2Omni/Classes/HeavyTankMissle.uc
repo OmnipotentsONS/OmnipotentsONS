@@ -149,7 +149,7 @@ defaultproperties
      StaticMesh=StaticMesh'WeaponStaticMesh.RedeemerMissile'
      AmbientSound=Sound'WeaponSounds.RocketLauncher.RocketLauncherProjectile'
      LifeSpan=6.000000
-     DrawScale=0.500000
+     DrawScale=0.800000
      DrawScale3D=(Y=0.400000,Z=0.400000)
      AmbientGlow=96
      FluidSurfaceShootStrengthMod=10.000000
