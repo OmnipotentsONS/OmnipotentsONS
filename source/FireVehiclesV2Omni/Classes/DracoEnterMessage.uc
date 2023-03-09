@@ -27,5 +27,5 @@ static function string GetString(
 
 defaultproperties
 {
-     DeployMessageString="After Alt-Fire Smoke Bomb, Flamethrower takes 5s to recharge"
+     DeployMessageString="After Alt-Fire Smoke Bomb, Flamethrower takes 3s to recharge"
 }

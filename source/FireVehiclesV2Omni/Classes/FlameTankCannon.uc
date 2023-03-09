@@ -6,6 +6,12 @@ class FlameTankCannon extends ONSHoverTankCannon;
 var float ChargeLevel, ChargeTick, ChargeTime;
 var bool bAllowShoot;
 
+replication
+{
+	reliable if (role == ROLE_Authority)
+		ChargeLevel,bAllowShoot;
+}
+
 state ProjectileFireMode
 {
 
@@ -16,16 +22,18 @@ state ProjectileFireMode
          Return;
       else if (bAllowShoot)
       {
-       ChargeLevel -= 0.1;
+       ChargeLevel -= 0.15;
        Super.Fire(C);
       }
 
  }
 }
 
-simulated function Tick(float DeltaTime)
+function Tick(float DeltaTime)
+//FYI this makes the recharging highly dependent on TickRATE!!
 {
 
+ If (Owner != None) {
      if (  FlameTank(Owner).Driver != None  &&   ChargeLevel < 0.999999  )
      {
           if (bAllowShoot && ChargeLevel < 0.05)
@@ -33,15 +41,13 @@ simulated function Tick(float DeltaTime)
 
           ChargeLevel += ChargeTick;
 
-          if (!bAllowShoot && ChargeLevel > 0.3)
+          if (!bAllowShoot && ChargeLevel > 0.4)
           bAllowShoot=true;
      }
-
+  
      else if (ChargeLevel >= 0.999999)
           ChargeLevel = 0.99999999;
-
-
-
+  }
 	Super.Tick(DeltaTime);
 
 }
@@ -49,7 +55,8 @@ simulated function Tick(float DeltaTime)
 simulated function float ChargeBar()
 {
 
-	return FMin(0.999999, ChargeLevel);
+	return FMin(ChargeLevel, 0.999999);
+	//return FClamp(0.999 - (ChargeLevel), 0.0, 0.999);
 	
 
 }
@@ -74,7 +81,7 @@ simulated function ClientStartFire(Controller C, bool bAltFire)
 
 defaultproperties
 {
-     ChargeTick=0.003000
+     ChargeTick=0.00600
      ChargeLevel = 0.9;
      PitchUpLimit=9000
      RotationsPerSecond=0.200000

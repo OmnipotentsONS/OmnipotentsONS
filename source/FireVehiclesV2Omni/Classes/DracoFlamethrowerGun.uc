@@ -10,6 +10,12 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
+// Wormbo used a hack here, the projectiles are invsible and he used Ambient Emitters to simulate the projectiles
+// then used a hack on the alt fire so it wouldn't show.
+// better fix was in Ownereffects() to not show AmbientEmitter if altfire
+// deleted a bunch of garbage code to work around the hack
+
+
 class DracoFlamethrowerGun extends ONSWeapon; // ONSLinkableWeapon;
 
 
@@ -25,14 +31,15 @@ class DracoFlamethrowerGun extends ONSWeapon; // ONSLinkableWeapon;
 // Variables
 //=============================================================================
 
-var float DamageFactor;
-var bool bTurnedOff;
+//var float DamageFactor;
+//var bool bTurnedOff;  //appears to do nothing?!
 
 
 simulated function Tick(float DeltaTime)
 {
-	if (bTurnedOff)
-		return;
+	//if (bTurnedOff)
+	//	return; 
+	
 
 	if (Instigator != None && Instigator.PlayerReplicationInfo != None)
 	{
@@ -60,10 +67,11 @@ function byte BestMode()
 	return 1; // AVRiL incoming and no decoy out yet
 }
 
-simulated function SetFireRateModifier(float Modifier)
-{
-	DamageFactor = Modifier;
-}
+// WTF is this for? pooty
+//simulated function SetFireRateModifier(float Modifier)
+//{
+//	DamageFactor = Modifier;
+//}
 
 simulated function InitEffects()
 {
@@ -71,6 +79,8 @@ simulated function InitEffects()
 	if (Level.NetMode == NM_DedicatedServer)
 		return;
 
+	
+	
 	if ( (FlashEmitterClass != None) && (FlashEmitter == None) )
 	{
 		FlashEmitter = Spawn(FlashEmitterClass);
@@ -82,7 +92,8 @@ simulated function InitEffects()
 
 		FlashEmitter.SetRelativeLocation(WeaponFireOffset * vect(1,0,0));
 	}
-
+  
+	
 	if (AmbientEffectEmitterClass != none && AmbientEffectEmitter == None)
 	{
 		AmbientEffectEmitter = Spawn(AmbientEffectEmitterClass, self,, WeaponFireLocation, WeaponFireRotation);
@@ -94,6 +105,12 @@ simulated function InitEffects()
 		//AmbientEffectEmitter.SetRelativeLocation(WeaponFireOffset * vect(1,0,0) / DrawScale); // because it seems to scale with DrawScale, unlike everything else
 	}
 }
+
+simulated function float ChargeBar()
+{
+	return FClamp(0.999 - (FireCountDown / AltFireInterval), 0.0, 0.999);
+}
+
 
 simulated function DestroyEffects()
 {
@@ -108,46 +125,68 @@ simulated function DestroyEffects()
 	}
 }
 
-simulated function ClientStartFire(Controller C, bool bAltFire)
+simulated event OwnerEffects()
 {
-	if (!bAltFire)
-		Super.ClientStartFire(C, bAltFire);
+    if (!bIsRepeatingFF)
+    {
+        if (bIsAltFire)
+            ClientPlayForceFeedback( AltFireForce );
+        else
+            ClientPlayForceFeedback( FireForce );
+    }
+    ShakeView();
+
+    if (Role < ROLE_Authority)
+    {
+        if (bIsAltFire)
+            FireCountdown = AltFireInterval;
+        else
+            FireCountdown = FireInterval;
+
+        AimLockReleaseTime = Level.TimeSeconds + FireCountdown * FireIntervalAimLock;
+
+        FlashMuzzleFlash();
+
+        if (AmbientEffectEmitter != None && (!bIsAltFire))  // don't show for alt fire.
+        // because only primary fire needs this on the Draco -- this avoids Wormbo's dumb flash counter hack in the original version
+            AmbientEffectEmitter.SetEmitterStatus(true);
+
+        // Play firing noise
+        if (!bAmbientFireSound)
+        {
+            if (bIsAltFire)
+                PlaySound(AltFireSoundClass, SLOT_None, FireSoundVolume/255.0,, AltFireSoundRadius,, false);
+            else
+                PlaySound(FireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius,, false);
+        }
+    }
 }
 
 state ProjectileFireMode
 {
+	
+	// this uses the AmbientEffects to simulate the flame projectiles.
 	function Fire(Controller C)
 	{
-		local Projectile P;
 
 		if (AmbientEffectEmitter != None)
 		{
 			AmbientEffectEmitter.SetEmitterStatus(true);
 		}
-		P = SpawnProjectile(ProjectileClass, False);
-		if (P != None)
-			P.Damage *= DamageFactor;
+		Super.Fire(C);
+	
 	}
+
 
     function AltFire(Controller C)
     {
-		local ONSDecoy P;
-		local ONSDualAttackCraft V;
-
-    	if (AltFireProjectileClass != none)
-    	{
-			P =	ONSDecoy(SpawnProjectile(AltFireProjectileClass, True));
-			V = ONSDualAttackCraft(Owner);
-			if (P != None && V != None)
+		if (AmbientEffectEmitter != None)
 			{
-				V.Decoys.Insert(0,1);
-				V.Decoys[0] = P;
-
-			    P.ProtectedTarget = V;
+				AmbientEffectEmitter.SetEmitterStatus(false);
 			}
-			FlashCount = 0; // ugly, but would otherwise start spawning flame particles on the client
-		}
+		Super.AltFire(C);
     }
+
 }
 
 
@@ -157,15 +196,15 @@ state ProjectileFireMode
 
 defaultproperties
 {
-     DamageFactor=1.000000
+     //DamageFactor=1.000000
      YawBone="GatlingGun"
      PitchBone="GatlingGun"
      PitchUpLimit=2000
      PitchDownLimit=50000
      WeaponFireAttachmentBone="GatlingGunFirePoint"
      bShowChargingBar=True
-    // Doesn't work for some reason
-
+    // Works now needed to set the chargebar function,
+    
      DualFireOffset=10.000000
      RotationsPerSecond=0.700000
      bAmbientFireSound=True
@@ -173,7 +212,7 @@ defaultproperties
      BlueSkin=Shader'WVDraco.Skins.DracoShaderBlue'
      FireInterval=0.100000
      
-     AltFireInterval=5.000000
+     AltFireInterval=3.000000
      
      AmbientEffectEmitterClass=Class'FireVehiclesV2Omni.DracoFlamethrowerEmitter'
      FireSoundClass=Sound'WVDraco.DracoFireLoop'

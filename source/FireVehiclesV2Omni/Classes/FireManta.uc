@@ -252,7 +252,7 @@ simulated function Tick(float DeltaTime)
 	{
 		JumpCountdown = JumpDuration;
         OldDoBikeJump = DoBikeJump;
-        if ( (Controller != Level.GetLocalPlayerController()) && EffectIsRelevant(Location,false) )
+        if ( Level.NetMode != NM_DedicatedServer && (Controller != Level.GetLocalPlayerController()) && EffectIsRelevant(Location,false) )
         {
             JumpEffect = Spawn(class'FireVehiclesV2Omni.FlameJumpEmitter');
             JumpEffect.SetBase(Self);
@@ -552,7 +552,7 @@ defaultproperties
      TPCamLookat=(X=0.000000,Z=0.000000)
      TPCamWorldOffset=(Z=120.000000)
      VehiclePositionString="in a Cherufe"
-     VehicleNameString="Cherufe 2.6"
+     VehicleNameString="Cherufe 2.61"
      RanOverDamageType=Class'Onslaught.DamTypeHoverBikeHeadshot'
      CrushedDamageType=Class'Onslaught.DamTypeHoverBikePancake'
      MaxDesireability=0.600000

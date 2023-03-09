@@ -112,15 +112,15 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 
     if ( EffectIsRelevant(Location, false) )
     {
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*3, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*20, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*16, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*1, rotator(HitNormal));
+	Spawn(class'DracoIncendiarySmokeRing',,, HitLocation + HitNormal*3, rotator(HitNormal));
+	Spawn(class'DracoIncendiarySmokeRing',,, HitLocation + HitNormal*20, rotator(HitNormal));
+	Spawn(class'DracoIncendiarySmokeRing',,, HitLocation + HitNormal*16, rotator(HitNormal));
+	Spawn(class'DracoIncendiarySmokeRing',,, HitLocation + HitNormal*1, rotator(HitNormal));
     	Spawn(class'FireballBlowup',,, HitLocation + HitNormal*16, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*10, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*13, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*5, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*9, rotator(HitNormal));
+	Spawn(class'DracoIncendiarySmokeRing',,, HitLocation + HitNormal*10, rotator(HitNormal));
+	Spawn(class'DracoIncendiarySmokeRing',,, HitLocation + HitNormal*13, rotator(HitNormal));
+	Spawn(class'DracoIncendiarySmokeRing',,, HitLocation + HitNormal*5, rotator(HitNormal));
+	Spawn(class'DracoIncendiarySmokeRing',,, HitLocation + HitNormal*9, rotator(HitNormal));
 		if ( (ExplosionDecal != None) && (Level.NetMode != NM_DedicatedServer) )
 			Spawn(ExplosionDecal,self,,Location, rotator(-HitNormal));
     }
@@ -174,7 +174,7 @@ defaultproperties
      DrawType=DT_StaticMesh
      StaticMesh=StaticMesh'WeaponStaticMesh.FlakChunk'
      AmbientSound=Sound'WeaponSounds.RocketLauncher.RocketLauncherProjectile'
-     LifeSpan=6.500000
+     LifeSpan=6.50000  
      AmbientGlow=32
      SoundVolume=255
      SoundRadius=200.000000

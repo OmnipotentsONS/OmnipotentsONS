@@ -1,5 +1,5 @@
 /******************************************************************************
-FlamerProjectile
+FlamerProjectile - USED in Firebug
 
 Creation date: 2012-10-12 11:48
 Last change: $Id$

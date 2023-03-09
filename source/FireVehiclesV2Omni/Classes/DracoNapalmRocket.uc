@@ -414,7 +414,9 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 /**
 Hurt all actors within the specified radius.
 */
-simulated function ProjectileHurtRadius(vector HurtOrigin, vector VDiff, class<DamageType> ImpactedActorDamageType, float ImpactedActorDamageAmount)
+// Should this be simulated? Should only need to run on server
+//simulated function ProjectileHurtRadius(vector HurtOrigin, vector VDiff, class<DamageType> ImpactedActorDamageType, float ImpactedActorDamageAmount)
+function ProjectileHurtRadius(vector HurtOrigin, vector VDiff, class<DamageType> ImpactedActorDamageType, float ImpactedActorDamageAmount)
 {
 	local Vehicle TargetVehicle;
 	local array<TVictimInfo> Victims;
@@ -516,7 +518,7 @@ simulated function ProjectileHurtRadius(vector HurtOrigin, vector VDiff, class<D
 					VictimInfo.HL = VictimInfo.Actor.Location;
 					Victims[Victims.Length] = VictimInfo;
 				}
-				if (ONSVehicle(TargetVehicle) != None)
+				if (ONSVehicle(TargetVehicle) != None )
 				{
 					for (j = 0; j < ONSVehicle(TargetVehicle).WeaponPawns.Length; j++)
 					{

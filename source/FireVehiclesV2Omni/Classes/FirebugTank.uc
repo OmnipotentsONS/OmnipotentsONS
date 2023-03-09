@@ -103,7 +103,7 @@ simulated event ClientVehicleExplosion(bool bFinal)
 
 	Super.ClientVehicleExplosion(bFinal);
 
-	if (bFinal)
+	if ((Level.NetMode != NM_DedicatedServer) && bFinal)
 	{
 		GetAxes(Rotation, X, Y, Z);
 		Spawn(class'FirebugExplosionScorch',,, Location + CollisionHeight * Z, rot(-16384,0,0));
@@ -142,19 +142,21 @@ simulated function Tick(float DeltaTime)
 
 	Super.Tick(DeltaTime);
 
-	JumpCountdown -= DeltaTime;
+  
+		JumpCountdown -= DeltaTime;
 
-	CheckJump();
+		CheckJump();
 
-	if (bDoFlameJump != bOldDoFlameJump)
-	{
-		JumpCountdown = JumpDuration;
-		bOldDoFlameJump = bDoFlameJump;
-		if (Controller != Level.GetLocalPlayerController() && EffectIsRelevant(Location, false))
+		if (bDoFlameJump != bOldDoFlameJump)
 		{
-			SpawnJumpEffect();
+			JumpCountdown = JumpDuration;
+			bOldDoFlameJump = bDoFlameJump;
+			if ((Level.NetMode != NM_DedicatedServer) && Controller != Level.GetLocalPlayerController() && EffectIsRelevant(Location, false))
+			{
+				SpawnJumpEffect();
+			}
 		}
-	}
+  
 
 	// spawn jump flame projectiles
 	if (Role == ROLE_Authority && bHasJumped && LastFlameProjectileOffset < 2 * HoverDustOffset.Length)
@@ -162,15 +164,21 @@ simulated function Tick(float DeltaTime)
 		GetAxes(Rotation, X, Y, Z);
 		i = Min(2 * HoverDustOffset.Length * (1 - JumpCountDown / JumpDuration), 2 * HoverDustOffset.Length);
 
+	if (Level.NetMode != NM_DedicatedServer) {
 		while (LastFlameProjectileOffset < i)
 		{
 			Offset = HoverDustOffset[(LastFlameProjectileOffset++ * 7) % HoverDustOffset.Length];
 			Spawn(FlameJumpProjectileClass, Self,, Location + Offset, rotator(0.1 * VRand() - Z));
 		}
-
+     
+   
 		bHasJumped = LastFlameProjectileOffset < 2 * HoverDustOffset.Length;
 	}
+	}
+
 }
+
+
 
 simulated function SpawnJumpEffect()
 {
@@ -178,6 +186,8 @@ simulated function SpawnJumpEffect()
 	local vector HN, HL;
 	local vector X, Y, Z;
 
+
+  if (Level.NetMode == NM_DedicatedServer) return;
 	JumpEffect = Spawn(class'FlameJumpEmitter');
 	JumpEffect.SetBase(Self);
 
@@ -421,7 +431,7 @@ defaultproperties
      TPCamLookat=(Z=100.000000)
      TPCamWorldOffset=(Z=150.000000)
      VehiclePositionString="in a Firebug"
-     VehicleNameString="Firebug 2.9"
+     VehicleNameString="Firebug 2.91"
      VehicleDescription="The Firebug is a small and agile hover tank that can quickly turn enemies into a smoking pile of ashes with its twin flamethrowers."
      RanOverDamageType=Class'FireVehiclesV2Omni.DamTypeFirebugRoadkill'
      CrushedDamageType=Class'FireVehiclesV2Omni.DamTypeFirebugPancake'

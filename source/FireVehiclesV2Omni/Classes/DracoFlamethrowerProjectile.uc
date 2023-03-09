@@ -1,5 +1,5 @@
 /******************************************************************************
-DracoFlamethrowerProjectile
+DracoFlamethrowerProjectile 
 
 Creation date: 2012-10-12 11:48
 Last change: $Id$
@@ -142,7 +142,7 @@ defaultproperties
      TargetSizeTime=2.000000
      HeightRatio=0.800000
      AddVelocityScale=0.900000
-     Speed=3200.000000
+     Speed=3800.000000
      MaxSpeed=5000.000000
      Damage=45.000000
      DamageRadius=200.000000

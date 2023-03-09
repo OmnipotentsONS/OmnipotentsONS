@@ -1,5 +1,7 @@
 class FlameProjectile extends Projectile;
 
+// used in FireTank, FlameTank 2nd seat flamethrower
+
 var xEmitter Flame;
 var() class<xEmitter> FlameClass;
 var() class<DamageType> DamageType, BurnDamageType;
@@ -66,9 +68,10 @@ simulated function PostNetBeginPlay()
 if(Role == ROLE_Authority)
 {
 	//Damage reduces with distance.
-    Damage = Max(Default.Damage * Sqrt(Default.CollisionHeight / CollisionHeight), MinDamage);
+    //Damage = Max(Default.Damage * Sqrt(Default.CollisionHeight / CollisionHeight), MinDamage);
+    Damage = Max(Default.Damage * ((LifeSpan / default.LifeSpan) ** 0.4), MinDamage);
     //always do at least MinDamage pts.
-		HurtRadius(MinDamage/3, CollisionRadius * 5, MyDamageType, MomentumTransfer, Location);
+		HurtRadius(MinDamage/2, CollisionRadius * 5, MyDamageType, MomentumTransfer, Location);
 	}
 
 	//Setting people on fire is handled here.
@@ -127,20 +130,22 @@ simulated function HitWall(vector HitNormal, actor Wall)
 
 }
 
+
 simulated function ProcessTouch(Actor Other, Vector HitLocation){}
 simulated function BlowUp(vector HitLocation){}
 simulated function Explode(vector HitLocation, vector HitNormal){}
+
 
 defaultproperties
 {
      FlameClass=Class'FireEmitter'
      BurnDamageType=Class'Burned'
-     Speed=2200.000000
+     Speed=3000.000000
      MaxSpeed=4000.000000
      TossZ=0.000000
      Damage=90.000000
-     MinDamage = 18.0
-     DamageRadius=220.000000
+     MinDamage = 20.0
+     DamageRadius=175.000000
      MomentumTransfer=10000.000000
      MyDamageType=Class'FlameKill'
      LightType=LT_Steady
@@ -149,7 +154,7 @@ defaultproperties
      LightBrightness=64.000000
      LightRadius=16.000000
      DrawType=DT_None
-     LifeSpan=2.5000
+     LifeSpan=1.80000  //reduce to reduce range now that speed is faster
      bFullVolume=True
      SoundVolume=255
      SoundPitch=56 

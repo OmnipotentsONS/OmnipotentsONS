@@ -76,6 +76,7 @@ defaultproperties
      WeaponFireAttachmentBone="Object02"
      WeaponFireOffset=85.000000
      RotationsPerSecond=3.000000
+     bInstantRotation = True  // make it faster to spin
      bDoOffsetTrace=True
      bAmbientFireSound=True
      bIsRepeatingFF=True
@@ -87,6 +88,7 @@ defaultproperties
      FireSoundVolume=900.000000
      FireForce="minifireb"
      ProjectileClass=Class'FireVehiclesV2Omni.FlameProjectile'
+     
      AIInfo(0)=(bLeadTarget=True)
      CullDistance=8000.000000
      Mesh=SkeletalMesh'ONSWeapons-A.TankMachineGun'

@@ -229,7 +229,8 @@ state Shriveling
     }
 }
 
-simulated function Tick(float DeltaTime)
+//simulated function Tick(float DeltaTime)
+function Tick(float DeltaTime) // don't need to run on client too. Server handles it
 	{
 
 	Super.Tick(DeltaTime);
