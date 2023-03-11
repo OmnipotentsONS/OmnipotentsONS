@@ -116,12 +116,12 @@ defaultproperties
      bDoOffsetTrace=True
      RedSkin=Texture'KingHound_TEX.KingHellHoundRed'
      BlueSkin=Texture'KingHound_TEX.KingHellHoundBlue'
-     FireInterval=0.250000
+     FireInterval=0.18000
      FireSoundClass=Sound'WeaponSounds.Misc.instagib_rifleshot'
      FireForce="Laser01"
      DamageType=Class'CSKingHellHound.KingHellHoundBeams'
      DamageMin=20
-     DamageMax=20
+     DamageMax=22
      TraceRange=80000.000000
      Momentum=100.000000
      AIInfo(0)=(bInstantHit=True,aimerror=400.000000)

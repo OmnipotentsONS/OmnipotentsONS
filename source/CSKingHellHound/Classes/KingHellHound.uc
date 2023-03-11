@@ -435,7 +435,7 @@ defaultproperties
      TPCamWorldOffset=(Z=100.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a King HellHound"
-     VehicleNameString="King HellHound 2.0"
+     VehicleNameString="King HellHound 2.1"
      RanOverDamageType=Class'CSKingHellHound.KingHellHoundRoadkill'
      HornSounds(0)=Sound'GorzWheels_Sounds.KingHellHound.KHHHorn1'
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.DixieHorn'

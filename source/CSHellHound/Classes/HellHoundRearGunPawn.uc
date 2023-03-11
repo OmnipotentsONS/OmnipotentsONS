@@ -54,7 +54,7 @@ defaultproperties
      TPCamDistance=450.000000
      TPCamLookat=(X=0.000000)
      TPCamWorldOffset=(Z=50.000000)
-     DriverDamageMult=0.600000
+     DriverDamageMult=0.000000
      VehiclePositionString="in a HellHound's rear turret"
      VehicleNameString="HellHound Rear Turret"
 }
