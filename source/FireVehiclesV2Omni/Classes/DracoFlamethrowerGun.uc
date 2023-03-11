@@ -31,15 +31,17 @@ class DracoFlamethrowerGun extends ONSWeapon; // ONSLinkableWeapon;
 // Variables
 //=============================================================================
 
-//var float DamageFactor;
-//var bool bTurnedOff;  //appears to do nothing?!
+var float               AltFireCountdown;
+
 
 
 simulated function Tick(float DeltaTime)
 {
-	//if (bTurnedOff)
-	//	return; 
-	
+	 
+    super.Tick(DeltaTime);
+    if(AltFireCountdown > 0)  AltFireCountdown -= DeltaTime;
+   
+// orig below
 
 	if (Instigator != None && Instigator.PlayerReplicationInfo != None)
 	{
@@ -54,7 +56,10 @@ simulated function Tick(float DeltaTime)
 	{
 		bActive = False;
 	}
+	
+	
 }
+
 
 function byte BestMode()
 {
@@ -67,11 +72,7 @@ function byte BestMode()
 	return 1; // AVRiL incoming and no decoy out yet
 }
 
-// WTF is this for? pooty
-//simulated function SetFireRateModifier(float Modifier)
-//{
-//	DamageFactor = Modifier;
-//}
+
 
 simulated function InitEffects()
 {
@@ -108,7 +109,8 @@ simulated function InitEffects()
 
 simulated function float ChargeBar()
 {
-	return FClamp(0.999 - (FireCountDown / AltFireInterval), 0.0, 0.999);
+	return FClamp(0.999 - (AltFireCountDown / AltFireInterval), 0.0, 0.999);
+	// Charge bar is just for AltFire
 }
 
 
@@ -138,12 +140,16 @@ simulated event OwnerEffects()
 
     if (Role < ROLE_Authority)
     {
-        if (bIsAltFire)
-            FireCountdown = AltFireInterval;
-        else
+      if (bIsAltFire) {
+            AltFireCountdown = AltFireInterval;
+            AimLockReleaseTime = Level.TimeSeconds + AltFireCountdown * FireIntervalAimLock;
+      }      
+      else {
             FireCountdown = FireInterval;
+            AimLockReleaseTime = Level.TimeSeconds + FireCountdown * FireIntervalAimLock;
+      }      
 
-        AimLockReleaseTime = Level.TimeSeconds + FireCountdown * FireIntervalAimLock;
+//        AimLockReleaseTime = Level.TimeSeconds + FireCountdown * FireIntervalAimLock;
 
         FlashMuzzleFlash();
 
@@ -161,6 +167,56 @@ simulated event OwnerEffects()
         }
     }
 }
+
+// Added 03/2023 pooty to make primary fire available all the time
+// base code from ONSWeapon
+
+event bool AttemptFire(Controller C, bool bAltFire)
+{
+    if(Role != ROLE_Authority || bForceCenterAim)
+        return False;
+
+    if (FireCountdown <= 0 && !bAltFire)
+    {
+        CalcWeaponFire();
+        if (bCorrectAim)
+            WeaponFireRotation = AdjustAim(bAltFire);
+        if (Spread > 0)
+            WeaponFireRotation = rotator(vector(WeaponFireRotation) + VRand()*FRand()*Spread);
+
+        DualFireOffset *= -1;
+
+        Instigator.MakeNoise(1.0);
+        FireCountdown = FireInterval;
+        Fire(C);
+        AimLockReleaseTime = Level.TimeSeconds + FireCountdown * FireIntervalAimLock;
+
+        return True;
+    }
+    
+    if (AltFireCountdown <= 0 && bAltFire)
+    {
+        CalcWeaponFire();
+        if (bCorrectAim)
+            WeaponFireRotation = AdjustAim(bAltFire);
+        if (Spread > 0)
+            WeaponFireRotation = rotator(vector(WeaponFireRotation) + VRand()*FRand()*Spread);
+
+        DualFireOffset *= -1;
+
+        Instigator.MakeNoise(1.0);
+        AltFireCountdown = AltFireInterval;
+        AltFire(C);
+        AimLockReleaseTime = Level.TimeSeconds + AltFireCountdown * FireIntervalAimLock;
+
+        return True;
+    }
+
+    return False;
+}
+
+
+
 
 state ProjectileFireMode
 {
@@ -212,7 +268,7 @@ defaultproperties
      BlueSkin=Shader'WVDraco.Skins.DracoShaderBlue'
      FireInterval=0.100000
      
-     AltFireInterval=3.000000
+     AltFireInterval=3.00000
      
      AmbientEffectEmitterClass=Class'FireVehiclesV2Omni.DracoFlamethrowerEmitter'
      FireSoundClass=Sound'WVDraco.DracoFireLoop'

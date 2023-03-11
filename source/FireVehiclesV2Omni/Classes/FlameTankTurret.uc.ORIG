@@ -1,4 +1,8 @@
 class FlameTankTurret extends ONSWeapon;
+// NOT USED
+// Deprecated pooty 03/2023 
+// both fire and flame tanks use FireTankTurret!
+
 
 var vector OldDir;
 var rotator OldRot;

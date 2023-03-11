@@ -110,6 +110,11 @@ if (DamageType.name == 'FlameKillRaptor')
 		
 if (DamageType.name == 'DamTypeFirebugFlame')
 		Damage *= 0.50;
+	
+if (DamageType.name == 'DamTypeTurretFlames')
+		Damage *= 0.50;
+
+
 
 	if (DamageType.name == 'HeatRay')
 		Damage *= 0.20;
@@ -232,7 +237,7 @@ defaultproperties
      IdleSound=Sound'BioAegis_Sound.BioTank.BioTankEngine'
      VehicleMass=15.000000
      VehiclePositionString="in a Flame Tank"
-     VehicleNameString="Flame Tank 2.62"
+     VehicleNameString="Flame Tank 2.7"
      HornSounds(0)=Sound'CuddlyArmor_Sound.Horns.FireTankHorn'
      HornSounds(1)=Sound'CuddlyArmor_Sound.Horns.Horn3'
      GroundSpeed=850.000000

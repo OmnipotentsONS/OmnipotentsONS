@@ -39,7 +39,8 @@ simulated function ClientKDriverLeave(PlayerController PC)
 
 defaultproperties
 {
-     GunClass=Class'FireVehiclesV2Omni.FlameTankTurret'
+     //GunClass=Class'FireVehiclesV2Omni.FlameTankTurret'
+     GunClass=Class'FireVehiclesV2Omni.FireTankTurret'
      CameraBone="Object02"
      bDrawDriverInTP=False
      DrivePos=(Z=130.000000)

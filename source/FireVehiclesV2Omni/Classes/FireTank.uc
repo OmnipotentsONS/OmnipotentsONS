@@ -102,6 +102,11 @@ if (DamageType.name == 'Burned')
 if (DamageType.name == 'DamTypeFirebugFlame')
 		Damage *= 0.50;
 
+if (DamageType.name == 'DamTypeTurretFlames')
+		Damage *= 0.50;
+
+
+
 if (DamageType.name == 'FireBall')
 		Damage *= 0.15;
 
@@ -233,7 +238,7 @@ defaultproperties
      IdleSound=Sound'CuddlyArmor_Sound.FireTank.FireTankEngine'
      VehicleMass=19.000000
      VehiclePositionString="in a Fire Tank"
-     VehicleNameString="Fire Tank 2.62"
+     VehicleNameString="Fire Tank 2.7"
      RanOverDamageType=Class'FireVehiclesV2Omni.FireTankDamTypeRoadkill'
      HornSounds(0)=Sound'CuddlyArmor_Sound.Horns.FireTankHorn'
      HornSounds(1)=Sound'CuddlyArmor_Sound.Horns.Horn3'

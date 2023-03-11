@@ -51,7 +51,7 @@ function ShouldTargetMissile(Projectile P)
 
 defaultproperties
 {
-     GunClass=Class'FireVehiclesV2Omni.FlameTankTurret'
+     GunClass=Class'FireVehiclesV2Omni.FireTankTurret'
      bHasAltFire=False
      CameraBone="Object02"
      bDrawDriverInTP=False

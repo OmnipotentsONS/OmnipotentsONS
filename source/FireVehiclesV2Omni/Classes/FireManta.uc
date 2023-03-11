@@ -87,6 +87,9 @@ if (DamageType.name == 'FireBall')
 if (DamageType.name == 'DamTypeFirebugFlame')
 		Damage *= 1.20;
 
+if (DamageType.name == 'DamTypeTurretFlames')
+		Damage *= 1.20;
+
 if (DamageType.name == 'FlameKillRaptor')
 		Damage *= 0.50;
 		
@@ -552,7 +555,7 @@ defaultproperties
      TPCamLookat=(X=0.000000,Z=0.000000)
      TPCamWorldOffset=(Z=120.000000)
      VehiclePositionString="in a Cherufe"
-     VehicleNameString="Cherufe 2.61"
+     VehicleNameString="Cherufe 2.7"
      RanOverDamageType=Class'Onslaught.DamTypeHoverBikeHeadshot'
      CrushedDamageType=Class'Onslaught.DamTypeHoverBikePancake'
      MaxDesireability=0.600000

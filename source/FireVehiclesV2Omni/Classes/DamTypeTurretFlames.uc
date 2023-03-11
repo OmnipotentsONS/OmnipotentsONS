@@ -10,7 +10,7 @@ to report bugs/provide improvements.
 Please ask for permission first, if you intend to make money off reused code.
 ******************************************************************************/
 
-class DamTypeFirebugFlame extends VehicleDamageType abstract;
+class DamTypeTurretFlames extends VehicleDamageType abstract;
 
 
 static function GetHitEffects(out class<xEmitter> HitEffects[4], int VictimHealth)
@@ -30,8 +30,8 @@ static function GetHitEffects(out class<xEmitter> HitEffects[4], int VictimHealt
 
 defaultproperties
 {
-     VehicleClass=Class'FireVehiclesV2Omni.FirebugTank'
-     DeathString="%o was roasted by %k's Firebug flame."
+     VehicleClass=Class'FireVehiclesV2Omni.FireTank'
+     DeathString="%o was roasted and charred by %k's flamethrower."
      FemaleSuicide="%o roasted herself."
      MaleSuicide="%o roasted himself."
      bDetonatesGoop=True

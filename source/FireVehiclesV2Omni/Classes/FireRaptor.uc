@@ -353,6 +353,9 @@ if (DamageType.name == 'FlameKillRaptor')
 
 if (DamageType.name == 'DamTypeFirebugFlame')
 		Damage *= 1.20;
+		
+if (DamageType.name == 'DamTypeTurretFlames')
+		Damage *= 1.20;
 
 if (DamageType.name == 'HeatRay')
 		Damage *= 0.75;
@@ -500,7 +503,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in the Ifrit"
-     VehicleNameString="Ifrit 2.6"
+     VehicleNameString="Ifrit 2.7"
      RanOverDamageType=Class'FireVehiclesV2Omni.DamTypeFireRaptorRoadkill'
      CrushedDamageType=Class'FireVehiclesV2Omni.DamTypeFireRaptorPancake'
      MaxDesireability=0.600000
