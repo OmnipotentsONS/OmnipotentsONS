@@ -175,22 +175,20 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
         if(Level != None)
             C = Level.ControllerList;
 
+// lots of checking on C since there's been a few crashes when someone leaves
+// maybe this catches it.
         while(C != None)
         {
-            PC = PlayerController(C);
-            if (PC != None)
-            {
-                PC.ClientSetBehindView(true);
-                PC.ClientSetViewTarget(ONS.PowerCores[ONS.FinalCore[deadCore]]);
-                PC.SetViewTarget(ONS.PowerCores[ONS.FinalCore[deadCore]]);
-                PC.ClientRoundEnded();
+            if(C != None) PC = PlayerController(C);
+            if (PC != None) PC.ClientSetBehindView(true);
+            if (PC != None) PC.ClientSetViewTarget(ONS.PowerCores[ONS.FinalCore[deadCore]]);
+            if (PC != None) PC.SetViewTarget(ONS.PowerCores[ONS.FinalCore[deadCore]]);
+            if (PC != None) PC.ClientRoundEnded();
+            
 
-            }
+            if(C != None) C.RoundHasEnded();
 
-            if(C != None)
-                C.RoundHasEnded();
-
-            C = C.NextController;
+            if(C != None) C = C.NextController;
         }
     }
 
