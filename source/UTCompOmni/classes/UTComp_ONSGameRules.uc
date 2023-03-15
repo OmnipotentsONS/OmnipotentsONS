@@ -150,6 +150,7 @@ function OPInitialise()
 }
 
 // snarf attempt to fix the after round shenanigans
+
 function bool CheckScore(PlayerReplicationInfo Scorer)
 {
     local PlayerController PC;
@@ -186,7 +187,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
             if (PC != None) PC.ClientRoundEnded();
             
 
-            if(C != None) C.RoundHasEnded();
+         //   if(C != None) C.RoundHasEnded();  // We know round has ended just set client views commented out. 03/2023 pooty
 
             if(C != None) C = C.NextController;
         }
@@ -194,6 +195,8 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 
     return retval;
 }
+
+
 
 // Initialise the vehicle spawn list for a certain player
 //function InitialiseVehicleSpawnList(ONSPlusPlayerReplicationInfo NewPlayer)

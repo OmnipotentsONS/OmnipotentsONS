@@ -1449,7 +1449,7 @@ defaultproperties
      bEnableClanSkins=True
      bEnablePowerupsOverlay=True
      EnableHitSoundsMode=1
-     bEnableScoreboard=True
+     bEnableScoreboard=False //make UTCompScoreboard False by default 03/2023 pooty
      bEnableWeaponStats=True
      bEnablePowerupStats=True
 
@@ -1485,9 +1485,9 @@ defaultproperties
      NewNetUpdateFrequency=200
      PingTweenTime=3.0
 
-     FriendlyName="UTComp Version 1.41 (Omni)"
+     FriendlyName="UTComp Version 1.42 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.41"
+     FriendlyVersionNumber=")o(mni 1.42"
      Description="A mutator for brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
