@@ -28,7 +28,7 @@ var KnownPlayerPPH KnownPlayers;
 var ONSOnslaughtGame Game;
 var MutTeamBalance EvenMatchMutator;
 var int MinDesiredFirstRoundDuration;
-var bool bBalancing, bSaveNeeded;
+var bool bBalancingMulligan, bSaveNeeded;
 var int FirstRoundResult;
 var int MatchStartTS;
 var float ConfigPPHDiff;
@@ -320,17 +320,18 @@ function CustomScore(PlayerReplicationInfo Scorer)
 function bool CheckScore(PlayerReplicationInfo Scorer)
 {
 	local int i;
-
-  if (bBalancing) return True;
-  // if balancing return, we don't need to do anything else.
+  //if (EvenMatchMutator.bDebug) log("Starting CheckScores...bBalancingMulligan="$bBalancingMulligan$" bMulliganEnabled="$EvenMatchMutator.bMulliganEnabled, 'EvenMatchDebug');
+  if (bBalancingMulligan) return False; // changed from True (which overrides any other game rules).
+  // this is in case CheckScore gets called while doing mulligan reshuffle
+  // if balancing return, we don't need to do anything else. including any overriding.
   if (EvenMatchMutator.bCustomScoring && Scorer != None) CustomScore(Scorer);
 
-	//if (bBalancing || Super.CheckScore(Scorer)) {
+	//if (bBalancingMulligan || Super.CheckScore(Scorer)) {
 		
 		
 		/* Removed for 3.61 Might have been crashing.   on Super.CheckScore(Scorer)
-		Plus its redundant below if no mulligan (MinDesiredFirstRoundDuration, it updates PPH Scores (if bBalancing = False from line above)
-		if (!bBalancing) {
+		Plus its redundant below if no mulligan (MinDesiredFirstRoundDuration, it updates PPH Scores (if bBalancingMulligan = False from line above)
+		if (!bBalancingMulligan) {
 			// just update recent PPH values
 			for (i = 0; i < Level.GRI.PRIArray.Length; ++i) {
 				if (Level.GRI.PRIArray[i] != None && !Level.GRI.PRIArray[i].bOnlySpectator)
@@ -340,9 +341,11 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 		return true;
 	}
 	*/
-	if (Level.GRI.ElapsedTime < MinDesiredFirstRoundDuration && Level.GRI.Teams[0].Score + Level.GRI.Teams[1].Score > 0) {
+	// Check for Mulligan ---------------------------------------
+	if (EvenMatchMutator.bMulliganEnabled && Level.GRI.ElapsedTime < MinDesiredFirstRoundDuration && Level.GRI.Teams[0].Score + Level.GRI.Teams[1].Score > 0) {
 		MinDesiredFirstRoundDuration = 0; // one restart is enough
-		bBalancing = True;
+		EvenMatchMutator.bMulliganEnabled = False;// one restart is enough
+		bBalancingMulligan = True; 
 		if (Level.GRI.Teams[0].Score > 0)
 			FirstRoundResult = 1;
 		else
@@ -367,17 +370,22 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 		Level.GRI.Teams[0].Score = 0;
 		Level.GRI.Teams[1].Score = 0;
 
-		bBalancing = False;
+		bBalancingMulligan = False;
 		return true;
+		// End Mulligan........
 	}
 	else {
 		// just update recent PPH values
+		//if (EvenMatchMutator.bDebug) log("Updating PPH Values in CheckScore, Level.GRI.PRIArray.Length="$Level.GRI.PRIArray.Length, 'EvenMatchDebug');
 		for (i = 0; i < Level.GRI.PRIArray.Length; ++i) {
 			if (Level.GRI.PRIArray[i] != None && !Level.GRI.PRIArray[i].bOnlySpectator)
 				GetPointsPerHour(Level.GRI.PRIArray[i]);
 		}
+  	//if (EvenMatchMutator.bDebug) log("Updated PPH Values in CheckScore, Level.GRI.PRIArray.Length="$Level.GRI.PRIArray.Length, 'EvenMatchDebug');
+
 	}
 
+// should we check for Scorer = None?
   if ( NextGameRules != none )
 	{
 		return NextGameRules.CheckScore( Scorer );
@@ -386,12 +394,12 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 	return false;
 }
 
-/** Check if a player is becoming spectator. */
+/** Check if a player is becoming spectator. There is no notify for specatators they just get killed and go to spec. */
 function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> damageType, vector HitLocation)
 {
 	if (DamageType == class'Suicided' && PlayerController(Killed.Controller) != None || DamageType == class'DamageType' && Killed.PlayerReplicationInfo != None && Killed.PlayerReplicationInfo.bOnlySpectator) {
 		PotentiallyLeavingPlayer = PlayerController(Killed.Controller);
-		SetTimer(0.01, false); // might be a player leaving, check right after all this whether it really is
+		SetTimer(0.01, false); // might be a player leaving, check right after all this whether it really is killed or someone going to spec.
 	}
 	return Super.PreventDeath(Killed, Killer, damageType, HitLocation);
 }
@@ -399,15 +407,17 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
 // HACK: Mutator.NotifyLogout() doesn't seem to be called in all cases, so perform alternate check here
 function Timer()
 {
-	if (PotentiallyLeavingPlayer == None || PotentiallyLeavingPlayer.PlayerReplicationInfo != None && PotentiallyLeavingPlayer.PlayerReplicationInfo.bOnlySpectator) {
-		if (EvenMatchMutator.bDebug) {
-			if (PotentiallyLeavingPlayer == None)
-				log("DEBUG: a player disconnected", 'EvenMatchDebug');
-			else
-				log("DEBUG: " $ PotentiallyLeavingPlayer.GetHumanReadableName() $ " became spectator", 'EvenMatchDebug');
-		}
-		EvenMatchMutator.CheckBalance(PotentiallyLeavingPlayer, True);
-	}
+	
+	if (PotentiallyLeavingPlayer != None) 
+		if  (PotentiallyLeavingPlayer.PlayerReplicationInfo != None && PotentiallyLeavingPlayer.PlayerReplicationInfo.bOnlySpectator) 
+		{
+				if (PotentiallyLeavingPlayer != None) {
+					if (EvenMatchMutator.bDebug) log("DEBUG: " $ PotentiallyLeavingPlayer.GetHumanReadableName() $ " became spectator", 'EvenMatchDebug_Timer');
+					// check balance on someone going to spec.
+					EvenMatchMutator.CheckBalance(PotentiallyLeavingPlayer, True);
+				}
+				// if they've actually left NotifyLogout() gets called.
+		}	  
 
     if(replicationHack != 0)
     {
@@ -760,7 +770,7 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 				bSaveNeeded = True;
 			}
 			RecentMap.PPH[IndexMap].CurrentPPH = PPH;
-			if (RecentMap.PPH[IndexMap].PastPPH != -1)
+			if (RecentMap.PPH[IndexMap].PastPPH != -1) 
 				PastPPHMap = RecentMap.PPH[IndexMap].PastPPH;
 		}
 	}
@@ -889,5 +899,6 @@ function float GetTeamProgress()
 defaultproperties
 {
 	bNetTemporary = True
-    ConfigPPHDiff=200
+  ConfigPPHDiff=200
+  bBalancingMulligan = False
 }

@@ -36,6 +36,7 @@ var config bool bBalanceTeamsDuringOvertime;
 var config bool bBalanceTeamsOnPlayerRequest;
 var config bool bBalanceTeamsOnAdminRequest;
 var config bool bDisplayRoundProgressIndicator;
+var config bool bMulliganEnabled;
 var config float SmallTeamProgressThreshold;
 var config int SoftRebalanceDelay;
 var config int ForcedRebalanceDelay;
@@ -58,6 +59,7 @@ var config bool bDebug;
 
 var localized string lblActivationDelay, descActivationDelay;
 var localized string lblMinDesiredFirstRoundDuration, descMinDesiredFirstRoundDuration;
+var localized string lblMulliganEnabled,descMulliganEnabled;
 var localized string lblShuffleTeamsAtMatchStart, descShuffleTeamsAtMatchStart;
 var localized string lblRandomlyStartWithSidesSwapped, descRandomlyStartWithSidesSwapped;
 var localized string lblAssignConnectingPlayerTeam, descAssignConnectingPlayerTeam;
@@ -514,8 +516,11 @@ function NotifyLogout(Controller Exiting)
 {
 	Super.NotifyLogout(Exiting);
 
-	if (PlayerController(Exiting) != None && Exiting.PlayerReplicationInfo != None && !Exiting.PlayerReplicationInfo.bOnlySpectator) {
-		if (bDebug) log("DEBUG: " $ Exiting.GetHumanReadableName() $ " disconnected", 'EvenMatchDebug');
+	if (PlayerController(Exiting) != None && Exiting.PlayerReplicationInfo != None ) {
+		if (!Exiting.PlayerReplicationInfo.bOnlySpectator) 
+		   if (bDebug) log("DEBUG: " $ Exiting.GetHumanReadableName() $ " disconnected", 'EvenMatchDebug_NotifyLogout');
+		else if (bDebug) log("DEBUG: " $ Exiting.GetHumanReadableName() $ " Became a Spectator", 'EvenMatchDebug_NotifyLogout'); 
+		// FYI I don't think NotifyLogout happens for specs  They aren't Logout, they just spec
 		Rules.SetTimer(0.0, false);
 		CheckBalance(PlayerController(Exiting), True);
 	}
@@ -618,7 +623,7 @@ Check team balance and potentially switch players.
 */
 function CheckBalance(PlayerController Player, bool bIsLeaving)
 {
-	if (!bBalanceTeamsWhilePlaying || Level.Game.bOverTime && !bBalanceTeamsDuringOvertime)
+	if (!bBalanceTeamsWhilePlaying || (Level.Game.bOverTime && !bBalanceTeamsDuringOvertime))
 		return;
 
 	ActuallyCheckBalance(Player, bIsLeaving);
@@ -1140,12 +1145,13 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
 defaultproperties
 {
-	Build = "3.61"
+	Build = "3.62"
 	FriendlyName = "Omnip)o(tents Team Balance (Onslaught-only)"
 	Description  = "Special team balancing rules for public Onslaught matches."
 	bAddToServerPackages = True
 
 	ActivationDelay                       = 10
+	bMulliganEnabled = False
 	MinDesiredFirstRoundDuration          = 5
 	bShuffleTeamsAtMatchStart             = True
 	bShuffleTeamsAtRoundStart             = False
@@ -1186,8 +1192,11 @@ defaultproperties
 	lblActivationDelay  = "Activation delay"
 	descActivationDelay = "Team balance checks only start after this number of seconds elapsed in the match."
 
-	lblMinDesiredFirstRoundDuration  = "Minimum desired first round length (minutes)"
-	descMinDesiredFirstRoundDuration = "If the first round is shorter than this number of minutes, scores are reset and the round is restarted with shuffled teams."
+	lblMulliganEnabled  = "Reshuffle teams if Minimum desired first round length isn't reached."
+	descMulliganEnabled = "Enables if the first round is shorter than this number of minutes, scores are reset and the round is restarted with shuffled teams."
+
+	lblMinDesiredFirstRoundDuration  = "Minimum desired first round length (minutes) - ignored if MulliganEnabled is False"
+	descMinDesiredFirstRoundDuration = "If the first round is shorter than this number of minutes and Mulligan Enabled, scores are reset and the round is restarted with shuffled teams."
 
 	lblShuffleTeamsAtMatchStart  = "Shuffle teams at match start"
 	descShuffleTeamsAtMatchStart = "Initially assign players to teams based on PPH from the previous matches to achieve even teams."
