@@ -4,6 +4,11 @@ Class UTComp_ONSGameRules extends GameRules;
 //var ONSPlusGameReplicationInfo OPGRI;
 //var ONSPlusMutator MutatorOwner;
 
+var config bool bEnableEndRoundCheckScore;  // flag to use end round fix or not
+var config bool bDebugRules;  // general debug
+var config bool bDebugDamagePoints;  // debug for NetDamage, its pretty chatty so it gets its own toggle
+
+
 var GameReplicationInfo OPGRI;
 var MutUTComp MutatorOwner;
 
@@ -14,6 +19,7 @@ var array<GameObjective.ScorerRecord> SavedScorers;
 
 var bool bGrabResult;
 var int PreIsolated;
+
 
 // var float DamageScoreQuota;
 var float IsolateBonusPctPerNode;
@@ -36,10 +42,10 @@ function OPInitialise()
 
 	if (MutatorOwner == none)
 	{
-		Log("ERROR: UTComp_ONSGameRules.MutatorOwner IS NONE IN OPInitialise", 'UTCompError');
+		Log("ERROR: UTComp_ONSGameRules.MutatorOwner IS NONE IN OPInitialise", 'UTCompOmni_Error');
 		return;
 	}
-
+	
 	if (ONSOnslaughtGame(level.game) == none)
 		return;
 
@@ -147,6 +153,7 @@ function OPInitialise()
 			VehicleSpawnMonitors[VehicleSpawnMonitors.Length-1].Tag = VF.Event;
 		}
 	}
+	if (bDebugRules) log("Finished OPInitialise",'UTCompOmni_ONSGameRules_OPInitialise');
 }
 
 // snarf attempt to fix the after round shenanigans
@@ -157,43 +164,49 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
     local Controller C;
     local ONSOnslaughtGame ONS;
     local int deadCore;
-    local bool retval;
+    //local bool retval;
 
-    retval = false;
-    if(NextGameRules != none)
-        retval = NextGameRules.CheckScore(Scorer);
+    if (bEnableEndRoundCheckScore) {
 
-    deadCore = -1;
-    ONS = ONSOnslaughtGame(Level.Game);
-    if(ONS != none && ONS.PowerCores[ONS.FinalCore[0]].Health <= 0)
-        deadCore = 0;
-    else if(ONS != none && ONS.PowerCores[ONS.FinalCore[1]].Health <= 0)
-        deadCore = 1;
+			Global.timer(); //clears all timers
+			
+	    deadCore = -1;
+	    ONS = ONSOnslaughtGame(Level.Game);
+	    if(ONS != none && ONS.PowerCores[ONS.FinalCore[0]].Health <= 0)
+	        deadCore = 0;
+	    else if(ONS != none && ONS.PowerCores[ONS.FinalCore[1]].Health <= 0)
+	        deadCore = 1;
 
-        //round has ended
-    if(deadCore >= 0)
-    {
-        if(Level != None)
-            C = Level.ControllerList;
+	        //round has ended
+	    if(deadCore >= 0)
+	    {
+	        if(Level != None)
+	            C = Level.ControllerList;
 
-// lots of checking on C since there's been a few crashes when someone leaves
-// maybe this catches it.
-        while(C != None)
-        {
-            if(C != None) PC = PlayerController(C);
-            if (PC != None) PC.ClientSetBehindView(true);
-            if (PC != None) PC.ClientSetViewTarget(ONS.PowerCores[ONS.FinalCore[deadCore]]);
-            if (PC != None) PC.SetViewTarget(ONS.PowerCores[ONS.FinalCore[deadCore]]);
-            if (PC != None) PC.ClientRoundEnded();
-            
+	// lots of checking on C since there's been a few crashes when someone leaves
+	// maybe this catches it.
+	        while(C != None)
+	        {
+	            if(C != None) PC = PlayerController(C);
+	            if (PC != None) PC.ClientSetBehindView(true);
+	            if (PC != None) PC.ClientSetViewTarget(ONS.PowerCores[ONS.FinalCore[deadCore]]);
+	            if (PC != None) PC.SetViewTarget(ONS.PowerCores[ONS.FinalCore[deadCore]]);
+	            if (PC != None) PC.ClientRoundEnded();
+	            
 
-         //   if(C != None) C.RoundHasEnded();  // We know round has ended just set client views commented out. 03/2023 pooty
+	            if(C != None) C.RoundHasEnded();  // We know round has ended just set client views commented out. 03/2023 pooty
 
-            if(C != None) C = C.NextController;
-        }
-    }
+	            if(C != None) C = C.NextController;
+	        } // while
+	        if (bDebugRules) log("Finished Resetting ClientViews",'UTCompOmni_ONSGameRules_CheckScore');
+	    } // dead core
+	  }  // end bEnableEndRoundCheckScore
 
-    return retval;
+// Moved here to match other gamerules. other examples always show this at the end 03/2023 pooty
+ if ( NextGameRules != None )
+        return NextGameRules.CheckScore(Scorer);
+
+    return false;
 }
 
 
@@ -273,8 +286,8 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
 	local float DamagePts;
   local bool bDebug;
 
-  bDebug = MutatorOwner.RepInfo.bDebugLogging; // for somereason this always false??
-  // bDebug = True;
+
+  bDebug = bDebugDamagePoints; //seperate debug, as this is quite chatty Pooty 03/2023.
   if (bDebug) Log("UTComp:ONSGameRules-Debug "$bDebug$"Config Vehicle Damage Points="$MutatorOwner.RepInfo.VehicleDamagePoints$",Damage="$Damage$",OriginalDamage="$OriginalDamage$",DamageType="$DamageType);
 	//CurDamage = Super.NetDamage(OriginalDamage, Damage, injured, instigatedBy, HitLocation, Momentum, DamageType);
 	CurDamage = Damage;
@@ -357,4 +370,8 @@ defaultproperties
 {
     // DamageScoreQuota=100.0
     IsolateBonusPctPerNode=20.0
+    bEnableEndRoundCheckScore=True
+    bDebugRules=False
+    bDebugDamagePoints=False
+
 }

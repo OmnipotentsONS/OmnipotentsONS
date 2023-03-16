@@ -140,6 +140,8 @@ function PreBeginPlay()
 	}
 
 	SaveRecentPPH();
+	
+	if (EvenMatchMutator.bDebug) log("Finished PreBeginPlay", 'EvenMatchDebug');
 }
 
 simulated function PostNetBeginPlay()
@@ -217,6 +219,7 @@ function MatchStarting()
 	}
 
     LastCheckScoreTime=Level.TimeSeconds;
+    if (EvenMatchMutator.bDebug) log("Finished MatchStarting", 'EvenMatchDebug');
 }
 
 
@@ -322,6 +325,11 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 	local int i;
   //if (EvenMatchMutator.bDebug) log("Starting CheckScores...bBalancingMulligan="$bBalancingMulligan$" bMulliganEnabled="$EvenMatchMutator.bMulliganEnabled, 'EvenMatchDebug');
   if (bBalancingMulligan) return False; // changed from True (which overrides any other game rules).
+  // From UT Source
+  /* CheckScore() see if this score means the game ends
+  return true to override gameinfo checkscore, or if game was ended (with a call to Level.Game.EndGame() )
+  */
+    
   // this is in case CheckScore gets called while doing mulligan reshuffle
   // if balancing return, we don't need to do anything else. including any overriding.
   if (EvenMatchMutator.bCustomScoring && Scorer != None) CustomScore(Scorer);
@@ -371,7 +379,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 		Level.GRI.Teams[1].Score = 0;
 
 		bBalancingMulligan = False;
-		return true;
+		return True;
 		// End Mulligan........
 	}
 	else {
@@ -385,13 +393,11 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 
 	}
 
-// should we check for Scorer = None?
-  if ( NextGameRules != none )
-	{
-		return NextGameRules.CheckScore( Scorer );
-  }
-    
-	return false;
+   if ( NextGameRules != None )
+        return NextGameRules.CheckScore(Scorer);
+
+    return false;
+
 }
 
 /** Check if a player is becoming spectator. There is no notify for specatators they just get killed and go to spec. */

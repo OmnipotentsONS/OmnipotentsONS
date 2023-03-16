@@ -208,7 +208,9 @@ var UTComp_Whitelist Whitelist;
 function PreBeginPlay()
 {
     bEnhancedNetCodeEnabledAtStartOfMap = bEnableEnhancedNetCode;
-
+    log("MutUTComp Debug="$bDebugLogging);
+    if (bDebugLogging) log("Starting PreBeginPlay...",'MutUTComp');
+    
     ReplacePawnAndPC();
     SetupVoting();
     SetupColoredDeathMessages();
@@ -218,6 +220,7 @@ function PreBeginPlay()
     SetupWhitelist();
 
     super.PreBeginPlay();
+    if (bDebugLogging) log("Finished PreBeginPlay...",'MutUTComp');
 }
 
 function SetupPowerupInfo()
@@ -755,7 +758,7 @@ function PostBeginPlay()
 	local mutator M;
 	local string URL;
 
-
+  if (bDebugLogging) log("Starting PostBeginPlay...",'MutUTComp');
 	Super.PostBeginPlay();
 
 	URL = Level.GetLocalURL();
@@ -789,6 +792,7 @@ function PostBeginPlay()
             return;
     }
     class'GrenadeAmmo'.default.InitialAmount = NumGrenadesOnSpawn;
+    if (bDebugLogging) log("Finished PostBeginPlay...",'MutUTComp');
 }
 
 simulated function bool InStrNonCaseSensitive(String S, string S2)
@@ -1008,6 +1012,8 @@ function ModifyLogin(out string Portal, out string Options)
         Level.Game.ScoreBoardType=string(class'UTComp_ScoreBoard_Mutant');
     }
 
+	if (bDebugLogging) log("ModifyLogin ScoreboardType="$Level.Game.ScoreBoardType,'MutUTComp');
+	
     Super.ModifyLogin(Portal, Options);
 
     if(level.game.hudtype~="xInterface.HudCTeamDeathmatch")
@@ -1449,7 +1455,7 @@ defaultproperties
      bEnableClanSkins=True
      bEnablePowerupsOverlay=True
      EnableHitSoundsMode=1
-     bEnableScoreboard=False //make UTCompScoreboard False by default 03/2023 pooty
+     bEnableScoreboard=True
      bEnableWeaponStats=True
      bEnablePowerupStats=True
 
@@ -1485,9 +1491,9 @@ defaultproperties
      NewNetUpdateFrequency=200
      PingTweenTime=3.0
 
-     FriendlyName="UTComp Version 1.42 (Omni)"
+     FriendlyName="UTComp Version 1.43 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.42"
+     FriendlyVersionNumber=")o(mni 1.43"
      Description="A mutator for brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
