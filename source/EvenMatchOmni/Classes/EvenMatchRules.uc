@@ -411,6 +411,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
 }
 
 // HACK: Mutator.NotifyLogout() doesn't seem to be called in all cases, so perform alternate check here
+// Its not a hack.. NotifyLogout() is for disconnects, not going to spec who ever wrote this originally didn't know that pooty 03/2023
 function Timer()
 {
 	

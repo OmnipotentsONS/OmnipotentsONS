@@ -511,18 +511,21 @@ function RememberForcedSwitch(PlayerController PC, string Reason)
 
 /**
 Check if leaving player caused teams to become unbalanced.
+ONLY NEED This if bBalanceTeamsWhilePlaying = True 
 */
 function NotifyLogout(Controller Exiting)
 {
 	Super.NotifyLogout(Exiting);
 
-	if (PlayerController(Exiting) != None && Exiting.PlayerReplicationInfo != None ) {
-		if (!Exiting.PlayerReplicationInfo.bOnlySpectator) 
-		   if (bDebug) log("DEBUG: " $ Exiting.GetHumanReadableName() $ " disconnected", 'EvenMatchDebug_NotifyLogout');
-		else if (bDebug) log("DEBUG: " $ Exiting.GetHumanReadableName() $ " Became a Spectator", 'EvenMatchDebug_NotifyLogout'); 
-		// FYI I don't think NotifyLogout happens for specs  They aren't Logout, they just spec
-		Rules.SetTimer(0.0, false);
-		CheckBalance(PlayerController(Exiting), True);
+	if (bBalanceTeamsWhilePlaying) {  // don't do anything if this is false 03/2023 pooty
+		if (PlayerController(Exiting) != None && Exiting.PlayerReplicationInfo != None ) {
+			if (!Exiting.PlayerReplicationInfo.bOnlySpectator) 
+			   if (bDebug) log("DEBUG: " $ Exiting.GetHumanReadableName() $ " disconnected", 'EvenMatchDebug_NotifyLogout');
+			else if (bDebug) log("DEBUG: " $ Exiting.GetHumanReadableName() $ " Became a Spectator", 'EvenMatchDebug_NotifyLogout'); 
+			// FYI I don't think NotifyLogout happens for specs  They aren't Logout, they just spec
+			Rules.SetTimer(0.0, false);
+			CheckBalance(PlayerController(Exiting), True);
+		}
 	}
 }
 
@@ -1145,7 +1148,7 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
 defaultproperties
 {
-	Build = "3.63"
+	Build = "3.64"
 	FriendlyName = "Omnip)o(tents Team Balance (Onslaught-only)"
 	Description  = "Special team balancing rules for public Onslaught matches."
 	bAddToServerPackages = True
@@ -1161,7 +1164,7 @@ defaultproperties
 	bAnnounceTeamChange                   = True
 	bIgnoreBotsForTeamSize                = True
 	bBalanceTeamsBetweenRounds            = True
-	bBalanceTeamsWhilePlaying             = True
+	bBalanceTeamsWhilePlaying             = False
 	bBalanceTeamsDuringOvertime           = False
 	bBalanceTeamsOnPlayerRequest          = True
 	bBalanceTeamsOnAdminRequest           = True
