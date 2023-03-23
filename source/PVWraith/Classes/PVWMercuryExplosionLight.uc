@@ -32,6 +32,6 @@ defaultproperties
      LightCone=128
      CullDistance=5000.000000
      bHidden=True
-     bDynamicLight=True
+     bDynamicLight=False // Dynamic light is pretty laggy 03/2023 pooty
      LifeSpan=0.500000
 }

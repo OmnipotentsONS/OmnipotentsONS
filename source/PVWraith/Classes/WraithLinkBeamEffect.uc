@@ -341,7 +341,7 @@ defaultproperties
      LightSaturation=100
      LightBrightness=255.000000
      LightRadius=4.000000
-     bDynamicLight=True
+     bDynamicLight=False
      RemoteRole=ROLE_SimulatedProxy
      bNetTemporary=False
      bReplicateInstigator=True

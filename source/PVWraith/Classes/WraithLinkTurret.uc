@@ -375,7 +375,7 @@ function TraceBeamFire(float DeltaTime)
 	
 	LinkedActor = NewLinkedActor;
 	
- //Log("In WraithLinkTurret=TraceBeamFire-AfterLinkedActor"@LinkedActor);
+  //Log("In WraithLinkTurret=TraceBeamFire-AfterLinkedActor"@LinkedActor);
 
 	if (Beam1 != None ) 	{ 
 		Beam1.EndEffect = HL;
@@ -403,7 +403,7 @@ function TraceBeamFire(float DeltaTime)
 			if (HitActor != None && !HitActor.bWorldGeometry && Level.Game.bTeamGame) {
 				
 				 //log("WraithLinkTurret:HitActor"$HitActor$"MyTeam="$TeamNum);
-				 if (Vehicle(HitActor) != None  && Vehicle(HitActor).Health > 0) { // VEhicle
+				 if (Vehicle(HitActor) != None  && Vehicle(HitActor).Health > 0 && !HitActor.IsA('ONSSpecialLinkBeamCatcher')) { // VEhicle , except Dumbass ONSSpecials made stupid beamcatcher as subclsss of vehicle!  Dumb.  03/2023 pooty
 				 	  if (Vehicle(HitActor).GetTeamNum() == TeamNum) { // Team Vehicle
 				 	  	//log("WraithLinkTurret:HealFriendlyVehicle");
 				 	  	HitActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
@@ -419,14 +419,23 @@ function TraceBeamFire(float DeltaTime)
 				 else { // Node or Other Actor
 				 	
 				 	 Node = DestroyableObjective(HitActor);
+				 //	 log("WraithLinkTurret:Node="$Node$" HitActor.Owner"$HitActor.Owner );
 				 	 // shield or sphere Make the hit the node itself, so heals can construct
-				 	 if ((ONSPowerNodeEnergySphere(HitActor) != None) || (ONSPowerNodeShield(HitActor) != None)) Node = DestroyableObjective(HitActor.Owner);
-				  		
-				  if (Node != None) {
+				 	 //if ((ONSPowerNodeEnergySphere(HitActor) != None) || (ONSPowerNodeShield(HitActor) != None)) Node = DestroyableObjective(HitActor.Owner);
+				 	 if (HitActor.IsA('ONSPowerNodeEnergySphere') 
+				 	    || HitActor.IsA('ONSPowerNodeShield') 
+				 	    || HitActor.IsA('ONSSpecialLinkBeamCatcher')
+				 	    || HitActor.IsA('ONSSpecialPowerNodeShield') 
+				 	    || HitActor.IsA('ONSSpecialPowerNodeEnergySphere')) 
+				 	    Node = DestroyableObjective(HitActor.Owner);
+				 	 			 	
+				 	 
+				 	 //log("WraithLinkTurret:Node,AfterSphere/Shield="$Node );
+				   if (Node != None) {
 				  	//log("WraithLinkTurret:HitActorNode"$HitActor$"ONSPowerCore(Node).PoweredBy(TeamNum"$TeamNum$")="$ONSPowerCore(Node).PoweredBy(TeamNum));
 				  	// While its constructing PoweredBy(TeamNum) doesn't get set right.  It only gets set when node fully powers up.
 				  				 
-              if (ONSPowerNode(Node) != None && (Node.DefenderTeamIndex == TeamNum) && Node.Health > 0 )
+              if (Node.IsA('ONSPowerNode')  && (Node.DefenderTeamIndex == TeamNum) && Node.Health > 0 )
 						  //if (ONSPowerNode(Node) != None && ONSPowerNode(Node).PoweredBy(TeamNum) && Node.Health > 0 )
 				  		{ // Friendly Node
 				  			//log("WraithLinkTurret:HealFriendlyNode");

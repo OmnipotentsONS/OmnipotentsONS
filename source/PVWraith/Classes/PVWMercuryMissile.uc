@@ -721,7 +721,7 @@ defaultproperties
      LightRadius=5.000000
      DrawType=DT_StaticMesh
      StaticMesh=StaticMesh'VMWeaponsSM.AVRiLGroup.AVRiLprojectileSM'
-     bDynamicLight=True
+     bDynamicLight=False
      bIgnoreVehicles=True
      AmbientSound=Sound'WVMercuryMissilesSounds.Effects.MercFly'
      LifeSpan=6.000000
