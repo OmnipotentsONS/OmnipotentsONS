@@ -41,6 +41,8 @@ var GamePPH CurrentGamePPH;
 var int replicationHack;
 var float LastCheckScoreTime;
 
+var bool bDebug;
+
 replication
 {
 	reliable if (bNetInitial)
@@ -70,6 +72,7 @@ function PreBeginPlay()
 	local int i, j, Diff;
 	
 	EvenMatchMutator = MutTeamBalance(Owner);
+	bDebug = EvenMatchMutator.bDebug;
 	
 	if (!Level.Game.bEnableStatLogging || !Level.Game.bLoggingGame)
 		RemoteRole = ROLE_SimulatedProxy;
@@ -268,24 +271,27 @@ event Trigger(Actor Other, Pawn EventInstigator)
 		BroadcastLocalizedMessage(class'UnevenMessage', FirstRoundResult);
 }
 
-function CustomScore(PlayerReplicationInfo Scorer)
+/*  Custom Scoring removed for refactoring. 03/2023 pooty  
+function bool CustomScore(PlayerReplicationInfo Scorer)
 {
     local ONSOnslaughtGame onsgame;
     local int oldscore, newscore;
     local bool bHasScored, bCoreDestroyed, bEnemyCoreDestroyed;
 
+    if (bDebug) log("Starting Custom Score...",'EvenMatchOmni_CustomScore');
     if(Scorer != None && EvenMatchMutator.bCustomScoring && Role == ROLE_Authority)
     {
+    	  if (bDebug) log("Evaluating Custom Score...",'EvenMatchOmni_CustomScore');
         onsgame = ONSOnslaughtGame(Level.Game);
-        onsgame.Timer();
-        /*
+     //   onsgame.Timer();
+       
         // add some hysteresis, restrict calling this function faster than once per 2 seconds
         if(LastCheckScoreTime > level.TimeSeconds )
         {
             return;
         }
         LastCheckScoreTime=Level.TimeSeconds+2.0;
-        */
+       
 
 
         if(Level.Game.bOverTime)
@@ -302,38 +308,57 @@ function CustomScore(PlayerReplicationInfo Scorer)
         bHasScored = Level.GRI.Teams[Scorer.Team.TeamIndex].Score > 0;
         bEnemyCoreDestroyed = onsgame.PowerCores[onsgame.FinalCore[1-Scorer.Team.TeamIndex]].Health <= 0;
         bCoreDestroyed = onsgame.PowerCores[onsgame.FinalCore[Scorer.Team.TeamIndex]].Health <= 0;
-
+        
+        if (bDebug) log("In Custom Score...TeamIndex="$Scorer.Team.TeamIndex$","$"bHasScored="$bHasScored$" bEnemyCoreDestroyed="$bEnemyCoreDestroyed,'EvenMatchOmni_CustomScore');
+        
         if(bHasScored && bEnemyCoreDestroyed && !bCoreDestroyed)
         {
-            //todo unwind stats?
+            if (bDebug) log("Applying Custom Score...TeamIndex="$Scorer.Team.TeamIndex$","$"CurrentScore="$Level.GRI.Teams[Scorer.Team.TeamIndex].Score);
+
+						
             Level.GRI.Teams[Scorer.Team.TeamIndex].Score -= oldscore;
             Level.GRI.Teams[Scorer.Team.TeamIndex].Score += newscore;
             if(Level.GRI.Teams[Scorer.Team.TeamIndex].Score < 0)
                 Level.GRI.Teams[Scorer.Team.TeamIndex].Score = 0;
+
+						if (bDebug) log("After Applying Custom Score...TeamIndex="$Scorer.Team.TeamIndex$","$"NewScore="$Level.GRI.Teams[Scorer.Team.TeamIndex].Score);
 
             Level.GRI.Teams[Scorer.Team.TeamIndex].NetUpdateTime = Level.TimeSeconds - 1;
 
             //update game objects
             onsgame.GameReplicationInfo.Teams[Scorer.Team.TeamIndex].Score = Level.GRI.Teams[Scorer.Team.TeamIndex].Score;
             onsgame.GameReplicationInfo.NetUpdateTime = Level.TimeSeconds - 1;
+            
+            return True;
         }
+      
     }
+    return false;
 }
+
+************************************/ 
 
 function bool CheckScore(PlayerReplicationInfo Scorer)
 {
 	local int i;
+	
+	// this is in case CheckScore gets called while doing mulligan reshuffle
+    if (bBalancingMulligan) return False; 
+  
   //if (EvenMatchMutator.bDebug) log("Starting CheckScores...bBalancingMulligan="$bBalancingMulligan$" bMulliganEnabled="$EvenMatchMutator.bMulliganEnabled, 'EvenMatchDebug');
-  if (bBalancingMulligan) return False; // changed from True (which overrides any other game rules).
   // From UT Source
   /* CheckScore() see if this score means the game ends
   return true to override gameinfo checkscore, or if game was ended (with a call to Level.Game.EndGame() )
   */
-    
-  // this is in case CheckScore gets called while doing mulligan reshuffle
-  // if balancing return, we don't need to do anything else. including any overriding.
-  if (EvenMatchMutator.bCustomScoring && Scorer != None) CustomScore(Scorer);
-
+  /*  
+  retval = False;
+  if (EvenMatchMutator.bCustomScoring && Scorer != None) {
+  	 retval = CustomScore(Scorer); //Adjust scoring, 
+  	 // just continue other checkscore
+  	 // but always return false from CheckScore, let base OnslaughtGame determine winner
+  	 // if we return true it might not check other rules.
+  }	 
+  */
 	//if (bBalancingMulligan || Super.CheckScore(Scorer)) {
 		
 		
@@ -350,7 +375,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 	}
 	*/
 	// Check for Mulligan ---------------------------------------
-	if (EvenMatchMutator.bMulliganEnabled && Level.GRI.ElapsedTime < MinDesiredFirstRoundDuration && Level.GRI.Teams[0].Score + Level.GRI.Teams[1].Score > 0) {
+	if (EvenMatchMutator.bMulliganEnabled && Level.GRI.ElapsedTime < MinDesiredFirstRoundDuration && ((Level.GRI.Teams[0].Score + Level.GRI.Teams[1].Score) > 0)) {
 		MinDesiredFirstRoundDuration = 0; // one restart is enough
 		EvenMatchMutator.bMulliganEnabled = False;// one restart is enough
 		bBalancingMulligan = True; 
@@ -393,9 +418,11 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 
 	}
 
-   if ( NextGameRules != None )
-        return NextGameRules.CheckScore(Scorer);
+// Do we need this original EvenMatch didn't have it
+//   if ( NextGameRules != None )
+//        return NextGameRules.CheckScore(Scorer);
 
+    //return retval;
     return false;
 
 }

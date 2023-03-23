@@ -50,9 +50,10 @@ var config int DeletePlayerPPHAfterDaysNotSeen;
 var config int PlayerGameSecondsBeforeStoringPPH;
 var config int PlayerMinScoreBeforeStoringPPH;
 var config float TeamImbalancePPHThreshold;
-var config bool bCustomScoring;
-var config int CustomRegulationPoints;
-var config int CustomOvertimePoints;
+// Removed 03/203 pooty to seperate mutator
+//var config bool bCustomScoring;
+//var config int CustomRegulationPoints;
+//var config int CustomOvertimePoints;
 var config bool bIgnoreMapSpecificPPH;
 
 var config bool bDebug;
@@ -1148,7 +1149,7 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
 defaultproperties
 {
-	Build = "3.64"
+	Build = "3.65"
 	FriendlyName = "Omnip)o(tents Team Balance (Onslaught-only)"
 	Description  = "Special team balancing rules for public Onslaught matches."
 	bAddToServerPackages = True
@@ -1182,9 +1183,9 @@ defaultproperties
 	PlayerGameSecondsBeforeStoringPPH     = 60
 	PlayerMinScoreBeforeStoringPPH        = 10
     TeamImbalancePPHThreshold             = 500
-    bCustomScoring                        = False
-    CustomRegulationPoints                = 1
-    CustomOvertimePoints                  = 1
+    //bCustomScoring                        = False
+    //CustomRegulationPoints                = 1
+    //CustomOvertimePoints                  = 1
     bIgnoreMapSpecificPPH                 = True
 	
 	bDebug = True

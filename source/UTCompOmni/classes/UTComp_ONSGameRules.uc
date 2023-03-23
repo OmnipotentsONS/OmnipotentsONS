@@ -4,7 +4,7 @@ Class UTComp_ONSGameRules extends GameRules;
 //var ONSPlusGameReplicationInfo OPGRI;
 //var ONSPlusMutator MutatorOwner;
 
-var config bool bEnableEndRoundCheckScore;  // flag to use end round fix or not
+//var config bool bEnableEndRoundCheckScore;  // flag to use end round fix or not Removed pooty 03/2023
 var config bool bDebugRules;  // general debug
 var config bool bDebugDamagePoints;  // debug for NetDamage, its pretty chatty so it gets its own toggle
 
@@ -157,7 +157,8 @@ function OPInitialise()
 }
 
 // snarf attempt to fix the after round shenanigans
-
+// Removed as custom score getting refactored and this should never be needed. 03/2023 Pooty
+/*
 function bool CheckScore(PlayerReplicationInfo Scorer)
 {
     local PlayerController PC;
@@ -209,7 +210,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
     return false;
 }
 
-
+*/
 
 // Initialise the vehicle spawn list for a certain player
 //function InitialiseVehicleSpawnList(ONSPlusPlayerReplicationInfo NewPlayer)
@@ -370,7 +371,7 @@ defaultproperties
 {
     // DamageScoreQuota=100.0
     IsolateBonusPctPerNode=20.0
-    bEnableEndRoundCheckScore=True
+    
     bDebugRules=False
     bDebugDamagePoints=False
 
