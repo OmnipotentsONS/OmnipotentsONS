@@ -362,10 +362,11 @@ function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam
 	return Super.FindPlayerStart(Player, InTeam, incomingName);
 }
 
+/*
 function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 {
 }
-
+*/
 
 defaultproperties
 {
