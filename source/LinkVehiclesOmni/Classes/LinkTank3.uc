@@ -1,11 +1,11 @@
-// Heavy Link Tank 3.0 updated by pOOty
+//  Link Tank 3.0 updated by pOOty
 // ============================================================================
 // Link Tank 2.0
 // Complete recode of original Link Tank
 // By [OMNI]Kamek
 // ============================================================================
 
-class LinkTank3Heavy extends ONSHoverTank;
+class LinkTank3 extends ONSHoverTank;
 
 // Green -- Combiner'UT2004Weapons.Shaders.Combiner12'
 // Blue -- Combiner'UT2004Weapons.Shaders.Combiner15'
@@ -49,7 +49,7 @@ var bool bBeaming;							// True if utilizing alt-fire
 
 var LinkAttachment.ELinkColor OldLinkColor;
 
-var LinkTank3HeavyBeamEffect Beam;
+var LinkTank3BeamEffect Beam;
 
 replication
 {
@@ -78,8 +78,8 @@ simulated function UpdateLinkColor( LinkAttachment.ELinkColor Color )
 
 	// Update weapon colors too
 	for (i = 0; i < Weapons.Length; i++)
-		if (LinkTank3HeavyGun(Weapons[i]) != None)
-			LinkTank3HeavyGun(Weapons[i]).UpdateLinkColor(Color);
+		if (LinkTank3Gun(Weapons[i]) != None)
+			LinkTank3Gun(Weapons[i]).UpdateLinkColor(Color);
 }
 
 // ============================================================================
@@ -387,7 +387,7 @@ static function StaticPrecache(LevelInfo L)
 {
     super(ONSTreadCraft).StaticPrecache(L);
 
-	L.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue');
 	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankTread');
 	L.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerGreen');
 	L.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerRed');
@@ -408,7 +408,7 @@ simulated function UpdatePrecacheStaticMeshes()
 
 simulated function UpdatePrecacheMaterials()
 {
-	Level.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue');
 	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankTread');
 	Level.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerGreen');
 	Level.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerRed');
@@ -431,19 +431,19 @@ function bool RecommendLongRangedAttack()
 
 defaultproperties
 {
-     LinkSkin_Gold(0)=Combiner'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed-DoubleLink'
-     LinkSkin_Gold(1)=Combiner'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue-DoubleLink'
-     LinkSkin_Green(0)=Combiner'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed-Idle'
-     LinkSkin_Green(1)=Combiner'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue-Idle'
-     LinkSkin_Red(0)=Combiner'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed-Linking'
-     LinkSkin_Blue(1)=Combiner'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue-Linking'
+     LinkSkin_Gold(0)=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-DoubleLink'
+     LinkSkin_Gold(1)=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue-DoubleLink'
+     LinkSkin_Green(0)=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-Idle'
+     LinkSkin_Green(1)=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue-Idle'
+     LinkSkin_Red(0)=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-Linking'
+     LinkSkin_Blue(1)=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue-Linking'
      MaxSteerTorque=160.000000
-     DriverWeapons(0)=(WeaponClass=Class'LinkVehiclesOmni.LinkTank3HeavyGun')
-     PassengerWeapons(0)=(WeaponPawnClass=Class'LinkVehiclesOmni.LinkTank3HeavySecondaryTurretPawn',WeaponBone="SecondaryTurretAttach")
-     PassengerWeapons(1)=(WeaponPawnClass=Class'LinkVehiclesOmni.LinkTank3HeavyTertiaryTurretPawn',WeaponBone="TertiaryTurretAttach")
+     DriverWeapons(0)=(WeaponClass=Class'LinkVehiclesOmni.LinkTank3Gun')
+     PassengerWeapons(0)=(WeaponPawnClass=Class'LinkVehiclesOmni.LinkTank3SecondaryTurretPawn',WeaponBone="SecondaryTurretAttach")
+     PassengerWeapons(1)=(WeaponPawnClass=Class'LinkVehiclesOmni.LinkTank3TertiaryTurretPawn',WeaponBone="TertiaryTurretAttach")
      bHasAltFire=True
-     RedSkin=Combiner'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed-Idle'
-     BlueSkin=Combiner'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue-Idle'
+     RedSkin=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-Idle'
+     BlueSkin=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue-Idle'
      DestroyedVehicleMesh=None
      DestructionEffectClass=Class'UT2k4Assault.FX_SpaceFighter_Explosion_Directional'
      DisintegrationEffectClass=None
@@ -455,15 +455,14 @@ defaultproperties
      TPCamLookat=(X=50.000000,Z=0.000000)
      TPCamWorldOffset=(Z=300.000000)
      
-     VehiclePositionString="in a Heavy Link Tank"
-     VehicleNameString="Heavy Link Tank 3.0"
-     RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3HeavyRoadkill'
-     CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3HeavyPancake'
+     VehiclePositionString="in a Link Tank"
+     VehicleNameString=" Link Tank 3.0"
+     RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Roadkill'
+     CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Pancake'
      HealthMax=1500.000000
      Health=1200
      Mesh=SkeletalMesh'ONSToys1Mesh.LinkTankChassis'
-     Skins(0)=Combiner'LinkTank3Tex.HeavyLinkTank.LinkTankBodyRed-Idle'
-     Skins(1)=Texture'LinkTank3Tex.HeavyLinkTank.LinkTankTread'
-     Skins(2)=Texture'LinkTank3Tex.HeavyLinkTank.LinkTankTread'
-     DrawScale=1.1
+     Skins(0)=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-Idle'
+     Skins(1)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
+     Skins(2)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
 }

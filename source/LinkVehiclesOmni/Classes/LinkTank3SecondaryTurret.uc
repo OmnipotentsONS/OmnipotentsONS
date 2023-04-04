@@ -1,7 +1,7 @@
 // ============================================================================
 // Link Tank gunner turret.
 // ============================================================================
-class LinkTank3HeavySecondaryTurret extends ONSWeapon;
+class LinkTank3SecondaryTurret extends ONSWeapon;
 
 var() sound LinkedFireSound;
 
@@ -13,8 +13,8 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 	local Projectile SpawnedProjectile;
 	local int NumLinks;
 
-	if (LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
-		NumLinks = LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
+	if (LinkTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+		NumLinks = LinkTank3(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 	else
 		NumLinks = 0;
 
@@ -69,7 +69,7 @@ defaultproperties
      FireInterval=0.200000
      FireSoundClass=SoundGroup'WeaponSounds.PulseRifle.PulseRifleFire'
      AmbientSoundScaling=1.300000
-     ProjectileClass=Class'LinkVehiclesOmni.LinkTank3HeavyProjectileSmall'
+     ProjectileClass=Class'LinkVehiclesOmni.LinkTank3ProjectileSmall'
      AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.990000,RefireRate=0.990000)
      Mesh=SkeletalMesh'ONSWeapons-A.RVnewGun'
      RedSkin=Texture'LinkScorpion3Tex.LinkScorpGun'

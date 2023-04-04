@@ -20,6 +20,7 @@ var Pawn	LockedPawn;
 var float	LinkBreakTime;
 var() float LinkBreakDelay;
 var float	LinkScale[6];
+var float CurrDrawScale;
 
 var String MakeLinkForce;
 
@@ -27,6 +28,8 @@ var() int Damage;
 var() float MomentumTransfer;
 
 var() float LinkFlexibility;
+var float LinkMultiplier;
+var float SelfHealMultiplier; 
 
 var		bool bDoHit;
 var()	bool bFeedbackDeath;
@@ -104,12 +107,7 @@ simulated function DestroyEffects()
 
 simulated function float AdjustLinkDamage( TickScorpion3Omni LS, Actor Other, float Damage )
 {
-	return Damage * (1.5*LS.Links+1);
-}
-
-simulated function tick(float dt)
-{
-	super.tick(Dt);
+	return Damage * (1*LS.Links+1)*MyTickScorpion.CurrDrawScale;
 }
 
 state InstantFireMode
@@ -136,6 +134,14 @@ state InstantFireMode
 		local Vehicle LinkedVehicle;
 	
 		Super.Tick(dt);
+		
+		// Scale the tick gun
+		CurrDrawScale = MyTickScorpion.CurrDrawScale;
+		// get it from basevehicle and set it so we can ref it from beameffect.
+		SetDrawScale(CurrDrawScale);
+		Damage = Min(default.Damage,Damage*MyTickScorpion.CurrDrawScale);
+		//Scale Beam Size, LB but uses Default Size.  
+		
 		if ( !bIsFiring )
 	    {
 			bInitAimError = true;
@@ -151,7 +157,7 @@ state InstantFireMode
 		{
 			UpTime -= dt;
 			StartTrace=WeaponFireLocation;
-			TraceRange = default.TraceRange + MyTickScorpion.Links*250;
+			TraceRange = default.TraceRange*CurrDrawScale + MyTickScorpion.Links*250;
 			
 	        if ( Instigator.Role < ROLE_Authority )
 	        {
@@ -323,8 +329,12 @@ state InstantFireMode
 								//if (!HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
 									//LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 							}
-							else
+							else {
 								Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, MomentumTransfer*X, DamageType);
+								// heal itself
+								 if (MyTickScorpion!=None&&MyTickScorpion.Health<MyTickScorpion.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
+                     MyTickScorpion.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
+							}
 
 							if ( Beam != None )
 								Beam.bLockedOn = true;
@@ -337,7 +347,7 @@ state InstantFireMode
 			LinkedVehicle = Vehicle(LockedPawn);
 			if ( LinkedVehicle != None && bDoHit )
 			{
-				AdjustedDamage = Damage * (1.5*MyTickScorpion.Links+1) * Instigator.DamageScaling;
+				AdjustedDamage = Damage * (LinkMultiplier*MyTickScorpion.Links+1) * Instigator.DamageScaling;
 				if (Instigator.HasUDamage())
 					AdjustedDamage *= 2;
 				LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);//if (! ))
@@ -571,7 +581,7 @@ defaultproperties
      LinkScale(4)=1.400000
      LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
-     Damage=9
+     Damage=12  //link gun shaft is 9
      LinkFlexibility=0.300000
      bInitAimError=True
      LinkVolume=240
@@ -587,7 +597,7 @@ defaultproperties
      FireInterval=0.120000
      FireSoundVolume=255.000000
      DamageType=Class'XWeapons.DamTypeLinkShaft'
-     TraceRange=2100.000000  // 1100 is link gun's trace range
+     TraceRange=3000.000000  // 1100 is link gun's trace range
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
      ShakeRotTime=6.000000
@@ -597,5 +607,11 @@ defaultproperties
      AIInfo(0)=(bLeadTarget=True,bFireOnRelease=True,WarnTargetPct=0.500000,RefireRate=0.650000)
      CullDistance=7500.000000
      Mesh=SkeletalMesh'ONSWeapons-A.RVnewGun'
+     RedSkin=Texture'LinkScorpion3Tex.TickTex.TickScorpGun'
+     BlueSkin=Texture'LinkScorpion3Tex.TickTex.TickScorpGun'
      SoundVolume=150
+    
+     LinkMultiplier = 1.5;
+		 SelfHealMultiplier = 1.25;
+     
 }

@@ -71,13 +71,13 @@ simulated function Vector SetBeamRotation()
 
 simulated function Tick(float dt)
 {
-    local float LocDiff, RotDiff, WiggleMe,ls;
+    local float LocDiff, RotDiff, WiggleMe,linkscale;
     local int c, n;
     local Vector BeamDir, HitLocation, HitNormal;
     local actor HitActor;
-	local PlayerController P;
-    if ( Role == ROLE_Authority && (Instigator == None || Instigator.Controller == None) )
-    {
+    local PlayerController P;
+	
+    if ( Role == ROLE_Authority && (Instigator == None || Instigator.Controller == None) )  {
         Destroy();
         return;
     }
@@ -103,14 +103,14 @@ simulated function Tick(float dt)
 				Sparks = Spawn(class'LinkScorp3Sparks', self);
 		}
 	}
-    ls = class'LinkFire'.default.LinkScale[Min(Links,5)];
+    linkscale = class'LinkFire'.default.LinkScale[Min(Links,5)];
 
     if ( Links != OldLinks || LinkColor != OldLinkColor || MuzFlash != OldMuzFlash )
     {
         // beam size
-        mSizeRange[0] = default.mSizeRange[0] * (ls*0.6 + 1);
+        mSizeRange[0] = default.mSizeRange[0] * (linkscale*0.6 + 1);
 
-        mWaveShift = default.mWaveShift * (ls*0.6 + 1);
+        mWaveShift = default.mWaveShift * (linkscale*0.6 + 1);
 
         // create/destroy children
         NumChildren = Min(Links+1, MAX_CHILDREN);
@@ -134,16 +134,16 @@ simulated function Tick(float dt)
         {
             if ( Links > 0 )
             {
-                Skins[0] = FinalBlend'LinkScorpion3Tex.LinkBeamPurpleFB';//was yellow
+                Skins[0] = FinalBlend'XEffectMat.LinkBeamYellowFB';//was yellow
                 if ( MuzFlash != None )
-					MuzFlash.Skins[0] = Texture'XEffectMat.link_muz_yellow';
+					         MuzFlash.Skins[0] = Texture'XEffectMat.link_muz_yellow';
                 LightHue = 40;
             }
             else
             {
-                Skins[0] = FinalBlend'LinkScorpion3Tex.LinkBeamPurpleFB'; //green
+                Skins[0] = FinalBlend'XEffectMat.LinkBeamGreenFB'; //green
                 if ( MuzFlash != None )
-	                MuzFlash.Skins[0] = Texture'LinkScorpion3Tex.link_muz_purple';
+	                MuzFlash.Skins[0] = Texture'XEffectMat.link_muz_green';
                 LightHue = 179;
             }
         }
@@ -164,16 +164,16 @@ simulated function Tick(float dt)
 
 		if ( MuzFlash != None )
 		{
-			MuzFlash.mSizeRange[0] = MuzFlash.default.mSizeRange[0] * (ls*0.5 + 1);
+			MuzFlash.mSizeRange[0] = MuzFlash.default.mSizeRange[0] * (linkscale*0.5 + 1);
 			MuzFlash.mSizeRange[1] = MuzFlash.mSizeRange[0];
 		}
 
-        LightBrightness = 180 + 40*ls;
-        LightRadius = 6 + 3*ls;
+        LightBrightness = 180 + 40*linkscale;
+        LightRadius = 6 + 3*linkscale;
 
         if ( Sparks != None )
         {
-            Sparks.SetLinkStatus(Links, (LinkColor > 0), ls);
+            Sparks.SetLinkStatus(Links, (LinkColor > 0), linkscale);
             Sparks.bHidden = (LinkColor > 0);
             Sparks.LightHue = LightHue;
             Sparks.LightBrightness = LightBrightness;
@@ -295,5 +295,6 @@ simulated function bool CheckMaxEffectDistance(PlayerController P, vector SpawnL
 
 defaultproperties
 {
-     Skins(0)=FinalBlend'LinkScorpion3Tex.LinkBeamPurpleFB'
+     Skins(0)=FinalBlend'XEffectMat.Link.LinkBeamGreenFB'
+     
 }

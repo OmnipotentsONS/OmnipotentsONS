@@ -108,9 +108,9 @@ simulated function Tick(float dt)
     if ( Links != OldLinks || LinkColor != OldLinkColor || MuzFlash != OldMuzFlash )
     {
         // beam size
-        mSizeRange[0] = default.mSizeRange[0] * (ls*0.6 + 1);
+        mSizeRange[0] = default.mSizeRange[0] * TickScorp3Gun.CurrDrawScale * (ls*0.6 + 1);
 
-        mWaveShift = default.mWaveShift * (ls*0.6 + 1);
+        mWaveShift = default.mWaveShift * TickScorp3Gun.CurrDrawScale * (ls*0.6 + 1);
 
         // create/destroy children
         NumChildren = Min(Links+1, MAX_CHILDREN);
@@ -123,7 +123,7 @@ simulated function Tick(float dt)
 					if ( Child[c] == None )
 						Child[c] = Spawn(class'TickScorpion3BeamChild', self);
 
-					Child[c].mSizeRange[0] = 2.0 + 4.0 * (NumChildren - c);
+					Child[c].mSizeRange[0] = (2.0 * TickScorp3Gun.CurrDrawScale) + 4.0 * (NumChildren - c);
 				}
 				else if ( Child[c] != None )
 					Child[c].Destroy();
@@ -164,8 +164,8 @@ simulated function Tick(float dt)
 
 		if ( MuzFlash != None )
 		{
-			MuzFlash.mSizeRange[0] = MuzFlash.default.mSizeRange[0] * (ls*0.5 + 1);
-			MuzFlash.mSizeRange[1] = MuzFlash.mSizeRange[0];
+			MuzFlash.mSizeRange[0] = MuzFlash.default.mSizeRange[0] * TickScorp3Gun.CurrDrawScale * (ls*0.5 + 1);
+			MuzFlash.mSizeRange[1] = MuzFlash.mSizeRange[0] * TickScorp3Gun.CurrDrawScale;
 		}
 
         LightBrightness = 180 + 40*ls;

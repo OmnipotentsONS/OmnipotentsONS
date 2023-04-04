@@ -1,0 +1,430 @@
+//===========================================================
+// EONS Scorpion
+// EONS Scorpion by Wail of Suicide
+// Please contact me before using any of this code in your own maps/mutators.
+// Contact: wailofsuicide@gmail.com or www.wailofsuicide.com - Comments and suggestions welcome.
+//===========================================================
+
+#exec obj load file=Textures\EONSScorpion.utx package=EONS-Scorpion_BETA3
+
+class EONSScorpion extends ONSRV;
+
+var () class<Emitter>	AfterburnerClass[2];
+var Emitter				Afterburner[2];
+var () Vector			AfterburnerOffset[2];
+var () Rotator		AfterburnerRotOffset[2];
+var bool				  bAfterburnersOn;
+
+var bool  bBoost;         //Boost functionality
+var float BoostForce;
+var float BoostTime;
+var int   BoostCount;
+var Sound BoostSound, BoostReadySound;
+var float BoostRechargeTime;
+var float BoostRechargeCounter;
+var float BoostFOV;
+var bool bPrimed;        //When the detonator is primed, collisions cause the vehicle to explode
+var bool bImminentDestruction; //Set when we have collided with something and are going to explode next tick.
+
+var int SelfDestructDamage;
+var int SelfDestructDamageRadius;
+var class<DamageType> SelfDestructDamageType;
+var int SelfDestructMomentum;
+
+
+replication
+{
+  reliable if (Role==ROLE_Authority)
+     bBoost, bPrimed, bImminentDestruction, BoostCount, BoostRechargeCounter;
+}
+
+
+simulated function PostNetBeginPlay()
+{
+	Super(ONSWheeledCraft).PostNetBeginPlay();
+}
+
+
+function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
+{
+  if ( (ClassIsChildOf(DamageType, class'DamTypeShockBeam')) || (ClassIsChildOf(DamageType, class'DamTypeONSMine')) )
+     Damage *= 0.8;
+  Momentum *= 0.35;
+
+  if (bBoost && instigatedBy != none && instigatedBy != self)
+     Damage *= 2;
+
+  Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
+}
+
+
+function ChooseFireAt(Actor A)
+{
+	Fire(0);
+}
+
+
+function AltFire(optional float F)
+{
+	Super(ONSWheeledCraft).AltFire(F);
+}
+
+
+function ClientVehicleCeaseFire(bool bWasAltFire)
+{
+	Super(ONSWheeledCraft).ClientVehicleCeaseFire(bWasAltFire);
+}
+
+
+function VehicleFire(bool bWasAltFire)
+{
+	if (bWasAltFire)
+	{
+		Boost();
+	}
+
+  Super(ONSWheeledCraft).VehicleFire(bWasAltFire);
+}
+
+
+function VehicleCeaseFire(bool bWasAltFire)
+{
+	Super(ONSWheeledCraft).VehicleCeaseFire(bWasAltFire);
+}
+
+
+function Boost()
+{
+	//If we're already boosting, then prime the detonator
+	if (bBoost)
+	{
+	  bPrimed = true;
+	  PlaySound(BoostReadySound, SLOT_Misc, 128,,,160);
+	}
+
+  // If we have a boost ready and we're not currently using it
+	if (BoostCount > 0 && !bBoost)
+	{
+    BoostRechargeCounter=0;
+	  PlaySound(BoostSound, SLOT_Misc, 128,,,64); //Boost sound Pitch 160
+		bBoost = true;
+		BoostCount--;
+	}
+}
+
+
+simulated event Timer()
+{
+	// when boost time exceeds time limit, turn it off and disable the primed detonator
+	bBoost = false;
+	bPrimed = false;
+	EnableAfterburners(bBoost);
+}
+
+//
+simulated function EnableAfterburners(bool bEnable)
+{
+	// Don't bother on dedicated server, this controls graphics only
+	if (Level.NetMode != NM_DedicatedServer)
+	{
+		//Because we want the trail emitters to look right (proper team color and not strangely angled at startup) we need to create our emitters every time we boost
+    if (bEnable)
+    {
+       // Create boosting emitters.
+		   Afterburner[0] = spawn(AfterburnerClass[Team], self,, Location + (AfterburnerOffset[0] >> Rotation) );
+		   Afterburner[0].SetBase(self);
+		   Afterburner[0].SetRelativeRotation(AfterburnerRotOffset[0]);
+
+		   Afterburner[1] = spawn(AfterburnerClass[Team], self,, Location + (AfterburnerOffset[1] >> Rotation) );
+		   Afterburner[1].SetBase(self);
+		   Afterburner[1].SetRelativeRotation(AfterburnerRotOffset[1]);
+    }
+    else
+    {
+       if (Afterburner[0] != none)
+          Afterburner[0].Destroy();
+       if (Afterburner[1] != none)
+		      Afterburner[1].Destroy();
+    }
+	}
+
+	bAfterburnersOn = bEnable; // update state of afterburners
+}
+
+
+function Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
+{
+   if (Level.NetMode != NM_DedicatedServer)
+	 {
+	    if (Afterburner[0] != none)
+         Afterburner[0].Destroy();
+      if (Afterburner[1] != none)
+	       Afterburner[1].Destroy();
+   }
+
+   //Handle vehicle ejection stuff
+   //if (Driver != none && Driver.ShieldStrength >= 50)
+   //   bEjectDriver=true;
+
+   Super.Died(Killer, damageType, HitLocation);
+}
+
+
+simulated function Destroyed()
+{
+    if (Level.NetMode != NM_DedicatedServer)
+	  {
+		   if (Afterburner[0] != none)
+          Afterburner[0].Destroy();
+       if (Afterburner[1] != none)
+		      Afterburner[1].Destroy();
+    }
+
+    Super.Destroyed();
+}
+
+
+
+simulated function Tick(float DT)
+{
+  //If bImminentDestruction, then we have already primed the detonator and hit something - We detonate here because detonating in KImpact seemed to cause General Protection Faults in some circumstances
+  if (bImminentDestruction)
+  {
+     SuperEjectDriver();
+     HurtRadius(SelfDestructDamage, SelfDestructDamageRadius, SelfDestructDamageType, SelfDestructMomentum, Location);
+     TakeDamage(SelfDestructDamage*3, Self, Location, vect(0,0,0), SelfDestructDamageType);
+  }
+
+  //If bAfterburnersOn and boost state don't agree
+  if (bBoost != bAfterburnersOn)
+  {
+	   // it means we need to change the state of the vehicle (bAfterburnersOn)
+	   // to match the desired state (bBoost)
+     EnableAfterburners(bBoost); // show/hide afterburner smoke
+
+	   // if we just enabled afterburners, set the timer
+	   // to turn them off after set time has expired
+	   if (bBoost)
+	   {
+	      SetTimer(BoostTime, false);
+     }
+	}
+
+	if (Role == ROLE_Authority)
+	{
+	   // Afterburners recharge after the change in time exceeds the specified charge duration
+	   BoostRechargeCounter+=DT;
+	   if (BoostRechargeCounter > BoostRechargeTime)
+	   {
+	      if (BoostCount < 1)
+	      {
+           BoostCount++;
+           if( PlayerController(Controller) != None)
+           {
+			        PlayerController(Controller).ClientPlaySound(BoostReadySound,,,SLOT_Misc);
+           }
+           //PlaySound(BoostReadySound, SLOT_Misc,128);
+        }
+        BoostRechargeCounter = 0;
+	   }
+	}
+
+  Super.Tick(DT);
+}
+
+
+
+simulated event KApplyForce(out vector Force, out vector Torque)
+{
+	Super.KApplyForce(Force, Torque); // apply other forces first
+
+	if (bBoost && bVehicleOnGround)
+	{
+    Force += vector(Rotation); // get direction of vehicle
+		Force += Normal(Force) * BoostForce; // apply force in that direction
+	}
+}
+
+
+simulated function float ChargeBar()
+{
+    if (BoostCount != 1)
+       return FClamp(BoostRechargeCounter/BoostRechargeTime, 0.0, 0.999);
+    else
+       return 0.999;
+}
+
+
+// event called when Karmic actor hits with impact velocity over KImpactThreshold
+// Used for determining if we have hit something worth detonating on
+event KImpact(actor other, vector pos, vector impactVel, vector impactNorm)
+{
+   if (bPrimed && VSize(impactVel) > 500)
+   {
+      bImminentDestruction = true;
+      ImpactVel /= 100;
+      if (Other != None && Other.IsA('ONSPRV'))
+         ImpactVel = vect(0,0,0);
+      Super.KImpact(Other, Pos, ImpactVel, ImpactNorm);
+   }
+}
+
+event Touch(actor Other)
+{
+    if (Other != None)
+    {
+       Super.Touch(Other);
+       if (Other.bBlockActors && bPrimed)
+       {
+          bImminentDestruction = true;
+       }
+    }
+}
+
+
+function SuperEjectDriver()
+{
+    local Pawn      OldPawn;
+    local vector    EjectVel;
+    local EONSScorpionSelfDestructInv Inv;
+    local EONSScorpionEjectionInv Inv2;
+
+    OldPawn = Driver;
+
+    KDriverLeave( true );
+
+    if ( OldPawn == None )
+        return;
+
+    EjectVel    = VRand();
+    EjectVel.Z  = 0;
+    EjectVel    = (Normal(EjectVel)*0.2 + Vect(0,0,1)) * EjectMomentum;
+
+    OldPawn.Velocity = EjectVel;
+
+    //Create our inventory items to absorb the self-destruct damage and some falling damage
+    Inv = spawn(class'EONSScorpionSelfDestructInv', OldPawn,,, rot(0,0,0));
+    Inv.GiveTo(OldPawn);
+    Inv2 = spawn(class'EONSScorpionEjectionInv', OldPawn,,, rot(0,0,0));
+    Inv2.GiveTo(OldPawn);
+
+
+    OldPawn.SpawnTime = Level.TimeSeconds;
+    OldPawn.PlayTeleportEffect( false, false);
+}
+
+//Our standard vehicle explosion doesn't need to do any damage if we've just self-destructed
+function VehicleExplosion(vector MomentumNormal, float PercentMomentum)
+{
+    if (bImminentDestruction)
+    {
+       ExplosionDamage = 0;
+    }
+
+    Super.VehicleExplosion(MomentumNormal, PercentMomentum);
+}
+
+defaultproperties
+{
+     AfterburnerClass(0)=Class'ONS-MinusTankMeUp-Randomizer-V15.EONSScorpionBoostTrailEmitterRed'
+     AfterburnerClass(1)=Class'ONS-MinusTankMeUp-Randomizer-V15.EONSScorpionBoostTrailEmitterBlue'
+     AfterburnerOffset(0)=(X=-110.000000,Y=-21.000000,Z=-1.000000)
+     AfterburnerOffset(1)=(X=-110.000000,Y=21.000000,Z=-1.000000)
+     AfterburnerRotOffset(0)=(Yaw=32768)
+     AfterburnerRotOffset(1)=(Yaw=32768)
+     BoostForce=1600.000000
+     BoostTime=2.000000
+     BoostCount=1
+     BoostSound=Sound'AssaultSounds.SkaarjShip.SkShipAccel01'
+     BoostReadySound=Sound'AssaultSounds.HumanShip.HnShipFireReadyl01'
+     BoostRechargeTime=8.000000
+     SelfDestructDamage=300
+     SelfDestructDamageRadius=750
+     SelfDestructDamageType=Class'ONS-MinusTankMeUp-Randomizer-V15.DamTypeEONSScorpionSelfDestruct'
+     SelfDestructMomentum=60000
+     WheelAdhesion=0.050000
+     GearRatios(1)=0.500000
+     MaxBrakeTorque=25.000000
+     SteerSpeed=200.000000
+     DaredevilThreshInAirSpin=100.000000
+     DaredevilThreshInAirDistance=25.000000
+     bAllowAirControl=True
+     AirPitchDamping=55.000000
+     DriverWeapons(0)=(WeaponClass=Class'ONS-MinusTankMeUp-Randomizer-V15.EONSScorpionProjectileLauncher')
+     RedSkin=FinalBlend'ONS-MinusTankMeUp-Randomizer-V15.SCORPION.EONSScorpionRedFB'
+     BlueSkin=FinalBlend'ONS-MinusTankMeUp-Randomizer-V15.SCORPION.EONSScorpionBlueFB'
+     Begin Object Class=SVehicleWheel Name=RRWheel
+         bPoweredWheel=True
+         bHandbrakeWheel=True
+         BoneName="tire02"
+         BoneRollAxis=AXIS_Y
+         BoneOffset=(Y=7.000000)
+         WheelRadius=24.000000
+         SupportBoneName="RrearStrut"
+         SupportBoneAxis=AXIS_X
+     End Object
+     Wheels(0)=SVehicleWheel'ONS-MinusTankMeUp-Randomizer-V15.EONSScorpion.RRWheel'
+
+     Begin Object Class=SVehicleWheel Name=LRWheel
+         bPoweredWheel=True
+         bHandbrakeWheel=True
+         BoneName="tire04"
+         BoneRollAxis=AXIS_Y
+         BoneOffset=(Y=-7.000000)
+         WheelRadius=24.000000
+         SupportBoneName="LrearStrut"
+         SupportBoneAxis=AXIS_X
+     End Object
+     Wheels(1)=SVehicleWheel'ONS-MinusTankMeUp-Randomizer-V15.EONSScorpion.LRWheel'
+
+     Begin Object Class=SVehicleWheel Name=RFWheel
+         bPoweredWheel=True
+         SteerType=VST_Steered
+         BoneName="tire"
+         BoneRollAxis=AXIS_Y
+         BoneOffset=(Y=7.000000)
+         WheelRadius=24.000000
+         SupportBoneName="RFrontStrut"
+         SupportBoneAxis=AXIS_X
+     End Object
+     Wheels(2)=SVehicleWheel'ONS-MinusTankMeUp-Randomizer-V15.EONSScorpion.RFWheel'
+
+     Begin Object Class=SVehicleWheel Name=LFWheel
+         bPoweredWheel=True
+         SteerType=VST_Steered
+         BoneName="tire03"
+         BoneRollAxis=AXIS_Y
+         BoneOffset=(Y=-7.000000)
+         WheelRadius=24.000000
+         SupportBoneName="LfrontStrut"
+         SupportBoneAxis=AXIS_X
+     End Object
+     Wheels(3)=SVehicleWheel'ONS-MinusTankMeUp-Randomizer-V15.EONSScorpion.LFWheel'
+
+     VehicleMass=5.500000
+     bShowChargingBar=True
+     DriverDamageMult=0.200000
+     VehiclePositionString="in an EONS Scorpion"
+     VehicleNameString="EONS Scorpion"
+     RanOverDamageType=Class'ONS-MinusTankMeUp-Randomizer-V15.DamTypeEONSScorpionRoadkill'
+     CrushedDamageType=Class'ONS-MinusTankMeUp-Randomizer-V15.DamTypeEONSScorpionPancake'
+     Begin Object Class=KarmaParamsRBFull Name=KParams0
+         KInertiaTensor(0)=1.000000
+         KInertiaTensor(3)=3.000000
+         KInertiaTensor(5)=3.000000
+         KCOMOffset=(X=-0.250000,Z=-0.400000)
+         KLinearDamping=0.050000
+         KAngularDamping=0.050000
+         KStartEnabled=True
+         bKNonSphericalInertia=True
+         bHighDetailOnly=False
+         bClientOnly=False
+         bKDoubleTickRate=True
+         bDestroyOnWorldPenetrate=True
+         bDoSafetime=True
+         KFriction=0.500000
+         KImpactThreshold=700.000000
+     End Object
+     KParams=KarmaParamsRBFull'ONS-MinusTankMeUp-Randomizer-V15.EONSScorpion.KParams0'
+
+}

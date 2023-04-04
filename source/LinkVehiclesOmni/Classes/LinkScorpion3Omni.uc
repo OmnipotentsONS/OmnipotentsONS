@@ -19,10 +19,27 @@ struct HealerStruct
 var array<HealerStruct> Healers; //the array of people currently healing.
 
 var float LastTimeLinkLoop;
+
+// boost
+var () class<Emitter>	AfterburnerClass[2];
+var Emitter				Afterburner[2];
+var () Vector			AfterburnerOffset[2];
+var () Rotator		AfterburnerRotOffset[2];
+var bool				  bAfterburnersOn;
+
+var bool  bBoost;         //Boost functionality
+var float BoostForce;
+var float BoostTime;
+var int   BoostCount;
+var Sound BoostSound, BoostReadySound;
+var float BoostRechargeTime;
+var float BoostRechargeCounter;
+var float BoostFOV;
+
 replication
 {
     unreliable if (Role == ROLE_Authority)
-        Linking, Links;
+        Linking, Links, bBoost, BoostCount, BoostRechargeCounter;
 }
 
 //link scorp needs to tell link gun when it's links change'
@@ -99,6 +116,15 @@ simulated function Timer()
 	local int i;
 	Super.Timer();
 	//log("TIMER IS BEING CALLED");
+	
+	// when boost time exceeds time limit, turn it off and disable the primed detonator
+  if (BoostCount == 0) {
+		bBoost = false;
+	  EnableAfterburners(bBoost);
+	}  
+
+	
+	
 	if(Healers.Length == 0 && Links != 0)
 		Links = 0;
 	else if(LastTimeLinkLoop + 0.5f < Level.TimeSeconds)
@@ -227,6 +253,7 @@ simulated function DrawHUD(Canvas C)
 
 function ChooseFireAt(Actor A)
 {
+	/*  No AltFire, just boost.
 	if (Pawn(A) != None && Vehicle(A) == None && VSize(A.Location - Location) < 1500 && Controller.LineOfSightTo(A))
 	{
 		if (!bWeaponIsAltFiring)
@@ -234,11 +261,176 @@ function ChooseFireAt(Actor A)
 	}
 	else if (bWeaponIsAltFiring)
 		VehicleCeaseFire(true);
-
+  */
+  
 	Fire(0);
 }
 
+function AltFire(optional float F)
+{
+	Super(ONSWheeledCraft).AltFire(F);
+}
 
+function ClientVehicleCeaseFire(bool bWasAltFire)
+{
+	Super(ONSWheeledCraft).ClientVehicleCeaseFire(bWasAltFire);
+}
+
+
+function VehicleFire(bool bWasAltFire)
+{
+	if (bWasAltFire)
+	{
+		Boost();
+	}
+
+  Super(Vehicle).VehicleFire(bWasAltFire);
+}
+
+
+function VehicleCeaseFire(bool bWasAltFire)
+{
+	Super(ONSWheeledCraft).VehicleCeaseFire(bWasAltFire);
+}
+
+function Boost()
+{
+		if (bBoost) 	{
+		  PlaySound(BoostReadySound, SLOT_Misc, 128,,,160);
+	}
+
+  // If we have a boost ready and we're not currently using it
+	if (BoostCount > 0 && !bBoost)
+	{
+    BoostRechargeCounter=0;
+	  PlaySound(BoostSound, SLOT_Misc, 128,,,64); //Boost sound Pitch 160
+		bBoost = true;
+		BoostCount--;
+	}
+}
+
+
+
+simulated function EnableAfterburners(bool bEnable)
+{
+	// Don't bother on dedicated server, this controls graphics only
+	if (Level.NetMode != NM_DedicatedServer)
+	{
+		//Because we want the trail emitters to look right (proper team color and not strangely angled at startup) we need to create our emitters every time we boost
+    if (bEnable)
+    {
+       // Create boosting emitters.
+		   Afterburner[0] = spawn(AfterburnerClass[Team], self,, Location + (AfterburnerOffset[0] >> Rotation) );
+		   Afterburner[0].SetBase(self);
+		   Afterburner[0].SetRelativeRotation(AfterburnerRotOffset[0]);
+
+		   Afterburner[1] = spawn(AfterburnerClass[Team], self,, Location + (AfterburnerOffset[1] >> Rotation) );
+		   Afterburner[1].SetBase(self);
+		   Afterburner[1].SetRelativeRotation(AfterburnerRotOffset[1]);
+    }
+    else
+    {
+       if (Afterburner[0] != none)
+          Afterburner[0].Destroy();
+       if (Afterburner[1] != none)
+		      Afterburner[1].Destroy();
+    }
+	}
+
+	bAfterburnersOn = bEnable; // update state of afterburners
+}
+
+simulated event KApplyForce(out vector Force, out vector Torque)
+{
+	Super.KApplyForce(Force, Torque); // apply other forces first
+
+	if (bBoost && bVehicleOnGround)
+	{
+    Force += vector(Rotation); // get direction of vehicle
+		Force += Normal(Force) * BoostForce; // apply force in that direction
+	}
+}
+
+
+function Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
+{
+   if (Level.NetMode != NM_DedicatedServer)
+	 {
+	    if (Afterburner[0] != none)
+         Afterburner[0].Destroy();
+      if (Afterburner[1] != none)
+	       Afterburner[1].Destroy();
+   }
+
+   //Handle vehicle ejection stuff
+   //if (Driver != none && Driver.ShieldStrength >= 50)
+   //   bEjectDriver=true;
+
+   Super.Died(Killer, damageType, HitLocation);
+}
+
+simulated function Destroyed()
+{
+    if (Level.NetMode != NM_DedicatedServer)
+	  {
+		   if (Afterburner[0] != none)
+          Afterburner[0].Destroy();
+       if (Afterburner[1] != none)
+		      Afterburner[1].Destroy();
+    }
+
+    Super.Destroyed();
+}
+
+
+
+simulated function tick(float dt)
+{
+	
+  //If bAfterburnersOn and boost state don't agree
+  if (bBoost != bAfterburnersOn)
+  {
+	   // it means we need to change the state of the vehicle (bAfterburnersOn)
+	   // to match the desired state (bBoost)
+     EnableAfterburners(bBoost); // show/hide afterburner smoke
+
+	   // if we just enabled afterburners, set the timer
+	   // to turn them off after set time has expired
+	   if (bBoost)
+	   {
+	      SetTimer(BoostTime, false);
+     }
+	}
+
+	if (Role == ROLE_Authority)
+	{
+	   // Afterburners recharge after the change in time exceeds the specified charge duration
+	   BoostRechargeCounter+=DT;
+	   if (BoostRechargeCounter > BoostRechargeTime)
+	   {
+	      if (BoostCount < 1)
+	      {
+           BoostCount++;
+           if( PlayerController(Controller) != None)
+           {
+			        PlayerController(Controller).ClientPlaySound(BoostReadySound,,,SLOT_Misc);
+           }
+           //PlaySound(BoostReadySound, SLOT_Misc,128);
+        }
+        BoostRechargeCounter = 0;
+	   }
+	}
+	super.tick(Dt);
+}
+
+
+simulated function float ChargeBar()
+{
+    if (BoostCount != 1)
+       return FClamp(BoostRechargeCounter/BoostRechargeTime, 0.0, 0.999);
+    else
+       return 0.999;
+}
 
 static function StaticPrecache(LevelInfo L)
 {
@@ -284,6 +476,63 @@ function ShouldTargetMissile(Projectile P)
 
 defaultproperties
 {
+	   WheelSoftness=0.025000
+     WheelPenScale=1.200000
+     WheelPenOffset=0.010000
+     WheelRestitution=0.100000
+     WheelInertia=0.100000
+     WheelLongFrictionFunc=(Points=(,(InVal=100.000000,OutVal=1.000000),(InVal=200.000000,OutVal=0.900000),(InVal=10000000000.000000,OutVal=0.900000)))
+     WheelLongSlip=0.001000
+     WheelLatSlipFunc=(Points=(,(InVal=30.000000,OutVal=0.007000),(InVal=45.000000),(InVal=10000000000.000000)))
+     WheelLongFrictionScale=1.250000
+     WheelLatFrictionScale=1.550000
+     WheelHandbrakeSlip=0.010000
+     WheelHandbrakeFriction=0.100000
+     WheelSuspensionTravel=15.000000
+     WheelSuspensionMaxRenderTravel=15.000000
+     FTScale=0.030000
+     ChassisTorqueScale=0.400000
+     MinBrakeFriction=4.750000
+     MaxSteerAngleCurve=(Points=((OutVal=25.000000),(InVal=1500.000000,OutVal=11.000000),(InVal=1000000000.000000,OutVal=11.000000)))
+     TorqueCurve=(Points=((OutVal=14.000000),(InVal=200.000000,OutVal=20.000000),(InVal=1500.000000,OutVal=28.000000),(InVal=2800.000000)))
+     GearRatios(0)=-0.600000
+     GearRatios(1)=0.610000
+     GearRatios(2)=1.130000
+     GearRatios(3)=1.630000
+     GearRatios(4)=2.100000
+     TransRatio=0.150000
+     ChangeUpPoint=2000.000000
+     ChangeDownPoint=1300.000000
+     LSDFactor=1.000000
+     EngineBrakeFactor=0.000100
+     EngineBrakeRPMScale=0.100000
+     MaxBrakeTorque=40.000000
+     SteerSpeed=240.000000
+     TurnDamping=35.000000
+     StopThreshold=100.000000
+     HandbrakeThresh=200.000000
+     EngineInertia=0.100000
+     IdleRPM=500.000000
+     EngineRPMSoundRange=12000.000000
+     SteerBoneName="SteeringWheel"
+     SteerBoneAxis=AXIS_Z
+     SteerBoneMaxAngle=90.000000
+     RevMeterScale=4000.000000
+     bMakeBrakeLights=True
+     BrakeLightOffset(0)=(X=-100.000000,Y=23.000000,Z=7.000000)
+     BrakeLightOffset(1)=(X=-100.000000,Y=-23.000000,Z=7.000000)
+     BrakeLightMaterial=Texture'EpicParticles.Flares.FlashFlare1'
+     DaredevilThreshInAirSpin=180.000000
+     DaredevilThreshInAirTime=2.400000
+     DaredevilThreshInAirDistance=33.000000
+     bDoStuntInfo=True
+     bAllowAirControl=True
+     bAllowBigWheels=True
+     AirTurnTorque=35.000000
+     AirPitchTorque=55.000000
+     AirPitchDamping=55.000000
+     AirRollTorque=35.000000
+     AirRollDamping=35.000000
      MaxJumpSpin=100.000000
      DriverWeapons(0)=(WeaponClass=Class'LinkVehiclesOmni.LinkScorpion3Gun')
      RedSkin=Shader'LinkScorpion3Tex.LinkrvRedShad'
@@ -363,4 +612,21 @@ defaultproperties
 
      Health=300
      HealthMax=300
+     
+        
+     // boost properties
+     AfterburnerClass(0)=Class'LinkVehiclesOmni.LinkScorp3BoostTrailEmitterRed'
+     AfterburnerClass(1)=Class'LinkVehiclesOmni.LinkScorp3BoostTrailEmitterBlue'
+     AfterburnerOffset(0)=(X=-110.000000,Y=-21.000000,Z=-1.000000)
+     AfterburnerOffset(1)=(X=-110.000000,Y=21.000000,Z=-1.000000)
+     AfterburnerRotOffset(0)=(Yaw=32768)
+     AfterburnerRotOffset(1)=(Yaw=32768)
+     BoostForce=1600.000000
+     BoostTime=2.000000
+     BoostCount=1
+     BoostSound=Sound'AssaultSounds.SkaarjShip.SkShipAccel01'
+     BoostReadySound=Sound'AssaultSounds.HumanShip.HnShipFireReadyl01'
+     BoostRechargeTime=8.000000
+     bShowChargingBar=True
+     DriverDamageMult=0 // no driver damage
 }

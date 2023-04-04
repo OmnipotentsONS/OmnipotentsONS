@@ -1,8 +1,4 @@
-//-----------------------------------------------------------
-// (c) RBThinkTank 07
-//  Coded by milk & Charybdis + Significant chunks of code from the original link gun.
-//   LinkSparks.uc - PurpleSparks.
-//-----------------------------------------------------------
+
 
 class LinkScorp3Sparks extends LinkSparks;
 
@@ -16,7 +12,7 @@ simulated function SetLinkStatus(int Links, bool bLinking, float ls)
     mLifeRange[1] = mLifeRange[0];
     DesiredRegen = default.mRegenRange[0] * (ls + 1);
     if (Links == 0)
-        Skins[0] = Texture'LinkScorpion3Tex.link_spark_purple';
+        Skins[0] = Texture'XEffectMat.Link.link_spark_green';
     else
         Skins[0] = Texture'XEffectMat.Link.link_spark_yellow';
 }
@@ -26,5 +22,5 @@ defaultproperties
      LightHue=179
      LightSaturation=90
      LightBrightness=153.000000
-     Skins(0)=Texture'LinkScorpion3Tex.link_spark_purple'
+     Skins(0)=Texture'XEffectMat.Link.link_spark_green';
 }

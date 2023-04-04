@@ -1,7 +1,7 @@
 // ============================================================================
 // Link Tank weapon.
 // ============================================================================
-class LinkTank3HeavyGun extends ONSWeapon;
+class LinkTank3Gun extends ONSWeapon;
 
 // ============================================================================
 // Properties
@@ -13,7 +13,7 @@ var() int LinkBeamSkin;
 var() sound LinkedFireSound;
 
 // CPed from LinkFire
-var(LinkBeam) class<LinkTank3HeavyBeamEffect>	BeamEffectClass;
+var(LinkBeam) class<LinkTank3BeamEffect>	BeamEffectClass;
 var(LinkBeam) Sound	MakeLinkSound;
 var(LinkBeam) float LinkBreakDelay;
 var(LinkBeam) float MomentumTransfer;
@@ -95,8 +95,8 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 	local Projectile SpawnedProjectile;
 	local int NumLinks;
 
-	if (LinkTank3Heavy(Owner) != None)
-		NumLinks = LinkTank3Heavy(Owner).GetLinks();
+	if (LinkTank3(Owner) != None)
+		NumLinks = LinkTank3(Owner).GetLinks();
 	else
 		NumLinks = 0;
 
@@ -122,15 +122,15 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 // ============================================================================
 function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector HitNormal, int ReflectNum)
 {
-	local LinkTank3HeavyBeamEffect ThisBeam;
-	local LinkTank3HeavyBeamEffect FoundBeam;
+	local LinkTank3BeamEffect ThisBeam;
+	local LinkTank3BeamEffect FoundBeam;
 
-	if (LinkTank3Heavy(Owner) != None)
-		FoundBeam = LinkTank3Heavy(Owner).Beam;
+	if (LinkTank3(Owner) != None)
+		FoundBeam = LinkTank3(Owner).Beam;
 
 	if (FoundBeam == None || FoundBeam.bDeleteMe)
 	{
-		foreach DynamicActors(class'LinkTank3HeavyBeamEffect', ThisBeam)
+		foreach DynamicActors(class'LinkTank3BeamEffect', ThisBeam)
 			if (ThisBeam.Instigator == Instigator)
 				FoundBeam = ThisBeam;
 	}
@@ -138,11 +138,11 @@ function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector H
 	if (FoundBeam == None)
 	{
 		FoundBeam = Spawn(BeamEffectClass, Owner,,WeaponFireLocation);
-		if (LinkTank3Heavy(Owner) != None) LinkTank3Heavy(Owner).Beam = FoundBeam;
+		if (LinkTank3(Owner) != None) LinkTank3(Owner).Beam = FoundBeam;
 	}
 
-	//if (LinkTank3HeavyBeamEffect(Beam) != None)
-	//	LinkTank3HeavyBeamEffect(Beam).WeaponOwner = self;
+	//if (LinkTank3BeamEffect(Beam) != None)
+	//	LinkTank3BeamEffect(Beam).WeaponOwner = self;
 
 	bDoHit = true;
 	UpTime = AltFireInterval + 0.1;
@@ -168,18 +168,18 @@ function WeaponCeaseFire(Controller C, bool bWasAltFire)
 {
 	local LinkBeamEffect Beam;
 
-	if (LinkTank3Heavy(Owner) != None)
-		Beam = LinkTank3Heavy(Owner).Beam;
+	if (LinkTank3(Owner) != None)
+		Beam = LinkTank3(Owner).Beam;
 
 //	log(self@"ceasefire"@bWasAltFire,'KDebug');
 	if (bWasAltFire && Beam != None)
 	{
 		Beam.Destroy();
 		Beam = None;
-		if (LinkTank3Heavy(Owner) != None)
+		if (LinkTank3(Owner) != None)
 		{
-			LinkTank3Heavy(Owner).Beam = None;
-			LinkTank3Heavy(Owner).bBeaming = false;
+			LinkTank3(Owner).Beam = None;
+			LinkTank3(Owner).bBeaming = false;
 		}
 		//AmbientSound = None;
 		Owner.AmbientSound = OldAmbientSound;
@@ -188,10 +188,10 @@ function WeaponCeaseFire(Controller C, bool bWasAltFire)
 		SetLinkTo(None);
 
 		// Can't link if there's no beam
-		if (LinkTank3Heavy(Owner) != None)
+		if (LinkTank3(Owner) != None)
 		{
 			//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to FALSE in WeaponCeaseFire",'KDebug');
-			LinkTank3Heavy(Owner).bLinking = false;
+			LinkTank3(Owner).bLinking = false;
 		}
 	}
 }
@@ -206,7 +206,7 @@ simulated event Tick(float dt)
 	local Vector HitLocation, HitNormal, EndEffect;
 	local Actor Other;
 	local Rotator Aim;
-	local LinkTank3Heavy LinkTank;
+	local LinkTank3 LinkTank;
 	//local float Step, ls;
 	//local bot B;
 	local bool bIsHealingObjective;
@@ -214,7 +214,7 @@ simulated event Tick(float dt)
 	//local LinkBeamEffect LB;
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
-	local LinkTank3HeavyBeamEffect Beam;
+	local LinkTank3BeamEffect Beam;
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
 
@@ -225,12 +225,12 @@ simulated event Tick(float dt)
 	//LinkGun = LinkGun(Weapon);
 	// Instead let's get a reference to our LinkTank
 	// This is easily changed over if I decide I want to recode the Link Badger based off this code
-	//log(Level.TimeSeconds@self@"TICK -- Owner"@Owner@"LinkTank of Owner"@LinkTank3Heavy(Owner),'KDebug');
-	if (LinkTank3Heavy(Owner) != None)
+	//log(Level.TimeSeconds@self@"TICK -- Owner"@Owner@"LinkTank of Owner"@LinkTank3(Owner),'KDebug');
+	if (LinkTank3(Owner) != None)
 	{
-		LinkTank = LinkTank3Heavy(Owner);
+		LinkTank = LinkTank3(Owner);
 		NumLinks = LinkTank.GetLinks();
-		Beam = LinkTank3Heavy(Owner).Beam;
+		Beam = LinkTank3(Owner).Beam;
 		Beam.SetBeamSize(NumLinks);
 	}
 	else
@@ -284,7 +284,7 @@ simulated event Tick(float dt)
 					//if ( !LB.bDeleteMe && (LB.Instigator != None) && (LB.Instigator == Instigator) )
 					//log(self@"check beam"@lb@"owner"@lb.owner@"our owner"@owner@"instigator"@instigator,'KDebug');
 					//if ( !LB.bDeleteMe && (LB.Instigator != None) && (LB.Owner == Owner) )
-					if (LinkTank3HeavyBeamEffect(LB) != None && LinkTank3HeavyBeamEffect(LB).WeaponOwner == self)
+					if (LinkTank3BeamEffect(LB) != None && LinkTank3BeamEffect(LB).WeaponOwner == self)
 					{
 						log("and now it's ours",'KDebug');
 						Beam = LB;
@@ -578,35 +578,35 @@ function SetLinkTo(Pawn Other, optional bool bHealing)
 	// Sanity check
 	if (LockedPawn != Other)
 	{
-	    if (LockedPawn != None && LinkTank3Heavy(Owner) != None)
+	    if (LockedPawn != None && LinkTank3(Owner) != None)
 	    {
 			//log(self@"setlinkto"@other@"current"@LockedPawn,'KDebug');
-	        RemoveLink(1 + LinkTank3Heavy(Owner).GetLinks(), Instigator);
+	        RemoveLink(1 + LinkTank3(Owner).GetLinks(), Instigator);
 
 	        // Added flag so the tank doesn't flash from green to teamcolor rapidly while linking a non-Wormbo node
 	        if (!bHealing)
 	        {
 				//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to FALSE in SetLinkTo"@Other,'KDebug');
-	        	LinkTank3Heavy(Owner).bLinking = false;
+	        	LinkTank3(Owner).bLinking = false;
 	        }
 	    }
 
 	    LockedPawn = Other;
 
 	    // Light up panels if linking a node
-	    //if (LinkTank3Heavy(Owner) != None)
-	    //	LinkTank3Heavy(Owner).bLinking = bIsHealingObjective;
+	    //if (LinkTank3(Owner) != None)
+	    //	LinkTank3(Owner).bLinking = bIsHealingObjective;
 
 	    if (LockedPawn != None)
 	    {
-			if (LinkTank3Heavy(Owner) != None)
+			if (LinkTank3(Owner) != None)
 			{
-		        if (!AddLink(1 + LinkTank3Heavy(Owner).GetLinks(), Instigator))
+		        if (!AddLink(1 + LinkTank3(Owner).GetLinks(), Instigator))
 		        {
 		            bFeedbackDeath = true;
 		        }
 		        			//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to TRUE in SetLinkTo"@Other,'KDebug');
-		        LinkTank3Heavy(Owner).bLinking = true;
+		        LinkTank3(Owner).bLinking = true;
 			}
 	
 	        LockedPawn.PlaySound(MakeLinkSound, SLOT_None);
@@ -858,12 +858,12 @@ defaultproperties
      LinkSkin_Blue(1)=Shader'UT2004Weapons.Shaders.PowerPulseShaderBlue'
      LinkBeamSkin=2
      LinkedFireSound=Sound'WeaponSounds.LinkGun.BLinkedFire'
-     BeamEffectClass=Class'LinkVehiclesOmni.LinkTank3HeavyBeamEffect'
+     BeamEffectClass=Class'LinkVehiclesOmni.LinkTank3BeamEffect'
      MakeLinkSound=Sound'WeaponSounds.LinkGun.LinkActivated'
      LinkBreakDelay=0.500000
      MomentumTransfer=2000.000000
-     AltDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3HeavyBeam'
-     AltDamage=20
+     AltDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Beam'
+     AltDamage=17
      MakeLinkForce="LinkActivated"
      LinkFlexibility=0.550000
      LinkVolume=240
@@ -887,7 +887,7 @@ defaultproperties
      DamageMin=0
      DamageMax=0
      TraceRange=5000.000000
-     ProjectileClass=Class'LinkVehiclesOmni.LinkTank3HeavyProjectile'
+     ProjectileClass=Class'LinkVehiclesOmni.LinkTank3Projectile'
      ShakeRotMag=(X=40.000000)
      ShakeRotRate=(X=2000.000000)
      ShakeRotTime=2.000000

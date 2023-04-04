@@ -1,7 +1,7 @@
 // ============================================================================
 // Link Tank laser turret.
 // ============================================================================
-class LinkTank3HeavyTertiaryTurret extends ONSWeapon;
+class LinkTank3TertiaryTurret extends ONSWeapon;
 
 var() sound LinkedFireSound;
 
@@ -52,8 +52,8 @@ simulated event OwnerEffects()
 
 	if (Role < ROLE_Authority)
 	{
-		if (LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
-			NumLinks = LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
+		if (LinkTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+			NumLinks = LinkTank3(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 		else
 			NumLinks = 0;
 
@@ -71,7 +71,7 @@ simulated event OwnerEffects()
 
 		AimLockReleaseTime = Level.TimeSeconds + FireCountdown * FireIntervalAimLock;
 
-     //   FlashMuzzleFlash();
+        FlashMuzzleFlash();
 
 		if (AmbientEffectEmitter != None)
 			AmbientEffectEmitter.SetEmitterStatus(true);
@@ -94,8 +94,8 @@ function TraceFire(Vector Start, Rotator Dir)
     local int Damage;
     local int NumLinks;
 
-	if (LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
-		NumLinks = LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
+	if (LinkTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+		NumLinks = LinkTank3(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 	else
 		NumLinks = 0;
 
@@ -117,8 +117,7 @@ function TraceFire(Vector Start, Rotator Dir)
 	if (!Other.bWorldGeometry)
         {
             Damage = (DamageMin + Rand(DamageMax - DamageMin));
-            Damage = AdjustLinkDamage(NumLinks,Damage);
-            Other.TakeDamage(Damage, Instigator, HitLocation, Momentum*X, DamageType);
+            Other.TakeDamage(AdjustLinkDamage(NumLinks,Damage), Instigator, HitLocation, Momentum*X, DamageType);
             HitNormal = vect(0,0,0);
         }
     }
@@ -145,15 +144,14 @@ simulated function float AdjustLinkDamage( int NumLinks, float Damage )
 }
 
 
-
 state InstantFireMode
 {
     function Fire(Controller C)
     {
 		local int NumLinks;
 	
-		if (LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
-			NumLinks = LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
+		if (LinkTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+			NumLinks = LinkTank3(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 		else
 			NumLinks = 0;
 	
@@ -163,7 +161,7 @@ state InstantFireMode
 		else
 			FireSoundClass = default.FireSoundClass;
 
-    //    FlashMuzzleFlash();
+        FlashMuzzleFlash();
 
         if (AmbientEffectEmitter != None)
         {
@@ -188,8 +186,8 @@ state InstantFireMode
 		if (Level.NetMode != NM_DedicatedServer)
 		{
 
-			if (LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
-				NumLinks = LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
+			if (LinkTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+				NumLinks = LinkTank3(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 			else
 				NumLinks = 0;
 
@@ -251,10 +249,10 @@ defaultproperties
      FireSoundClass=Sound'WeaponSounds.Misc.instagib_rifleshot'
      AmbientSoundScaling=1.300000
      FireForce="Laser01"
-     DamageType=Class'LinkVehiclesOmni.DamTypeLink3HeavyTurretBeam'
-     DamageMin=30
-     DamageMax=50
+     DamageType=Class'LinkVehiclesOmni.DamTypeLink3TurretBeam'
+     DamageMin=25
+     DamageMax=35
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      Mesh=SkeletalMesh'ONSWeapons-A.TankMachineGun'
-     LinkMultiplier = 1.3
+     LinkMultiplier = 1.1
 }

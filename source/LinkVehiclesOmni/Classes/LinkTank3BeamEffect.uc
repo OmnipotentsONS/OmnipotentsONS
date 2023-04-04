@@ -1,7 +1,7 @@
 // ============================================================================
 // Link Tank beam effect.
 // ============================================================================
-class LinkTank3HeavyBeamEffect extends LinkBeamEffect
+class LinkTank3BeamEffect extends LinkBeamEffect
 	notplaceable;
 
 // hack

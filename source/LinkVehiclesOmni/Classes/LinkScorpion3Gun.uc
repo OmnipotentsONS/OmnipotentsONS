@@ -19,7 +19,9 @@ var float	UpTime;
 var Pawn	LockedPawn;
 var float	LinkBreakTime;
 var() float LinkBreakDelay;
-var float	LinkScale[6];
+var float	LinkScale[6];   // linkers display sizing factor
+var float LinkMultiplier;  // linkers increase factor
+var float VehicleDamageMult; // link does more damage to vehicles
 
 var String MakeLinkForce;
 
@@ -102,9 +104,15 @@ simulated function DestroyEffects()
     }
 }
 
-simulated function float AdjustLinkDamage( LinkScorpion3Omni LS, Actor Other, float Damage )
+simulated function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
 {
-	return Damage * (1.5*LS.Links+1);
+	Damage = Damage * (LinkMultiplier*NumLinks+1);
+
+	if ( Other.IsA('Vehicle') )
+		Damage *= VehicleDamageMult;
+
+	return Damage;
+	
 }
 
 simulated function tick(float dt)
@@ -304,7 +312,7 @@ state InstantFireMode
 
 	                    Instigator.MakeNoise(1.0);
 
-	                    AdjustedDamage = AdjustLinkDamage( MyLinkScorpion, Other, Damage );
+	                    AdjustedDamage = AdjustLinkDamage( MyLinkScorpion.Links, Other, Damage );
 
 	                    if ( !Other.bWorldGeometry )
 	                    {
@@ -337,7 +345,8 @@ state InstantFireMode
 			LinkedVehicle = Vehicle(LockedPawn);
 			if ( LinkedVehicle != None && bDoHit )
 			{
-				AdjustedDamage = Damage * (1.5*MyLinkScorpion.Links+1) * Instigator.DamageScaling;
+				AdjustedDamage = AdjustLinkDamage( MyLinkScorpion.Links, None, Damage ) * Instigator.DamageScaling;
+				// don't apply Vehicle Damage multiplier to healing.
 				if (Instigator.HasUDamage())
 					AdjustedDamage *= 2;
 				LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);//if (! ))
@@ -565,15 +574,26 @@ defaultproperties
      BeamEffectClass=Class'LinkVehiclesOmni.LinkScorpion3BeamEffect'
      MakeLinkSound=Sound'WeaponSounds.LinkGun.LinkActivated'
      LinkBreakDelay=0.500000
-     LinkScale(1)=0.500000
+     
+     /*LinkScale(1)=0.500000
      LinkScale(2)=0.900000
      LinkScale(3)=1.200000
      LinkScale(4)=1.400000
      LinkScale(5)=1.500000
+     Updated link scaling below */
+     
+     // Scale is 
+     LinkScale(1)=0.75000
+     LinkScale(2)=1.25000
+     LinkScale(3)=2.0000 
+     LinkScale(4)=3.00000
+     LinkScale(5)=3.00000 
+     
      MakeLinkForce="LinkActivated"
-     Damage=9
-     LinkFlexibility=0.300000
+     Damage=12 // link gun damage is 9
+     LinkFlexibility=0.350000
      bInitAimError=True
+     PitchUpLimit=10000
      LinkVolume=240
      BeamSounds(0)=Sound'WeaponSounds.LinkGun.BLinkGunBeam1'
      BeamSounds(1)=Sound'WeaponSounds.LinkGun.BLinkGunBeam2'
@@ -587,7 +607,7 @@ defaultproperties
      FireInterval=0.120000
      FireSoundVolume=255.000000
      DamageType=Class'XWeapons.DamTypeLinkShaft'
-     TraceRange=2100.000000  // 1100 is link gun's trace range
+     TraceRange=5000.000000  // 1100 is link gun's trace range, link tank is 5000, make it same as Link Tank its a weak scorp with no other weapon.
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
      ShakeRotTime=6.000000
@@ -597,5 +617,10 @@ defaultproperties
      AIInfo(0)=(bLeadTarget=True,bFireOnRelease=True,WarnTargetPct=0.500000,RefireRate=0.650000)
      CullDistance=7500.000000
      Mesh=SkeletalMesh'ONSWeapons-A.RVnewGun'
+     RedSkin=Texture'LinkScorpion3Tex.LinkScorpGun'
+     BlueSkin=Texture'LinkScorpion3Tex.LinkScorpGun'
      SoundVolume=150
+     
+     LinkMultiplier = 1.5; // each linker adds 150%
+     VehicleDamageMult = 1.25 // more damage to vehicles.
 }

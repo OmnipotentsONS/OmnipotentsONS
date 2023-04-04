@@ -1,7 +1,7 @@
 // ============================================================================
 // Link Tank laser turret pawn.
 // ============================================================================
-class LinkTank3HeavyTertiaryTurretPawn extends ONSWeaponPawn;
+class LinkTank3TertiaryTurretPawn extends ONSWeaponPawn;
 
 // ============================================================================
 // ============================================================================
@@ -72,7 +72,7 @@ function ShouldTargetMissile(Projectile P)
 
 defaultproperties
 {
-     GunClass=Class'LinkVehiclesOmni.LinkTank3HeavyTertiaryTurret'
+     GunClass=Class'LinkVehiclesOmni.LinkTank3TertiaryTurret'
      bHasAltFire=False
      CameraBone="rvGUNbody"
      bDrawDriverInTP=False
@@ -86,5 +86,5 @@ defaultproperties
      TPCamDistRange=(Max=600.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a Link Tank laser turret"
-     VehicleNameString="Link Tank 3.0 Laser Turret"
+     VehicleNameString="Link Tank 2.0 Laser Turret"
 }

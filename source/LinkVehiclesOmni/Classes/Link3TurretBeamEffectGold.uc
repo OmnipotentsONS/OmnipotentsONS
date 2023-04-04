@@ -103,10 +103,11 @@ defaultproperties
          ColorScale(0)=(Color=(B=128,G=128,R=128))
          ColorScale(1)=(RelativeTime=1.000000,Color=(B=64,G=64,R=64))
          MaxParticles=2
+         Opacity=0.800000
          UseRotationFrom=PTRS_Actor
          StartSpinRange=(X=(Max=1.000000))
-         SizeScale(0)=(RelativeSize=1.000000)
-         SizeScale(1)=(RelativeTime=1.000000)
+         SizeScale(0)=(RelativeSize=0.330000)
+         SizeScale(1)=(RelativeTime=0.700000)
          StartSizeRange=(X=(Min=150.000000,Max=200.000000))
          InitialParticlesPerSecond=2000.000000
          Texture=Texture'AW-2004Particles.Weapons.PlasmaMuzzleBlue'

@@ -15,10 +15,12 @@ struct HealerStruct
 var array<HealerStruct> Healers; //the array of people currently healing.
 
 var float LastTimeLinkLoop;
+var float CurrDrawScale;
+
 replication
 {
     unreliable if (Role == ROLE_Authority)
-        Linking, Links;
+        Linking, Links, CurrDrawScale;
 }
 
 //link scorp needs to tell link gun when it's links change'
@@ -26,12 +28,13 @@ replication
 simulated function PostNetBeginPlay()
 {
 	Super.PostNetBeginPlay();
-	if(Role==Role_Authority)
-	{
-		SetTimer(0.2, true);
-	}
+	//if(Role==Role_Authority)
+	//{
+	//	SetTimer(0.2, true);
+	//}
 }
 
+/*
 function bool SomeoneLinksToMe()
 {
 	local Pawn LP;
@@ -47,11 +50,11 @@ function bool SomeoneLinksToMe()
 		else
 		{
 		//we found a player w/ a link gun some where.
-			/*Inv = LP.FindInventoryType(class'LinkGun');
-			if (Inv != None)
-			{
-				LP=LinkFire(LinkGun(Inv).GetFireMode(1)).LockedPawn;
-			}*/
+//Inv = LP.FindInventoryType(class'LinkGun');
+	//		if (Inv != None)
+	//		{
+	//			LP=LinkFire(LinkGun(Inv).GetFireMode(1)).LockedPawn;
+	//		}
 			if( LP.Weapon.IsA('LinkGun') )
 			{
 				LP=LinkFire(LinkGun(LP.Weapon).GetFireMode(1)).LockedPawn;
@@ -69,6 +72,9 @@ function bool SomeoneLinksToMe()
 	}
 	return false;
 }
+*/
+
+
 /* //for v2
 function bool ConsumeAmmo(int Mode, float load, optional bool bAmountNeededIsMax)
 {
@@ -89,6 +95,8 @@ function bool ConsumeAmmo(int Mode, float load, optional bool bAmountNeededIsMax
 	return Super.ConsumeAmmo(Mode, load, bAmountNeededIsMax);
 }
 */
+
+/* Don't need this no link stacking
 simulated function Timer()
 {
 	local int HealerLinks;
@@ -142,7 +150,7 @@ simulated function Timer()
 		//log("Links: "$Links);
 	}
 }
-
+*/
 
 function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
 {
@@ -150,6 +158,7 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 	local bool bFoundInHealerArray;
 	local LinkGun LG;
 
+/*
 	if(TeamLink(Healer.GetTeamNum()))
 	{
 		if(TickScorpion3Omni(Healer.Pawn) != None)
@@ -193,10 +202,12 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 				}
 		}
 	}
-    return super.HealDamage(Amount, Healer, DamageType);
+	*/
+	   return super.HealDamage(ScaleTickScorpDamage(True, Amount), Healer, DamageType);
 }
 
-
+// No link stacking no need to do this
+/*
 simulated function DrawHUD(Canvas C)
 {
 	local PlayerController PC;
@@ -219,7 +230,7 @@ simulated function DrawHUD(Canvas C)
 	}
 }
 
-
+*/
 
 function ChooseFireAt(Actor A)
 {
@@ -276,6 +287,61 @@ function ShouldTargetMissile(Projectile P)
 		KDriverLeave(false);
 		TeamUseTime = Level.TimeSeconds + 4;
 	}
+}
+
+	
+
+
+
+function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
+{
+	  
+    Super.TakeDamage(ScaleTickScorpDamage(false, Damage), instigatedBy, Hitlocation, Momentum, damageType);
+}
+
+function float ScaleTickScorpDamage(bool bHeal, int Damage) {
+	
+	CurrDrawScale = FMax(1,(Health/HealthMax)*2);
+	if (bHeal) return Damage;
+	else return Damage*CurrDrawScale; //increased damage based on health/size
+}
+
+
+function ScaleTickScorp(bool bHeal, int Damage){
+	
+	local vector NewLocation;
+	local bool bSetCol;
+	
+	CurrDrawScale = FMax(1,(Health/HealthMax)*2);
+	
+	// big wheels just temporary till I get rest working
+	SetWheelsScale(CurrDrawScale);
+	
+	//SetDrawScale(CurrDrawScale);  // fully engorged tick is 2x bigger 300 health normal size
+	// Gun scales itself off MyTickScorpion.CurrDrawScale
+	
+	VehicleMass = default.VehicleMass * CurrDrawScale;
+	
+		
+	//bSetCol = SetCollisionSize(default.CollisionRadius * CurrDrawScale*2, default.CollisionHeight * CurrDrawScale*2);
+	// Doesn't quite work right
+	
+	// Adjust TP Camera too.
+	  //TPCamDistance=default.TPCamDistance * CurrDrawScale;
+	 //FPCamPos=(X=15.000000,Z=25.000000)
+   
+   //  TPCamWorldOffset.Z= default.TPCamWorldOffset * CurrDrawScale);
+	// Position (needs to move UP off terrain).. maybe make it jump?
+	// it works fine when occupied.
+	
+	//if (bHeal) {
+	//		NewLocation = Location;
+	//		NewLocation.Z = Location.Z + Damage/15;
+//			SetLocation(NewLocation);
+			// How to make it drop to the ground?
+			//Setphysics?
+//	}	
+	// Speed?
 }
 
 defaultproperties
@@ -357,6 +423,10 @@ defaultproperties
      KParams=KarmaParamsRBFull'LinkVehiclesOmni.TickScorpion3Omni.KParams0'
 
 
+
      Health=300
-     HealthMax=800
+     HealthMax=900
+     CurrDrawScale = 1
+     DamagedEffectHealthFireFactor = 0.125 //100
+	   DamagedEffectHealthSmokeFactor = 0.25 //200
 }
