@@ -459,10 +459,11 @@ defaultproperties
      VehicleNameString=" Link Tank 3.0"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Pancake'
-     HealthMax=1500.000000
-     Health=1200
+     HealthMax=1000.000000
+     Health=800
      Mesh=SkeletalMesh'ONSToys1Mesh.LinkTankChassis'
      Skins(0)=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-Idle'
      Skins(1)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
      Skins(2)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
+     MaxGroundSpeed=850.000000
 }

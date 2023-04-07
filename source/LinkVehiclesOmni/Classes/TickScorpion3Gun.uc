@@ -612,6 +612,6 @@ defaultproperties
      SoundVolume=150
     
      LinkMultiplier = 1.5;
-		 SelfHealMultiplier = 1.25;
+		 SelfHealMultiplier = 1.1;
      
 }

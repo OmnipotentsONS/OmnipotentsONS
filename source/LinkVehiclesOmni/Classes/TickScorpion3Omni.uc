@@ -154,11 +154,12 @@ simulated function Timer()
 
 function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
 {
+	/*  Used for link Stacking
 	local int i;
 	local bool bFoundInHealerArray;
 	local LinkGun LG;
 
-/*
+
 	if(TeamLink(Healer.GetTeamNum()))
 	{
 		if(TickScorpion3Omni(Healer.Pawn) != None)
@@ -203,6 +204,7 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 		}
 	}
 	*/
+	   ScaleTickScorp(true, Amount);
 	   return super.HealDamage(ScaleTickScorpDamage(True, Amount), Healer, DamageType);
 }
 
@@ -295,7 +297,7 @@ function ShouldTargetMissile(Projectile P)
 
 function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
 {
-	  
+	  ScaleTickScorp(false, Damage);
     Super.TakeDamage(ScaleTickScorpDamage(false, Damage), instigatedBy, Hitlocation, Momentum, damageType);
 }
 
@@ -315,41 +317,64 @@ function ScaleTickScorp(bool bHeal, int Damage){
 	CurrDrawScale = FMax(1,(Health/HealthMax)*2);
 	
 	// big wheels just temporary till I get rest working
-	SetWheelsScale(CurrDrawScale);
+	//SetWheelsScale(CurrDrawScale);  // This doesn't work and its straight from mutator.?
 	
 	//SetDrawScale(CurrDrawScale);  // fully engorged tick is 2x bigger 300 health normal size
 	// Gun scales itself off MyTickScorpion.CurrDrawScale
 	
-	VehicleMass = default.VehicleMass * CurrDrawScale;
+	VehicleMass = default.VehicleMass * (1+ CurrDrawScale/3);
+	// Doesn't fucking work.. SetCollisionSize never updates the actual collision box.
+	 //log("TickScorpion CollisionSizeDefaults R,H="$default.CollisionRadius$", "$default.CollisionHeight);
+	 //bSetCol = SetCollisionSize(default.CollisionRadius * CurrDrawScale*550, default.CollisionHeight * CurrDrawScale*550); // karma units 1 UU = 50 KU
+	 //KParams.CalcContactRegion();
+	 //log("TickScorpion AfterSetCollisionSize="$bSetCol);
+	 //SetCollision(true, true);
+	 //bCollideWorld = true;
+	 //bPhysicsAnimUpdate = true;
+	 SetBase( Self );
+	 //log("TickScorpion CurrDrawScale="$CurrDrawScale$" CollisionSize R,H="$CollisionRadius$", "$CollisionHeight);
+	
 	
 		
-	//bSetCol = SetCollisionSize(default.CollisionRadius * CurrDrawScale*2, default.CollisionHeight * CurrDrawScale*2);
-	// Doesn't quite work right
-	
+		
+		
 	// Adjust TP Camera too.
-	  //TPCamDistance=default.TPCamDistance * CurrDrawScale;
+	  TPCamDistance=default.TPCamDistance * CurrDrawScale;
 	 //FPCamPos=(X=15.000000,Z=25.000000)
    
-   //  TPCamWorldOffset.Z= default.TPCamWorldOffset * CurrDrawScale);
+    TPCamWorldOffset.Z = default.TPCamWorldOffset.Z * CurrDrawScale;
+    
 	// Position (needs to move UP off terrain).. maybe make it jump?
 	// it works fine when occupied.
+	/* don't need this if it doesn't grow
+	bHeal = False;
+	if (bHeal && Health<HealthMax) {
+			NewLocation = Location;
+			NewLocation.Z = Location.Z + Damage/9;
+  		SetLocation(NewLocation);
+  		SetPhysics(PHYS_Falling); // How to make it drop to the ground?
 	
-	//if (bHeal) {
-	//		NewLocation = Location;
-	//		NewLocation.Z = Location.Z + Damage/15;
-//			SetLocation(NewLocation);
-			// How to make it drop to the ground?
-			//Setphysics?
-//	}	
+ 	}	
+ 	*/
+ 	
 	// Speed?
 }
 
 defaultproperties
 {
+	
      MaxJumpSpin=100.000000
      DriverWeapons(0)=(WeaponClass=Class'LinkVehiclesOmni.TickScorpion3Gun')
      RedSkin=Shader'LinkScorpion3Tex.LinkrvRedShad'
      BlueSkin=Shader'LinkScorpion3Tex.LinkrvBlueShad'
+     
+     FPCamPos=(X=15.000000,Z=25.000000)
+     TPCamDistance=375.000000
+     CenterSpringForce="SpringONSSRV"
+     TPCamLookat=(X=0.000000,Z=0.000000)
+     TPCamWorldOffset=(Z=100.000000)
+     
+     
      Begin Object Class=SVehicleWheel Name=RRWheel
          bPoweredWheel=True
          bHandbrakeWheel=True
@@ -407,7 +432,7 @@ defaultproperties
          KInertiaTensor(0)=1.000000
          KInertiaTensor(3)=3.000000
          KInertiaTensor(5)=3.000000
-         KCOMOffset=(X=-0.250000,Z=-0.400000)
+         KCOMOffset=(X=-0.250000,Z=-0.00000)
          KLinearDamping=0.050000
          KAngularDamping=0.050000
          KStartEnabled=True

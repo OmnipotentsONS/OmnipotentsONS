@@ -388,6 +388,7 @@ static function StaticPrecache(LevelInfo L)
     super(ONSTreadCraft).StaticPrecache(L);
 
 	L.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed');
 	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankTread');
 	L.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerGreen');
 	L.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerRed');
@@ -409,6 +410,7 @@ simulated function UpdatePrecacheStaticMeshes()
 simulated function UpdatePrecacheMaterials()
 {
 	Level.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed');
 	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankTread');
 	Level.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerGreen');
 	Level.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerRed');
@@ -466,4 +468,5 @@ defaultproperties
      Skins(1)=Texture'LinkTank3Tex.HeavyLinkTank.LinkTankTread'
      Skins(2)=Texture'LinkTank3Tex.HeavyLinkTank.LinkTankTread'
      DrawScale=1.1
+     MaxGroundSpeed=800.000000
 }

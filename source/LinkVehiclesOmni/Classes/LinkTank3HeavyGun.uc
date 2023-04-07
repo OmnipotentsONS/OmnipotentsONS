@@ -231,7 +231,7 @@ simulated event Tick(float dt)
 		LinkTank = LinkTank3Heavy(Owner);
 		NumLinks = LinkTank.GetLinks();
 		Beam = LinkTank3Heavy(Owner).Beam;
-		Beam.SetBeamSize(NumLinks);
+		if (Beam != None )	Beam.SetBeamSize(NumLinks);
 	}
 	else
 		NumLinks = 0;
@@ -563,8 +563,9 @@ simulated function float AdjustLinkDamage( int NumLinks, Actor Other, float Dama
 {
 	Damage = Damage * (LinkMultiplier*NumLinks+1);
 
-	if ( Other.IsA('Vehicle') )
+	if ( (Other != None) && Other.IsA('Vehicle') )
 		Damage *= VehicleDamageMult;
+		
 
 	return Damage;
 }

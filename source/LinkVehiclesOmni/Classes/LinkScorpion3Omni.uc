@@ -610,8 +610,8 @@ defaultproperties
      KParams=KarmaParamsRBFull'LinkVehiclesOmni.LinkScorpion3Omni.KParams0'
 
 
-     Health=300
-     HealthMax=300
+     Health=375
+     HealthMax=375
      
         
      // boost properties
