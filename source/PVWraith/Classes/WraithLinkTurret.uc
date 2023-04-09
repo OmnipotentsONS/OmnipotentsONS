@@ -419,7 +419,7 @@ function TraceBeamFire(float DeltaTime)
 				 else { // Node or Other Actor
 				 	
 				 	 Node = DestroyableObjective(HitActor);
-				 //	 log("WraithLinkTurret:Node="$Node$" HitActor.Owner"$HitActor.Owner );
+				// 	 log("WraithLinkTurret:Node="$Node$" HitActor.Owner"$HitActor.Owner );
 				 	 // shield or sphere Make the hit the node itself, so heals can construct
 				 	 //if ((ONSPowerNodeEnergySphere(HitActor) != None) || (ONSPowerNodeShield(HitActor) != None)) Node = DestroyableObjective(HitActor.Owner);
 				 	 if (HitActor.IsA('ONSPowerNodeEnergySphere') 
@@ -432,7 +432,7 @@ function TraceBeamFire(float DeltaTime)
 				 	 
 				 	 //log("WraithLinkTurret:Node,AfterSphere/Shield="$Node );
 				   if (Node != None) {
-				  	//log("WraithLinkTurret:HitActorNode"$HitActor$"ONSPowerCore(Node).PoweredBy(TeamNum"$TeamNum$")="$ONSPowerCore(Node).PoweredBy(TeamNum));
+				  //	log("WraithLinkTurret:HitActorNode"$HitActor$"ONSPowerCore(Node).PoweredBy(TeamNum"$TeamNum$")="$ONSPowerCore(Node).PoweredBy(TeamNum));
 				  	// While its constructing PoweredBy(TeamNum) doesn't get set right.  It only gets set when node fully powers up.
 				  				 
               if (Node.IsA('ONSPowerNode')  && (Node.DefenderTeamIndex == TeamNum) && Node.Health > 0 )
@@ -443,7 +443,7 @@ function TraceBeamFire(float DeltaTime)
 				     	}
 				   	else { // Enemy Node, core or team core.
 				   		 PrevHealth = Node.Health;
-				   		 //log("WraithLinkTurret:EnemyNode" );
+				   	//	 log("WraithLinkTurret:EnemyNode" );
 				   		 if (!Node.IsInState('NeutralCore') && Node.Health > 0 && !(Node.DefenderTeamIndex == TeamNum) ) {
 				   	 			//log("WraithLinkTurret:EnemyNode-TakeDamage" );
 				   	 	 		Node.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
@@ -592,9 +592,9 @@ state InstantFireMode
 
 defaultproperties
 {
-     DamagePerSecond=150.000000
-     MinDamageAmount=10
-     HealMultiplier=0.800000
+     DamagePerSecond=155.000000
+     MinDamageAmount=5
+     HealMultiplier=1.200000
      SelfHealMultiplier=0.800000
      LinkBreakError=0.950000
      BeamEffectClass=Class'PVWraith.WraithLinkBeamEffect'
@@ -623,8 +623,8 @@ defaultproperties
      FireForce="Laser01"
      DamageType=Class'PVWraith.DamTypeWraithLinkBeam'
      DamageMin=15
-     DamageMax=15
-     TraceRange=4000.000000
+     DamageMax=17
+     TraceRange=6666.000000
      Momentum=-30000.000000
      ProjectileClass=Class'PVWraith.WraithLinkPlasmaProjectile'
      AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.200000,RefireRate=0.700000)
