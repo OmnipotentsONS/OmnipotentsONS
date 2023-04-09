@@ -5,9 +5,24 @@ class HelixMinigunsidePawn extends ONSWeaponPawn;
 // this code enables the hover mode
 function KDriverEnter(Pawn P)
 {
-	super.KDriverEnter(P);
-	 Driver.CreateInventory("APVerIV.edo_ChuteInv");
-	// Give the Gunner a chute!
+	  local Inventory Inv;
+    local CSChuteInv Ch;
+    
+    super.KDriverEnter( P );
+// gunner chutes
+   Driver.CreateInventory("CSEjectorSeat.CSChuteInv");
+   
+   // next displays for server to show other clients
+   // using pickup seems to set this
+   for ( Inv=Driver.Inventory; Inv!=None; Inv=Inv.Inventory )
+    {
+        Ch = CSChuteInv(Inv);
+        if ( Ch != None )
+        {
+    			Ch.bOnlyRelevantToOwner = false;    
+        }
+    }
+    
 	
 	if (!VehicleBase.bDriving)
 		VehicleBase.bDriving = true;

@@ -299,15 +299,28 @@ function UpdateRoll()                                          //Update Pickup S
 
 
 // --- Added to give driver an edo chute 02-28-21
-// Requires APVerIV class
+// changed to CSEjectorSeatChute pooty 03/2023
 
 function KDriverEnter(Pawn p)
 {
 
+    local Inventory Inv;
+    local CSChuteInv Ch;
     super.KDriverEnter( P );
 
-   Driver.CreateInventory("APVerIV.edo_ChuteInv");
-
+   Driver.CreateInventory("CSEjectorSeat.CSChuteInv");
+   
+   // next displays for server to show other clients
+   // using pickup seems to set this
+   for ( Inv=Driver.Inventory; Inv!=None; Inv=Inv.Inventory )
+    {
+        Ch = CSChuteInv(Inv);
+        if ( Ch != None )
+        {
+    			Ch.bOnlyRelevantToOwner = false;    
+        }
+    }
+    
 }
 
 
@@ -752,7 +765,7 @@ defaultproperties
      MomentumMult=0.250000
      DriverDamageMult=0.000000
      VehiclePositionString="in a OmniHelix"
-     VehicleNameString="OmniHelix 1.2"
+     VehicleNameString="OmniHelix 1.21"
      RanOverDamageType=Class'helixesvOmni.DamTypeHelixRoadkill'
      CrushedDamageType=Class'helixesvOmni.DamTypeHelixPancake'
      FlagBone="PlasmaGunAttachment"
