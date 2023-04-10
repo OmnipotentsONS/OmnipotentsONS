@@ -718,6 +718,7 @@ defaultproperties
      //LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
      Damage=21  //link gun shaft is 9, Scorp is 12, Hvy LinkTank 17  This is its primary close in weapon.
+     Momentum=-130000
      LinkFlexibility=0.600000
      bInitAimError=True
      LinkVolume=240

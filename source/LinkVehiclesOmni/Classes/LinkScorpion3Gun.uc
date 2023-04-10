@@ -597,7 +597,7 @@ defaultproperties
      Damage=12 // link gun damage is 9
      LinkFlexibility=0.350000
      bInitAimError=True
-     PitchUpLimit=10000
+     PitchUpLimit=13000
      LinkVolume=240
      BeamSounds(0)=Sound'WeaponSounds.LinkGun.BLinkGunBeam1'
      BeamSounds(1)=Sound'WeaponSounds.LinkGun.BLinkGunBeam2'

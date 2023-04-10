@@ -465,8 +465,8 @@ defaultproperties
      VehicleNameString=" Vampire Tank 3.0"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Pancake'
-     HealthMax=1500.000000
-     Health=1200
+     HealthMax=1366.000000
+     Health=766
      Mesh=SkeletalMesh'ONSToys1Mesh.LinkTankChassis'
      Skins(0)=Combiner'LinkTank3Tex.VampireTank.VampireTankBodyRed-Idle'
      Skins(1)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
@@ -499,6 +499,8 @@ defaultproperties
         Name="KParams0"
     End Object
     KParams=KarmaParams'KParams0'
-    
+  
+    DamagedEffectHealthFireFactor = 0.18 //100
+    DamagedEffectHealthSmokeFactor = 0.3 //410
     //  need some coool horn sounds.
 }

@@ -12,15 +12,17 @@ Ready to Test.
 LinkTank3 (3 seats, stacking, 800 pts) This is the "older" link tank 2.0
 Ready to Test
 
-VampireTank (1 seat, similar to Chupa, Dark theme, faster speed) Started with 1000 health can go to 1500 too high?
-Alt-Fire (Ion shockwave) doesn't seem to do damage, might rather have stormcaster, work to be done.
+VampireTank (1 seat, similar to Chupa, Dark theme, faster speed) Started with 766 health can go to 1366
+Alt-Fire (Ion shockwave) doesn't seem to do damage, might rather have stormcaster, work to be done.  might be good for 1.0
 
 LinkScorp, link, stack, alt-fire is boost like EONS scorp. So this could be a fast nimble link vehicle, like a half version of the link badger.
 Ready to Test
 
 
 Tick, link, no stack, self heal to some high health (say 650-800, start with 250, and increase in mass), alt-fire could be plasma gun (the scorp blades are nearly useless) (or maybe Webcaster primary)
-ToDo: DrawScale on Gun, Blades.  Not sure how to fix...
+ToDo: DrawScale on Gun, Blades.  Not sure how to fix...No fix, can;t scale collision dynamically (engine limitation...)
+Need Alt-fire?  Blood goo?
+also damage taking is messed up scales down too fast when it gets hit.
 
 Lamprey - Manta that grapples on and drains health (healing itself too!)
 - Not Started.

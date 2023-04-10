@@ -582,6 +582,7 @@ defaultproperties
      LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
      Damage=12  //link gun shaft is 9
+     Momentum=-120000  //sucking u in
      LinkFlexibility=0.300000
      bInitAimError=True
      LinkVolume=240
@@ -591,6 +592,7 @@ defaultproperties
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
      YawBone="rvGUNTurret"
      PitchBone="rvGUNbody"
+     PitchUpLimit=13000
      WeaponFireAttachmentBone="RVfirePoint"
      bInstantFire=True
      bDoOffsetTrace=True

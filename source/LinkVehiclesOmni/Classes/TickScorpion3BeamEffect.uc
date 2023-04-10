@@ -108,9 +108,9 @@ simulated function Tick(float dt)
     if ( Links != OldLinks || LinkColor != OldLinkColor || MuzFlash != OldMuzFlash )
     {
         // beam size
-        mSizeRange[0] = default.mSizeRange[0] * TickScorp3Gun.CurrDrawScale * (ls*0.6 + 1);
+        mSizeRange[0] = default.mSizeRange[0] * TickScorp3Gun.CurrDrawScale*2 * (ls*0.6 + 1);
 
-        mWaveShift = default.mWaveShift * TickScorp3Gun.CurrDrawScale * (ls*0.6 + 1);
+        mWaveShift = default.mWaveShift * TickScorp3Gun.CurrDrawScale*2 * (ls*0.6 + 1);
 
         // create/destroy children
         NumChildren = Min(Links+1, MAX_CHILDREN);

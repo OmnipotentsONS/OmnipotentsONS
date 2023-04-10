@@ -3,6 +3,8 @@
 
 class TickScorpion3Omni extends ONSRV;
 
+#exec OBJ LOAD FILE=LinkScorpion3Tex.utx
+
 var bool Linking;
 var int Links, OldLinks;
 struct HealerStruct
@@ -16,6 +18,11 @@ var array<HealerStruct> Healers; //the array of people currently healing.
 
 var float LastTimeLinkLoop;
 var float CurrDrawScale;
+var int intCurrDrawScale;
+
+var() array<Material> TickSkin_Red, TickSkin_Blue;
+var int NewSkin, OldSkin;
+
 
 replication
 {
@@ -311,66 +318,122 @@ function float ScaleTickScorpDamage(bool bHeal, int Damage) {
 
 function ScaleTickScorp(bool bHeal, int Damage){
 	
-	local vector NewLocation;
-	local bool bSetCol;
+
 	
-	CurrDrawScale = FMax(1,(Health/HealthMax)*2);
+	CurrDrawScale = FMax(1,(Health/HealthMax)*2.33);
+	NewSkin = Clamp(Round(Health/HealthMax*3.1)-1,0,2);
+	//log(self$"Health="$Health$", HealthMax="$HealthMax$" NewSkin="$NewSkin);
+	intCurrDrawScale = NewSkin + 1; // (1,2,3) for scaling other things based on int
+	// Can't scale collision its constant based on mesh.
+	// Mesh is also a constant so you can't change it.
+	// So lets play with other attributes/skins
 	
-	// big wheels just temporary till I get rest working
-	//SetWheelsScale(CurrDrawScale);  // This doesn't work and its straight from mutator.?
-	
-	//SetDrawScale(CurrDrawScale);  // fully engorged tick is 2x bigger 300 health normal size
-	// Gun scales itself off MyTickScorpion.CurrDrawScale
-	
-	VehicleMass = default.VehicleMass * (1+ CurrDrawScale/3);
-	// Doesn't fucking work.. SetCollisionSize never updates the actual collision box.
-	 //log("TickScorpion CollisionSizeDefaults R,H="$default.CollisionRadius$", "$default.CollisionHeight);
-	 //bSetCol = SetCollisionSize(default.CollisionRadius * CurrDrawScale*550, default.CollisionHeight * CurrDrawScale*550); // karma units 1 UU = 50 KU
-	 //KParams.CalcContactRegion();
-	 //log("TickScorpion AfterSetCollisionSize="$bSetCol);
-	 //SetCollision(true, true);
-	 //bCollideWorld = true;
-	 //bPhysicsAnimUpdate = true;
-	 SetBase( Self );
-	 //log("TickScorpion CurrDrawScale="$CurrDrawScale$" CollisionSize R,H="$CollisionRadius$", "$CollisionHeight);
-	
-	
-		
-		
-		
-	// Adjust TP Camera too.
-	  TPCamDistance=default.TPCamDistance * CurrDrawScale;
+	//AmbientGlow=FMax(default.AmbientGlow*CurrDrawScale, 255);
+	if (NewSkin != OldSkin) {  // only change skins when needed.
+		if (Team == 0 )  {
+			 Skins[0] = TickSkin_Red[NewSkin];
+			 OldSkin = NewSkin;
+		}	 
+		else {
+		 	 Skins[0] = TickSkin_Blue[NewSkin];
+	  	 OldSkin = NewSkin;	
+	  }
+	  	// Adjust TP Camera NOT NEEDED
+	//  TPCamDistance=default.TPCamDistance * CurrDrawScale;
 	 //FPCamPos=(X=15.000000,Z=25.000000)
-   
-    TPCamWorldOffset.Z = default.TPCamWorldOffset.Z * CurrDrawScale;
-    
-	// Position (needs to move UP off terrain).. maybe make it jump?
-	// it works fine when occupied.
-	/* don't need this if it doesn't grow
-	bHeal = False;
-	if (bHeal && Health<HealthMax) {
-			NewLocation = Location;
-			NewLocation.Z = Location.Z + Damage/9;
-  		SetLocation(NewLocation);
-  		SetPhysics(PHYS_Falling); // How to make it drop to the ground?
-	
- 	}	
- 	*/
- 	
+    //   TPCamWorldOffset.Z = default.TPCamWorldOffset.Z * CurrDrawScale;
+	  
+	}
+	// Gun scales itself off MyTickScorpion.CurrDrawScale
+	 VehicleMass = default.VehicleMass * (CurrDrawScale);
+		 
+		
+		
+		
+
+  
 	// Speed?
 }
 
 defaultproperties
 {
 	
+    WheelSoftness=0.025000
+     WheelPenScale=1.200000
+     WheelPenOffset=0.010000
+     WheelRestitution=0.100000
+     WheelInertia=0.100000
+     WheelLongFrictionFunc=(Points=(,(InVal=100.000000,OutVal=1.000000),(InVal=200.000000,OutVal=0.900000),(InVal=10000000000.000000,OutVal=0.900000)))
+     WheelLongSlip=0.001000
+     WheelLatSlipFunc=(Points=(,(InVal=30.000000,OutVal=0.007000),(InVal=45.000000),(InVal=10000000000.000000)))
+     WheelLongFrictionScale=1.250000
+     WheelLatFrictionScale=1.550000
+     WheelHandbrakeSlip=0.010000
+     WheelHandbrakeFriction=0.100000
+     WheelSuspensionTravel=15.000000
+     WheelSuspensionMaxRenderTravel=15.000000
+     FTScale=0.030000
+     ChassisTorqueScale=0.400000
+     MinBrakeFriction=4.750000
+     MaxSteerAngleCurve=(Points=((OutVal=25.000000),(InVal=1500.000000,OutVal=11.000000),(InVal=1000000000.000000,OutVal=11.000000)))
+     TorqueCurve=(Points=((OutVal=14.000000),(InVal=200.000000,OutVal=20.000000),(InVal=1500.000000,OutVal=28.000000),(InVal=2800.000000)))
+     GearRatios(0)=-0.600000
+     GearRatios(1)=0.610000
+     GearRatios(2)=1.130000
+     GearRatios(3)=1.630000
+     GearRatios(4)=2.100000
+     TransRatio=0.150000
+     ChangeUpPoint=2000.000000
+     ChangeDownPoint=1300.000000
+     LSDFactor=1.000000
+     EngineBrakeFactor=0.000100
+     EngineBrakeRPMScale=0.100000
+     MaxBrakeTorque=40.000000
+     SteerSpeed=240.000000
+     TurnDamping=35.000000
+     StopThreshold=100.000000
+     HandbrakeThresh=200.000000
+     EngineInertia=0.100000
+     IdleRPM=500.000000
+     EngineRPMSoundRange=12000.000000
+     SteerBoneName="SteeringWheel"
+     SteerBoneAxis=AXIS_Z
+     SteerBoneMaxAngle=90.000000
+     RevMeterScale=4000.000000
+     bMakeBrakeLights=True
+     BrakeLightOffset(0)=(X=-100.000000,Y=23.000000,Z=7.000000)
+     BrakeLightOffset(1)=(X=-100.000000,Y=-23.000000,Z=7.000000)
+     BrakeLightMaterial=Texture'EpicParticles.Flares.FlashFlare1'
+     DaredevilThreshInAirSpin=180.000000
+     DaredevilThreshInAirTime=2.400000
+     DaredevilThreshInAirDistance=33.000000
+     bDoStuntInfo=True
+     bAllowAirControl=True
+     bAllowBigWheels=True
+     AirTurnTorque=35.000000
+     AirPitchTorque=55.000000
+     AirPitchDamping=55.000000
+     AirRollTorque=35.000000
+     AirRollDamping=35.000000
      MaxJumpSpin=100.000000
      DriverWeapons(0)=(WeaponClass=Class'LinkVehiclesOmni.TickScorpion3Gun')
-     RedSkin=Shader'LinkScorpion3Tex.LinkrvRedShad'
-     BlueSkin=Shader'LinkScorpion3Tex.LinkrvBlueShad'
+     
+//     RedSkin=Shader'LinkScorpion3Tex.LinkrvRedShad'
+//     BlueSkin=Shader'LinkScorpion3Tex.LinkrvBlueShad'
+     RedSkin=Texture'LinkScorpion3Tex.TickTex.Tick-Red-Light'
+     BlueSkin=Texture'LinkScorpion3Tex.TickTex.Tick-Blue-Light'
+     
+     
+    TickSkin_Red[0]=Texture'LinkScorpion3Tex.TickTex.Tick-Red-Light'
+    TickSkin_Red[1]=Texture'LinkScorpion3Tex.TickTex.Tick-Red'
+    TickSkin_Red[2]=Texture'LinkScorpion3Tex.TickTex.Tick-Red-Full'
+    TickSkin_Blue[0]=Texture'LinkScorpion3Tex.TickTex.Tick-Blue-Light'
+    TickSkin_Blue[1]=Texture'LinkScorpion3Tex.TickTex.Tick-Blue'
+    TickSkin_Blue[2]=Texture'LinkScorpion3Tex.TickTex.Tick-Blue-Full'
      
      FPCamPos=(X=15.000000,Z=25.000000)
      TPCamDistance=375.000000
-     CenterSpringForce="SpringONSSRV"
+     
      TPCamLookat=(X=0.000000,Z=0.000000)
      TPCamWorldOffset=(Z=100.000000)
      
@@ -432,9 +495,9 @@ defaultproperties
          KInertiaTensor(0)=1.000000
          KInertiaTensor(3)=3.000000
          KInertiaTensor(5)=3.000000
-         KCOMOffset=(X=-0.250000,Z=-0.00000)
+         KCOMOffset=(X=-0.250000,Z=-0.40000)
          KLinearDamping=0.050000
-         KAngularDamping=0.050000
+         KAngularDamping=0.500000
          KStartEnabled=True
          bKNonSphericalInertia=True
          bHighDetailOnly=False
@@ -442,8 +505,8 @@ defaultproperties
          bKDoubleTickRate=True
          bDestroyOnWorldPenetrate=True
          bDoSafetime=True
-         KFriction=0.500000
-         KImpactThreshold=700.000000
+         KFriction=0.700000
+         KImpactThreshold=1000.000000
      End Object
      KParams=KarmaParamsRBFull'LinkVehiclesOmni.TickScorpion3Omni.KParams0'
 
@@ -451,7 +514,11 @@ defaultproperties
 
      Health=300
      HealthMax=900
+     DriverDamageMult=0 // no driver damage
      CurrDrawScale = 1
+     Mesh=SkeletalMesh'ONSVehicles-A.RV' // same as ONSRV
      DamagedEffectHealthFireFactor = 0.125 //100
 	   DamagedEffectHealthSmokeFactor = 0.25 //200
+	   OldSkin = 0
+	   NewSkin = 0
 }
