@@ -16,6 +16,9 @@ struct HealerStruct
 
 var array<HealerStruct> Healers; //the array of people currently healing.
 
+var ONSWeapon Gun;
+var TickScorpion3Gun TS3Gun;
+
 var float LastTimeLinkLoop;
 var float CurrDrawScale;
 var int intCurrDrawScale;
@@ -27,7 +30,7 @@ var int NewSkin, OldSkin;
 replication
 {
     unreliable if (Role == ROLE_Authority)
-        Linking, Links, CurrDrawScale;
+        Linking, Links, CurrDrawScale, intCurrDrawScale, NewSkin, OldSkin;
 }
 
 //link scorp needs to tell link gun when it's links change'
@@ -159,9 +162,12 @@ simulated function Timer()
 }
 */
 
+
 function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
 {
-	/*  Used for link Stacking
+
+  //Used for link Stacking	
+  /*
 	local int i;
 	local bool bFoundInHealerArray;
 	local LinkGun LG;
@@ -211,9 +217,12 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 		}
 	}
 	*/
+	
+	// Scale it based on healing
 	   ScaleTickScorp(true, Amount);
-	   return super.HealDamage(ScaleTickScorpDamage(True, Amount), Healer, DamageType);
+	   return super.HealDamage(Amount, Healer, DamageType);
 }
+
 
 // No link stacking no need to do this
 /*
@@ -267,6 +276,12 @@ static function StaticPrecache(LevelInfo L)
 	L.AddPrecacheMaterial(Material'LinkScorpion3Tex.link_spark_purple');
 	L.AddPrecacheMaterial(Material'LinkScorpion3Tex.RVcolorBluelink');
 	L.AddPrecacheMaterial(Material'LinkScorpion3Tex.RVcolorREDlink');
+	L.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Red-Light');
+  L.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Red');
+  L.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Red-Full');
+  L.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Blue-Light');
+  L.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Blue');
+  L.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Blue-Full');
 }
 
 simulated function UpdatePrecacheStaticMeshes()
@@ -284,6 +299,12 @@ simulated function UpdatePrecacheMaterials()
 	Level.AddPrecacheMaterial(Material'LinkScorpion3Tex.link_spark_purple');
 	Level.AddPrecacheMaterial(Material'LinkScorpion3Tex.RVcolorBluelink');
 	Level.AddPrecacheMaterial(Material'LinkScorpion3Tex.RVcolorREDlink');
+	Level.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Red-Light');
+  Level.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Red');
+  Level.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Red-Full');
+  Level.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Blue-Light');
+  Level.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Blue');
+  Level.AddPrecacheMaterial(Material'LinkScorpion3Tex.TickTex.Tick-Blue-Full');
 	Super.UpdatePrecacheMaterials();
 }
 
@@ -301,25 +322,18 @@ function ShouldTargetMissile(Projectile P)
 	
 
 
-
 function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
 {
 	  ScaleTickScorp(false, Damage);
-    Super.TakeDamage(ScaleTickScorpDamage(false, Damage), instigatedBy, Hitlocation, Momentum, damageType);
+	  //if (TickScorpGun.bActive)
+	   Momentum *= 0; //sucking don't allow momentum... we are "stuck" might want to check locked pawn (link beam locked)
+    Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
 }
 
-function float ScaleTickScorpDamage(bool bHeal, int Damage) {
-	
-	CurrDrawScale = FMax(1,(Health/HealthMax)*2);
-	if (bHeal) return Damage;
-	else return Damage*CurrDrawScale; //increased damage based on health/size
-}
-
-
-function ScaleTickScorp(bool bHeal, int Damage){
+simulated function ScaleTickScorp(bool bHeal, int Damage){
 	
 
-	
+		
 	CurrDrawScale = FMax(1,(Health/HealthMax)*2.33);
 	NewSkin = Clamp(Round(Health/HealthMax*3.1)-1,0,2);
 	//log(self$"Health="$Health$", HealthMax="$HealthMax$" NewSkin="$NewSkin);
@@ -327,9 +341,14 @@ function ScaleTickScorp(bool bHeal, int Damage){
 	// Can't scale collision its constant based on mesh.
 	// Mesh is also a constant so you can't change it.
 	// So lets play with other attributes/skins
-	
+	  //Scale Gun though
+	  Gun = Weapons[0];
+	  Gun.SetDrawScale(FClamp(CurrDrawScale,1,1.5));
+		TS3Gun = TickScorpion3Gun(Gun);
+		
 	//AmbientGlow=FMax(default.AmbientGlow*CurrDrawScale, 255);
 	if (NewSkin != OldSkin) {  // only change skins when needed.
+		//log(@self@"Changing Skins...")
 		if (Team == 0 )  {
 			 Skins[0] = TickSkin_Red[NewSkin];
 			 OldSkin = NewSkin;
@@ -344,10 +363,18 @@ function ScaleTickScorp(bool bHeal, int Damage){
     //   TPCamWorldOffset.Z = default.TPCamWorldOffset.Z * CurrDrawScale;
 	  
 	}
-	// Gun scales itself off MyTickScorpion.CurrDrawScale
-	 VehicleMass = default.VehicleMass * (CurrDrawScale);
+	  VehicleMass = default.VehicleMass * (CurrDrawScale);
+	  
+	  // Play with these. Based on Scale.
+	  KParams.KImpactThreshold= 80000*CurrDrawScale*2;
+	  KParams.KFriction = 0.8;
+	 
 		 
 		
+   
+  
+  
+    
 		
 		
 
@@ -506,7 +533,7 @@ defaultproperties
          bDestroyOnWorldPenetrate=True
          bDoSafetime=True
          KFriction=0.700000
-         KImpactThreshold=1000.000000
+         KImpactThreshold=10000.000000
      End Object
      KParams=KarmaParamsRBFull'LinkVehiclesOmni.TickScorpion3Omni.KParams0'
 
@@ -521,4 +548,5 @@ defaultproperties
 	   DamagedEffectHealthSmokeFactor = 0.25 //200
 	   OldSkin = 0
 	   NewSkin = 0
+	   Links = 0
 }

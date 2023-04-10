@@ -26,8 +26,8 @@ var float SelfHealMultiplier; // how much it heals itself as draining.
 
 var String MakeLinkForce;
 
-var() int Damage;
-var() float MomentumTransfer;
+var() float Damage;
+//var() float MomentumTransfer;
 
 var() float LinkFlexibility;
 
@@ -55,8 +55,8 @@ replication
 
 simulated function PostNetBeginPlay()
 {
-	if(LinkScorpion3Omni(Owner) != None)
-		MyLinkScorpion = LinkScorpion3Omni(Owner);
+	//if(LinkScorpion3Omni(Owner) != None)
+	//	MyLinkScorpion = LinkScorpion3Omni(Owner);
 	Super.PostNetBeginPlay();
 }
 
@@ -105,14 +105,16 @@ simulated function DestroyEffects()
     }
 }
 
-simulated function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
+function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
 {
-	Damage = Damage * (LinkMultiplier*NumLinks+1);
+	local float AdjDamage;
+	
+	AdjDamage = Damage * (LinkMultiplier*NumLinks+1);
 
-	if ( Other.IsA('Vehicle') )
-		Damage *= VehicleDamageMult;
-
-	return Damage;
+	if ( Other.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
+  if (Instigator.HasUDamage()) 	AdjDamage *= 2;
+	
+	return AdjDamage;
 	
 }
 
@@ -145,6 +147,10 @@ state InstantFireMode
 		local Vehicle LinkedVehicle;
 	
 		Super.Tick(dt);
+		
+		MyLinkScorpion = LinkScorpion3Omni(Owner);
+		If (MyLinkScorpion == None) return; // no driver nothing to do.
+		
 		if ( !bIsFiring )
 	    {
 			bInitAimError = true;
@@ -333,7 +339,7 @@ state InstantFireMode
 									//LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 							}
 							else {
-								Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, MomentumTransfer*X, DamageType);
+								Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, Momentum*X, DamageType);
 								// heal itself
 								 if (MyLinkScorpion!=None&&MyLinkScorpion.Health<MyLinkScorpion.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
                      MyLinkScorpion.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
@@ -349,8 +355,8 @@ state InstantFireMode
 			LinkedVehicle = Vehicle(LockedPawn);
 			if ( LinkedVehicle != None && bDoHit )
 			{
-				AdjustedDamage = AdjustLinkDamage( MyLinkScorpion.Links, None, Damage ) * Instigator.DamageScaling;
-				// don't apply Vehicle Damage multiplier to healing.
+				AdjustedDamage = AdjustLinkDamage( MyLinkScorpion.Links, None, Damage );
+				
 				if (Instigator.HasUDamage())
 					AdjustedDamage *= 2;
 				LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);//if (! ))
@@ -627,5 +633,5 @@ defaultproperties
      
      LinkMultiplier = 1.5; // each linker adds 150%
      VehicleDamageMult = 1.25 // more damage to vehicles.
-     SelfHealMultiplier = 0.75 // good heal multiplier, it has to get close.
+     SelfHealMultiplier = 1.1 // good heal multiplier, it has to get close.
 }

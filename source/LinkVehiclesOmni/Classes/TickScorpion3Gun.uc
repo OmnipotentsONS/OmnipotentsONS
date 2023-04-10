@@ -21,6 +21,7 @@ var float	LinkBreakTime;
 var() float LinkBreakDelay;
 var float	LinkScale[6];
 var float CurrDrawScale;
+var int NumLinkers;  // Links from base vehicle, not used here though.
 
 var String MakeLinkForce;
 
@@ -30,6 +31,7 @@ var() float MomentumTransfer;
 var() float LinkFlexibility;
 var float LinkMultiplier;
 var float SelfHealMultiplier; 
+var float VehicleDamageMultiplier;
 
 var		bool bDoHit;
 var()	bool bFeedbackDeath;
@@ -50,15 +52,17 @@ var float MinAim;
 replication
 {
     reliable if (Role == ROLE_Authority)
-		bIsFiring;
+		bIsFiring, CurrDrawScale;
 }
 
+/*
 simulated function PostNetBeginPlay()
 {
-	if(TickScorpion3Omni(Owner) != None)
-		MyTickScorpion = TickScorpion3Omni(Owner);
+	//if(TickScorpion3Omni(Owner) != None)
+	//	MyTickScorpion = TickScorpion3Omni(Owner);
 	Super.PostNetBeginPlay();
 }
+*/
 
 simulated function ClientStopFire(Controller C, bool bWasAltFire)
 {
@@ -105,9 +109,18 @@ simulated function DestroyEffects()
     }
 }
 
-simulated function float AdjustLinkDamage( TickScorpion3Omni LS, Actor Other, float Damage )
+function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
 {
-	return Damage * (1*LS.Links+1)*MyTickScorpion.CurrDrawScale;
+	local float AdjDamage;
+	
+	
+	AdjDamage =Min( DamageMin,Damage * (1*NumLinks+1)*CurrDrawScale);
+	//Damage = Damage * (LinkMultiplier*NumLinks+1);
+
+	if ( Other.IsA('Vehicle') ) AdjDamage *= VehicleDamageMultiplier;
+  if (Instigator.HasUDamage()) 	AdjDamage *= 2;
+	
+	return AdjDamage;
 }
 
 state InstantFireMode
@@ -125,7 +138,7 @@ state InstantFireMode
 		local Vector HitLocation, HitNormal, EndEffect;
 		local Actor Other;
 		local Rotator Aim;
-		local float ls;
+		//local float ls;
 		local bot B;
 		local bool bShouldStop, bIsHealingObjective;
 		local int AdjustedDamage;
@@ -135,11 +148,16 @@ state InstantFireMode
 	
 		Super.Tick(dt);
 		
-		// Scale the tick gun
+		
+		MyTickScorpion = TickScorpion3Omni(Owner);
+		If (MyTickScorpion == None) return; // no driver nothing to do.
+		
 		CurrDrawScale = MyTickScorpion.CurrDrawScale;
+		//log(self@"Tick, CurrDrawScale="@CurrDrawScale);
 		// get it from basevehicle and set it so we can ref it from beameffect.
-		SetDrawScale(CurrDrawScale);
-		Damage = Min(default.Damage,Damage*MyTickScorpion.CurrDrawScale);
+		//SetDrawScale(CurrDrawScale);
+		// Set in Vehicle.
+		
 		//Scale Beam Size, LB but uses Default Size.  
 		
 		if ( !bIsFiring )
@@ -147,12 +165,13 @@ state InstantFireMode
 			bInitAimError = true;
 	        return;
 	    }
-		if (MyTickScorpion.Links < 0)
-		{
+		//if (MyTickScorpion.Links < 0)
+		//{
 		     //log("warning:"@Instigator@"linkgun had"@MyTickScorpion.Links@"links");
-			MyTickScorpion.Links = 0;
-		}
-		ls = LinkScale[Min(MyTickScorpion.Links,5)];
+		//	NumLinkers = MyTickScorpion.Links = 0;  // we aren't enabling link stacking power
+		//}
+		//ls = LinkScale[Min(MyTickScorpion.Links,5)];
+		
 		if ( (UpTime > 0.0) || (Instigator.Role < ROLE_Authority) )
 		{
 			UpTime -= dt;
@@ -169,12 +188,10 @@ state InstantFireMode
 							break;
 						}
 
-				if ( Beam != None )
-					LockedPawn = Beam.LinkedPawn;
+				if ( Beam != None ) LockedPawn = Beam.LinkedPawn;
 			}
 
-	        if ( LockedPawn != None )
-				TraceRange *= 1.5;
+	        if ( LockedPawn != None ) TraceRange *= 1.5;
 
 	   
 
@@ -245,11 +262,10 @@ state InstantFireMode
 					*/
 				}
 				else
-		            Aim = WeaponFireRotation;//GetPlayerAim(StartTrace, AimError); ANOTHER FUNCTION FOR WEAPONS WE DON'T HAVE.'
-
+		          Aim = WeaponFireRotation;//GetPlayerAim(StartTrace, AimError); ANOTHER FUNCTION FOR WEAPONS WE DON'T HAVE.'
 	            X = Vector(Aim);
 	            EndTrace = StartTrace + TraceRange * X;
-	        }
+	      } // Locked Pawn None
 
 	        Other = Trace(HitLocation, HitNormal, EndTrace, StartTrace, true);
 	        if ( Other != None && Other != Instigator )
@@ -280,22 +296,14 @@ state InstantFireMode
 				*/
 				return;
 			}
-	        if ( Other != None && Other != Instigator )
-	        {
+	        if ( Other != None && Other != Instigator )   {
 	            // target can be linked to
-	            if ( IsLinkable(Other) )
-	            {
-	                if ( Other != lockedpawn )
-	                    SetLinkTo( Pawn(Other) );
-
-	                if ( lockedpawn != None )
-	                    LinkBreakTime = LinkBreakDelay;
+	            if ( IsLinkable(Other) )    {
+	                if ( Other != lockedpawn )  SetLinkTo( Pawn(Other) );
+	                if ( lockedpawn != None )   LinkBreakTime = LinkBreakDelay;
 	            }
-	            else
-	            {
-	                // stop linking
-	                if ( lockedpawn != None )
-	                {
+	            else {   // stop linking
+	                if ( lockedpawn != None )  {
 	                    if ( LinkBreakTime <= 0.0 )
 	                        SetLinkTo( None );
 	                    else
@@ -303,53 +311,41 @@ state InstantFireMode
 	                }
 
 	                // beam is updated every frame, but damage is only done based on the firing rate
-	                if ( bDoHit )
-	                {
-	                    if ( Beam != None )
-							Beam.bLockedOn = false;
-
+	                if ( bDoHit ) {
+	                    if ( Beam != None ) 	Beam.bLockedOn = false;
 	                    Instigator.MakeNoise(1.0);
-
-	                    AdjustedDamage = AdjustLinkDamage( MyTickScorpion, Other, Damage );
-
-	                    if ( !Other.bWorldGeometry )
-	                    {
-	                        if ( Level.Game.bTeamGame && Pawn(Other) != None && Pawn(Other).PlayerReplicationInfo != None
-								&& Pawn(Other).PlayerReplicationInfo.Team == Instigator.PlayerReplicationInfo.Team) // so even if friendly fire is on you can't' hurt teammates
+	                    AdjustedDamage = AdjustLinkDamage( NumLinkers, Other, Damage );
+	                    if ( !Other.bWorldGeometry )  {
+	                        if ( Level.Game.bTeamGame && Pawn(Other) != None && Pawn(Other).PlayerReplicationInfo != None && Pawn(Other).PlayerReplicationInfo.Team == Instigator.PlayerReplicationInfo.Team) // so even if friendly fire is on you can't' hurt teammates
 	                            AdjustedDamage = 0;
 
-							HealObjective = DestroyableObjective(Other);
-							if ( HealObjective == None )
-								HealObjective = DestroyableObjective(Other.Owner);
-							if ( HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()) )
-							{
-								SetLinkTo(None);
-								bIsHealingObjective = true;
-								HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
+											  	HealObjective = DestroyableObjective(Other);
+													if ( HealObjective == None )  HealObjective = DestroyableObjective(Other.Owner);
+													if ( HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()) ) 	{
+															SetLinkTo(None);
+															bIsHealingObjective = true;
+															HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
 								//if (!HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
 									//LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
-							}
-							else {
-								Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, MomentumTransfer*X, DamageType);
-								// heal itself
-								 if (MyTickScorpion!=None&&MyTickScorpion.Health<MyTickScorpion.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
-                     MyTickScorpion.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
-							}
+													}
+													else {
+															Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, Momentum*X, DamageType);
+															// heal itself
+								 							if (MyTickScorpion!=None&&MyTickScorpion.Health<MyTickScorpion.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
+                     								MyTickScorpion.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
+													}
 
-							if ( Beam != None )
-								Beam.bLockedOn = true;
-						}
-					}
-				}
-			}
+											if ( Beam != None )		Beam.bLockedOn = true;
+											}  // world geo
+									} // do hit
+							} // stop linking
+						} // other none
 
 			// vehicle healing
 			LinkedVehicle = Vehicle(LockedPawn);
 			if ( LinkedVehicle != None && bDoHit )
 			{
-				AdjustedDamage = Damage * (LinkMultiplier*MyTickScorpion.Links+1) * Instigator.DamageScaling;
-				if (Instigator.HasUDamage())
-					AdjustedDamage *= 2;
+				AdjustedDamage = AdjustLinkDamage( NumLinkers, Other, Damage );
 				LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);//if (! ))
 					//LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 			}
@@ -582,7 +578,8 @@ defaultproperties
      LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
      Damage=12  //link gun shaft is 9
-     Momentum=-120000  //sucking u in
+     DamageMin=12 
+     Momentum=-10000  //sucking u in 
      LinkFlexibility=0.300000
      bInitAimError=True
      LinkVolume=240
@@ -613,7 +610,10 @@ defaultproperties
      BlueSkin=Texture'LinkScorpion3Tex.TickTex.TickScorpGun'
      SoundVolume=150
     
+     CurrDrawScale = 1;
+     NumLinkers = 1;
      LinkMultiplier = 1.5;
 		 SelfHealMultiplier = 1.1;
+		 VehicleDamageMultiplier = 1.1; //  increased damage to vehicles might add some specific vehicles here?
      
 }

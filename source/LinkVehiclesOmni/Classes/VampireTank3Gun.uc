@@ -21,7 +21,6 @@ var float	LinkScale[6];
 var String MakeLinkForce;
 
 var() int Damage;
-var() float MomentumTransfer;
 
 var() float LinkFlexibility;
 var float LinkMultiplier;
@@ -52,12 +51,14 @@ replication
 		bIsFiring;
 }
 
+/*
 simulated function PostNetBeginPlay()
 {
 	if(VampireTank3(Owner) != None)
 		MyVampireTank = VampireTank3(Owner);
 	Super.PostNetBeginPlay();
 }
+*/
 
 simulated function ClientStopFire(Controller C, bool bWasAltFire)
 {
@@ -136,6 +137,10 @@ state InstantFireMode
 		local Vehicle LinkedVehicle;
 	
 		Super.Tick(dt);
+		
+		MyVampireTank = VampireTank3(Owner);
+		If (MyVampireTank == None) return; // no driver nothing to do.
+		
 		 if(AltFireCountdown > 0)  AltFireCountdown -= dt;
 				
 		if ( !bIsFiring )
@@ -326,7 +331,7 @@ state InstantFireMode
 									//LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 							}
 							else {
-								Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, MomentumTransfer*X, DamageType);
+								Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, Momentum*X, DamageType);
 								// heal itself
 								 if (MyVampireTank!=None&&MyVampireTank.Health<MyVampireTank.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
                      MyVampireTank.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
@@ -718,7 +723,7 @@ defaultproperties
      //LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
      Damage=21  //link gun shaft is 9, Scorp is 12, Hvy LinkTank 17  This is its primary close in weapon.
-     Momentum=-130000
+     Momentum=-25000
      LinkFlexibility=0.600000
      bInitAimError=True
      LinkVolume=240
