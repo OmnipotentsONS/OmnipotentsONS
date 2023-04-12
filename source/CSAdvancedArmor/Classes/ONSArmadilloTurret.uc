@@ -103,7 +103,7 @@ defaultproperties
      mTracerSpeed=15000.000000
      YawBone="Object01"
      PitchBone="Object02"
-     PitchUpLimit=12500
+     PitchUpLimit=15000
      PitchDownLimit=59500
      WeaponFireAttachmentBone="Object02"
      WeaponFireOffset=85.000000
@@ -117,14 +117,14 @@ defaultproperties
      Spread=0.010000
      RedSkin=Shader'VMVehicles-TX.HoverTankGroup.HoverTankChassisFinalRED'
      BlueSkin=Shader'VMVehicles-TX.HoverTankGroup.HoverTankChassisFinalBLUE'
-     FireInterval=0.100000
+     FireInterval=0.10000
      AmbientEffectEmitterClass=Class'Onslaught.ONSRVChainGunFireEffect'
      FireSoundClass=Sound'ONSVehicleSounds-S.Tank.TankMachineGun01'
      AmbientSoundScaling=1.300000
      FireForce="minifireb"
      DamageType=Class'Onslaught.DamTypeONSChainGun'
-     DamageMin=38
-     DamageMax=48
+     DamageMin=17
+     DamageMax=22
      TraceRange=15000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      CullDistance=8000.000000

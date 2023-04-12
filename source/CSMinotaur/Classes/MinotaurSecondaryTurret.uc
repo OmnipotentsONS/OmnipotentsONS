@@ -119,7 +119,7 @@ defaultproperties
      DamageType=Class'CSMinotaur.MinotaurSecondaryTurretKill'
      DamageMin=20
      DamageMax=20
-     TraceRange=80000.000000
+     TraceRange=30000.000000
      Momentum=500.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      Mesh=SkeletalMesh'AS_VehiclesFull_M.IONTankMachineGun'

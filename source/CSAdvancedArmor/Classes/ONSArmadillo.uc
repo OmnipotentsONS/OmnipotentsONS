@@ -436,8 +436,8 @@ defaultproperties
      MaxViewPitch=30000
      MomentumMult=0.300000
      DriverDamageMult=0.000000
-     VehiclePositionString="in a Armadillo"
-     VehicleNameString="Troop Carrier"
+     VehiclePositionString="in a Armadillo Troop Carrier"
+     VehicleNameString="Armadillo Troop Carrier"
      RanOverDamageType=Class'CSAdvancedArmor.DamType_ARMTankRoadkill'
      CrushedDamageType=Class'CSAdvancedArmor.DamType_ARMTankPancake'
      MaxDesireability=0.800000
@@ -446,9 +446,9 @@ defaultproperties
      HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.Horn09'
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.Horn02'
      bCanStrafe=True
-     GroundSpeed=520.000000
-     HealthMax=1200.000000
-     Health=1200
+     GroundSpeed=620.000000
+     HealthMax=1450.000000
+     Health=1450
      Mesh=SkeletalMesh'AdvancedArmor_anim.TroopCarrier'
      Skins(0)=Texture'PC_ConvoyTextures.Trailer.PC_TrackTread'
      SoundVolume=200

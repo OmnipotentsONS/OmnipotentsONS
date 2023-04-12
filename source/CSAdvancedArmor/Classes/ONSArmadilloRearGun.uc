@@ -115,7 +115,7 @@ defaultproperties
      PitchUpLimit=15000
      PitchDownLimit=57500
      WeaponFireAttachmentBone="Firepoint"
-     WeaponFireOffset=128.000000
+     WeaponFireOffset=36.000000
      DualFireOffset=10.000000
      RotationsPerSecond=2.000000
      bInstantRotation=True
@@ -125,8 +125,8 @@ defaultproperties
      FireSoundClass=Sound'WeaponSounds.Misc.instagib_rifleshot'
      FireForce="PRVRearFire"
      DamageType=Class'CSAdvancedArmor.DamType_LaserBeam'
-     DamageMin=50
-     DamageMax=70
+     DamageMin=40
+     DamageMax=55
      TraceRange=20000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      CullDistance=8000.000000

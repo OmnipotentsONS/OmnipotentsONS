@@ -118,7 +118,7 @@ defaultproperties
      DamageType=Class'MinotaurClassic.DamTypeMinotaurClassicSecondaryTurret'
      DamageMin=9
      DamageMax=9
-     TraceRange=80000.000000
+     TraceRange=30000.000000
      Momentum=10000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      Mesh=SkeletalMesh'AS_VehiclesFull_M.IONTankMachineGun'
