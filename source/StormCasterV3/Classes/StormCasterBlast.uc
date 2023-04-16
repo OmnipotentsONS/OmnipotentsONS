@@ -55,6 +55,7 @@ auto state IncomingBlast
 		local range BlastRange;
 		local vector BlastOrigin;
 		local float Distance;
+		local byte TeamN;
 
 		BlastOrigin = Location + vect(0,0,35000);
 		BlastRange.Max = BlastOrigin.Z - 3500 * Stage;
@@ -77,6 +78,12 @@ auto state IncomingBlast
 
 			Distance = 1 - Sqrt(Distance / DamageRadius);
 
+		 if (A.IsA('Pawn')) TeamN = Pawn(A).GetTeamNum();
+		  else TeamN = 255; // no team
+		
+	  	if ( TeamNum != 255 && TeamN == TeamNum) {
+				continue; // Blast doesn't hurt team
+	   	}
 			A.SetDelayedDamageInstigatorController(InstigatorController);
 			A.TakeDamage(Damage * Distance, Instigator, A.Location, Normal(A.Location - BlastOrigin) * MomentumTransfer * Distance, MyDamageType);
 		}

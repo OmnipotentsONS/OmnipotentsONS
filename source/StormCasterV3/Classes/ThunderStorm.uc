@@ -35,7 +35,7 @@ var() bool bAvoidTargetingTeammates;
 // Variables
 //=============================================================================
 
-var byte TeamNum;
+//var byte TeamNum;  Redundant
 var Controller InstigatorController;
 var int NumShadows;
 var Emitter ThunderStormEffects;
@@ -86,6 +86,7 @@ simulated function Timer()
 	local array<Actor> PotentialVictims;
 	local array<LightningTraceHelper.THitInfo> Hits;
 	local int i;
+	local byte TeamN;
 
 	if (NumShadows++ < 3 && !bTearOff)
 	{
@@ -108,8 +109,10 @@ simulated function Timer()
 
 		foreach DynamicActors(class'Pawn', P)
 		{
-			if (bAvoidTargetingTeammates && TeamNum != 255 && P.GetTeamNum() == TeamNum)
+			//log(self@"Pawn="@Pawn@" TeamNum="@TeamNum@" Pawn.GetTeamNum="@P.GetTeamNum);
+			if (bAvoidTargetingTeammates && TeamNum != 255 && P.GetTeamNum() == TeamNum) {
 				continue; // don't target teammates directly
+			}
 			
 			if (P.Health > 0 && P.bCollideActors && P.bProjTarget && (VSize(vect(1,1,2) * (P.Location - Location)) < CloudTargetRadius || P.Location.Z < Location.Z && Location.Z - P.Location.Z < GroundTraceRange && VSize((P.Location - Location) * vect(1,1,0)) < GroundTargetRadius))
 			{
@@ -219,6 +222,13 @@ simulated function Timer()
 	{
 		Victim = Hits[i].HitActor;
 
+		if (Victim.IsA('Pawn')) TeamN = Pawn(Victim).GetTeamNum();
+		 else TeamN = 255; // no team
+		
+		if (bAvoidTargetingTeammates && TeamNum != 255 && TeamN == TeamNum) {
+				continue; // don't target teammates directly
+		}
+			
 		if ((Victim.bProjTarget || Victim.bBlockActors))
 		{
 			Victim.SetDelayedDamageInstigatorController(InstigatorController);
