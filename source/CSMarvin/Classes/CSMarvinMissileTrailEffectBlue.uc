@@ -18,6 +18,7 @@ simulated function PostNetBeginPlay()
 
 defaultproperties
 {
+    /*
     //////
     /// dots
     Begin Object Class=SpriteEmitter Name=SpriteEmitter223
@@ -66,6 +67,7 @@ defaultproperties
 
 
     // end dots
+    */
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter8
         StartLocationShape=PTLS_Sphere
@@ -99,12 +101,12 @@ defaultproperties
          TrailShadeType=PTTST_PointLife
          TrailLocation=PTTL_FollowEmitter
          //MaxPointsPerTrail=150
-         MaxPointsPerTrail=300
+         MaxPointsPerTrail=150
          //DistanceThreshold=1300.000000
          DistanceThreshold=30.000000
          UseCrossedSheets=True
          //PointLifeTime=0.800000
-         PointLifeTime=1.600000
+         PointLifeTime=0.800000
          UseColorScale=True
          UseSizeScale=True
          UseRegularSizeScale=False
@@ -121,7 +123,7 @@ defaultproperties
          Texture=Texture'AW-2004Particles.Weapons.TrailBlur'
          //Texture=Texture'AW-2004Particles.Weapons.TankTrail'
          SecondsBeforeInactive=0.000000
-         LifetimeRange=(Min=500.000000,Max=500.000000)
+         LifetimeRange=(Min=200.000000,Max=200.000000)
      End Object
      Emitters(2)=TrailEmitter'TrailEmitter0'     
 

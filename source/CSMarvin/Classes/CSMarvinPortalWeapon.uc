@@ -18,6 +18,47 @@ simulated function Destroyed()
     super.Destroyed();
 }
 
+
+/*
+simulated function ClientStartFire(Controller C, bool bAltFire)
+{
+    bIsAltFire = bAltFire;
+
+	if (FireCountdown <= 0)
+	{
+		if (bIsRepeatingFF)
+		{
+			if (bIsAltFire)
+				ClientPlayForceFeedback( AltFireForce );
+			else
+				ClientPlayForceFeedback( FireForce );
+		}
+		//OwnerEffects();
+	}
+}
+
+simulated function ClientStopFire(Controller C, bool bWasAltFire)
+{
+	if (bIsRepeatingFF)
+	{
+		if (bIsAltFire)
+			StopForceFeedback( AltFireForce );
+		else
+			StopForceFeedback( FireForce );
+	}
+
+	if (Role < ROLE_Authority && AmbientEffectEmitter != None)
+		AmbientEffectEmitter.SetEmitterStatus(false);
+
+    OwnerEffects();
+}
+*/
+
+simulated function OwnerEffects()
+{
+}
+
+
 state ProjectileFireMode
 {
     function Fire(Controller C)
@@ -53,6 +94,8 @@ state ProjectileFireMode
             MP.DefaultPortalSize = DefaultPortalSize;
             MP.StartingPortalSize = DefaultPortalSize; 
         }
+
+        PlaySound(FireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius,, false);
     }
 
     function AltFire(Controller C)
@@ -90,9 +133,52 @@ state ProjectileFireMode
                 MP.DefaultPortalSize = DefaultPortalSize;
                 MP.StartingPortalSize = DefaultPortalSize;
             }
+
+            PlaySound(AltFireSoundClass, SLOT_None, FireSoundVolume/255.0,, AltFireSoundRadius,, false);
         }
     }
 }
+
+/*
+simulated event OwnerEffects()
+{
+	if (!bIsRepeatingFF)
+	{
+		if (bIsAltFire)
+			ClientPlayForceFeedback( AltFireForce );
+		else
+			ClientPlayForceFeedback( FireForce );
+	}
+    ShakeView();
+
+	if (Role < ROLE_Authority)
+	{
+		if (bIsAltFire)
+			FireCountdown = AltFireInterval;
+		else
+			FireCountdown = FireInterval;
+
+		AimLockReleaseTime = Level.TimeSeconds + FireCountdown * FireIntervalAimLock;
+
+        FlashMuzzleFlash();
+
+		if (AmbientEffectEmitter != None)
+			AmbientEffectEmitter.SetEmitterStatus(true);
+
+
+
+        // Play firing noise
+        if (!bAmbientFireSound)
+        {
+            if (bIsAltFire)
+                PlaySound(AltFireSoundClass, SLOT_None, FireSoundVolume/255.0,, AltFireSoundRadius,, false);
+            else
+                PlaySound(FireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius,, false);
+        }
+	}
+}
+*/
+
 
 
 defaultproperties

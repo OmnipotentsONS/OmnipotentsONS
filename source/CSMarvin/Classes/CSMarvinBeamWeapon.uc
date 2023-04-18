@@ -89,7 +89,6 @@ state InstantFireMode
         SpawnBeamEffect(start, dir, hitlocation, hitnormal, 0);
 
         bBeamOn=!bBeamOn;
-        AmbientSound = BeamSoundClass;
         SetTimer(AltFireInterval, true);
     }
 
@@ -185,6 +184,8 @@ function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector H
     {
         AbductBeamRocks = spawn(class'CSMarvinAbductBeamRockEffect',self,, HitLocation, rotator(-HitNormal));
     }
+
+    AmbientSound = BeamSoundClass;
 }
 
 simulated function OwnerEffects()
@@ -193,7 +194,27 @@ simulated function OwnerEffects()
     local rotator dir;
     local actor victim;
 
-    super.OwnerEffects();
+    //super.OwnerEffects();
+
+    ShakeView();
+
+	if (Role < ROLE_Authority)
+	{
+		if (bIsAltFire)
+			FireCountdown = AltFireInterval;
+		else
+			FireCountdown = FireInterval;
+
+		AimLockReleaseTime = Level.TimeSeconds + FireCountdown * FireIntervalAimLock;
+
+        FlashMuzzleFlash();
+
+		if (AmbientEffectEmitter != None)
+			AmbientEffectEmitter.SetEmitterStatus(true);
+
+          if (!bIsAltFire)
+            PlaySound(FireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius,, false);
+    }
 
     if(bIsAltFire)
     {
@@ -255,6 +276,7 @@ simulated function CancelBeam()
         AbductBeamRocks.Cancel();
         AbductBeamRocks = None;
     }
+    AmbientSound=None;
 }
 
 simulated function ServerCancelBeam()

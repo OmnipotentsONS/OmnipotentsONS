@@ -136,34 +136,37 @@ simulated event DrivingStatusChanged()
 
 	Super.DrivingStatusChanged();
 
-    if (bDriving && Level.NetMode != NM_DedicatedServer && !bDropDetail)
+    if (bDriving)
 	{
-        GetAxes(Rotation,RotX,RotY,RotZ);
-
-        if (TrailEffects.Length == 0)
+        if(Level.NetMode != NM_DedicatedServer)
         {
-            TrailEffects.Length = TrailEffectPositions.Length;
+            GetAxes(Rotation,RotX,RotY,RotZ);
 
-        	for(i=0;i<TrailEffects.Length;i++)
-            	if (TrailEffects[i] == None)
-            	{
-                	TrailEffects[i] = spawn(TrailEffectClass, self,, Location + (TrailEffectPositions[i] >> Rotation) );
-                	TrailEffects[i].SetBase(self);
-                    TrailEffects[i].SetRelativeRotation( rot(0,32768,0) );
-                }
+            if (TrailEffects.Length == 0)
+            {
+                TrailEffects.Length = TrailEffectPositions.Length;
+
+                for(i=0;i<TrailEffects.Length;i++)
+                    if (TrailEffects[i] == None)
+                    {
+                        TrailEffects[i] = spawn(TrailEffectClass, self,, Location + (TrailEffectPositions[i] >> Rotation) );
+                        TrailEffects[i].SetBase(self);
+                        TrailEffects[i].SetRelativeRotation( rot(0,32768,0) );
+                    }
+            }
+
+            if (StreamerEffect.Length == 0)
+            {
+                StreamerEffect.Length = StreamerEffectOffset.Length;
+
+                for(i=0; i<StreamerEffect.Length; i++)
+                    if (StreamerEffect[i] == None)
+                    {
+                        StreamerEffect[i] = spawn(StreamerEffectClass, self,, Location + (StreamerEffectOffset[i] >> Rotation) );
+                        StreamerEffect[i].SetBase(self);
+                    }
+            }
         }
-
-        if (StreamerEffect.Length == 0)
-        {
-    		StreamerEffect.Length = StreamerEffectOffset.Length;
-
-    		for(i=0; i<StreamerEffect.Length; i++)
-        		if (StreamerEffect[i] == None)
-        		{
-        			StreamerEffect[i] = spawn(StreamerEffectClass, self,, Location + (StreamerEffectOffset[i] >> Rotation) );
-        			StreamerEffect[i].SetBase(self);
-        		}
-    	}
     }
     else
     {
@@ -417,6 +420,7 @@ simulated function SwitchWeapon(byte F)
         CrosshairColor = PGCrosshairColor;
     }
 
+    SetActiveWeapon(F-1);
     ServerChangeWeapon(F);
 }
 
@@ -458,9 +462,9 @@ defaultproperties
      FPCamPos=(Z=50.000000)
      TPCamWorldOffset=(Z=130.000000)
      VehiclePositionString="in a Q-36 Space Modulator"
-     VehicleNameString="Q-36 Space Modulator 2.0"
+     VehicleNameString="Q-36 Space Modulator 2.4"
      AirSpeed=800.000000
-     AccelRate=4000.000000
+     AccelRate=2800.000000
      AirControl=0.300000
      Mesh=SkeletalMesh'CSMarvin.EdWood'
      bShadowCast=True
@@ -476,8 +480,8 @@ defaultproperties
          KStartEnabled=True
          bKNonSphericalInertia=True
          KActorGravScale=0.000000
-         //KMaxSpeed=5000.000000
-         KMaxSpeed=3000.000000
+         //KMaxSpeed=3000.000000
+         KMaxSpeed=2400.000000
          bHighDetailOnly=False
          bClientOnly=False
          bKDoubleTickRate=True

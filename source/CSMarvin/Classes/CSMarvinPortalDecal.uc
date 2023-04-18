@@ -508,8 +508,7 @@ simulated function Touch(actor Other)
     */
 
 	// Allow warp projectile to destroy other portals
-	//if (CSMarvinProjectile(Other) != none && CSMarvinPortalWeapon(Other.Owner) != none && CSMarvinPortalWeapon(Other.Owner).Team != CSMarvinPortalWeapon(Owner).Team)
-	if (Projectile(Other) != none && Other.Instigator != none && Other.Instigator.GetTeamNum() != CSMarvinPortalWeapon(Owner).Team)
+	if (CSMarvinProjectile(Other) != none && Other.Instigator != none && Other.Instigator.GetTeamNum() != CSMarvinPortalWeapon(Owner).Team)
 	{
         PlaySound(Sound'PortalShrink');
         Projectile(Other).Explode(Location,vector(Rotation));

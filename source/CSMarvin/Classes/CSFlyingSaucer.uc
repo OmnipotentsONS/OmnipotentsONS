@@ -4,7 +4,11 @@
 class CSFlyingSaucer extends ONSAttackCraft
 	placeable;
 
-function PostBeginPlay()
+
+#exec AUDIO IMPORT File=Sounds\drwho2.wav 
+#exec AUDIO IMPORT File=Sounds\closeencounters.wav 
+
+simulated function PostBeginPlay()
 {
     TrailEffectPositions.Length=0;
     StreamerEffectOffset.Length=0;
@@ -13,6 +17,9 @@ function PostBeginPlay()
 
 defaultproperties
 {
+	HornSounds(0)=sound'CSMarvin.closeencounters'
+	HornSounds(1)=sound'CSMarvin.drwho2'
+
      MaxThrustForce=300.000000
      MaxStrafeForce=300.000000
      MaxRiseForce=200.000000
@@ -37,9 +44,9 @@ defaultproperties
      FPCamPos=(Z=50.000000)
      TPCamWorldOffset=(Z=130.000000)
      VehiclePositionString="in a Flying Saucer"
-     VehicleNameString="Flying Saucer 2.0"
+     VehicleNameString="Flying Saucer 2.4"
      AirSpeed=800.000000
-     AccelRate=4000.000000
+     AccelRate=2800.000000
      AirControl=0.300000
      Mesh=SkeletalMesh'CSMarvin.EdWood'
      bShadowCast=True
@@ -55,7 +62,9 @@ defaultproperties
          KStartEnabled=True
          bKNonSphericalInertia=True
          KActorGravScale=0.000000
-         KMaxSpeed=5000.000000
+         //KMaxSpeed=5000.000000
+         //KMaxSpeed=4000.000000
+         KMaxSpeed=2600.000000
          bHighDetailOnly=False
          bClientOnly=False
          bKDoubleTickRate=True
