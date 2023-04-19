@@ -53,7 +53,7 @@ function bool Dodge(eDoubleClickDir DoubleClickMove)
 function KDriverEnter(Pawn P)
 {
 	bHeadingInitialized = False;
-
+  P.ReceiveLocalizedMessage(class'CSMarvin.CSMarvinEnterMessage', 0);
 	Super.KDriverEnter(P);
 }
 
@@ -413,6 +413,7 @@ simulated function SwitchWeapon(byte F)
     {
         CrosshairTexture=NormalCrossTexture;
         CrosshairColor = NormalCrossColor;
+         
     }
     else if(F==2)
     {
@@ -420,14 +421,20 @@ simulated function SwitchWeapon(byte F)
         CrosshairColor = PGCrosshairColor;
     }
 
+    PlayerController(Controller).ReceiveLocalizedMessage(class'CSMarvin.CSMarvinEnterMessage', int(F));
     SetActiveWeapon(F-1);
     ServerChangeWeapon(F);
 }
 
 function ServerChangeWeapon(byte F)
 {
-    SetActiveWeapon(F-1);
+   If (Weapons.Length > 0) SetActiveWeapon(F-1);
+   // shouldn't need this check but somehow this is getting called
+   // generating this in the log
+   // CSMarvin (Function Onslaught.ONSVehicle.SetActiveWeapon:000F) Accessed array 'Weapons' out of bounds (0/0)
+  // CSMarvin (Function Onslaught.ONSVehicle.SetActiveWeapon:000F) Accessed None 'Weapons'
 }
+
 
 
 defaultproperties
@@ -462,7 +469,7 @@ defaultproperties
      FPCamPos=(Z=50.000000)
      TPCamWorldOffset=(Z=130.000000)
      VehiclePositionString="in a Q-36 Space Modulator"
-     VehicleNameString="Q-36 Space Modulator 2.4"
+     VehicleNameString="Q-36 Space Modulator 2.5"
      AirSpeed=800.000000
      AccelRate=2800.000000
      AirControl=0.300000

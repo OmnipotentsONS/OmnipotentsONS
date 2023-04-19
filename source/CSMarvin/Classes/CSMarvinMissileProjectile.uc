@@ -104,11 +104,13 @@ simulated function Timer()
 {
     local float dist;
 
-    dist = VSize(Owner.Location - Location);
-    if(dist > 1000)
-    {
-        RotationRate.Roll += (3000 - dist / 3000) * 40;
-    }
+    if (Owner != None) {
+	    dist = VSize(Owner.Location - Location);
+	    if(dist > 1000)
+	    {
+	        RotationRate.Roll += (3000 - dist / 3000) * 40;
+	    }
+  }
 }
 
 simulated function Landed( vector HitNormal )
@@ -134,9 +136,9 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 {
 	local PlayerController PC;
     local int Team;
-    Team = ONSWeapon(Owner).Team;
+    if (Owner!= None) Team = ONSWeapon(Owner).Team;
 
-	PlaySound(sound'CSMarvin.orangeexplosion',,4.0*TransientSoundVolume);
+		PlaySound(sound'CSMarvin.orangeexplosion',,4.0*TransientSoundVolume);
 
     if ( EffectIsRelevant(Location,false) )
     {
