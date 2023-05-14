@@ -1,9 +1,11 @@
 // Updated for Omni Link3 by pooty
 // Tick link with healing and growing.  Its link beam heals friendlies, but drains enemies and heals its self.
 
-class TickScorpion3Omni extends ONSRV;
+class TickScorpion3Omni extends ONSWheeledCraft;  // instead of ONSRV
+// based on Hyena (which has two firing modes and drives nice)
 
 #exec OBJ LOAD FILE=LinkScorpion3Tex.utx
+#exec obj load file=TickScorpion3Mesh.ukx
 
 var bool Linking;
 var int Links, OldLinks;
@@ -37,12 +39,35 @@ replication
 
 simulated function PostNetBeginPlay()
 {
+	
+	SetBoneScale(4, 0.0, 'CarLShoulder');
+	SetBoneScale(5, 0.0, 'CarRShoulder');
+
 	Super.PostNetBeginPlay();
-	//if(Role==Role_Authority)
-	//{
-	//	SetTimer(0.2, true);
-	//}
 }
+
+
+/*
+function AltFire(optional float F)
+{
+	Super(ONSWheeledCraft).AltFire(F);
+}
+
+function ClientVehicleCeaseFire(bool bWasAltFire)
+{
+	Super(ONSWheeledCraft).ClientVehicleCeaseFire(bWasAltFire);
+}
+
+function VehicleFire(bool bWasAltFire)
+{
+	Super(ONSWheeledCraft).VehicleFire(bWasAltFire);
+}
+
+function VehicleCeaseFire(bool bWasAltFire)
+{
+	Super(ONSWheeledCraft).VehicleCeaseFire(bWasAltFire);
+}
+*/
 
 /*
 function bool SomeoneLinksToMe()
@@ -349,14 +374,27 @@ simulated function ScaleTickScorp(bool bHeal, int Damage){
 	//AmbientGlow=FMax(default.AmbientGlow*CurrDrawScale, 255);
 	if (NewSkin != OldSkin) {  // only change skins when needed.
 		//log(@self@"Changing Skins...")
+		Spawn(class'TickScorp3GrowthEffect', Self,,);
+		// put some kind off effect.
 		if (Team == 0 )  {
 			 Skins[0] = TickSkin_Red[NewSkin];
 			 OldSkin = NewSkin;
+			 
 		}	 
 		else {
 		 	 Skins[0] = TickSkin_Blue[NewSkin];
 	  	 OldSkin = NewSkin;	
 	  }
+	  
+	  // Doesn't work either, it loads new mesh and size but again
+	  /// doesn't update the collisoin box!  WTF.  No way to force the engine to 
+	  // Update Collision box once the actor is spawned.
+	  //If (Health > 451 ) 
+	  //	LinkMesh(SkeletalMesh'TickScorpion3Mesh.RV1o5');
+	 // 	LinkSkelAnim()?
+	 // else LinkMesh(SkeletalMesh'ONSVehicles-A.RV');
+//	  SetCollision();
+	  
 	  	// Adjust TP Camera NOT NEEDED
 	//  TPCamDistance=default.TPCamDistance * CurrDrawScale;
 	 //FPCamPos=(X=15.000000,Z=25.000000)
@@ -381,6 +419,30 @@ simulated function ScaleTickScorp(bool bHeal, int Damage){
   
 	// Speed?
 }
+
+
+simulated function DrawHUD(Canvas C)
+{
+	local PlayerController PC;
+	local HudCTeamDeathMatch PlayerHud;
+
+	//Hax. :P
+    Super.DrawHUD(C);
+	PC = PlayerController(Controller);
+	if (Health < 1 || PC == None || PC.myHUD == None || PC.MyHUD.bShowScoreboard)
+		return;
+		
+	PlayerHud=HudCTeamDeathMatch(PC.MyHud);
+	
+	if ( Links > 0 )
+	{
+		PlayerHud.totalLinks.value = Links;
+		PlayerHud.DrawSpriteWidget (C, PlayerHud.LinkIcon);
+		PlayerHud.DrawNumericWidget (C, PlayerHud.totalLinks, PlayerHud.DigitsBigPulse);
+		PlayerHud.totalLinks.value = Links;
+	}
+}
+
 
 defaultproperties
 {
@@ -443,7 +505,7 @@ defaultproperties
      AirRollTorque=35.000000
      AirRollDamping=35.000000
      MaxJumpSpin=100.000000
-     DriverWeapons(0)=(WeaponClass=Class'LinkVehiclesOmni.TickScorpion3Gun')
+     DriverWeapons(0)=(WeaponClass=Class'LinkVehiclesOmni.TickScorpion3Gun',WeaponBone="ChainGunAttachment")
      
 //     RedSkin=Shader'LinkScorpion3Tex.LinkrvRedShad'
 //     BlueSkin=Shader'LinkScorpion3Tex.LinkrvBlueShad'
@@ -458,11 +520,30 @@ defaultproperties
     TickSkin_Blue[1]=Texture'LinkScorpion3Tex.TickTex.Tick-Blue'
     TickSkin_Blue[2]=Texture'LinkScorpion3Tex.TickTex.Tick-Blue-Full'
      
-     FPCamPos=(X=15.000000,Z=25.000000)
-     TPCamDistance=375.000000
+     IdleSound=Sound'ONSVehicleSounds-S.RV.RVEng01'
+     StartUpSound=Sound'ONSVehicleSounds-S.RV.RVStart01'
+     ShutDownSound=Sound'ONSVehicleSounds-S.RV.RVStop01'
+     StartUpForce="RVStartUp"
+     DestroyedVehicleMesh=StaticMesh'ONSDeadVehicles-SM.RVDead'
+     DestructionEffectClass=Class'Onslaught.ONSSmallVehicleExplosionEffect'
+     DisintegrationEffectClass=Class'Onslaught.ONSVehDeathRV'
+     DisintegrationHealth=-25.000000
+     DestructionLinearMomentum=(Min=200000.000000,Max=300000.000000)
+     DestructionAngularMomentum=(Min=100.000000,Max=150.000000)
+     DamagedEffectOffset=(X=60.000000,Y=10.000000,Z=10.000000)
+     bEjectPassengersWhenFlipped=False
+     ImpactDamageMult=0.000100
+     HeadlightCoronaOffset(0)=(X=86.000000,Y=30.000000,Z=7.000000)
+     HeadlightCoronaOffset(1)=(X=86.000000,Y=-30.000000,Z=7.000000)
+     HeadlightCoronaMaterial=Texture'Flakwolf_Tex.Hyena.HyenaFlare'
+     HeadlightCoronaMaxSize=65.000000
+     HeadlightProjectorMaterial=Texture'Flakwolf_Tex.Hyena.HyenaProjector'
+     HeadlightProjectorOffset=(X=90.000000,Z=7.000000)
+     HeadlightProjectorRotation=(Pitch=-1000)
+     HeadlightProjectorScale=0.300000
+    
      
-     TPCamLookat=(X=0.000000,Z=0.000000)
-     TPCamWorldOffset=(Z=100.000000)
+     
      
      
      Begin Object Class=SVehicleWheel Name=RRWheel
@@ -513,6 +594,7 @@ defaultproperties
      End Object
      Wheels(3)=SVehicleWheel'LinkVehiclesOmni.TickScorpion3Omni.LFWheel'
 
+		 VehicleMass = 3.3
      bScriptedRise=True
      VehiclePositionString="in a Tick Scorpion"
      VehicleNameString="Tick Scorpion 3.0"
@@ -537,13 +619,38 @@ defaultproperties
      End Object
      KParams=KarmaParamsRBFull'LinkVehiclesOmni.TickScorpion3Omni.KParams0'
 
-
-
+     bDrawDriverInTP=True
+     bDrawMeshInFP=True
+     bHasHandbrake=True
+     bSeparateTurretFocus=True
+     bSpawnProtected=False
+     DrivePos=(X=2.000000,Z=38.000000)
+     ExitPositions(0)=(Y=-165.000000,Z=100.000000)
+     ExitPositions(1)=(Y=165.000000,Z=100.000000)
+     ExitPositions(2)=(Y=-165.000000,Z=-100.000000)
+     ExitPositions(3)=(Y=165.000000,Z=-100.000000)
+     EntryRadius=160.000000
+     
+     FPCamPos=(X=15.000000,Z=25.000000)
+     TPCamDistance=375.000000
+     TPCamLookat=(X=0.000000,Z=0.000000)
+     TPCamWorldOffset=(Z=100.000000)
+     CenterSpringForce="SpringONSSRV"
+     
+     MaxDesireability=0.400000
+     ObjectiveGetOutDist=1500.000000
+		 HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.Dixie_Horn'
+     HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.La_Cucharacha_Horn'
+     bReplicateAnimations=True
+     bShowChargingBar=True
      Health=300
      HealthMax=900
      DriverDamageMult=0 // no driver damage
      CurrDrawScale = 1
      Mesh=SkeletalMesh'ONSVehicles-A.RV' // same as ONSRV
+     //Mesh=SkeletalMesh'TickScorpion3Mesh.RV1o5'
+     CollisionRadius=100.000000
+     CollisionHeight=40.000000
      DamagedEffectHealthFireFactor = 0.125 //100
 	   DamagedEffectHealthSmokeFactor = 0.25 //200
 	   OldSkin = 0

@@ -49,7 +49,7 @@ var bool bBeaming;							// True if utilizing alt-fire
 
 var LinkAttachment.ELinkColor OldLinkColor;
 
-var LinkTank3BeamEffect Beam;
+var LinkBeamEffect Beam;
 
 replication
 {
@@ -383,6 +383,31 @@ Begin:
 }
 */
 
+simulated function DrawHUD(Canvas C)
+{
+	local PlayerController PC;
+	local HudCTeamDeathMatch PlayerHud;
+
+	//Hax. :P
+    Super.DrawHUD(C);
+	PC = PlayerController(Controller);
+	if (Health < 1 || PC == None || PC.myHUD == None || PC.MyHUD.bShowScoreboard)
+		return;
+		
+	PlayerHud=HudCTeamDeathMatch(PC.MyHud);
+	
+	if ( Links > 0 )
+	{
+		PlayerHud.totalLinks.value = Links;
+		PlayerHud.DrawSpriteWidget (C, PlayerHud.LinkIcon);
+		PlayerHud.DrawNumericWidget (C, PlayerHud.totalLinks, PlayerHud.DigitsBigPulse);
+		PlayerHud.totalLinks.value = Links;
+	}
+}
+
+
+
+
 static function StaticPrecache(LevelInfo L)
 {
     super(ONSTreadCraft).StaticPrecache(L);
@@ -459,8 +484,8 @@ defaultproperties
      VehicleNameString=" Link Tank 3.0"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Pancake'
-     HealthMax=1000.000000
-     Health=800
+     HealthMax=1250.00000
+     Health=900
      Mesh=SkeletalMesh'ONSToys1Mesh.LinkTankChassis'
      Skins(0)=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-Idle'
      Skins(1)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'

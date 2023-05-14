@@ -105,13 +105,13 @@ simulated function DestroyEffects()
     }
 }
 
-function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
+function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage )
 {
 	local float AdjDamage;
 	
 	AdjDamage = Damage * (LinkMultiplier*NumLinks+1);
 
-	if ( Other.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
+  if (Target != None && Target.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
   if (Instigator.HasUDamage()) 	AdjDamage *= 2;
 	
 	return AdjDamage;
@@ -362,7 +362,7 @@ state InstantFireMode
 				LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);//if (! ))
 					//LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 			}
-			MyLinkScorpion.Linking = (LockedPawn != None) || bIsHealingObjective;
+			MyLinkScorpion.bLinking = (LockedPawn != None) || bIsHealingObjective;
 
 			if ( bShouldStop )
 				B.StopFiring();
@@ -381,7 +381,7 @@ state InstantFireMode
 
 				if ( Beam != None )
 				{
-					if ( MyLinkScorpion.Linking || ((Other != None) && (Instigator.PlayerReplicationInfo.Team != None) && Other.TeamLink(Instigator.PlayerReplicationInfo.Team.TeamIndex)) )
+					if ( MyLinkScorpion.bLinking || ((Other != None) && (Instigator.PlayerReplicationInfo.Team != None) && Other.TeamLink(Instigator.PlayerReplicationInfo.Team.TeamIndex)) )
 					{
 						Beam.LinkColor = Instigator.PlayerReplicationInfo.Team.TeamIndex + 1;
 						/*if ( LinkGun.ThirdPersonActor != None )
@@ -456,7 +456,7 @@ function SetLinkTo(Pawn Other)
     if (LockedPawn != None && MyLinkScorpion != None)
     {
         RemoveLink(1 + MyLinkScorpion.Links, Instigator);
-        MyLinkScorpion.Linking = false;
+        MyLinkScorpion.bLinking = false;
     }
 
     LockedPawn = Other;
@@ -467,7 +467,7 @@ function SetLinkTo(Pawn Other)
         {
             bFeedbackDeath = true;
         }
-        MyLinkScorpion.Linking = true;
+        MyLinkScorpion.bLinking = true;
         LockedPawn.PlaySound(MakeLinkSound, SLOT_None);
     }
 }

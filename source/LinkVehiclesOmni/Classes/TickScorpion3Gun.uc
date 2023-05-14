@@ -48,6 +48,14 @@ var Sound BeamSounds[4];
 
 var float MinAim;
 
+// for alt-fire taken from ONSRVWebLauncher
+var()   float   SpreadAngle; // Angle between initial shots, in radians.
+var()   float   MinProjectiles, MaxProjectiles, MaxHoldTime;
+var float   StartHoldTime;
+var bool    bHoldingFire;
+var sound   ChargeUpSound, ChargeLoop;
+
+
 
 replication
 {
@@ -123,6 +131,7 @@ function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
 	return AdjDamage;
 }
 
+// STATE INSTANT FIRE ===============================================================
 state InstantFireMode
 {
     simulated function ClientSpawnHitEffects()
@@ -436,7 +445,170 @@ state InstantFireMode
             PlayOwnedSound(AltFireSoundClass, SLOT_None, AltFireSoundVolume/255.0,, AltFireSoundRadius,, False);*/
 		}
 
+simulated function OwnerEffects()
+    {
+        if (Role < ROLE_Authority && !bHoldingFire && bIsAltFire)
+        {
+            bHoldingFire = true;
+            StartHoldTime = Level.TimeSeconds;
+        }
+    }
+	function AltFire(Controller C) {
+		 //log(self@"AltFire Called,bHoldingFire="@bHoldingFire);
+  	 if (!bHoldingFire)
+        {
+            StartHoldTime = Level.TimeSeconds;
+            bHoldingFire = true;
+            AmbientSound = ChargeUpSound;
+            SetTimer(MaxHoldTime, False);
+        }
+    }
+    
+    
+    function Timer()
+    {
+        if (bHoldingFire)
+            AmbientSound = ChargeLoop;
+    }
+    
+
+    
+	function CeaseFire(Controller C)
+	{
+		local vector GunDir, RightDir, UpDir, FireDir, FireOffset;
+		local int i, NumProjectiles;
+		local float SpreadAngleRad, FireAngleRad;
+		local TickWebCasterProjectileLeader Leader;
+		local TickWebCasterProjectile P;
+
+    //log(self@"CeaseFire Called,bHoldingFire="@bHoldingFire@",bIsAltFire="@bIsAltFire);
+		if (!bIsAltFire) return;
+		if (!bHoldingFire) return;
+
+		ClientPlayForceFeedback("BioRifleFire");
+
+		AmbientSound = None;
+    //log(self@"CeaseFire Called, CalcWeaponFire()");
+		CalcWeaponFire();
+
+		if (bCorrectAim)
+			WeaponFireRotation = AdjustAim(false);
+
+		// Defines plane in which projectiles will start travelling in.
+		GetAxes(WeaponFireRotation, GunDir, RightDir, UpDir);
+
+    MaxProjectiles = FClamp(Round(default.MaxProjectiles * CurrDrawScale), default.MaxProjectiles, default.MaxProjectiles*2);
+    
+		NumProjectiles = MinProjectiles + 2 * int(0.5 * (MaxProjectiles - MinProjectiles) * (FMin(Level.TimeSeconds - StartHoldTime, MaxHoldTime) / MaxHoldTime));
+		//log(self@"TickWebCaster, CurrDrawSCale="@CurrDrawScale@"NumProjectiles="@NumProjectiles@"MaxProjectiles="@MaxProjectiles);
+		
+		bHoldingFire = false;
+
+		//SpreadAngleRad = SpreadAngle * (Pi/180.0);
+		SpreadAngleRad = (SpreadAngle - Rand(10))* (Pi/180.0); //??? play with this some more?
+
+		// Spawn all the projectiles
+		for(i = 0; i < NumProjectiles; i++)
+		{
+			FireAngleRad = ((1 - NumProjectiles) + 2 * i) * (SpreadAngleRad / NumProjectiles);
+			FireDir = Cos(FireAngleRad) * GunDir + Sin(FireAngleRad) * RightDir;
+			FireOffset = ((1 - NumProjectiles) + 2 * i) * RightDir;
+			
+			switch (i) {
+				case 0:
+					Leader = Spawn(class'TickWebCasterProjectileLeader', self,, WeaponFireLocation + FireOffset, rotator(FireDir));
+					
+					if (Leader != None)
+					{
+						Leader.Velocity += InheritVelocityScale * Instigator.Velocity;
+						Leader.Projectiles.Length = 2 * NumProjectiles - 2;
+						Leader.ProjTeam = C.GetTeamNum();
+
+						Leader.ProjNumber = 0;
+						Leader.Projectiles[0] = Leader;
+						Leader.Leader = Leader;
+						
+						//Adjust web for TickScale 
+						Leader.SuckTargetSearchRange = Leader.default.SuckTargetSearchRange + ((CurrDrawScale-1)*Leader.default.SuckTargetSearchRange);
+						//log(self@"SuckTargetSearchRange="@Leader.SuckTargetSearchRange@" default="@Leader.default.SuckTargetSearchRange);
+						//increase suck/sticky force
+						// from leader SuckTargets(3)=(SuckTargetClass=Class'Engine.Vehicle',SuckTargetRange=150.000000,SuckTargetForce=6500.000000,SuckReduceVelFactor=0.900000)
+					//	log(self@"SuckTargetRange="@Leader.SuckTargets[3].SuckTargetRange@" default="@Leader.default.SuckTargets[3].SuckTargetRange@"CurrDrawScale="@CurrDrawScale);
+						Leader.SuckTargets[3].SuckTargetForce = Leader.default.SuckTargets[3].SuckTargetForce + ((CurrDrawScale-1)*Leader.default.SuckTargets[3].SuckTargetForce);
+						Leader.SuckTargets[3].SuckReduceVelFactor = Leader.default.SuckTargets[3].SuckReduceVelFactor + ((CurrDrawScale-1)*Leader.default.SuckTargets[3].SuckReduceVelFactor);
+					}
+					break;
+					
+				case NumProjectiles - 1:
+					
+					P = Spawn(class'TickWebCasterProjectile', self, , WeaponFireLocation + FireOffset, rotator(FireDir));
+				
+					if (P != None && Leader != None)
+					{
+						P.ProjNumber = 2 * i - 1;
+						Leader.Projectiles[P.ProjNumber] = P;
+						P.Leader = Leader;
+					}
+					break;
+				
+				default:
+					if (i % 2 == 1)
+						FireOffset -= 0.5 * UpDir;
+					
+					P = Spawn(class'TickWebCasterProjectile', self, , WeaponFireLocation + FireOffset, rotator(FireDir - 0.05 * UpDir));
+					
+					if (P != None && Leader != None)
+					{
+						P.ProjNumber = 2 * i - 1;
+						Leader.Projectiles[P.ProjNumber] = P;
+						P.Leader = Leader;
+					}
+					
+					FireOffset += UpDir;
+					P = Spawn(class'TickWebCasterProjectile', self, , WeaponFireLocation + FireOffset, rotator(FireDir + 0.05 * UpDir));
+					
+					if (P != None && Leader != None)
+					{
+						P.ProjNumber = 2 * i;
+						Leader.Projectiles[P.ProjNumber] = P;
+						P.Leader = Leader;
+					}
+			}
+		}
+
+		ShakeView();
+		FlashMuzzleFlash();
+
+		// Play firing noise
+		if (bAmbientFireSound)
+			AmbientSound = FireSoundClass;
+		else
+			PlayOwnedSound(FireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius,, false);
+
+		FireCountdown = FireInterval;
+	}
+
+
+
 }
+// END Instant STATE ============================================
+
+// Alt fire stuff
+
+simulated function float ChargeBar()
+{
+    if (bHoldingFire)
+        return (FMin(Level.TimeSeconds - StartHoldTime, MaxHoldTime) / MaxHoldTime);
+    else
+        return 0;
+}
+
+//state ProjectileFireMode
+//{
+ 
+ 		
+//}
+// Projectile State END (Altfire)======================================
 
 function SetLinkTo(Pawn Other)
 {
@@ -616,4 +788,14 @@ defaultproperties
 		 SelfHealMultiplier = 1.1;
 		 VehicleDamageMultiplier = 1.1; //  increased damage to vehicles might add some specific vehicles here?
      
+     //AltFire
+     AltFireInterval=0.30000
+     AltFireSoundClass=Sound'ONSVehicleSounds-S.LaserSounds.Laser17'
+     AltFireForce="BioRifleFire"
+    // AltDamageType=Class'LinkVehiclesOmni.DmgTypeTickWebCaster'
+     AltFireProjectileClass=Class'LinkVehiclesOmni.TickWebCasterProjectile'
+     SpreadAngle=15.000000
+     MinProjectiles=3.000000
+     MaxProjectiles=11.000000
+     MaxHoldTime=3.000000
 }

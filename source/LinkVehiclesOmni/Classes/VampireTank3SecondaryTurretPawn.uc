@@ -63,6 +63,35 @@ function ShouldTargetMissile(Projectile P)
 
 // ============================================================================
 
+simulated function DrawHUD(Canvas C)
+{
+	local PlayerController PC;
+	local HudCTeamDeathMatch PlayerHud;
+
+	//log("VampireTank3SecondTurret:DrawHUD");
+	//log("VampireTank3SecondTurret:DrawHUD VehicleBase="$VehicleBase);
+    Super.DrawHUD(C);
+	PC = PlayerController(Controller);
+	//log("VampireTank3SecondTurret:DrawHUD PC="$PC);
+	if (VehicleBase.Health < 1 || PC == None || PC.myHUD == None || PC.MyHUD.bShowScoreboard)
+		return;
+		
+	PlayerHud=HudCTeamDeathMatch(PC.MyHud);
+	
+	//log("VampireTank3SecondTurret:DrawHUD PlayerHud="$PlayerHud);
+	
+	If (VehicleBase.Owner == None) VampireTank3(VehicleBase).ResetLinks();  // this doesn't get called unless Tank has owner (its in tick), only need this in turrets
+	//log("VampireTank3SecondTurret:DrawHUD Links="$VampireTank3(VehicleBase).Links);
+	if ( VampireTank3(VehicleBase).Links > 0 )
+	{
+		PlayerHud.totalLinks.value = VampireTank3(VehicleBase).Links;
+		PlayerHud.DrawSpriteWidget (C, PlayerHud.LinkIcon);
+		PlayerHud.DrawNumericWidget (C, PlayerHud.totalLinks, PlayerHud.DigitsBigPulse);
+		PlayerHud.totalLinks.value = VampireTank3(VehicleBase).Links;
+	}
+}
+
+
 defaultproperties
 {
      GunClass=Class'LinkVehiclesOmni.VampireTank3SecondaryTurret'

@@ -79,8 +79,10 @@ simulated function UpdatePrecacheStaticMeshes()
 
 simulated function PostNetBeginPlay()
 {
-	if(VampireTank3(Owner) != None)
-		MyVampireTank = VampireTank3(ONSWeaponPawn(Owner).VehicleBase);
+	//if(VampireTank3(Owner) != None)
+	//	MyVampireTank = VampireTank3(ONSWeaponPawn(Owner).VehicleBase);
+	
+	
 	Super.PostNetBeginPlay();
 }
  
@@ -96,10 +98,9 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 	local int NumLinks;
 
 
-	//if (MyVampireTank != None)
-	//	NumLinks = MyVampireTank.GetLinks();
-	//else
-	// No link stacking
+	if (MyVampireTank != None)
+		NumLinks = MyVampireTank.GetLinks();
+	else
 		NumLinks = 0;
 
 	// Swap out fire sound
@@ -201,8 +202,8 @@ function WeaponCeaseFire(Controller C, bool bWasAltFire)
 			//VampireTank3(Owner).Beam = None;
 			bBeaming = false;
 		}
-		//AmbientSound = None;
-		Owner.AmbientSound = OldAmbientSound;
+		AmbientSound = None;
+		//Owner.AmbientSound = OldAmbientSound;
 		OldAmbientSound = None;
 		//Owner.SoundVolume = ONSVehicle(Owner).Default.SoundVolume;
 		SetLinkTo(None);
@@ -247,15 +248,18 @@ simulated event Tick(float dt)
 	// This is easily changed over if I decide I want to recode the Link Badger based off this code
 	//log(Level.TimeSeconds@self@"TICK -- Owner"@Owner@"LinkTank of Owner"@VampireTank3(Owner),'KDebug');
 
-	// No link stacking	
-	//	if (MyVampireTank != None) {
-	//		NumLinks = MyVampireTank.GetLinks();
-	  	//Beam = VampireTank3(Owner).Beam;
-	//	  if (Beam != NONE) 	Beam.SetBeamSize(NumLinks);
-	//	 } 
-	//else
-		NumLinks = 0;
+	if (Owner != None) MyVampireTank = VampireTank3(ONSWeaponPawn(Owner).VehicleBase);
+	NumLinks = 0;
 	
+	//  link stacking	
+	if (MyVampireTank != None) {
+	  	NumLinks = MyVampireTank.GetLinks();
+	 	  Beam = VampireTank3(Owner).Beam;
+		  if (Beam != NONE) 	Beam.SetBeamSize(NumLinks);
+  } 
+	
+	
+	  
 	//if (Role < ROLE_Authority)
 	//	log(Level.TimeSeconds@self@"TICK -- Role"@Role@"LinkBeam"@Beam,'KDebug');
 
@@ -309,14 +313,12 @@ simulated event Tick(float dt)
 				}
 			*/
 
-			if ( Beam != None )
-				LockedPawn = Beam.LinkedPawn;
+			if ( Beam != None ) LockedPawn = Beam.LinkedPawn;
 			//log("in tick found beam"@beam@"locked onto"@LockedPawn,'KDebug');
 		}
 
 		// If we're locked onto a pawn increase our trace distance
-        if ( LockedPawn != None )
-			TraceRange *= 1.5;
+      if ( LockedPawn != None ) TraceRange *= 1.5;
 
 	
 		if ( LockedPawn != None )
@@ -326,16 +328,13 @@ simulated event Tick(float dt)
 			{
 				V = Normal(EndTrace - StartTrace);
 				if ( (V dot X < LinkFlexibility) || LockedPawn.Health <= 0 || LockedPawn.bDeleteMe || (VSize(EndTrace - StartTrace) > 1.5 * TraceRange) )
-				{
-					SetLinkTo( None );
-				}
+				{				SetLinkTo( None ); 				}
 			}
 		}
 
 
         if ( LockedPawn == None )
         {
-
 	        if (Role == ROLE_Authority)
 	        	Aim = AdjustAim(true);
 	        else
@@ -347,36 +346,27 @@ simulated event Tick(float dt)
 
         Other = Trace(HitLocation, HitNormal, EndTrace, StartTrace, true);
         if ( Other != None && Other != Instigator )
-			EndEffect = HitLocation;
-		else
-			EndEffect = EndTrace;
+			     EndEffect = HitLocation;
+		    else
+			     EndEffect = EndTrace;
 
-		if ( Beam != None )
-			Beam.EndEffect = EndEffect;
+		    if ( Beam != None )	Beam.EndEffect = EndEffect;
 
-		if ( Role < ROLE_Authority )
-		{
-
-			return;
-		}
-
+				if ( Role < ROLE_Authority ) return;
+		
         if ( Other != None && Other != Instigator )
         {
             // target can be linked to
             if ( IsLinkable(Other) )
             {
-                if ( Other != lockedpawn )
-                    SetLinkTo( Pawn(Other) );
-
-                if ( lockedpawn != None )
-                    LinkBreakTime = LinkBreakDelay;
+                if ( Other != lockedpawn )  SetLinkTo( Pawn(Other) );
+                if ( lockedpawn != None )   LinkBreakTime = LinkBreakDelay;
             }
             else
-            {
-                // stop linking
+            {    // stop linking
                 if ( lockedpawn != None )
                 {
-                    if ( LinkBreakTime <= 0.0 )
+                    if ( LinkBreakTime <= 0.0 ) 
                         SetLinkTo( None );
                     else
                         LinkBreakTime -= dt;
@@ -389,7 +379,6 @@ simulated event Tick(float dt)
 
                     Instigator.MakeNoise(1.0);
 
-                   ;
 
                     if ( !Other.bWorldGeometry )
                     {
@@ -397,37 +386,37 @@ simulated event Tick(float dt)
 							           && Pawn(Other).PlayerReplicationInfo.Team == Instigator.PlayerReplicationInfo.Team) // so even if friendly fire is on you can't hurt teammates
                             AdjustedDamage = 0;
 
-						HealObjective = DestroyableObjective(Other);
-						if ( HealObjective == None )
-							HealObjective = DestroyableObjective(Other.Owner);
-						if ( HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()) )
-						{
-							SetLinkTo(None,true);
-							//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to TRUE in Tick",'KDebug');
-							MyVampireTank.bLinking = true;
-							bIsHealingObjective = true;
-			  			AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ); // no vehicle damage mutli on healing, passing in None deactivates.
-							HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
-							//if (!HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
-							//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
-						}
-						else
-						{
-							if (LockedPawn != None)
-								warn(self@"called takedamage with a linked pawn!!!");
-							else {
-								 AdjustedDamage = AdjustLinkDamage( NumLinks, Other, AltDamage );
-								 Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, MomentumTransfer*X, AltDamageType);
-								
-								 if (MyVampireTank!=None&&MyVampireTank.Health<MyVampireTank.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
-                     MyVampireTank.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
-							}	
-						}
+												HealObjective = DestroyableObjective(Other);
+												if ( HealObjective == None )
+													HealObjective = DestroyableObjective(Other.Owner);
+												if ( HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()) )
+												{
+													SetLinkTo(None,true);
+													//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to TRUE in Tick",'KDebug');
+													MyVampireTank.bLinking = true;
+													bIsHealingObjective = true;
+									  			AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ); // no vehicle damage mutli on healing, passing in None deactivates.
+													HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
+													//if (!HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+													//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
+												}
+												else
+												{
+													if (LockedPawn != None)
+														warn(self@"called takedamage with a linked pawn!!!");
+													else {
+														 AdjustedDamage = AdjustLinkDamage( NumLinks, Other, AltDamage );
+														 Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, MomentumTransfer*X, AltDamageType);
+														 //log(self@"Just before HealDamage to MyVampireTank="@MyVampireTank); 
+														 if (MyVampireTank!=None&&MyVampireTank.Health<MyVampireTank.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
+						                     MyVampireTank.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
+													}	
+												}
 
-						if ( Beam != None )
-							Beam.bLockedOn = true;
-					}
-				}
+												if ( Beam != None )
+													Beam.bLockedOn = true;
+										}  // World geo
+						}  // do hit
 			}
 		}
 
@@ -438,9 +427,8 @@ simulated event Tick(float dt)
 		// exclude self healing.
 		if ( LinkedVehicle != None && bDoHit && (LinkedVehicle != ONSWeaponPawn(Owner).VehicleBase) )
 		{
-			AdjustedDamage = AltDamage * (1.5*NumLinks+1) * Instigator.DamageScaling;
-			if (Instigator.HasUDamage())
-				AdjustedDamage *= 2;
+			AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ); * Instigator.DamageScaling;
+		
 			LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
 			//if (!LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
 			//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
@@ -475,37 +463,15 @@ simulated event Tick(float dt)
 		if ( Beam != None )
 		{
 			if ( (MyVampireTank != None && MyVampireTank.bLinking) || ((Other != None) && (Instigator.PlayerReplicationInfo.Team != None) && Other.TeamLink(Instigator.PlayerReplicationInfo.Team.TeamIndex)) )
-			{
-				Beam.LinkColor = Instigator.PlayerReplicationInfo.Team.TeamIndex + 1;
-
-				// Color change is handled on the tank itself
-				//if ( LinkGun.ThirdPersonActor != None )
-				//{
-				//	if ( Instigator.PlayerReplicationInfo.Team == None || Instigator.PlayerReplicationInfo.Team.TeamIndex == 0 )
-				//		LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Red );
-				//	else
-				//		LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Blue );
-				//}
-			}
+			  	Beam.LinkColor = Instigator.PlayerReplicationInfo.Team.TeamIndex + 1;
 			else
-			{
-				Beam.LinkColor = 0;
-
-				// Color change is handled on the tank itself
-				//if ( LinkGun.ThirdPersonActor != None )
-				//{
-				//	if ( LinkGun.Links > 0 )
-				//		LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Gold );
-				//	else
-				//		LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Green );
-				//}
-			}
-
+					Beam.LinkColor = 0;
+			
 			Beam.Links = NumLinks;
 			if (OldAmbientSound == None)
 			{
 				OldAmbientSound = Owner.AmbientSound;
-				Owner.AmbientSound = BeamSounds[Min(Beam.Links,3)];
+				AmbientSound = BeamSounds[Min(Beam.Links,3)];
 			}
 			//AmbientSound = BeamSounds[Min(Beam.Links,3)];
 			//if (LinkTank != None)
@@ -532,15 +498,19 @@ simulated event Tick(float dt)
 // Return adjusted damage based on number of links
 // Takes a NumLinks argument instead of an actual LinkGun
 // ============================================================================
-simulated function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
+function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage )
 {
-	Damage = Damage * (LinkMultiplier*NumLinks+1);
+	local float AdjDamage;
+	
+	AdjDamage = Damage * (LinkMultiplier*NumLinks+1);
 
-	if ( Other.IsA('Vehicle') )
-		Damage *= VehicleDamageMult;
-
-	return Damage;
+	if (Target != None && Target.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
+  if (Instigator.HasUDamage()) 	AdjDamage *= 2;
+	
+	return AdjDamage;
+	
 }
+
 
 // ============================================================================
 // SetLinkTo
@@ -849,7 +819,7 @@ defaultproperties
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
      VehicleDamageMult=1.500000
-     LinkMultiplier = 1.50000
+     LinkMultiplier = 0.80000
      bInitAimError=True
      YawBone="rvGUNTurret"
      PitchBone="rvGUNbody"
@@ -882,4 +852,5 @@ defaultproperties
      SoundRadius=512.000000
      TransientSoundRadius=1024.000000
      SelfHealMultiplier = 0.8
+     
 }

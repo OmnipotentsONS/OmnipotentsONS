@@ -70,6 +70,30 @@ function ShouldTargetMissile(Projectile P)
 
 // ============================================================================
 
+simulated function DrawHUD(Canvas C)
+{
+	local PlayerController PC;
+	local HudCTeamDeathMatch PlayerHud;
+
+	//Hax. :P
+    Super.DrawHUD(C);
+	PC = PlayerController(Controller);
+	if (VehicleBase.Health < 1 || PC == None || PC.myHUD == None || PC.MyHUD.bShowScoreboard)
+		return;
+		
+	PlayerHud=HudCTeamDeathMatch(PC.MyHud);
+	
+	If (VehicleBase.Owner == None) LinkTank3(VehicleBase).ResetLinks();  // this doesn't get called unless Tank has owner (its in tick), only need this in turrets
+	if ( LinkTank3(VehicleBase).Links > 0 )
+	{
+		PlayerHud.totalLinks.value = LinkTank3(VehicleBase).Links;
+		PlayerHud.DrawSpriteWidget (C, PlayerHud.LinkIcon);
+		PlayerHud.DrawNumericWidget (C, PlayerHud.totalLinks, PlayerHud.DigitsBigPulse);
+		PlayerHud.totalLinks.value = LinkTank3(VehicleBase).Links;
+	}
+}
+
+
 defaultproperties
 {
      GunClass=Class'LinkVehiclesOmni.LinkTank3TertiaryTurret'
@@ -86,5 +110,5 @@ defaultproperties
      TPCamDistRange=(Max=600.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a Link Tank laser turret"
-     VehicleNameString="Link Tank 2.0 Laser Turret"
+     VehicleNameString="Link Tank 3.0 Laser Turret"
 }

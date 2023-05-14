@@ -12,4 +12,5 @@ defaultproperties
      DeathString="%o was exsanguinated by %k's Vampire Tank."
      FemaleSuicide="%o sucked herself dry..."
      MaleSuicide="%o sucked himself dry..."
+     VehicleDamageScaling=1.2
 }

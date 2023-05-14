@@ -14,6 +14,8 @@ class VampireTank3 extends ONSHoverTank;
 
 #exec OBJ LOAD FILE=AS_Vehicles_TX.utx
 #exec OBJ LOAD FILE=LinkTank3Tex.utx
+#exec AUDIO IMPORT File=Sounds/buffy.wav
+#exec AUDIO IMPORT File=Sounds/sucksucksuck.wav
 
 // ============================================================================
 // Structs
@@ -78,8 +80,8 @@ simulated function UpdateLinkColor( LinkAttachment.ELinkColor Color )
 
 	// Update weapon colors too
 	for (i = 0; i < Weapons.Length; i++)
-		if (LinkTank3Gun(Weapons[i]) != None)
-			LinkTank3Gun(Weapons[i]).UpdateLinkColor(Color);
+		if (VampireTank3Gun(Weapons[i]) != None)
+			VampireTank3Gun(Weapons[i]).UpdateLinkColor(Color);
 }
 
 // ============================================================================
@@ -96,7 +98,7 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 		return false;
 
 	// If allied teammate, possibly add them to a link list
-	if (TeamLink(Healer.GetTeamNum()))
+	if (TeamLink(Healer.GetTeamNum()) && Healer != Controller)  // Add self so selfhealing doesn't show link HUD
 	{
 		for (i = 0; i < Linkers.Length; i++)
 		{
@@ -385,6 +387,28 @@ Begin:
 }
 */
 
+simulated function DrawHUD(Canvas C)
+{
+	local PlayerController PC;
+	local HudCTeamDeathMatch PlayerHud;
+
+	//Hax. :P
+    Super.DrawHUD(C);
+	PC = PlayerController(Controller);
+	if (Health < 1 || PC == None || PC.myHUD == None || PC.MyHUD.bShowScoreboard)
+		return;
+		
+	PlayerHud=HudCTeamDeathMatch(PC.MyHud);
+	
+	if ( Links > 0 )
+	{
+		PlayerHud.totalLinks.value = Links;
+		PlayerHud.DrawSpriteWidget (C, PlayerHud.LinkIcon);
+		PlayerHud.DrawNumericWidget (C, PlayerHud.totalLinks, PlayerHud.DigitsBigPulse);
+		PlayerHud.totalLinks.value = Links;
+	}
+}
+
 static function StaticPrecache(LevelInfo L)
 {
     super(ONSTreadCraft).StaticPrecache(L);
@@ -503,4 +527,6 @@ defaultproperties
     DamagedEffectHealthFireFactor = 0.18 //100
     DamagedEffectHealthSmokeFactor = 0.3 //410
     //  need some coool horn sounds.
+   	HornSounds(0)=sound'LinkVehiclesOmni.buffy'
+	  HornSounds(1)=sound'LinkVehiclesOmni.sucksucksuck'
 }

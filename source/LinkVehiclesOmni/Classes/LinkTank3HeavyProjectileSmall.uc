@@ -13,4 +13,5 @@ defaultproperties
      DamageRadius=200.000000
      MyDamageType=Class'LinkVehiclesOmni.DamTypeLink3HeavySecondaryPlasma'
      LifeSpan=4.500000
+     DrawScale=1.25
 }

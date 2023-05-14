@@ -25,6 +25,7 @@ var() int Damage;
 var() float LinkFlexibility;
 var float LinkMultiplier;
 var float SelfHealMultiplier; 
+var float VehicleDamageMult;
 
 var		bool bDoHit;
 var()	bool bFeedbackDeath;
@@ -105,11 +106,21 @@ simulated function DestroyEffects()
     }
 }
 
-simulated function float AdjustLinkDamage( VampireTank3 VT, Actor Other, float Damage )
+function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage )
 {
-	// doesn't do stacking but leave here just in case.
-	return Damage * (1*VT.Links+1);
+	local float AdjDamage;
+	
+	AdjDamage = Damage * (LinkMultiplier*NumLinks+1);
+
+	if (Target != None && Target.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
+  if (Instigator.HasUDamage()) 	AdjDamage *= 2;
+	
+	return AdjDamage;
+	
 }
+
+
+
 // ====================== Instant Fire
 state InstantFireMode
 {
@@ -306,12 +317,10 @@ state InstantFireMode
 	                // beam is updated every frame, but damage is only done based on the firing rate
 	                if ( bDoHit )
 	                {
-	                    if ( Beam != None )
-							Beam.bLockedOn = false;
-
+	                    if ( Beam != None )	Beam.bLockedOn = false;
 	                    Instigator.MakeNoise(1.0);
 
-	                    AdjustedDamage = AdjustLinkDamage( MyVampireTank, Other, Damage );
+	                    AdjustedDamage = AdjustLinkDamage( MyVampireTank.Links, Other, Damage );
 
 	                    if ( !Other.bWorldGeometry )
 	                    {
@@ -348,7 +357,7 @@ state InstantFireMode
 			LinkedVehicle = Vehicle(LockedPawn);
 			if ( LinkedVehicle != None && bDoHit )
 			{
-				AdjustedDamage = Damage * (LinkMultiplier*MyVampireTank.Links+1) * Instigator.DamageScaling;
+				AdjustedDamage = AdjustLinkDamage( MyVampireTank.Links, None,  Damage ) * Instigator.DamageScaling;
 				if (Instigator.HasUDamage())
 					AdjustedDamage *= 2;
 				LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);//if (! ))
@@ -448,7 +457,7 @@ function Fire(Controller C)
 
 	function AltFire(Controller C)
 	{
-		local FX_IonPlasmaTank_ShockWave		Shock;
+		local VampireLightiningShockWave		Shock;
 		local float		DistScale, dist;
 		local vector	dir, StartLocation;
 		local Pawn		Victims;
@@ -460,8 +469,23 @@ function Fire(Controller C)
 
 		PlaySound(Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01', SLOT_None, 128/255.0,,, 2.5, False);
 
-		Shock = Spawn(class'FX_IonPlasmaTank_ShockWave', Self,, StartLocation);
-	  Shock.Emitters[0].ColorScale[0].Color = class'Canvas'.static.MakeColor( 136, 14, 79);
+		Shock = Spawn(class'VampireLightiningShockWave', Self,, StartLocation);
+		
+		if (Instigator.GetTeamNum()==0) {
+			//Red
+			 Shock.Emitters[1].ColorScale[0].Color = class'Canvas'.static.MakeColor( 204,0, 0);
+       Shock.Emitters[1].ColorScale[1].Color = class'Canvas'.static.MakeColor( 204,0, 0);
+       Shock.Emitters[1].ColorScale[2].Color = class'Canvas'.static.MakeColor( 204,0, 0);
+		}
+		else
+		{
+			//Blue
+			 Shock.Emitters[1].ColorScale[0].Color = class'Canvas'.static.MakeColor( 0,0, 255);
+       Shock.Emitters[1].ColorScale[1].Color = class'Canvas'.static.MakeColor( 0,0, 255);
+       Shock.Emitters[1].ColorScale[2].Color = class'Canvas'.static.MakeColor( 0,0, 255);
+		}
+
+	  /*Shock.Emitters[0].ColorScale[0].Color = class'Canvas'.static.MakeColor( 0, 77, 64);
 	  Shock.Emitters[0].ColorScale[1].Color = class'Canvas'.static.MakeColor( 136, 14, 79);
 	  Shock.Emitters[0].ColorScale[2].Color = class'Canvas'.static.MakeColor( 136, 14, 79);
 
@@ -469,17 +493,20 @@ function Fire(Controller C)
     Shock.Emitters[1].ColorScale[1].Color = class'Canvas'.static.MakeColor( 0, 77, 64);
     Shock.Emitters[1].ColorScale[2].Color = class'Canvas'.static.MakeColor( 0, 77, 64);
 
-    Shock.Emitters[2].ColorScale[0].Color = class'Canvas'.static.MakeColor(74,20,140); //74,20,140
+    Shock.Emitters[2].ColorScale[0].Color = class'Canvas'.static.MakeColor(0, 77, 64); //74,20,140
     Shock.Emitters[2].ColorScale[1].Color = class'Canvas'.static.MakeColor( 74,20,140);
     Shock.Emitters[2].ColorScale[2].Color = class'Canvas'.static.MakeColor( 74,20,140);
+    */
 		Shock.SetBase( Instigator );
 
 
-// Doesn't seem to do any damage?!
+
 		foreach VisibleCollidingActors( class'Pawn', Victims, AltFireRadius, StartLocation )
 		{
 			//log("found:" @ Victims.GetHumanReadableName() );
 			// don't let Shock affect fluid - VisibleCollisingActors doesn't really work for them - jag
+			
+			// only does damage if there's instigators/controllers doesn't affect empty stuff.
 			if( (Victims != Instigator) //&& (Victims.Controller != None)
 				&& (Victims.Controller != None && Victims.Controller.GetTeamNum() != Instigator.GetTeamNum())  // spare your team
 				&& (Victims.Role == ROLE_Authority) )
@@ -495,22 +522,22 @@ function Fire(Controller C)
 					// Special easter egg!  
 					Victims.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumEasterEggMult);
 					Victims.TakeDamage(DistScale * AltFireDamage * AltFireDamageEasterEggMult, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, class'DamTypeVampireTankShockwave');
+					MyVampireTank.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
 				}
 				else if (Vehicle(Victims) == None)
 				{
 					Victims.AddVelocity( DistScale * -AltFireMomentum * dir );
 					Victims.TakeDamage(DistScale * AltFireDamage, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, class'DamTypeVampireTankShockwave');
+					MyVampireTank.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
 				}
 				else
 				{
 					Victims.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumVehicleMult);
 					Victims.TakeDamage(DistScale * AltFireDamage * AltFireDamageVehicleMult, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, class'DamTypeVampireTankShockwave');
+					MyVampireTank.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
 				}
 
-				//Victims.Velocity = (DistScale * ShockMomentum * dir);
-				//Victims.TakeDamage(0, Instigator, Victims.Location - 0.5 * (Victims.CollisionHeight + Victims.CollisionRadius) * dir,
-				//(DistScale * ShockMomentum * dir), None	);
-				//log("Victims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
+				log("Victims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
 			}
 		}
 	}
@@ -722,16 +749,16 @@ defaultproperties
      //LinkScale(4)=1.400000
      //LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
-     Damage=21  //link gun shaft is 9, Scorp is 12, Hvy LinkTank 17  This is its primary close in weapon.
+     Damage=17  //link gun shaft is 9, Scorp is 12,  Regular link tank, 17 Hvy LinkTank 20  This is its primary close in weapon.
      Momentum=-25000
-     LinkFlexibility=0.600000
+     LinkFlexibility=0.700000
      bInitAimError=True
      LinkVolume=240
      BeamSounds(0)=Sound'WeaponSounds.LinkGun.BLinkGunBeam1'
      BeamSounds(1)=Sound'WeaponSounds.LinkGun.BLinkGunBeam2'
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
-      YawBone="Object02"
+     YawBone="Object02"
      PitchBone="Object02"
      PitchUpLimit=9000
      WeaponFireAttachmentBone="Muzzle"
@@ -740,7 +767,7 @@ defaultproperties
      FireInterval=0.120000
      AltFireInterval=3.00000
      FireSoundVolume=255.000000
-     DamageType=Class'XWeapons.DamTypeLinkShaft'
+     DamageType=Class'DamTypeVampireTank3Beam'
      TraceRange=6000.000000  // 1100 is link gun's trace range
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
@@ -757,14 +784,16 @@ defaultproperties
      DrawScale=0.200000
      SoundVolume=150
     
-     LinkMultiplier = 1.5; // not used here
-		 SelfHealMultiplier = 1.25;
+     LinkMultiplier = 0.8;  //smaller since it heals itself
+		 SelfHealMultiplier = 1.0;
+		 VehicleDamageMult = 1.2;
+		 
   
-     AltFireRadius=1792.000000
+     AltFireRadius=1500.000000
      AltFireDamage=100.000000
      AltFireDamageVehicleMult=2.000000
      AltFireDamageEasterEggMult=6.000000
-     AltFireMomentumVehicleMult=20.000000
+     AltFireMomentumVehicleMult=5.000000
      AltFireMomentumEasterEggMult=40.000000
      AltFireMomentum=20000.000000
      

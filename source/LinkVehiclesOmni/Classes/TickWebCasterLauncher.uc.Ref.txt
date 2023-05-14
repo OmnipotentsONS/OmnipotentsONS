@@ -1,0 +1,136 @@
+/**
+WVWebCaster.WebCasterLauncher
+
+Copyright (c) 2016, Wormbo
+
+(1) This source code and any binaries compiled from it are provided "as-is",
+without warranty of any kind. (In other words, if it breaks something for you,
+that's entirely your problem, not mine.)
+(2) You are allowed to reuse parts of this source code and binaries compiled
+from it in any way that does not involve making money, breaking applicable laws
+or restricting anyone's human or civil rights.
+(3) You are allowed to distribute binaries compiled from modified versions of
+this source code only if you make the modified sources available as well. I'd
+prefer being mentioned in the credits for such binaries, but please do not make
+it seem like I endorse them in any way.
+*/
+
+// Taken from Wormbo's TickWebCaster  Thanks, Pooty.
+
+class TickWebCasterLauncher extends ONSRVWebLauncher;
+
+
+state ProjectileFireMode
+{
+	function CeaseFire(Controller C)
+	{
+		local vector GunDir, RightDir, UpDir, FireDir, FireOffset;
+		local int i, NumProjectiles;
+		local float SpreadAngleRad, FireAngleRad;
+		local TickWebCasterProjectileLeader Leader;
+		local TickWebCasterProjectile P;
+
+		if (!bHoldingFire)
+			return;
+
+		ClientPlayForceFeedback("BioRifleFire");
+
+		AmbientSound = None;
+
+		CalcWeaponFire();
+
+		if (bCorrectAim)
+			WeaponFireRotation = AdjustAim(false);
+
+		// Defines plane in which projectiles will start travelling in.
+		GetAxes(WeaponFireRotation, GunDir, RightDir, UpDir);
+
+		NumProjectiles = MinProjectiles + 2 * int(0.5 * (MaxProjectiles - MinProjectiles) * (FMin(Level.TimeSeconds - StartHoldTime, MaxHoldTime) / MaxHoldTime));
+		bHoldingFire = false;
+
+		SpreadAngleRad = SpreadAngle * (Pi/180.0);
+
+		// Spawn all the projectiles
+		for(i = 0; i < NumProjectiles; i++)
+		{
+			FireAngleRad = ((1 - NumProjectiles) + 2 * i) * (SpreadAngleRad / NumProjectiles);
+			FireDir = Cos(FireAngleRad) * GunDir + Sin(FireAngleRad) * RightDir;
+			FireOffset = ((1 - NumProjectiles) + 2 * i) * RightDir;
+			
+			switch (i) {
+				case 0:
+					Leader = Spawn(class'TickWebCasterProjectileLeader', self,, WeaponFireLocation + FireOffset, rotator(FireDir));
+
+					if (Leader != None)
+					{
+						Leader.Velocity += InheritVelocityScale * Instigator.Velocity;
+
+						Leader.Projectiles.Length = 2 * NumProjectiles - 2;
+						Leader.ProjTeam = C.GetTeamNum();
+
+						Leader.ProjNumber = 0;
+						Leader.Projectiles[0] = Leader;
+						Leader.Leader = Leader;
+					}
+					break;
+					
+				case NumProjectiles - 1:
+					
+					P = Spawn(class'TickWebCasterProjectile', self, , WeaponFireLocation + FireOffset, rotator(FireDir));
+				
+					if (P != None && Leader != None)
+					{
+						P.ProjNumber = 2 * i - 1;
+						Leader.Projectiles[P.ProjNumber] = P;
+						P.Leader = Leader;
+					}
+					break;
+				
+				default:
+					if (i % 2 == 1)
+						FireOffset -= 0.5 * UpDir;
+					
+					P = Spawn(class'TickWebCasterProjectile', self, , WeaponFireLocation + FireOffset, rotator(FireDir - 0.05 * UpDir));
+					
+					if (P != None && Leader != None)
+					{
+						P.ProjNumber = 2 * i - 1;
+						Leader.Projectiles[P.ProjNumber] = P;
+						P.Leader = Leader;
+					}
+					
+					FireOffset += UpDir;
+					P = Spawn(class'TickWebCasterProjectile', self, , WeaponFireLocation + FireOffset, rotator(FireDir + 0.05 * UpDir));
+					
+					if (P != None && Leader != None)
+					{
+						P.ProjNumber = 2 * i;
+						Leader.Projectiles[P.ProjNumber] = P;
+						P.Leader = Leader;
+					}
+			}
+		}
+
+		ShakeView();
+		FlashMuzzleFlash();
+
+		// Play firing noise
+		if (bAmbientFireSound)
+			AmbientSound = FireSoundClass;
+		else
+			PlayOwnedSound(FireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius,, false);
+
+		FireCountdown = FireInterval;
+	}
+}
+
+
+//=============================================================================
+// Default values
+//=============================================================================
+
+defaultproperties
+{
+     MaxProjectiles=9.000000
+     ProjectileClass=Class'LinkVehiclesOmni.TickWebCasterProjectile'
+}

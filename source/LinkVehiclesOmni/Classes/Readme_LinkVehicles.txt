@@ -6,28 +6,55 @@ ONSToys1Mesh (Mesh from orignal)
 
 Variants:
 
-LinkTank3Heavy (3 seats, plasma turret, link turret, all with stacking link, 1200 pts) Basically the current Link Tank 2.0 (ONSlaughtToys1 Kamek) with a bit more health.
-Ready to Test.
+General Notes:   
+Green/Gold Link Beams, are like standard beams, and do NOT self heal when doing damage.  They generally link stack (meaning number of linkers times linkmultipler does more damage/healing)
+Both Driver Weapons and Turret weapons will show number of linkers on HUD when being linked and link stacking.
+Purple Link Beams, aka Dark Beams, will self heal with doing damage (drain effect).  Generally do NOT link stack (Vampire tank is an exception)
 
-LinkTank3 (3 seats, stacking, 800 pts) This is the "older" link tank 2.0
+
+LinkTank3Heavy: 3 Seats. Basically the current Link Tank 2.0 (ONSlaughtToys1 Kamek) with a bit more health, and slightly larger.  Has different coloration than standard Link Tank 3.0
+Health: 1250 start, healable to 1500
+Driver Weapon:  Link Turret (plasma blast/link beam) - Link Stacking 1.5
+Secondary Weapon: Plasma Turret (plasma blast/zoom) - Link Stacking 1.5
+Tertiary Weapon:  Link Laser Turret( lasers/zoom) - Link Stacking 1.5 (watch out flyers!)
+Issues: Hud display for links in turret, verify link counts when no driver.
+
+
+LinkTank3 3 seats This is the basically Link tank 2.0 Cleaned up for Link Tank 3.0
+Health: 1000 start, healable to 1250
+(Past link tanks had health from 550 to 1000, Figured the LinkBadger is 1000 so this TANK shouldn't be that far off)
+Driver Weapon:  Link Turret (plasma blast/link beam) - Link Stacking 1.5
+Secondary Weapon: Plasma Turret (plasma blast/zoom) - Link Stacking 1.5
+Tertiary Weapon:  Link Laser Turret( lasers/zoom) - Link Stacking 1.5 (watch out flyers!)
+Issues: Hud display for links in turret.
+
+VampireTank 2 Seats (Dark theme, faster speed similar to DarkRailTank, 
+Driver Weapoon: Primary LinkBeam (like Alt-Fire on linktank but with self healing) linkstacks with 0.8 multiplier, AltFire- DarkEnergy Shockwave Blast (like Ion tank)) (Note this does NOT harm empty vehicles, but some vehicle types take EXTRA damage)
+Secondary Weapon: Dark Link Turret (dark plasma/dark link beam) Linkstacks with 0.8 multiplier
+Starts with 766 health can go to 1366
+Issues: Hud display for links in turret.
+
+LinkScorpion: 1 seat, Fast ground linker
+Driver Weapon:  Primary is link beam, stacking 1.5 multiplier, alt-fire is boost like EONS Scorp.
+Health: 375
 Ready to Test
 
-VampireTank (1 seat, similar to Chupa, Dark theme, faster speed) Started with 766 health can go to 1366
-Alt-Fire (Ion shockwave)  might rather have stormcaster, work to be done.  might be good for 1.0
+TickScorpion: 1 seat, Fast ground linker with special power to get "bigger"
+Driver Weapon: Primary DarkLinkBeam - Does damage and self heals.  No stacking.  Damage is variable based on health (), AltFire - DarkWeb (Like Webcaster), more powerful depending on health (Gun will get bigger depending on health)
+Health:  300 healable to 900.
+Notes:  As health increases vehicle speed/mass also increase, gun size increases (damage from beam, number of nodes in the sticky web), Tick gets darker in color based on health
+I wanted to make it acutally "grow" in Size, but the UT engine cannot recalculate the Collision Size...so it can grow in size except the Collision box which stays same as when spawned.  Kind sucked (ok bad pun)
+At 300 health Damage from beam = 12 (Base LinkGun is 9), up to 26 when fully engorged!  
 
-LinkScorp, link, stack, alt-fire is boost like EONS scorp. So this could be a fast nimble link vehicle, like a half version of the link badger.
-Ready to Test
-
-Tick, link, no stack, self heal to some high health (say 650-800, start with 250, and increase in mass), alt-fire could be plasma gun (the scorp blades are nearly useless) (or maybe Webcaster primary)
-Done: DrawScale on Gun.  Not sure how to fix...No fix, can;t scale collision dynamically (engine limitation...)
-ToDo Need Alt-fire?  Blood goo?; Play with Karma making it heavier.
+Lamprey: Manta that Links, based on Hornet (Machine gun manta)
+Driver Weapon:  Primary Dark LinkBeam, heals itself, has "tractor effect" (weaker than Pulse Traitor though) to pull victims (especially flyers) close to suck them dry. AltFire - Smaller version of DarkEnergyShockWave (like Vampire Tank)
+Health: 300 healable to 375
+Issues:  When you first enter and sitting on top of static mesh the view is messed up.  Flying up higher fixes it, this is because the Hornet was Raptor base with Manta mesh/skin.  Can't seem to fix it but its a minor thing.
 
 
-Lamprey - Manta that Links,  grapples on and drains health (healing itself too!)
-Base is there, textures, vehicle.   Weapon is a freaking mess....
+- The Wraith/Odin do NOT stack because draining health and healing is too OP IMO, especially in a flyer -- Chupa (link flyer) is too OP IMO
 
-- The Wraith/Odin do NOT stack because draining health and healing is too OP IMO -- Chupa (link flyer) is too OP IMO
-The Wraith/Odin/Chupa have their own packages/
+The Wraith/Odin/Chupa have their own packages
 
 - There's also a bug in the Odin that it can heal itself, which I meant to fix, but its kind of a fun feature in that tank..
 

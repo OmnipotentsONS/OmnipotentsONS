@@ -163,7 +163,7 @@ state InstantFireMode
 		else
 			FireSoundClass = default.FireSoundClass;
 
-    //    FlashMuzzleFlash();
+        //FlashMuzzleFlash();
 
         if (AmbientEffectEmitter != None)
         {

@@ -71,7 +71,7 @@ simulated event OwnerEffects()
 
 		AimLockReleaseTime = Level.TimeSeconds + FireCountdown * FireIntervalAimLock;
 
-        FlashMuzzleFlash();
+       // FlashMuzzleFlash();
 
 		if (AmbientEffectEmitter != None)
 			AmbientEffectEmitter.SetEmitterStatus(true);
@@ -247,7 +247,7 @@ defaultproperties
      BlueSkin=Texture'LinkTank3Tex.LinkTankTex.LinkTankLaserBlue'
      FireInterval=0.150000
      FireSoundClass=Sound'WeaponSounds.Misc.instagib_rifleshot'
-     AmbientSoundScaling=1.300000
+     AmbientSoundScaling=1.100000
      FireForce="Laser01"
      DamageType=Class'LinkVehiclesOmni.DamTypeLink3TurretBeam'
      DamageMin=25

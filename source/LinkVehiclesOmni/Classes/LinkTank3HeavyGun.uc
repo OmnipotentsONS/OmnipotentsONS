@@ -13,7 +13,7 @@ var() int LinkBeamSkin;
 var() sound LinkedFireSound;
 
 // CPed from LinkFire
-var(LinkBeam) class<LinkTank3HeavyBeamEffect>	BeamEffectClass;
+var(LinkBeam) class<LinkBeamEffect>	BeamEffectClass;
 var(LinkBeam) Sound	MakeLinkSound;
 var(LinkBeam) float LinkBreakDelay;
 var(LinkBeam) float MomentumTransfer;
@@ -122,15 +122,15 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 // ============================================================================
 function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector HitNormal, int ReflectNum)
 {
-	local LinkTank3HeavyBeamEffect ThisBeam;
-	local LinkTank3HeavyBeamEffect FoundBeam;
+	local LinkBeamEffect ThisBeam;
+	local LinkBeamEffect FoundBeam;
 
 	if (LinkTank3Heavy(Owner) != None)
 		FoundBeam = LinkTank3Heavy(Owner).Beam;
 
 	if (FoundBeam == None || FoundBeam.bDeleteMe)
 	{
-		foreach DynamicActors(class'LinkTank3HeavyBeamEffect', ThisBeam)
+		foreach DynamicActors(class'LinkBeamEffect', ThisBeam)
 			if (ThisBeam.Instigator == Instigator)
 				FoundBeam = ThisBeam;
 	}
@@ -214,7 +214,7 @@ simulated event Tick(float dt)
 	//local LinkBeamEffect LB;
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
-	local LinkTank3HeavyBeamEffect Beam;
+	local LinkBeamEffect Beam;
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
 
@@ -231,7 +231,7 @@ simulated event Tick(float dt)
 		LinkTank = LinkTank3Heavy(Owner);
 		NumLinks = LinkTank.GetLinks();
 		Beam = LinkTank3Heavy(Owner).Beam;
-		if (Beam != None )	Beam.SetBeamSize(NumLinks);
+		if (Beam != None )	 LinkTank3HeavyBeamEffect(Beam).SetBeamSize(NumLinks);
 	}
 	else
 		NumLinks = 0;
@@ -559,16 +559,19 @@ simulated event Tick(float dt)
 // Return adjusted damage based on number of links
 // Takes a NumLinks argument instead of an actual LinkGun
 // ============================================================================
-simulated function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
+function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage )
 {
-	Damage = Damage * (LinkMultiplier*NumLinks+1);
+	local float AdjDamage;
+	
+	AdjDamage = Damage * (LinkMultiplier*NumLinks+1);
 
-	if ( (Other != None) && Other.IsA('Vehicle') )
-		Damage *= VehicleDamageMult;
-		
-
-	return Damage;
+	if (Target != None && Target.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
+  if (Instigator.HasUDamage()) 	AdjDamage *= 2;
+	
+	return AdjDamage;
+	
 }
+
 
 // ============================================================================
 // SetLinkTo

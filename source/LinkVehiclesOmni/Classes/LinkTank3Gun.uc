@@ -13,7 +13,7 @@ var() int LinkBeamSkin;
 var() sound LinkedFireSound;
 
 // CPed from LinkFire
-var(LinkBeam) class<LinkTank3BeamEffect>	BeamEffectClass;
+var(LinkBeam) class<LinkBeamEffect>	BeamEffectClass;
 var(LinkBeam) Sound	MakeLinkSound;
 var(LinkBeam) float LinkBreakDelay;
 var(LinkBeam) float MomentumTransfer;
@@ -122,15 +122,15 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 // ============================================================================
 function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector HitNormal, int ReflectNum)
 {
-	local LinkTank3BeamEffect ThisBeam;
-	local LinkTank3BeamEffect FoundBeam;
+	local LinkBeamEffect ThisBeam;
+	local LinkBeamEffect FoundBeam;
 
 	if (LinkTank3(Owner) != None)
 		FoundBeam = LinkTank3(Owner).Beam;
 
 	if (FoundBeam == None || FoundBeam.bDeleteMe)
 	{
-		foreach DynamicActors(class'LinkTank3BeamEffect', ThisBeam)
+		foreach DynamicActors(class'LinkBeamEffect', ThisBeam)
 			if (ThisBeam.Instigator == Instigator)
 				FoundBeam = ThisBeam;
 	}
@@ -141,8 +141,8 @@ function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector H
 		if (LinkTank3(Owner) != None) LinkTank3(Owner).Beam = FoundBeam;
 	}
 
-	//if (LinkTank3BeamEffect(Beam) != None)
-	//	LinkTank3BeamEffect(Beam).WeaponOwner = self;
+	//if (LinkBeamEffect(Beam) != None)
+	//	LinkBeamEffect(Beam).WeaponOwner = self;
 
 	bDoHit = true;
 	UpTime = AltFireInterval + 0.1;
@@ -214,7 +214,7 @@ simulated event Tick(float dt)
 	//local LinkBeamEffect LB;
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
-	local LinkTank3BeamEffect Beam;
+	local LinkBeamEffect Beam;
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
 
@@ -231,7 +231,8 @@ simulated event Tick(float dt)
 		LinkTank = LinkTank3(Owner);
 		NumLinks = LinkTank.GetLinks();
 		Beam = LinkTank3(Owner).Beam;
-		if (Beam != None) Beam.SetBeamSize(NumLinks);
+		if (Beam != None) LinkTank3BeamEffect(Beam).SetBeamSize(NumLinks);
+	// Need to subclass, but Link 2.0 uses base linkema
 	}
 	else
 		NumLinks = 0;
@@ -240,20 +241,17 @@ simulated event Tick(float dt)
 	//	log(Level.TimeSeconds@self@"TICK -- Role"@Role@"LinkBeam"@Beam,'KDebug');
 
 	// If not firing, restore value of bInitAimError
-	if (Beam == None && Role == ROLE_Authority)
-	{
+	if (Beam == None && Role == ROLE_Authority) 	{
 		bInitAimError = true;
 		return;
 	}
 
-	if (LinkTank != None && LinkTank.GetLinks() < 0)
-	{
+	if (LinkTank != None && LinkTank.GetLinks() < 0) 	{
         //log("warning:"@Instigator@"linktank had"@LinkTank.GetLinks()@"links");
         LinkTank.ResetLinks();
     }
 
-    if ( (UpTime > 0.0) || (Role < ROLE_Authority) )
-    {
+    if ( (UpTime > 0.0) || (Role < ROLE_Authority) )    {
 //		log("warning: logspam ahead",'KDebug');
 
 //		log("UpTime -= dt",'KDebug');
@@ -451,7 +449,7 @@ simulated event Tick(float dt)
 							if (LockedPawn != None)
 								warn(self@"called takedamage with a linked pawn!!!");
 							else {
-								 AdjustedDamage = AdjustLinkDamage( NumLinks, Other, AltDamage );
+								 AdjustedDamage = AdjustLinkDamage( NumLinks, Other, AltDamage);
 								Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, MomentumTransfer*X, AltDamageType);
 								
 							}	
@@ -559,15 +557,19 @@ simulated event Tick(float dt)
 // Return adjusted damage based on number of links
 // Takes a NumLinks argument instead of an actual LinkGun
 // ============================================================================
-simulated function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
+function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage )
 {
-	Damage = Damage * (LinkMultiplier*NumLinks+1);
+	local float AdjDamage;
+	
+	AdjDamage = Damage * (LinkMultiplier*NumLinks+1);
 
-	if ( Other!= None && Other.IsA('Vehicle') )
-		Damage *= VehicleDamageMult;
-
-	return Damage;
+	if (Target != None && Target.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
+  if (Instigator.HasUDamage()) 	AdjDamage *= 2;
+	
+	return AdjDamage;
+	
 }
+
 
 // ============================================================================
 // SetLinkTo
@@ -820,8 +822,7 @@ state ProjectileFireMode
 {
 	function Fire(Controller C)
 	{
-		//if (Beam != None)
-		//	CeaseFire(C);
+		if (LinkTank3(Owner).Beam != None) CeaseFire(C);
 
 		Super.Fire(C);
 	}
@@ -842,7 +843,7 @@ state ProjectileFireMode
         //else
         //   PlayOwnedSound(AltFireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius, FireSoundPitch, False);
 
-        TraceFire(WeaponFireLocation, WeaponFireRotation);
+       TraceFire(WeaponFireLocation, WeaponFireRotation);
     }
 }
 

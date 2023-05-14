@@ -7,7 +7,7 @@
 //-----------------------------------------------------------
 class LinkScorpion3Omni extends ONSRV;
 
-var bool Linking;
+var bool bLinking;
 var int Links, OldLinks;
 struct HealerStruct
 {
@@ -18,7 +18,49 @@ struct HealerStruct
 
 var array<HealerStruct> Healers; //the array of people currently healing.
 
+
 var float LastTimeLinkLoop;
+
+// Linking vars from LinkTankCode, the base code here wasn't right, only counted linkers with linkgun
+// Not other link vehicles (including other LinkScorps -- dumb)
+
+
+// ============================================================================
+// Structs
+// ============================================================================
+struct LinkerStruct {
+	var Controller LinkingController;
+	var int NumLinks;
+	var float LastLinkTime;
+};
+
+// ============================================================================
+// Consts
+// ============================================================================
+const LINK_DECAY_TIME = 0.250000;			// Time to remove a linker from the linker list
+const AI_HEAL_SEARCH = 4096.000000;			// Radius for bots to search for damaged actors while driving
+
+
+// ============================================================================
+// Properties
+// ============================================================================
+
+// 0 = Red, 1 = Blue
+var() array<Material> LinkSkin_Gold, LinkSkin_Green, LinkSkin_Red, LinkSkin_Blue;
+
+
+// ============================================================================
+// Vars
+// ============================================================================
+
+var array<LinkerStruct> Linkers;			// For keeping track of links
+var bool bBotHealing;
+//var bool bBeaming;							// True if utilizing alt-fire
+
+var LinkAttachment.ELinkColor OldLinkColor;
+
+var LinkBeamEffect Beam;
+
 
 // boost
 var () class<Emitter>	AfterburnerClass[2];
@@ -39,7 +81,7 @@ var float BoostFOV;
 replication
 {
     unreliable if (Role == ROLE_Authority)
-        Linking, Links, bBoost, BoostCount, BoostRechargeCounter;
+        bLinking, Links, bBoost, BoostCount, BoostRechargeCounter;
 }
 
 //link scorp needs to tell link gun when it's links change'
@@ -73,7 +115,7 @@ function bool SomeoneLinksToMe()
 			{
 				LP=LinkFire(LinkGun(Inv).GetFireMode(1)).LockedPawn;
 			}*/
-			if( LP.Weapon.IsA('LinkGun') )
+		if( LP.Weapon.IsA('LinkGun') )
 			{
 				LP=LinkFire(LinkGun(LP.Weapon).GetFireMode(1)).LockedPawn;
 			}
@@ -90,26 +132,8 @@ function bool SomeoneLinksToMe()
 	}
 	return false;
 }
-/* //for v2
-function bool ConsumeAmmo(int Mode, float load, optional bool bAmountNeededIsMax)
-{
-	local Controller C;
-
-	if (Linking && LinkFire(FireMode[1]).LockedPawn != None && ONSRVLinkGun(Weapons[0]).LockedPawn == None)
-		return true;
 
 
-	//use ammo from linking teammates
-	if (Instigator != None && Instigator.PlayerReplicationInfo != None && Instigator.PlayerReplicationInfo.Team != None)
-	{
-		for (C = Level.ControllerList; C != None; C = C.NextController)
-			if (C.Pawn != None && LinkGun(C.Pawn.Weapon) != None && LinkGun(C.Pawn.Weapon).LinkedTo(self))
-				LinkGun(C.Pawn.Weapon).LinkedConsumeAmmo(Mode, load, bAmountNeededIsMax);
-	}
-
-	return Super.ConsumeAmmo(Mode, load, bAmountNeededIsMax);
-}
-*/
 simulated function Timer()
 {
 	local int HealerLinks;
@@ -174,6 +198,52 @@ simulated function Timer()
 }
 
 
+// ============================================================================
+// HealDamage
+// When someone links the tank, record it and add it to the Linkers
+// After a certain time period passes, remove that linker if they aren't linking anymore
+// ============================================================================
+function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
+{
+	local int i;
+	local bool bFound;
+	
+	if (Healer == None || Healer.bDeleteMe)
+		return false;
+
+	// If allied teammate, possibly add them to a link list
+	if (TeamLink(Healer.GetTeamNum()) && Healer != Controller)  // Add Controller so selfhealing doesn't show link HUD)
+	{
+		for (i = 0; i < Linkers.Length; i++)
+		{
+			if (Linkers[i].LinkingController != None && Linkers[i].LinkingController == Healer)
+			{
+				bFound = true;
+				Linkers[i].LastLinkTime = Level.TimeSeconds;
+				// If other players are linking that pawn, record it
+				if ( (Linkers[i].LinkingController.Pawn != None) && (Linkers[i].LinkingController.Pawn.Weapon != None) && (LinkGun(Linkers[i].LinkingController.Pawn.Weapon) != None) )
+					Linkers[i].NumLinks = LinkGun(Linkers[i].LinkingController.Pawn.Weapon).Links;
+				else
+					Linkers[i].NumLinks = 0;
+			}
+		}
+		if (!bFound)
+		{
+			Linkers.Insert(0,1);
+			Linkers[0].LinkingController = Healer;
+			Linkers[0].LastLinkTime = Level.TimeSeconds;
+			// If other players are linking that pawn, record it
+			if ( (Linkers[i].LinkingController.Pawn != None) && (Linkers[i].LinkingController.Pawn.Weapon != None) && (LinkGun(Linkers[i].LinkingController.Pawn.Weapon) != None) )
+				Linkers[0].NumLinks = LinkGun(Linkers[0].LinkingController.Pawn.Weapon).Links;
+			else
+				Linkers[0].NumLinks = 0;
+		}
+	}
+
+	return super.HealDamage(Amount, Healer, DamageType);
+}
+
+/* Original Heal Damage, used one above from LinkTank3
 function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
 {
 	local int i;
@@ -225,7 +295,7 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 	}
     return super.HealDamage(Amount, Healer, DamageType);
 }
-
+*/
 
 simulated function DrawHUD(Canvas C)
 {
@@ -404,6 +474,7 @@ simulated function tick(float dt)
 
 	if (Role == ROLE_Authority)
 	{
+			ResetLinks();
 	   // Afterburners recharge after the change in time exceeds the specified charge duration
 	   BoostRechargeCounter+=DT;
 	   if (BoostRechargeCounter > BoostRechargeTime)
@@ -463,6 +534,48 @@ simulated function UpdatePrecacheMaterials()
 	Super.UpdatePrecacheMaterials();
 }
 
+
+// ============================================================================
+// GetLinks
+// Returns number of linkers
+// ============================================================================
+function int GetLinks()
+{
+	return Links;
+}
+
+// ============================================================================
+// ResetLinks
+// Reset our linkers, called if Links < 0 or during tick
+// ============================================================================
+function ResetLinks()
+{
+	local int i;
+	local int NewLinks;
+
+	i = 0;
+	NewLinks = 0;
+	while (i < Linkers.Length)
+	{
+		// Remove linkers when their controllers are deleted
+		// Or remove if LINK_DECAY_TIME seconds pass since they last linked the tank
+		if (Linkers[i].LinkingController == None || Level.TimeSeconds - Linkers[i].LastLinkTime > LINK_DECAY_TIME)
+			Linkers.Remove(i,1);
+		else
+		{
+			NewLinks += 1 + Linkers[i].NumLinks;
+			i++;
+		}
+	}
+
+	if (Links != NewLinks)
+		Links = NewLinks;
+}
+
+
+
+
+
 function ShouldTargetMissile(Projectile P)
 {
 	if ( (Health < 200) && (Bot(Controller) != None) 
@@ -473,6 +586,9 @@ function ShouldTargetMissile(Projectile P)
 		TeamUseTime = Level.TimeSeconds + 4;
 	}
 }
+
+
+
 
 defaultproperties
 {

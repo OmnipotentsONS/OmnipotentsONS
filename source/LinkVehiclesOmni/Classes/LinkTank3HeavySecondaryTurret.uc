@@ -27,8 +27,7 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 	SpawnedProjectile = Super.SpawnProjectile(ProjClass, bAltFire);
 	if (LinkProjectile(SpawnedProjectile) != None)
 	{
-
-		LinkProjectile(SpawnedProjectile).Links = NumLinks;
+  	LinkProjectile(SpawnedProjectile).Links = NumLinks;
 		LinkProjectile(SpawnedProjectile).LinkAdjust();
 	}
 
