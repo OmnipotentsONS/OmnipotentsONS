@@ -59,7 +59,7 @@ replication
 	reliable if (Role == ROLE_Authority)
 		Beam;
 	unreliable if (Role == ROLE_Authority && bNetDirty)
-         bBeaming;
+    bBeaming;
 }
 
 simulated function UpdatePrecacheMaterials()
@@ -97,12 +97,14 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 	local Projectile SpawnedProjectile;
 	local int NumLinks;
 
+  //log("VampireTank3SecondaryTurret VT="$VampireTank3(ONSWeaponPawn(Owner).VehicleBase));
 
-	if (MyVampireTank != None)
-		NumLinks = MyVampireTank.GetLinks();
+	if (VampireTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+		NumLinks = VampireTank3(ONSWeaponPawn(Owner).VehicleBase).Links;
 	else
 		NumLinks = 0;
 
+  //log("VampireTank3SecondaryTurret NumLinks="$NumLinks);
 	// Swap out fire sound
 	if (NumLinks > 0)
 		FireSoundClass = LinkedFireSound;
@@ -110,10 +112,10 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 		FireSoundClass = default.FireSoundClass;
 
 	SpawnedProjectile = Super.SpawnProjectile(ProjClass, bAltFire);
-	if (PROJ_LinkTurret_Plasma(SpawnedProjectile) != None)
+	if (SpawnedProjectile != None)
 	{
-		  PROJ_LinkTurret_Plasma(SpawnedProjectile).Plasma.SetSize(0.75);
-		  // can we change color here? yes we can set RGB values
+		  		  // can we change color here? yes we can set RGB values  WHY DID THIS SUDDENLY stop working on server?!
+		  		  /* subclassed the color server issues
 		  PROJ_LinkTurret_Plasma(SpawnedProjectile).Plasma.Emitters[0].ColorScale[0].Color = class'Canvas'.static.MakeColor( 136, 14, 79);
    		PROJ_LinkTurret_Plasma(SpawnedProjectile).Plasma.Emitters[0].ColorScale[1].Color = class'Canvas'.static.MakeColor( 136, 14, 79);
 
@@ -122,9 +124,10 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 
     	PROJ_LinkTurret_Plasma(SpawnedProjectile).Plasma.Emitters[2].ColorScale[0].Color = class'Canvas'.static.MakeColor(74,20,140); //74,20,140
     	PROJ_LinkTurret_Plasma(SpawnedProjectile).Plasma.Emitters[2].ColorScale[1].Color = class'Canvas'.static.MakeColor( 74,20,140);
+  		*/
   		
-  		PROJ_LinkTurret_Plasma(SpawnedProjectile).Links = NumLinks;
-  		PROJ_LinkTurret_Plasma(SpawnedProjectile).LinkAdjust();
+  		VampireTank3ProjectileSmall(SpawnedProjectile).Links = NumLinks;
+  		VampireTank3ProjectileSmall(SpawnedProjectile).LinkAdjust();  //sets size based on links.
   		
 	}
 
@@ -253,9 +256,7 @@ simulated event Tick(float dt)
 	
 	//  link stacking	
 	if (MyVampireTank != None) {
-	  	NumLinks = MyVampireTank.GetLinks();
-	 	  Beam = VampireTank3(Owner).Beam;
-		  if (Beam != NONE) 	Beam.SetBeamSize(NumLinks);
+		  NumLinks = MyVampireTank.GetLinks();
   } 
 	
 	
@@ -427,7 +428,7 @@ simulated event Tick(float dt)
 		// exclude self healing.
 		if ( LinkedVehicle != None && bDoHit && (LinkedVehicle != ONSWeaponPawn(Owner).VehicleBase) )
 		{
-			AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ); * Instigator.DamageScaling;
+			AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ) * Instigator.DamageScaling;
 		
 			LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
 			//if (!LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
@@ -526,7 +527,6 @@ function SetLinkTo(Pawn Other, optional bool bHealing)
 			//log(self@"setlinkto"@other@"current"@LockedPawn,'KDebug');
 	        RemoveLink(1 + VampireTank3(Owner).GetLinks(), Instigator);
 
-	        // Added flag so the tank doesn't flash from green to teamcolor rapidly while linking a non-Wormbo node
 	        if (!bHealing)
 	        {
 				//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to FALSE in SetLinkTo"@Other,'KDebug');

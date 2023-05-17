@@ -79,9 +79,9 @@ simulated function UpdateLinkColor( LinkAttachment.ELinkColor Color )
 	}
 
 	// Update weapon colors too
-	for (i = 0; i < Weapons.Length; i++)
-		if (VampireTank3Gun(Weapons[i]) != None)
-			VampireTank3Gun(Weapons[i]).UpdateLinkColor(Color);
+	//for (i = 0; i < Weapons.Length; i++)
+	//	if (VampireTank3Gun(Weapons[i]) != None)
+	//		VampireTank3Gun(Weapons[i]).UpdateLinkColor(Color);
 }
 
 // ============================================================================
@@ -255,6 +255,7 @@ simulated event Tick(float DT)
 	// Show regular green link panels
 	else
 		UpdateLinkColor(LC_Green);
+
 }
 
 // ============================================================================

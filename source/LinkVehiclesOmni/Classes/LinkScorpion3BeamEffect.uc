@@ -296,5 +296,5 @@ simulated function bool CheckMaxEffectDistance(PlayerController P, vector SpawnL
 defaultproperties
 {
      Skins(0)=FinalBlend'XEffectMat.Link.LinkBeamGreenFB'
-     
+     mSizeRange(0)=13.000000
 }

@@ -1,7 +1,7 @@
 Dependencies:
 #exec obj load File=LinkScorpion3Tex.utx (scorps)
 #exec obj load File=LinkTank3Tex.utx  (linkTanks)
-ONSToys1Mesh (Mesh from orignal)
+ONSToys1Mesh (Mesh from orignal link tank)
 
 
 Variants:
@@ -15,24 +15,23 @@ Purple Link Beams, aka Dark Beams, will self heal with doing damage (drain effec
 LinkTank3Heavy: 3 Seats. Basically the current Link Tank 2.0 (ONSlaughtToys1 Kamek) with a bit more health, and slightly larger.  Has different coloration than standard Link Tank 3.0
 Health: 1250 start, healable to 1500
 Driver Weapon:  Link Turret (plasma blast/link beam) - Link Stacking 1.5
-Secondary Weapon: Plasma Turret (plasma blast/zoom) - Link Stacking 1.5
+Secondary Weapon: Plasma Turret (plasma blast/zoom) - Link Stacking 1.0
 Tertiary Weapon:  Link Laser Turret( lasers/zoom) - Link Stacking 1.5 (watch out flyers!)
-Issues: Hud display for links in turret, verify link counts when no driver.
+Issues: Hud display for links in turret, verify link counts when no driver.  I think linker count is only accurate when there's a driver (resetlinks call by driver tick)
 
 
 LinkTank3 3 seats This is the basically Link tank 2.0 Cleaned up for Link Tank 3.0
 Health: 1000 start, healable to 1250
 (Past link tanks had health from 550 to 1000, Figured the LinkBadger is 1000 so this TANK shouldn't be that far off)
 Driver Weapon:  Link Turret (plasma blast/link beam) - Link Stacking 1.5
-Secondary Weapon: Plasma Turret (plasma blast/zoom) - Link Stacking 1.5
+Secondary Weapon: Plasma Turret (plasma blast/zoom) - Link Stacking 1.0
 Tertiary Weapon:  Link Laser Turret( lasers/zoom) - Link Stacking 1.5 (watch out flyers!)
-Issues: Hud display for links in turret.
 
 VampireTank 2 Seats (Dark theme, faster speed similar to DarkRailTank, 
 Driver Weapoon: Primary LinkBeam (like Alt-Fire on linktank but with self healing) linkstacks with 0.8 multiplier, AltFire- DarkEnergy Shockwave Blast (like Ion tank)) (Note this does NOT harm empty vehicles, but some vehicle types take EXTRA damage)
-Secondary Weapon: Dark Link Turret (dark plasma/dark link beam) Linkstacks with 0.8 multiplier
+Secondary Weapon: Dark Link Turret (dark plasma/dark link beam) Linkstacks with 1.0 multiplier plasma/ 0.8 on beam.
 Starts with 766 health can go to 1366
-Issues: Hud display for links in turret.
+
 
 LinkScorpion: 1 seat, Fast ground linker
 Driver Weapon:  Primary is link beam, stacking 1.5 multiplier, alt-fire is boost like EONS Scorp.

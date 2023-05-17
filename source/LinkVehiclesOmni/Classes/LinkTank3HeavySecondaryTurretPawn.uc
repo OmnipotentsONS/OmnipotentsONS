@@ -82,7 +82,7 @@ simulated function DrawHUD(Canvas C)
 		return;
 		
 	PlayerHud=HudCTeamDeathMatch(PC.MyHud);
-	If (VehicleBase.Owner == None) LinkTank3Heavy(VehicleBase).ResetLinks();  // this doesn't get called unless Tank has owner (its in tick), only need this in turrets
+	
 	if ( LinkTank3Heavy(VehicleBase).Links > 0 )
 	{
 		PlayerHud.totalLinks.value = LinkTank3Heavy(VehicleBase).Links;
@@ -90,6 +90,17 @@ simulated function DrawHUD(Canvas C)
 		PlayerHud.DrawNumericWidget (C, PlayerHud.totalLinks, PlayerHud.DigitsBigPulse);
 		PlayerHud.totalLinks.value = LinkTank3Heavy(VehicleBase).Links;
 	}
+}
+
+// ============================================================================
+// Tick
+// Remove linkers from the linker list after they stop linking
+// ============================================================================
+simulated event Tick(float DT)
+{
+	Super.Tick( DT );
+	 // this doesn't get called unless Tank has owner (its in tick), only need this in turrets so if no driver link count updates.
+  if (VehicleBase.Owner == None && Role == ROLE_Authority)  LinkTank3Heavy(VehicleBase).ResetLinks(); 
 }
 
 defaultproperties

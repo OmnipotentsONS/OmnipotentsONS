@@ -77,6 +77,7 @@ simulated function Tick(float dt)
 		{
 			if ( MuzFlash == None )
 				MuzFlash = Spawn(class'LinkMuzFlashBeam3rd', self);
+				
 		}
 		else if ( MuzFlash != None )
 			MuzFlash.Destroy();
@@ -122,7 +123,7 @@ simulated function Tick(float dt)
             {
                 Skins[0] = FinalBlend'LinkScorpion3Tex.LinkBeamPurpleFB'; // was yellow
                 if ( MuzFlash != None )
-					MuzFlash.Skins[0] = Texture'XEffectMat.link_muz_yellow';
+								MuzFlash.Skins[0] = Texture'XEffectMat.link_muz_red';
                 LightHue = 40;
             }
             else
@@ -239,7 +240,7 @@ simulated function Tick(float dt)
             Sparks.SetRotation( Rotator(-BeamDir) );
         Sparks.mRegenRange[0] = Sparks.DesiredRegen;
         Sparks.mRegenRange[1] = Sparks.DesiredRegen;
-        Sparks.bDynamicLight = true;
+        Sparks.bDynamicLight = False;
     }
 
     if ( LinkColor > 0 && LinkedPawn != None )

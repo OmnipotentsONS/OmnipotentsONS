@@ -80,7 +80,7 @@ simulated function DrawHUD(Canvas C)
 	
 	//log("VampireTank3SecondTurret:DrawHUD PlayerHud="$PlayerHud);
 	
-	If (VehicleBase.Owner == None) VampireTank3(VehicleBase).ResetLinks();  // this doesn't get called unless Tank has owner (its in tick), only need this in turrets
+	
 	//log("VampireTank3SecondTurret:DrawHUD Links="$VampireTank3(VehicleBase).Links);
 	if ( VampireTank3(VehicleBase).Links > 0 )
 	{
@@ -91,6 +91,18 @@ simulated function DrawHUD(Canvas C)
 	}
 }
 
+
+
+// ============================================================================
+// Tick
+// Remove linkers from the linker list after they stop linking
+// ============================================================================
+simulated event Tick(float DT)
+{
+	Super.Tick( DT );
+	 // this doesn't get called unless Tank has owner (its in tick), only need this in turrets so if no driver link count updates.
+  if (VehicleBase.Owner == None && Role == ROLE_Authority)  VampireTank3(VehicleBase).ResetLinks(); 
+}
 
 defaultproperties
 {

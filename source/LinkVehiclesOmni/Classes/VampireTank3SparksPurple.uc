@@ -11,10 +11,8 @@ simulated function SetLinkStatus(int Links, bool bLinking, float ls)
     mLifeRange[0] = default.mLifeRange[0] * (ls + 1);
     mLifeRange[1] = mLifeRange[0];
     DesiredRegen = default.mRegenRange[0] * (ls + 1);
-    if (Links == 0)
-        Skins[0] = Texture'LinkScorpion3Tex.link_spark_purple';
-    else
-        Skins[0] = Texture'XEffectMat.Link.link_spark_yellow';
+    Skins[0] = Texture'LinkScorpion3Tex.link_spark_purple';
+    
 }
 
 defaultproperties
