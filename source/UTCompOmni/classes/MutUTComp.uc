@@ -1491,9 +1491,9 @@ defaultproperties
      NewNetUpdateFrequency=200
      PingTweenTime=3.0
 
-     FriendlyName="UTComp Version 1.45 (Omni)"
+     FriendlyName="UTComp Version 1.46 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.45"
+     FriendlyVersionNumber=")o(mni 1.46"
      Description="A mutator for brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
