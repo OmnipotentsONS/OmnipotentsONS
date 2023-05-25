@@ -357,8 +357,6 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Mo
 
 simulated function ScaleTickScorp(bool bHeal, int Damage){
 	
-
-		
 	CurrDrawScale = FMax(1,(Health/HealthMax)*2.33);
 	NewSkin = Clamp(Round(Health/HealthMax*3.1)-1,0,2);
 	//log(self$"Health="$Health$", HealthMax="$HealthMax$" NewSkin="$NewSkin);
@@ -376,12 +374,15 @@ simulated function ScaleTickScorp(bool bHeal, int Damage){
 		//log(@self@"Changing Skins...")
 		Spawn(class'TickScorp3GrowthEffect', Self,,);
 		// put some kind off effect.
+		// RepSkin tells server to replicate skin on clients.
 		if (Team == 0 )  {
+			 RepSkin = TickSkin_Red[NewSkin];
 			 Skins[0] = TickSkin_Red[NewSkin];
 			 OldSkin = NewSkin;
 			 
 		}	 
 		else {
+			 RepSkin = TickSkin_Blue[NewSkin];
 		 	 Skins[0] = TickSkin_Blue[NewSkin];
 	  	 OldSkin = NewSkin;	
 	  }

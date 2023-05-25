@@ -16,7 +16,7 @@ var int Links;
 replication
 {
     unreliable if (Role == ROLE_Authority)
-        bLinking;
+        bLinking, Links;
 }
 
 

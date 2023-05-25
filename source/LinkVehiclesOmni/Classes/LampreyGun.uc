@@ -1,4 +1,3 @@
-
 class LampreyGun extends ONSWeapon;
 
 #exec OBJ LOAD FILE=..\Animations\ONSWeapons-A.ukx
@@ -115,7 +114,7 @@ function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage )
 	
 	AdjDamage = Damage * (LinkMultiplier*NumLinks+1);
 
-	if ( Target.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
+	if ( Target != None && Target.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
   if (Instigator.HasUDamage()) 	AdjDamage *= 2;
 	
 	return AdjDamage;
@@ -144,7 +143,7 @@ simulated function tick(float dt)
 		local bot B;
 		local bool bShouldStop, bIsHealingObjective;
 		local int AdjustedDamage;
-		//local LampreyBeamEffect LB;
+		local LampreyBeamEffect LB;
 		local DestroyableObjective HealObjective;
 		local Vehicle LinkedVehicle;
 	
@@ -169,17 +168,18 @@ simulated function tick(float dt)
 			StartTrace=WeaponFireLocation;
 			TraceRange = default.TraceRange + MyLamprey.Links*250;
 			
-			/*
+			
 	    if ( Instigator.Role < ROLE_Authority ) {
 				if ( Beam == None )
 					ForEach DynamicActors(class'LampreyBeamEffect', LB )
 						if ( !LB.bDeleteMe && (LB.Instigator != None) && (LB.Instigator == Instigator) )
 						{
-							Beam = LB;
-							break;
+							if (LB.bLeftBeam) BeamLeft = LB;
+							else  Beam = LB;
+							if (Beam != None && BeamLeft != None) break;
 						}
 			}			
-*/
+
 				if ( Beam != None ) LockedPawn = Beam.LinkedPawn;
 			
 
@@ -320,6 +320,7 @@ simulated function tick(float dt)
 
 				if ( Beam != None && BeamLeft != None) {
 					BeamLeft.bLeftBeam = True;
+				
 					if ( MyLamprey.bLinking || ((Other != None) && (Instigator.PlayerReplicationInfo.Team != None) && Other.TeamLink(Instigator.PlayerReplicationInfo.Team.TeamIndex)) )
 					{
 							Beam.LinkColor = Instigator.PlayerReplicationInfo.Team.TeamIndex + 1;
@@ -485,7 +486,7 @@ function Fire(Controller C)
 					MyLamprey.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
 				}
 
-				log("Victims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
+			//	log("Victims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
 			}
 		}
 	}

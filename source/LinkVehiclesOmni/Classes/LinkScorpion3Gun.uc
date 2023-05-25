@@ -600,7 +600,7 @@ defaultproperties
      LinkScale(5)=3.00000 
      
      MakeLinkForce="LinkActivated"
-     Damage=12 // link gun damage is 9
+     Damage=13 // link gun damage is 9
      LinkFlexibility=0.350000
      bInitAimError=True
      PitchUpLimit=13000

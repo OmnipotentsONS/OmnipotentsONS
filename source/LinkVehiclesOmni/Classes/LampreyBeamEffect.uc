@@ -7,7 +7,7 @@ var bool bLeftBeam;
 replication
 {
     unreliable if (Role == ROLE_Authority)
-		LampGun;
+		LampGun, bLeftBeam;
 }
 
 simulated function SetBeamLocation()
@@ -16,7 +16,7 @@ simulated function SetBeamLocation()
 	if ( Level.NetMode == NM_DedicatedServer )
     {
 		    LampGun.CalcWeaponFire();
-	// we don't care about offsets on dedicated server no one sees that.	
+	       StartEffect = LampGun.WeaponFireLocation; 
         SetLocation( StartEffect );
         return;
     }
@@ -33,6 +33,7 @@ simulated function SetBeamLocation()
       else {
     	   StartEffect = LampGun.WeaponFireLocation + Abs(LampGun.BeamOffset)*Vect(0,1,0);
     }
+    
 	  SetLocation( StartEffect );
 	}
 	/*

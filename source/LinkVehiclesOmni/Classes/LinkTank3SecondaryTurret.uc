@@ -18,7 +18,7 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 	else
 		NumLinks = 0;
   
-  log("LinkTank3SecondaryTurret NumLinks="$NumLinks);
+  //log("LinkTank3SecondaryTurret NumLinks="$NumLinks);
 	// Swap out fire sound
 	if (NumLinks > 0)
 		FireSoundClass = LinkedFireSound;

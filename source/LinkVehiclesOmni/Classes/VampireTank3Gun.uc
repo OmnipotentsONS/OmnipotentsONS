@@ -1,4 +1,3 @@
-
 class VampireTank3Gun extends ONSWeapon;
 
 #exec OBJ LOAD FILE=..\Animations\ONSWeapons-A.ukx
@@ -537,7 +536,7 @@ function Fire(Controller C)
 					MyVampireTank.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
 				}
 
-				log("Victims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
+				//log("Victims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
 			}
 		}
 	}

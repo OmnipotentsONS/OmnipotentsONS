@@ -72,27 +72,13 @@ simulated function PostNetBeginPlay()
 }
 */
 
-simulated function ClientStopFire(Controller C, bool bWasAltFire)
+simulated function SetFireRateModifier(float Modifier)
 {
+    Super.SetFireRateModifier(Modifier);
 
-	Super.ClientStopfire(C,bWasAltFire);
-	if(!bWasAltFire)
-	{
-		bIsFiring=False;
-	}
-
+    MaxHoldTime = default.MaxHoldTime / Modifier;
 }
 
-simulated function ClientStartFire(Controller C, bool bWasAltFire)
-{
-
-	Super.ClientStartfire(C,bWasAltFire);
-	if(!bWasAltFire)
-	{
-		bIsFiring=true;
-	}
-
-}
 
 function byte BestMode()
 {
@@ -105,6 +91,16 @@ simulated function float MaxRange()
 
 	return AimTraceRange;
 }
+
+
+simulated function float ChargeBar()
+{
+    if (bHoldingFire)
+        return (FMin(Level.TimeSeconds - StartHoldTime, MaxHoldTime) / MaxHoldTime);
+    else
+        return 0;
+}
+
 
 simulated function DestroyEffects()
 {
@@ -134,6 +130,47 @@ function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
 // STATE INSTANT FIRE ===============================================================
 state InstantFireMode
 {
+	
+simulated function ClientStopFire(Controller C, bool bWasAltFire)
+{
+
+	Super.ClientStopfire(C,bWasAltFire);
+	if(!bWasAltFire)
+	{
+		bIsFiring=False;
+	}
+
+  if (Role < ROLE_Authority)
+  {
+        bHoldingFire = false;
+        if (FireCountdown <= 0)
+        {
+            //FIXME make sounds clientside as well!
+            if (bIsAltFire)
+                FireCountdown = AltFireInterval;
+            else
+                FireCountdown = FireInterval;
+
+            FlashMuzzleFlash();
+
+            if (!bIsAltFire)
+                PlaySound(FireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius,, false);
+        }
+    }
+
+}
+
+simulated function ClientStartFire(Controller C, bool bWasAltFire)
+{
+
+	Super.ClientStartfire(C,bWasAltFire);
+	if(!bWasAltFire)
+	{
+		bIsFiring=true;
+	}
+
+}
+	
     simulated function ClientSpawnHitEffects()
     {
     }
@@ -141,7 +178,8 @@ state InstantFireMode
     function SpawnHitEffects(Actor HitActor, vector HitLocation, vector HitNormal)
     {
     }
-	simulated function tick(float dt)
+    
+	 simulated function tick(float dt)
 	{
 		local Vector StartTrace, EndTrace, V, X; 
 		local Vector HitLocation, HitNormal, EndEffect;
@@ -481,8 +519,8 @@ simulated function OwnerEffects()
 		local TickWebCasterProjectileLeader Leader;
 		local TickWebCasterProjectile P;
 
-    //log(self@"CeaseFire Called,bHoldingFire="@bHoldingFire@",bIsAltFire="@bIsAltFire);
-		if (!bIsAltFire) return;
+   // log(self@"CeaseFire Called,bHoldingFire="@bHoldingFire@",bIsAltFire="@bIsAltFire);
+	//	if (!bIsAltFire) return;
 		if (!bHoldingFire) return;
 
 		ClientPlayForceFeedback("BioRifleFire");
@@ -594,14 +632,6 @@ simulated function OwnerEffects()
 // END Instant STATE ============================================
 
 // Alt fire stuff
-
-simulated function float ChargeBar()
-{
-    if (bHoldingFire)
-        return (FMin(Level.TimeSeconds - StartHoldTime, MaxHoldTime) / MaxHoldTime);
-    else
-        return 0;
-}
 
 //state ProjectileFireMode
 //{
