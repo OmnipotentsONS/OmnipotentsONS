@@ -12,6 +12,7 @@ simulated function SetBeamLocation()
         {
         //super.SetBeamLocation();
         //StartEffect = Location;
+         SetLocation( StartEffect );
         return;
         }
     StartEffect=ONSVehicle(Instigator).Weapons[0].WeaponFireLocation;
@@ -39,6 +40,7 @@ simulated function Vector SetBeamRotation()
     {
     SetRotation(Rotator(EndEffect-StartEffect));
     return Normal(EndEffect-StartEffect);
+    
     }
 
 // ============================================================================

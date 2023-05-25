@@ -417,7 +417,7 @@ simulated function float AdjustLinkDamage(int NumLinks, Actor Other, float Damag
     {
     Damage=Damage * (1.5*NumLinks+1);
 
-    if (Other.IsA('Vehicle'))
+    if (Other != None && Other.IsA('Vehicle'))
         Damage*=VehicleDamageMult;
 
     return Damage;
@@ -679,7 +679,7 @@ defaultproperties
      LinkBreakDelay=0.500000
      MomentumTransfer=2000.000000
      AltDamageType=Class'ONSLinkFlyer.DamTypeLinkFlyerBeam'
-     AltDamage=15
+     AltDamage=13
      MakeLinkForce="LinkActivated"
      LinkFlexibility=0.550000
      LinkVolume=240
@@ -712,4 +712,6 @@ defaultproperties
      SoundPitch=112
      SoundRadius=512.000000
      TransientSoundRadius=1024.000000
+     WeaponFireOffset=15.000000 //test this weapon often is too far out.
+     bDoOffsetTrace=True
 }

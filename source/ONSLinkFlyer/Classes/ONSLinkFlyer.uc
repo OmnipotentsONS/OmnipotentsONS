@@ -67,7 +67,7 @@ replication
             return false;
 
         // If allied teammate, possibly add them to a link list
-        if (TeamLink(Healer.GetTeamNum()))
+        if (TeamLink(Healer.GetTeamNum()) && Healer != Controller)
             {
             for (i=0; i<Linkers.Length; i++)
                 {
@@ -245,6 +245,33 @@ replication
         Super.UpdatePrecacheMaterials();
         }
 
+
+
+simulated function DrawHUD(Canvas C)
+{
+	local PlayerController PC;
+	local HudCTeamDeathMatch PlayerHud;
+
+	//Hax. :P
+    Super.DrawHUD(C);
+	PC = PlayerController(Controller);
+	if (Health < 1 || PC == None || PC.myHUD == None || PC.MyHUD.bShowScoreboard)
+		return;
+		
+	PlayerHud=HudCTeamDeathMatch(PC.MyHud);
+	
+	if ( Links > 0 )
+	{
+		PlayerHud.totalLinks.value = Links;
+		PlayerHud.DrawSpriteWidget (C, PlayerHud.LinkIcon);
+		PlayerHud.DrawNumericWidget (C, PlayerHud.totalLinks, PlayerHud.DigitsBigPulse);
+		PlayerHud.totalLinks.value = Links;
+	}
+}
+
+
+
+
     // ============================================================================
     // defaultproperties
     // ============================================================================
@@ -262,7 +289,7 @@ defaultproperties
      DisintegrationEffectClass=None
      DisintegrationHealth=0.000000
      VehiclePositionString="in a Chupacabra"
-     VehicleNameString="Chupacabra 1.0"
+     VehicleNameString="Chupacabra 1.1"
      GroundSpeed=2200.000000
      HealthMax=450.000000
      Mesh=SkeletalMesh'LinkFlyer_Mesh.LinkFlyer.LinkFinal'
