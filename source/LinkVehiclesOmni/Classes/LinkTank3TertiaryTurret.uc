@@ -252,6 +252,8 @@ defaultproperties
      DamageType=Class'LinkVehiclesOmni.DamTypeLink3TurretBeam'
      DamageMin=25
      DamageMax=35
+     TraceRange=20000.000000
+     Momentum=10000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      Mesh=SkeletalMesh'ONSWeapons-A.TankMachineGun'
      LinkMultiplier = 1.1

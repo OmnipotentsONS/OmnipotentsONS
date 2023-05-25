@@ -406,7 +406,7 @@ function Fire(Controller C)
 
 	function AltFire(Controller C)
 	{
-		local VampireLightiningShockWave		Shock;
+		local LampreyLightiningShockWave		Shock;
 		local float		DistScale, dist;
 		local vector	dir, StartLocation;
 		local Pawn		Victims;
@@ -418,7 +418,7 @@ function Fire(Controller C)
 
 		PlaySound(Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01', SLOT_None, 128/255.0,,, 2.5, False);
 
-		Shock = Spawn(class'VampireLightiningShockWave', Self,, StartLocation);
+		Shock = Spawn(class'LampreyLightiningShockWave', Self,, StartLocation);
 		
 		if (Instigator.GetTeamNum()==0) {
 			//Red
@@ -434,6 +434,7 @@ function Fire(Controller C)
        Shock.Emitters[1].ColorScale[2].Color = class'Canvas'.static.MakeColor( 0,0, 255);
 		}
 
+	
 	  /*Shock.Emitters[0].ColorScale[0].Color = class'Canvas'.static.MakeColor( 0, 77, 64);
 	  Shock.Emitters[0].ColorScale[1].Color = class'Canvas'.static.MakeColor( 136, 14, 79);
 	  Shock.Emitters[0].ColorScale[2].Color = class'Canvas'.static.MakeColor( 136, 14, 79);
@@ -713,6 +714,7 @@ defaultproperties
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
      PitchUpLimit=9000
+     PitchDownLimit=40000
      
      /* From Manta/Hornet
      YawBone="Object02"
@@ -749,6 +751,8 @@ defaultproperties
      WeaponFireOffset=15.000000
      BeamOffset=12.000000
 		// DualFireOffset=12
+    
+   
     
      LinkMultiplier = 1.0; // not used here
 		 SelfHealMultiplier = 1.25;
