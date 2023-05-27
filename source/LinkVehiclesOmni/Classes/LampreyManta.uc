@@ -70,7 +70,7 @@ defaultproperties
      VehiclePositionString="in a Lamprey 3.0"
      VehicleNameString="Lamprey Manta"
      GroundSpeed=1800.000000
-     HealthMax=375.000000
+     HealthMax=325.000000
      Health=300
      Mesh=SkeletalMesh'ONSVehicles-A.HoverBike'
      

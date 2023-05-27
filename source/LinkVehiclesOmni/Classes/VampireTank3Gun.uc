@@ -516,7 +516,7 @@ function Fire(Controller C)
 				dist = FMax(1,VSize(dir));
 				dir = Normal(Dir)*0.5 + vect(0,0,1);
 				DistScale = 1 - FMax(0,(dist - Victims.CollisionRadius)/AltFireRadius);
-				if (Victims.IsA('Omnitaur')|| Victims.IsA('Minotaur'))
+				if (Victims.IsA('Omnitaur')|| Victims.IsA('Minotaur')|| Victims.IsA('MinotaurClassic'))
 				{
 					// Special easter egg!  
 					Victims.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumEasterEggMult);
@@ -789,7 +789,7 @@ defaultproperties
 		 
   
      AltFireRadius=1500.000000
-     AltFireDamage=100.000000
+     AltFireDamage=300.000000 // matches phoenix.
      AltFireDamageVehicleMult=2.000000
      AltFireDamageEasterEggMult=6.000000
      AltFireMomentumVehicleMult=5.000000

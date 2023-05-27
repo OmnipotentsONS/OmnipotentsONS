@@ -491,4 +491,23 @@ defaultproperties
      Skins(1)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
      Skins(2)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
      MaxGroundSpeed=850.000000
+      Begin Object Class=KarmaParamsRBFull Name=KParams0
+         KInertiaTensor(0)=1.300000
+         KInertiaTensor(3)=4.000000
+         KInertiaTensor(5)=4.500000
+         KLinearDamping=0.000000
+         KAngularDamping=0.000000
+         KStartEnabled=True
+         KMaxSpeed=850.000000
+         bHighDetailOnly=False
+         bClientOnly=False
+         bKDoubleTickRate=True
+         bKStayUpright=True
+         bKAllowRotate=True
+         bDestroyOnWorldPenetrate=True
+         bDoSafetime=True
+         KFriction=0.450000
+     End Object
+     KParams=KarmaParamsRBFull'LinkVehiclesOmni.LinkTank3.KParams0'
+
 }

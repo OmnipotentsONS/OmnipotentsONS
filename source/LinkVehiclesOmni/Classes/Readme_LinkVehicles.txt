@@ -43,7 +43,7 @@ At 300 health Damage from beam = 12 (Base LinkGun is 9), up to 26 when fully eng
 
 Lamprey: Manta that Links, based on Hornet (Machine gun manta)
 Driver Weapon:  Primary Dark LinkBeam, heals itself, has "tractor effect" (weaker than Pulse Traitor though) to pull victims (especially flyers) close to suck them dry. AltFire - Smaller version of DarkEnergyShockWave (like Vampire Tank)
-Health: 300 healable to 375
+Health: 300 healable to 325
 Issues:  When you first enter and sitting on top of static mesh the view is messed up.  Flying up higher fixes it, this is because the Hornet was Raptor base with Manta mesh/skin.  Can't seem to fix it but its a minor thing.
 
 ONSLinkFlyer 1.1 

@@ -467,7 +467,7 @@ function Fire(Controller C)
 				dist = FMax(1,VSize(dir));
 				dir = Normal(Dir)*0.5 + vect(0,0,1);
 				DistScale = 1 - FMax(0,(dist - Victims.CollisionRadius)/AltFireRadius);
-				if (Victims.IsA('Omnitaur')|| Victims.IsA('Minotaur'))
+				if (Victims.IsA('Omnitaur')|| Victims.IsA('Minotaur')|| Victims.IsA('MinotaurClassic'))
 				{
 					// Special easter egg!  
 					Victims.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumEasterEggMult);
@@ -704,8 +704,8 @@ defaultproperties
      //LinkScale(4)=1.400000
      //LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
-     Damage=12  //link gun shaft is 9, Scorp is 12, Hvy LinkTank 17  This is its primary close in weapon.
-     Momentum=-25000
+     Damage=13  //link gun shaft is 9, Scorp is 12, Hvy LinkTank 17  This is its primary close in weapon.
+     Momentum=-20000
      LinkFlexibility=1.20000
      bInitAimError=True
      LinkVolume=240
@@ -734,7 +734,7 @@ defaultproperties
      AltFireInterval=3.00000
      FireSoundVolume=255.000000
      DamageType=Class'DamTypeLampreyBeam'
-     TraceRange=6000.000000  // 1100 is link gun's trace range
+     TraceRange=3600.000000  // 1100 is link gun's trace range
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
      ShakeRotTime=6.000000
@@ -759,7 +759,7 @@ defaultproperties
 		 VehicleDamageMult = 1.2;
   
      AltFireRadius=1500.000000
-     AltFireDamage=100.000000
+     AltFireDamage=175.000000 // phoenix is 300
      AltFireDamageVehicleMult=2.000000
      AltFireDamageEasterEggMult=6.000000
      AltFireMomentumVehicleMult=5.000000
