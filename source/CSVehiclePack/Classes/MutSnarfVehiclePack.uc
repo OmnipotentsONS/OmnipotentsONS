@@ -11,6 +11,7 @@ var() config bool bSmallKraken;
 var() config bool bHammerhead;
 var() config bool bArmadillo;
 var() config bool bHurricane;
+var() config bool bLinkTank;
 
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
@@ -78,6 +79,10 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
         {
             SVehicleFactory(Other).VehicleClass = class'CSAdvancedArmor.ONSHurricaneTank';
         }
+        if(bLinkTank && (factory.VehicleClass.Name == 'ONSLinkTank' || factory.VehicleClass.Name == 'LinkTank'))
+        {
+            SVehicleFactory(Other).VehicleClass = class'LinkVehiclesOmni.LinkTank3';
+        }
     }
     if(randomizer != None)
     {
@@ -127,6 +132,10 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
             {
                 randomizer.Vehicles[i].VehicleClass = class'CSAdvancedArmor.ONSHurricaneTank';
             }
+            if(bLinkTank && (factory.VehicleClass.Name == 'ONSLinkTank' || factory.VehicleClass.Name == 'LinkTank'))
+            {
+                randomizer.Vehicles[i].VehicleClass = class'LinkVehiclesOmni.LinkTank3';
+            }
         }
     }
 	
@@ -137,7 +146,7 @@ defaultproperties
 {
     bAddToServerPackages=True
     FriendlyName="Snarf's Vehicle Pack"
-    Description="Replaces vehicles with Snarf's bug fixed versions - Ballista, HellHound, KingHellHound, Alligator, Minotaur/Omnitaur, Leviathan, Kraken, Tiamat, Hammerhead, Troop Carrier, and Hurricane"
+    Description="Replaces vehicles with Snarf's and Omni's bug fixed versions - Ballista, HellHound, KingHellHound, Alligator, Minotaur/Omnitaur, Leviathan, Kraken, Tiamat, Hammerhead, Troop Carrier, Hurricane and LinkTank"
     bBallista=true
     bHellHound=true
     bKingHellHound=true
@@ -149,4 +158,5 @@ defaultproperties
     bHammerhead=true
     bArmadillo=true
     bHurricane=true
+    bLinkTank=true
 }
