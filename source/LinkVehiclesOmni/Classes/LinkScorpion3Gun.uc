@@ -23,6 +23,7 @@ var float	LinkScale[6];   // linkers display sizing factor
 var float LinkMultiplier;  // linkers increase factor
 var float VehicleDamageMult; // link does more damage to vehicles
 var float SelfHealMultiplier; // how much it heals itself as draining.
+var float VehicleHealScore; //  how many healing points of an occupied vehicle = 1pt score for player
 
 var String MakeLinkForce;
 
@@ -145,6 +146,7 @@ state InstantFireMode
 		local LinkScorpion3BeamEffect LB;
 		local DestroyableObjective HealObjective;
 		local Vehicle LinkedVehicle;
+	  local float score;
 	
 		Super.Tick(dt);
 		
@@ -359,8 +361,14 @@ state InstantFireMode
 				
 				if (Instigator.HasUDamage())
 					AdjustedDamage *= 2;
-				LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);//if (! ))
-					//LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
+				if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	      {
+	        score = 1;
+	        if(LinkedVehicle.default.Health >= VehicleHealScore)
+	            score = LinkedVehicle.default.Health / VehicleHealScore;
+	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
+        }  		
 			}
 			MyLinkScorpion.bLinking = (LockedPawn != None) || bIsHealingObjective;
 
@@ -634,4 +642,5 @@ defaultproperties
      LinkMultiplier = 1.5; // each linker adds 150%
      VehicleDamageMult = 1.25 // more damage to vehicles.
      SelfHealMultiplier = 1.1 // good heal multiplier, it has to get close.
+     VehicleHealScore = 200.0
 }

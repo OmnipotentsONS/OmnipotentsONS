@@ -32,6 +32,7 @@ var() float LinkFlexibility;
 var float LinkMultiplier;
 var float SelfHealMultiplier; 
 var float VehicleDamageMultiplier;
+var float VehicleHealScore;
 
 var		bool bDoHit;
 var()	bool bFeedbackDeath;
@@ -192,6 +193,7 @@ simulated function ClientStartFire(Controller C, bool bWasAltFire)
 		local TickScorpion3BeamEffect LB;
 		local DestroyableObjective HealObjective;
 		local Vehicle LinkedVehicle;
+		local float score;
 	
 		Super.Tick(dt);
 		
@@ -393,8 +395,14 @@ simulated function ClientStartFire(Controller C, bool bWasAltFire)
 			if ( LinkedVehicle != None && bDoHit )
 			{
 				AdjustedDamage = AdjustLinkDamage( NumLinkers, Other, Damage );
-				LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);//if (! ))
-					//LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
+				if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	      {
+	        score = 1;
+	        if(LinkedVehicle.default.Health >= VehicleHealScore)
+	            score = LinkedVehicle.default.Health / VehicleHealScore;
+	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
+        }  		
 			}
 			MyTickScorpion.Linking = (LockedPawn != None) || bIsHealingObjective;
 
@@ -812,11 +820,12 @@ defaultproperties
      BlueSkin=Texture'LinkScorpion3Tex.TickTex.TickScorpGun'
      SoundVolume=150
     
-     CurrDrawScale = 1;
-     NumLinkers = 1;
-     LinkMultiplier = 1.5;
-		 SelfHealMultiplier = 1.1;
-		 VehicleDamageMultiplier = 1.1; //  increased damage to vehicles might add some specific vehicles here?
+     CurrDrawScale = 1
+     NumLinkers = 1
+     LinkMultiplier = 1.5
+		 SelfHealMultiplier = 1.1
+		 VehicleDamageMultiplier = 1.1 //  increased damage to vehicles might add some specific vehicles here?
+     VehicleHealScore = 200
      
      //AltFire
      AltFireInterval=0.30000

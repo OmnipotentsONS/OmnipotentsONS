@@ -25,6 +25,7 @@ var() float LinkFlexibility;
 var float LinkMultiplier;
 var float SelfHealMultiplier; 
 var float VehicleDamageMult;
+var float VehicleHealScore;
 
 var		bool bDoHit;
 var()	bool bFeedbackDeath;
@@ -146,6 +147,7 @@ simulated function tick(float dt)
 		local LampreyBeamEffect LB;
 		local DestroyableObjective HealObjective;
 		local Vehicle LinkedVehicle;
+		local float score;
 	
 		Super.Tick(dt);
 		
@@ -296,9 +298,16 @@ simulated function tick(float dt)
 			// vehicle healing
 			LinkedVehicle = Vehicle(LockedPawn);
 			if ( LinkedVehicle != None && bDoHit ) {
-				AdjustedDamage = Damage * (LinkMultiplier*MyLamprey.Links+1) * Instigator.DamageScaling;
-				if (Instigator.HasUDamage()) AdjustedDamage *= 2;
-				LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
+				AdjustedDamage = AdjustLinkDamage(0,None,Damage ) * Instigator.DamageScaling;
+				
+				if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	      {
+	        score = 1;
+	        if(LinkedVehicle.default.Health >= VehicleHealScore)
+	            score = LinkedVehicle.default.Health / VehicleHealScore;
+	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
+        }  		
 			}
 			
 			MyLamprey.bLinking = (LockedPawn != None) || bIsHealingObjective;
@@ -757,7 +766,8 @@ defaultproperties
      LinkMultiplier = 1.0; // not used here
 		 SelfHealMultiplier = 1.25;
 		 VehicleDamageMult = 1.2;
-  
+		 VehicleHealScore = 200;
+		 
      AltFireRadius=1500.000000
      AltFireDamage=175.000000 // phoenix is 300
      AltFireDamageVehicleMult=2.000000

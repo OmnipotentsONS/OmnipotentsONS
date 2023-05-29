@@ -26,6 +26,7 @@ var(LinkBeam) Sound BeamSounds[4];
 var(LinkBeam) float VehicleDamageMult;
 
 var float LinkMultiplier;  // linkers increase factor
+var float VehicleHealScore; // how much occupied vehicle healing = 1pt player score
 
 
 // ============================================================================
@@ -72,7 +73,26 @@ simulated function UpdatePrecacheStaticMeshes()
 //	Level.AddPrecacheStaticMesh(StaticMesh'MyStaticMesh');
 }
 
-
+/* Need to figure out how to check for UTComp and get a value without making this whole package dependent on UTComp.
+// probably could just read UT2004.ini file for the value there if we find it in the mutator list.
+simulated function PostNetBeginPlay()
+{
+    local Mutator M;
+    Super.PostNetBeginPlay();
+    
+    for ( M=Level.Game.BaseMutator; M!=None; M=M.NextMutator ) {
+    	  log("LT3Gun::PostNetBeginPlay "$M.NextMutator.Name);
+    
+         if ( M.NextMutator.Name == 'MutUTComp' )
+         {
+         	   Log("LT3Gun::PostNetBeginPlay -- Found MutUTComp");
+         	   if (M.NextMutator.VehicleHealScore != NONE) Log("LT3Gun::PostNetBeginPlay -- VehicleHealScore"$M.NextMutator.VehicleHealScore);
+                
+                break;
+         }
+    } // for
+}
+*/
 // ============================================================================
 // ============================================================================
 simulated function UpdateLinkColor( LinkAttachment.ELinkColor Color )
@@ -215,6 +235,7 @@ simulated event Tick(float dt)
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
 	local LinkBeamEffect Beam;
+	local float score;
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
 
@@ -466,10 +487,18 @@ simulated event Tick(float dt)
 		LinkedVehicle = Vehicle(LockedPawn);
 		if ( LinkedVehicle != None && bDoHit )
 		{
-			AdjustedDamage = AltDamage * (1.5*NumLinks+1) * Instigator.DamageScaling;
-			if (Instigator.HasUDamage())
-				AdjustedDamage *= 2;
-			LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
+			AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ); // Target None = No vehicle damage multiplier
+			AdjustedDamage *= Instigator.DamageScaling;  // Not sure what this was, but left it in.
+			
+			if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	      {
+	        score = 1;
+	        if(LinkedVehicle.default.Health >= VehicleHealScore)
+	            score = LinkedVehicle.default.Health / VehicleHealScore;
+	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
+        }  		
+			//LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
 			//if (!LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
 			//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 		}
@@ -557,7 +586,7 @@ simulated event Tick(float dt)
 // Return adjusted damage based on number of links
 // Takes a NumLinks argument instead of an actual LinkGun
 // ============================================================================
-function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage )
+function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage)
 {
 	local float AdjDamage;
 	
@@ -902,4 +931,5 @@ defaultproperties
      SoundPitch=112
      SoundRadius=512.000000
      TransientSoundRadius=1024.000000
+     VehicleHealScore=200
 }

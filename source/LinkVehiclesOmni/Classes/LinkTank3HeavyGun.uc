@@ -26,7 +26,7 @@ var(LinkBeam) Sound BeamSounds[4];
 var(LinkBeam) float VehicleDamageMult;
 
 var float LinkMultiplier;  // linkers increase factor
-
+var float VehicleHealScore; // how much occupied vehicle healing = 1pt player score
 
 // ============================================================================
 // Internal vars
@@ -215,6 +215,7 @@ simulated event Tick(float dt)
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
 	local LinkBeamEffect Beam;
+	local float score;
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
 
@@ -468,10 +469,17 @@ simulated event Tick(float dt)
 		LinkedVehicle = Vehicle(LockedPawn);
 		if ( LinkedVehicle != None && bDoHit )
 		{
-			AdjustedDamage = AltDamage * (1.5*NumLinks+1) * Instigator.DamageScaling;
-			if (Instigator.HasUDamage())
-				AdjustedDamage *= 2;
-			LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
+			AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ); // Target None = No vehicle damage multiplier
+			AdjustedDamage *= Instigator.DamageScaling;  // Not sure what this was, but left it in.
+			
+		if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	      {
+	        score = 1;
+	        if(LinkedVehicle.default.Health >= VehicleHealScore)
+	            score = LinkedVehicle.default.Health / VehicleHealScore;
+	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
+        }  		
 			//if (!LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
 			//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 		}
@@ -905,4 +913,5 @@ defaultproperties
      SoundPitch=112
      SoundRadius=512.000000
      TransientSoundRadius=1024.000000
+     VehicleHealScore=200
 }

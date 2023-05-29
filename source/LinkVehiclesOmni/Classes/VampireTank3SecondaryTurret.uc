@@ -28,6 +28,7 @@ var(LinkBeam) float VehicleDamageMult;
 var float LinkMultiplier;  // linkers increase factor, not used in vampire, but will leave the code just in case want to add it back
 var VampireTank3TurretBeamEffect Beam;
 var float SelfHealMultiplier; 
+var float VehicleHealScore;
 var VampireTank3 MyVampireTank;  // need reference to it to healit
 
 // ============================================================================
@@ -238,6 +239,7 @@ simulated event Tick(float dt)
 	//local LinkBeamEffect LB;
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
+	local float score;
 	//local VampireTank3TurretBeamEffect Beam;
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
@@ -430,7 +432,15 @@ simulated event Tick(float dt)
 		{
 			AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ) * Instigator.DamageScaling;
 		
-			LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
+			if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	      {
+	        score = 1;
+	        if(LinkedVehicle.default.Health >= VehicleHealScore)
+	            score = LinkedVehicle.default.Health / VehicleHealScore;
+	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
+        }  				
+			//LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
 			//if (!LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
 			//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 		}
@@ -852,5 +862,6 @@ defaultproperties
      SoundRadius=512.000000
      TransientSoundRadius=1024.000000
      SelfHealMultiplier = 0.8
+     VehicleHealScore=200.0
      
 }

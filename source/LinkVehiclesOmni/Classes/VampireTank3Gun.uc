@@ -25,6 +25,7 @@ var() float LinkFlexibility;
 var float LinkMultiplier;
 var float SelfHealMultiplier; 
 var float VehicleDamageMult;
+var float VehicleHealScore; // how much occupied vehicle healing = 1pt player score
 
 var		bool bDoHit;
 var()	bool bFeedbackDeath;
@@ -145,6 +146,7 @@ state InstantFireMode
 		local VampireTank3BeamEffect LB;
 		local DestroyableObjective HealObjective;
 		local Vehicle LinkedVehicle;
+		local float score;
 	
 		Super.Tick(dt);
 		
@@ -356,11 +358,16 @@ state InstantFireMode
 			LinkedVehicle = Vehicle(LockedPawn);
 			if ( LinkedVehicle != None && bDoHit )
 			{
-				AdjustedDamage = AdjustLinkDamage( MyVampireTank.Links, None,  Damage ) * Instigator.DamageScaling;
-				if (Instigator.HasUDamage())
-					AdjustedDamage *= 2;
-				LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);//if (! ))
-					//LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
+				AdjustedDamage = AdjustLinkDamage( MyVampireTank.Links, None, Damage ); // Target None = No vehicle damage multiplier
+					
+		  	if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	      {
+	        score = 1;
+	        if(LinkedVehicle.default.Health >= VehicleHealScore)
+	            score = LinkedVehicle.default.Health / VehicleHealScore;
+	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
+        }  		
 			}
 			MyVampireTank.bLinking = (LockedPawn != None) || bIsHealingObjective;
 
@@ -786,7 +793,7 @@ defaultproperties
      LinkMultiplier = 0.8;  //smaller since it heals itself
 		 SelfHealMultiplier = 1.0;
 		 VehicleDamageMult = 1.2;
-		 
+		 VehicleHealScore=200
   
      AltFireRadius=1500.000000
      AltFireDamage=300.000000 // matches phoenix.
