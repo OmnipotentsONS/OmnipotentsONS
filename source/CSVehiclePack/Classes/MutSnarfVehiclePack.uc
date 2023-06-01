@@ -132,7 +132,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
             {
                 randomizer.Vehicles[i].VehicleClass = class'CSAdvancedArmor.ONSHurricaneTank';
             }
-            if(bLinkTank && (factory.VehicleClass.Name == 'ONSLinkTank' || factory.VehicleClass.Name == 'LinkTank'))
+            if(bLinkTank && (randomizer.Vehicles[i].VehicleClass.Name == 'ONSLinkTank' || randomizer.Vehicles[i].VehicleClass.Name == 'LinkTank'))
             {
                 randomizer.Vehicles[i].VehicleClass = class'LinkVehiclesOmni.LinkTank3';
             }
