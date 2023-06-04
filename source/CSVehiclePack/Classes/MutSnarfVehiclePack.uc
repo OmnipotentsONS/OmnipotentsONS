@@ -1,5 +1,9 @@
 class MutSnarfVehiclePack extends Mutator config(CSVehiclePack);
 
+// to do, add in firehound
+// attempt to fix forcedvehiclefactories
+
+
 var() config bool bBallista;
 var() config bool bHellHound;
 var() config bool bKingHellHound;
@@ -17,12 +21,20 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
     local int i;
     local SVehicleFactory factory;
-    local CSVehicleRandomizer randomizer;
+    //local ONSForcedVehicleFactory fvfactory;
+    local ONSVehicleRandomizer randomizer;
     local class<ONSVehicle> vehicleClass;
 
     factory = SVehicleFactory(Other);
-    randomizer = CSVehicleRandomizer(Other);
-	if (factory != None && factory.VehicleClass != None)
+    randomizer = ONSVehicleRandomizer(Other);
+    //fvfactory = ONSForcedVehicleFactory(Other);
+    //log("CSVP Other="@Other);
+    //log("CSVP factory"@factory);
+    //log("CSVP fvf="@fvfactory);
+    
+    //log("CSVP");
+    
+	  if (factory != None && factory.VehicleClass != None)
     {
         if(bBallista && factory.VehicleClass.Name == 'Ballista')
         {
@@ -83,6 +95,12 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
         {
             SVehicleFactory(Other).VehicleClass = class'LinkVehiclesOmni.LinkTank3';
         }
+        // Check for ONSForcedVehicleFactories
+        //if (Other.IsA('ONSForcedVehicleFactory'))
+        //{
+        //	fvfactory.DefaultVehicleClass =  SVehicleFactory(Other).VehicleClass;
+        //}      
+        // Doesn't freaking works, fvfactory is always none.
     }
     if(randomizer != None)
     {
