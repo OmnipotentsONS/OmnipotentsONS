@@ -302,4 +302,10 @@ defaultproperties
 {
      mSizeRange(0)=30.000000
      bAlwaysRelevant=True
+     mColorRange(0)=(B=240,G=40,R=40)
+     mColorRange(1)=(B=240,G=40,R=40)
+     mWaveFrequency=0.060000
+     mWaveAmplitude=6.000000
+     mWaveShift=50000.000000
+     mBendStrength=3.000000
 }

@@ -146,6 +146,14 @@ function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector H
 		FoundBeam = Spawn(BeamEffectClass, Owner,,WeaponFireLocation);
 		if (CSTrickboard(Owner) != None)
 			CSTrickboard(Owner).Beam = FoundBeam;
+		 if (Instigator.PlayerReplicationInfo.Team.TeamIndex == 1) {
+		 			FoundBeam.mColorRange[0]=Class'Canvas'.static.MakeColor(40,10,240);
+     			FoundBeam.mColorRange[1]=Class'Canvas'.static.MakeColor(40,10,240);
+     }
+     else {
+     			FoundBeam.mColorRange[0]=Class'Canvas'.static.MakeColor(240,10,40);
+     			FoundBeam.mColorRange[1]=Class'Canvas'.static.MakeColor(240,10,40);
+     }			
 	}
 
 	//if (CSTrickboardBeamEffect(Beam) != None)

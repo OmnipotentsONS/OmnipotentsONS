@@ -534,6 +534,7 @@ simulated function SetDriverPositionOriginal(Pawn Driver) {
 }
 
 function KDriverEnter (Pawn P) {
+    P.ReceiveLocalizedMessage(class'CSTrickboard.CSTrickboardEnterMessage', 0);
     Super.KDriverEnter(P); // cals the normal function
     //SetDriverPositionReset(); // resets the position to my driving position
     //spinAttack = 0;
@@ -541,6 +542,8 @@ function KDriverEnter (Pawn P) {
     OldDoSpinAttack = false;
     BikeDustOffsetTemp[0] = BikeDustOffset[0];
     BikeDustOffsetTemp[1] = BikeDustOffset[1];
+   
+
 }
 
 simulated function ClientKDriverEnter(PlayerController pc)
@@ -948,7 +951,7 @@ simulated function Tick(float DeltaTime)
 
     ///////////////////////////////////////
 	if (Role == ROLE_Authority)
-		ResetLinks();
+//		ResetLinks();
 	//else
 	//	log(Level.TimeSeconds@Self@"Beam Effect:"@Beam,'KDebug');
 
@@ -956,15 +959,15 @@ simulated function Tick(float DeltaTime)
 
 	//log(Level.TimeSeconds@Self@"TICK -- Linking"@bLinking,'KDebug');
 	// When linked, always show gold link panels
-	if (Links > 0)
-		UpdateLinkColor(LC_Gold);
+//	if (Links > 0)
+//		UpdateLinkColor(LC_Gold);
 	// If linking a vehicle/player/node, show team-colored link panels
-	else if (bLinking && Team == 0)
-		UpdateLinkColor(LC_Red);
-	else if (bLinking && Team == 1)
-		UpdateLinkColor(LC_Blue);
+//	else if (bLinking && Team == 0)
+//		UpdateLinkColor(LC_Red);
+//	else if (bLinking && Team == 1)
+//		UpdateLinkColor(LC_Blue);
 	// Show regular green link panels
-	else
+//	else
 		UpdateLinkColor(LC_Green);
 
     BoostTick(DeltaTime);
