@@ -33,7 +33,7 @@ var float lastDT;
 replication
 {
     reliable if(Role < Role_Authority)
-        NewNet_ServerStartFire, NewNet_OldServerStartFire;
+        NewNet_ServerStartFire, NewNet_OldServerStartFire, ServerDisableNet;
     unreliable if(Role == Role_Authority && bNetOwner)
         RandSeed;
 }
@@ -44,6 +44,11 @@ function DisableNet()
     NewNet_FlakFire(FireMode[0]).PingDT = 0.00;
     NewNet_FlakAltFire(FireMode[1]).bUseEnhancedNetCode = false;
     NewNet_FlakAltFire(FireMode[1]).PingDT = 0.00;
+}
+
+function ServerDisableNet()
+{
+    DisableNet();
 }
 
 //// client only ////
@@ -57,11 +62,10 @@ simulated event ClientStartFire(int Mode)
         // since flak primary has a hard time hitting nodes for new net, only use old net
         if(Mode == 0 && AimingAtNode())
         {
-            NewNet_FlakFire(FireMode[0]).bUseEnhancedNetCode = false;
-            NewNet_FlakFire(FireMode[0]).PingDT = 0.00;
-            //NewNet_FlakFire(FireMode[0]).ProjectileClass = class'FlakChunk';
+            DisableNet();
+            ServerDisableNet();
+
             super.ClientStartFire(mode);
-            //NewNet_FlakFire(FireMode[0]).ProjectileClass = class'NewNet_FlakChunk';
         }
         else
         {
