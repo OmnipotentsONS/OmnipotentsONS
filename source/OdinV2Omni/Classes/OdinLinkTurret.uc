@@ -9,6 +9,7 @@ var() float DamagePerSecond;
 var() int MinDamageAmount;
 var() float HealMultiplier;
 var() float SelfHealMultiplier;
+var() float DrainHealMultiplier;
 var() float LinkBreakError;
 var class<OdinLinkBeamEffect> BeamEffectClass;
 var array<class<Projectile> > TeamProjectileClasses;
@@ -18,6 +19,7 @@ var bool bIsFiringBeam;
 var Actor LinkedActor;
 var float SavedDamage, SavedHeal;
 var float DamageModifier;
+var float VehicleHealScore;
 
 replication
 {
@@ -307,10 +309,12 @@ function TraceBeamFire(float DeltaTime)
 	local Actor HitActor, NewLinkedActor;
 	local ONSWeaponPawn WeaponPawn;
 	local Vehicle BaseVehicle;
+	local Vehicle HitVehicle;
 	local int DamageAmount, PrevHealth;
 	local DestroyableObjective Node;
   //Log("In OdinLinkTurret=TraceBeamFire");
   local int TeamNum;
+  local float score;
   
 
   LinkedActor = None;
@@ -400,18 +404,30 @@ function TraceBeamFire(float DeltaTime)
 			If (LinkedActor != None) HitActor = LinkedActor; 
 			
 			if (HitActor != None && !HitActor.bWorldGeometry && Level.Game.bTeamGame) {
-				
+				 
+				 HitVehicle=Vehicle(HitActor);
 				 //log("OdinLinkTurret:HitActor"$HitActor$"MyTeam="$TeamNum);
-				 if (Vehicle(HitActor) != None  && Vehicle(HitActor).Health > 0) { // VEhicle
-				 	  if (Vehicle(HitActor).GetTeamNum() == TeamNum) { // Team Vehicle
+				 if (HitVehicle != None  && HitVehicle.Health > 0 ) { // VEhicle
+				 	  if (HitVehicle.GetTeamNum() == TeamNum) { // Team Vehicle
 				 	  	//log("OdinLinkTurret:HealFriendlyVehicle");
-				 	  	HitActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
+				 	  	
+				 	  	if (HitVehicle == ONSWeaponPawn(Owner).VehicleBase) // self
+				 	  			HitVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+				 	  	else // friendly not me		
+				 	  		{
+				 	  	   HitVehicle.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
+				 	       score = 1;
+					        if(HitVehicle.default.Health >= VehicleHealScore)
+					            score = HitVehicle.default.Health / VehicleHealScore;
+					        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !HitVehicle.IsVehicleEmpty())
+					            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((Round(DamageAmount * HealMultiplier)/1.5) / HitVehicle.default.Health * score);
+				         } //else friendly 				
 				 	  }
 				 	  else { // Enemy Vehicle
-				 	  	if (Vehicle(HitActor).GetTeamNum() < 2 && Vehicle(HitActor).Health > 0) {  //Check for enemy Turrets are neutral 255, Team is either 0 red or 1 blue
+				 	  	if (HitVehicle.GetTeamNum() < 2 && HitVehicle.Health > 0) {  //Check for enemy Turrets are neutral 255, Team is either 0 red or 1 blue
 				 	  		//log("OdinLinkTurret:DamageEnemyVehicle Team="$Vehicle(HitActor).GetTeamNum());
-				 	  		HitActor.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
-				   	 		if (BaseVehicle.Health < BaseVehicle.HealthMax) BaseVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+				 	  		HitVehicle.TakeDamage(DamageAmount, Instigator, HL, DeltaTime * Momentum * vector(WeaponFireRotation), DamageType);
+				   	 		if (BaseVehicle.Health < BaseVehicle.HealthMax) BaseVehicle.HealDamage(Round(DamageAmount * DrainHealMultiplier), Instigator.Controller, DamageType);
 				   	 	}	
 				 	  } // Enemy Vehicle
 				 }//Vehicle
@@ -578,8 +594,9 @@ defaultproperties
 {
      DamagePerSecond=150.000000
      MinDamageAmount=10
-     HealMultiplier=0.800000
-     SelfHealMultiplier=0.800000
+     HealMultiplier=1.05000 // multiplier for healing friendlies.
+     SelfHealMultiplier=0.250000 // how much it can heal itself
+     DrainHealMultiplier=1.0  // how many heal points you get when per point of beam Damage
      LinkBreakError=0.950000
      BeamEffectClass=Class'OdinV2Omni.OdinLinkBeamEffect'
      TeamProjectileClasses(0)=Class'OdinV2Omni.OdinLinkPlasmaProjectileRed'
@@ -601,8 +618,8 @@ defaultproperties
      DamageType=Class'OdinV2Omni.DamTypeOdinLinkBeam'
      DamageMin=15
      DamageMax=15
-     TraceRange=4000.000000
-     Momentum=-30000.000000
+     TraceRange=5500.000000
+     Momentum=-20000.000000
      ProjectileClass=Class'OdinV2Omni.OdinLinkPlasmaProjectile'
      AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.200000,RefireRate=0.700000)
      AIInfo(1)=(bInstantHit=True,WarnTargetPct=0.200000)
@@ -614,4 +631,6 @@ defaultproperties
           // Added for InstantFire
      bInstantRotation=True
      bInstantFire=True
+     
+     VehicleHealScore=200.0  // amount to heal occupied vehicle=1player score
 }

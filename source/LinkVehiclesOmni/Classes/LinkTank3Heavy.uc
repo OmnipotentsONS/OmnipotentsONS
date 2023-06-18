@@ -483,7 +483,7 @@ defaultproperties
      TPCamWorldOffset=(Z=300.000000)
      
      VehiclePositionString="in a Heavy Link Tank"
-     VehicleNameString="Heavy Link Tank 3.0"
+     VehicleNameString="Heavy Link Tank 3.1"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3HeavyRoadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3HeavyPancake'
      HealthMax=1550.000000
@@ -494,7 +494,7 @@ defaultproperties
      Skins(2)=Texture'LinkTank3Tex.HeavyLinkTank.LinkTankTread'
      DrawScale=1.1
      MaxThrust=100
-     MaxGroundSpeed=900.000000
+     MaxGroundSpeed=950.000000
      MaxAirSpeed=5000.0000
      VehicleMass=14.0000
       Begin Object Class=KarmaParamsRBFull Name=KParams0
@@ -512,7 +512,7 @@ defaultproperties
          bKAllowRotate=True
          bDestroyOnWorldPenetrate=True
          bDoSafetime=True
-         KFriction=0.450000
+         KFriction=0.40000
      End Object
      KParams=KarmaParamsRBFull'LinkVehiclesOmni.LinkTank3Heavy.KParams0'
 

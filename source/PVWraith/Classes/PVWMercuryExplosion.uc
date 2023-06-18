@@ -11,7 +11,7 @@ class PVWMercuryExplosion extends Emitter notplaceable;
 
 
 
-#exec obj load file=WVMercuryMissles_Tex.utx
+#exec obj load file=WVMercuryMissiles_Tex.utx
 #exec obj load file=WVMercuryMissilesSounds.uax
 
 //=============================================================================

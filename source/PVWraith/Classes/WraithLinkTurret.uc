@@ -17,6 +17,7 @@ var bool bIsFiringBeam;
 var Actor LinkedActor;
 var float SavedDamage, SavedHeal;
 var float DamageModifier;
+var float VehicleHealScore; 
 
 replication
 {
@@ -308,10 +309,12 @@ function TraceBeamFire(float DeltaTime)
 	local Actor HitActor, NewLinkedActor;
 	local ONSWeaponPawn WeaponPawn;
 	local Vehicle BaseVehicle;
+	local Vehicle HitVehicle;
 	local int DamageAmount, PrevHealth;
 	local DestroyableObjective Node;
   //Log("In WraithLinkTurret=TraceBeamFire");
   local int TeamNum;
+  local float score;
   
 
   LinkedActor = None;
@@ -404,9 +407,18 @@ function TraceBeamFire(float DeltaTime)
 				
 				 //log("WraithLinkTurret:HitActor"$HitActor$"MyTeam="$TeamNum);
 				 if (Vehicle(HitActor) != None  && Vehicle(HitActor).Health > 0 && !HitActor.IsA('ONSSpecialLinkBeamCatcher')) { // VEhicle , except Dumbass ONSSpecials made stupid beamcatcher as subclsss of vehicle!  Dumb.  03/2023 pooty
-				 	  if (Vehicle(HitActor).GetTeamNum() == TeamNum) { // Team Vehicle
+				 	  HitVehicle = Vehicle(HitActor);
+				 	  if (HitVehicle.GetTeamNum() == TeamNum) { // Team Vehicle
 				 	  	//log("WraithLinkTurret:HealFriendlyVehicle");
-				 	  	HitActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
+				 	  	//HitActor.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
+				 	  	if(HitVehicle.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType))
+						      {
+						        score = 1;
+						        if(HitVehicle.default.Health >= VehicleHealScore)
+						            score = HitVehicle.default.Health / VehicleHealScore;
+						        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !HitVehicle.IsVehicleEmpty())
+						            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((Round(DamageAmount * HealMultiplier)/1.5) / HitVehicle.default.Health * score);
+					        }  		
 				 	  }
 				 	  else { // Enemy Vehicle
 				 	  	if (Vehicle(HitActor).GetTeamNum() < 2 && Vehicle(HitActor).Health > 0) {  //Check for enemy Turrets are neutral 255, Team is either 0 red or 1 blue
@@ -634,6 +646,7 @@ defaultproperties
      DrawScale=0.600000
      CullDistance=15000
      Skins(0)=Texture'ONSFullTextures.MASGroup.LEVnoColor'
+     VehicleHealScore=200
      
      // Added for InstantFire
      bInstantRotation=True

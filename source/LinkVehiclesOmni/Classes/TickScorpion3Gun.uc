@@ -33,6 +33,7 @@ var float LinkMultiplier;
 var float SelfHealMultiplier; 
 var float VehicleDamageMultiplier;
 var float VehicleHealScore;
+var float RangeExtPerLink;
 
 var		bool bDoHit;
 var()	bool bFeedbackDeath;
@@ -225,7 +226,7 @@ simulated function ClientStartFire(Controller C, bool bWasAltFire)
 		{
 			UpTime -= dt;
 			StartTrace=WeaponFireLocation;
-			TraceRange = default.TraceRange*CurrDrawScale + MyTickScorpion.Links*250;
+			TraceRange = default.TraceRange*CurrDrawScale + MyTickScorpion.Links*RangeExtPerLink;
 			
 	        if ( Instigator.Role < ROLE_Authority )
 	        {
@@ -806,7 +807,7 @@ defaultproperties
      FireInterval=0.120000
      FireSoundVolume=255.000000
      DamageType=Class'XWeapons.DamTypeLinkShaft'
-     TraceRange=3000.000000  // 1100 is link gun's trace range
+     TraceRange=5500.000000  // 1100 is link gun's trace range
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
      ShakeRotTime=6.000000
@@ -826,7 +827,7 @@ defaultproperties
 		 SelfHealMultiplier = 1.1
 		 VehicleDamageMultiplier = 1.1 //  increased damage to vehicles might add some specific vehicles here?
      VehicleHealScore = 200
-     
+     RangeExtPerLink = 500
      //AltFire
      AltFireInterval=0.30000
      AltFireSoundClass=Sound'ONSVehicleSounds-S.LaserSounds.Laser17'
