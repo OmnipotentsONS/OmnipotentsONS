@@ -27,6 +27,7 @@ var(LinkBeam) float VehicleDamageMult;
 
 var float LinkMultiplier;  // linkers increase factor
 var float VehicleHealScore; // how much occupied vehicle healing = 1pt player score
+var float RangeExtPerLink; // how much range is extended per linker
 
 
 // ============================================================================
@@ -286,7 +287,7 @@ simulated event Tick(float dt)
 //		log("StartTrace = WeaponFireLocation",'KDebug');
 		StartTrace = WeaponFireLocation;
 //		log("TraceRange = default.TraceRange + NumLinks*250",'KDebug');
-		TraceRange = default.TraceRange + NumLinks*250;
+		TraceRange = default.TraceRange + NumLinks*RangeExtPerLink;
 
 //		log("if role < role authority then do shit",'KDebug');
 		// Get client LockedPawn
@@ -916,7 +917,7 @@ defaultproperties
      FireForce="Explosion05"
      DamageMin=0
      DamageMax=0
-     TraceRange=5000.000000
+     TraceRange=5500.000000
      ProjectileClass=Class'LinkVehiclesOmni.LinkTank3Projectile'
      ShakeRotMag=(X=40.000000)
      ShakeRotRate=(X=2000.000000)
@@ -932,4 +933,5 @@ defaultproperties
      SoundRadius=512.000000
      TransientSoundRadius=1024.000000
      VehicleHealScore=200
+     RangeExtPerLink=500 // how much range is extended per linker
 }

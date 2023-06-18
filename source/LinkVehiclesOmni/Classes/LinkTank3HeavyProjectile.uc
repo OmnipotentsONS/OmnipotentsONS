@@ -7,7 +7,7 @@ class LinkTank3HeavyProjectile extends PROJ_LinkTurret_Plasma;
 
 defaultproperties
 {
-     VehicleDamageMult=1.250000
+     VehicleDamageMult=1.350000
      Speed=5000.000000
      MaxSpeed=5000.000000
      Damage=85.000000

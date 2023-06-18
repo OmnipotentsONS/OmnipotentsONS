@@ -273,7 +273,7 @@ defaultproperties
      StartUpSound=Sound'PVWraith.WraithStart'
      ShutDownSound=Sound'PVWraith.WraithStop'
      VehiclePositionString="in a Wraith"
-     VehicleNameString="Wraith 1.62"
+     VehicleNameString="Wraith 1.63"
      RanOverDamageType=Class'PVWraith.DamTypeWraithRoadkill'
      CrushedDamageType=Class'PVWraith.DamTypeWraithPancake'
 }

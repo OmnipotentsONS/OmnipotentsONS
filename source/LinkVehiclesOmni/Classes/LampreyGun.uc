@@ -26,6 +26,7 @@ var float LinkMultiplier;
 var float SelfHealMultiplier; 
 var float VehicleDamageMult;
 var float VehicleHealScore;
+var float RangeExtPerLink; // how much range is extended per linker
 
 var		bool bDoHit;
 var()	bool bFeedbackDeath;
@@ -168,7 +169,7 @@ simulated function tick(float dt)
 		if ( (UpTime > 0.0) || (Instigator.Role < ROLE_Authority) ) {
 			UpTime -= dt;
 			StartTrace=WeaponFireLocation;
-			TraceRange = default.TraceRange + MyLamprey.Links*250;
+			TraceRange = default.TraceRange + MyLamprey.Links*RangeExtPerLink;
 			
 			
 	    if ( Instigator.Role < ROLE_Authority ) {
@@ -743,7 +744,7 @@ defaultproperties
      AltFireInterval=3.00000
      FireSoundVolume=255.000000
      DamageType=Class'DamTypeLampreyBeam'
-     TraceRange=3600.000000  // 1100 is link gun's trace range
+     TraceRange=5500.000000  // 1100 is link gun's trace range
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
      ShakeRotTime=6.000000
@@ -767,6 +768,7 @@ defaultproperties
 		 SelfHealMultiplier = 1.25;
 		 VehicleDamageMult = 1.2;
 		 VehicleHealScore = 200;
+		 RangeExtPerLink=500; // how much range is extended per linker
 		 
      AltFireRadius=1500.000000
      AltFireDamage=175.000000 // phoenix is 300

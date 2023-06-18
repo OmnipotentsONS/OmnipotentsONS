@@ -24,6 +24,7 @@ var float LinkMultiplier;  // linkers increase factor
 var float VehicleDamageMult; // link does more damage to vehicles
 var float SelfHealMultiplier; // how much it heals itself as draining.
 var float VehicleHealScore; //  how many healing points of an occupied vehicle = 1pt score for player
+var float RangeExtPerLink; // how much range is extended per linker
 
 var String MakeLinkForce;
 
@@ -168,7 +169,7 @@ state InstantFireMode
 		{
 			UpTime -= dt;
 			StartTrace=WeaponFireLocation;
-			TraceRange = default.TraceRange + MyLinkScorpion.Links*250;
+			TraceRange = default.TraceRange + MyLinkScorpion.Links*RangeExtPerLink;
 			
 	        if ( Instigator.Role < ROLE_Authority )
 	        {
@@ -625,7 +626,7 @@ defaultproperties
      FireInterval=0.120000
      FireSoundVolume=255.000000
      DamageType=Class'XWeapons.DamTypeLinkShaft'
-     TraceRange=5000.000000  // 1100 is link gun's trace range, link tank is 5000, make it same as Link Tank its a weak scorp with no other weapon.
+     TraceRange=5500.000000  // 1100 is link gun's trace range, link tank is 5500, make it same as Link Tank its a weak scorp with no other weapon.
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
      ShakeRotTime=6.000000
@@ -643,4 +644,5 @@ defaultproperties
      VehicleDamageMult = 1.25 // more damage to vehicles.
      SelfHealMultiplier = 1.1 // good heal multiplier, it has to get close.
      VehicleHealScore = 200.0
+     RangeExtPerLink=500; // how much range is extended per linker
 }

@@ -30,6 +30,7 @@ var VampireTank3TurretBeamEffect Beam;
 var float SelfHealMultiplier; 
 var float VehicleHealScore;
 var VampireTank3 MyVampireTank;  // need reference to it to healit
+var float RangeExtPerLink;
 
 // ============================================================================
 // Internal vars
@@ -290,7 +291,7 @@ simulated event Tick(float dt)
 //		log("StartTrace = WeaponFireLocation",'KDebug');
 		StartTrace = WeaponFireLocation;
 //		log("TraceRange = default.TraceRange + NumLinks*250",'KDebug');
-		TraceRange = default.TraceRange + NumLinks*250;
+		TraceRange = default.TraceRange + NumLinks*RangeExtPerLink;
 
 //		log("if role < role authority then do shit",'KDebug');
 		// Get client LockedPawn
@@ -863,5 +864,6 @@ defaultproperties
      TransientSoundRadius=1024.000000
      SelfHealMultiplier = 0.8
      VehicleHealScore=200.0
+     RangeExtPerLink=500
      
 }

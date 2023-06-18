@@ -26,6 +26,7 @@ var float LinkMultiplier;
 var float SelfHealMultiplier; 
 var float VehicleDamageMult;
 var float VehicleHealScore; // how much occupied vehicle healing = 1pt player score
+var float RangeExtPerLink; // how much range is extended per linker
 
 var		bool bDoHit;
 var()	bool bFeedbackDeath;
@@ -766,7 +767,7 @@ defaultproperties
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
      YawBone="Object02"
      PitchBone="Object02"
-     PitchUpLimit=9000
+     PitchUpLimit=12000
      WeaponFireAttachmentBone="Muzzle"
      bInstantFire=True
      bDoOffsetTrace=True
@@ -791,9 +792,10 @@ defaultproperties
      SoundVolume=150
     
      LinkMultiplier = 0.8;  //smaller since it heals itself
-		 SelfHealMultiplier = 1.0;
-		 VehicleDamageMult = 1.2;
+		 SelfHealMultiplier = 1.0
+		 VehicleDamageMult = 1.2
 		 VehicleHealScore=200
+		 RangeExtPerLink=500 // how much range is extended per linker
   
      AltFireRadius=1500.000000
      AltFireDamage=300.000000 // matches phoenix.
