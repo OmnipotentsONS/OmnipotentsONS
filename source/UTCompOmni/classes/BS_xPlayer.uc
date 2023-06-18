@@ -4322,6 +4322,22 @@ simulated function SetMenuColor(int playerID)
     }
 }
 
+function PawnDied(Pawn P)
+{
+    local MutUTComp MutatorOwner;
+    if(Pawn == P && P != None)
+    {
+        if (MutatorOwner==None)
+            foreach DynamicActors(Class'MutUTComp', MutatorOwner)
+                break;
+
+        if(MutatorOwner != None && MutatorOwner.PCC != None)
+            MutatorOwner.PCC = MutatorOwner.PCC.RemovePawnFromList(P, MutatorOwner.PCC);
+    }
+
+    super.PawnDied(P);
+}
+
 defaultproperties
 {
 
