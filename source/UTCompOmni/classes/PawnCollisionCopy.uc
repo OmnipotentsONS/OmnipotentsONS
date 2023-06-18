@@ -245,8 +245,9 @@ function AddPawnToList(Pawn Other)
 {
     // Already got it, dont bother.
     // snarf this was commented out, uncommenting since it might be needed?
-    if(Other == CopiedPawn)
-        return;         
+    // snarf, recommenting out since we are having weird issue of unregs after first round
+    //if(Other == CopiedPawn)
+    //    return;         
 
     if(next==None)
     {
@@ -274,6 +275,7 @@ function PawnCollisionCopy RemovePawnFromList(Pawn Other, PawnCollisionCopy Head
             {
                 Previous.Next = Current.Next;
             }
+            Current.CopiedPawn=None;
             Current.LinkMesh(None);
             Current.Destroy();
             return Head;
