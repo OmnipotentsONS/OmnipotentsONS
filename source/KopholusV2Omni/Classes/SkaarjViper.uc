@@ -36,6 +36,7 @@ var			bool		StreamerActive;
 var() bool bIsThrusting;
 
 //Dodging Hacks
+/* Removed Dodge, Why the fuck should boats Dodge right and left.  Dumb.  Pooty
 var bool		bWasLeft;
 var bool		bWasRight;
 var bool		bEdgeLeft;
@@ -46,6 +47,7 @@ var float DodgeKarmaStrength;
 var eDoubleClickDir DoubleClickDir;
 var float LastDodgeTime;
 var() float DelayBetweenDodges; //delay between dodges ;)
+*/
 
 //Set this in default properties.. set closer to 0 sink faster ... 1 is neutral
 var() float DeathBuoyancy;
@@ -58,8 +60,8 @@ replication
 {
   reliable if(Role == Role_Authority) //for thrusting consider !bNetOwner as its possibly redundant?
            bIsBoosting, bIsThrusting;
-  reliable if(Role < Role_Authority)   //fixes dodge nicely
-           DodgeLeft,DodgeRight,ServerBoost;
+  //reliable if(Role < Role_Authority)   //fixes dodge nicely
+  //         DodgeLeft,DodgeRight,ServerBoost;
 }
 
 function Pawn CheckForHeadShot(Vector loc, Vector ray, float AdditionalScale)
@@ -447,7 +449,7 @@ simulated function float ChargeBar()
         }
 
 }
-
+/* Removed Dodge Why the fuck should boats dodge?  pOOty
 //interesting dodge hack  Mr-Slate
 simulated function RawInput(float DeltaTime,
 							float aBaseX, float aBaseY, float aBaseZ, float aMouseX, float aMouseY,
@@ -544,6 +546,9 @@ simulated function DodgeRight()
     KAddImpulse(Force,vect(0,0,0));
     LastDodgeTime = Level.TimeSeconds;
 }
+
+*/
+//  End Dodge Bullshit.
 
 function KDriverEnter(Pawn P)
 {
@@ -654,10 +659,10 @@ function ShouldTargetMissile(Projectile P)
 defaultproperties
 {
      MaxPitchSpeed=2000.000000
-     BoostAmount=1000.000000
-     BoostTime=2.500000
+     BoostAmount=1500.000000
+     BoostTime=3.7500000
      BoosterSound=Sound'GameSounds.Combo.ComboActivated'
-     RechargeTime=5.000000
+     RechargeTime=6.000000
      WaterSearchDistance=250.000000
      BoostEffectFOVChange=20.000000
      TrailEffectPositions(0)=(X=-140.000000,Y=-141.149994,Z=23.100000)
@@ -671,9 +676,9 @@ defaultproperties
      StreamerOpacityRamp=(Min=1200.000000,Max=1600.000000)
      StreamerOpacityChangeRate=1.000000
      StreamerOpacityMax=0.700000
-     DoubleClickTime=0.350000
-     DodgeKarmaStrength=5000000.000000
-     DelayBetweenDodges=0.500000
+//     DoubleClickTime=0.350000
+    // DodgeKarmaStrength=5000000.000000
+   //  DelayBetweenDodges=2.500000
      DeathBuoyancy=0.500000
      UprightStiffness=400.000000
      UprightDamping=150.000000
@@ -742,7 +747,7 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Skaarj Viper"
-     VehicleNameString="Skaarj Viper 2.2"
+     VehicleNameString="Skaarj Viper 2.31"
      RanOverDamageType=Class'KopholusV2Omni.DamTypeSkaarjViperRoadkill'
      CrushedDamageType=Class'KopholusV2Omni.DamTypeSkaarjViperPancake'
      FlagBone="VHull"
@@ -754,11 +759,11 @@ defaultproperties
      bCanFly=False
      bCanBeBaseForPawns=True
      GroundSpeed=2000.000000
-     HealthMax=300.000000
-     Health=650
+     HealthMax=800.000000
+     Health=800
      Mesh=SkeletalMesh'KASPvehicles.SkaarjViper'
      SoundVolume=160
-     CollisionRadius=150.000000
+     CollisionRadius=200.000000
      CollisionHeight=70.000000
      Begin Object Class=KarmaParamsRBFull Name=KParams0
          KInertiaTensor(0)=1.000000
