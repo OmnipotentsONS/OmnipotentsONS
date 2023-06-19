@@ -33,7 +33,7 @@ var float lastDT;
 replication
 {
     reliable if(Role < Role_Authority)
-        NewNet_ServerStartFire, NewNet_OldServerStartFire, ServerDisableNet;
+        NewNet_ServerStartFire, NewNet_OldServerStartFire, ServerBaseStartFire;
     unreliable if(Role == Role_Authority && bNetOwner)
         RandSeed;
 }
@@ -46,9 +46,31 @@ function DisableNet()
     NewNet_FlakAltFire(FireMode[1]).PingDT = 0.00;
 }
 
-function ServerDisableNet()
+// same as weapon serverstartfire, but disable new net
+function ServerBaseStartFire(int Mode)
 {
     DisableNet();
+	if ( (Instigator != None) && (Instigator.Weapon != self) )
+	{
+		if ( Instigator.Weapon == None )
+			Instigator.ServerChangedWeapon(None,self);
+		else
+			Instigator.Weapon.SynchronizeWeapon(self);
+		return;
+	}
+
+    if ( (FireMode[Mode].NextFireTime <= Level.TimeSeconds + FireMode[Mode].PreFireTime)
+		&& StartFire(Mode) )
+    {
+        FireMode[Mode].ServerStartFireTime = Level.TimeSeconds;
+        FireMode[Mode].bServerDelayStartFire = false;
+    }
+    else if ( FireMode[Mode].AllowFire() )
+    {
+        FireMode[Mode].bServerDelayStartFire = true;
+	}
+	else
+		ClientForceAmmoUpdate(Mode, AmmoAmount(Mode));
 }
 
 //// client only ////
@@ -63,9 +85,19 @@ simulated event ClientStartFire(int Mode)
         if(Mode == 0 && AimingAtNode())
         {
             DisableNet();
-            ServerDisableNet();
-
-            super.ClientStartFire(mode);
+            if ( Pawn(Owner).Controller.IsInState('GameEnded') || Pawn(Owner).Controller.IsInState('RoundEnded') )
+                return;
+            if (Role < ROLE_Authority)
+            {
+                if (StartFire(Mode))
+                {
+                    ServerBaseStartFire(Mode);
+                }
+            }
+            else
+            {
+                StartFire(Mode);
+            }            
         }
         else
         {
