@@ -60,8 +60,8 @@ replication
 {
   reliable if(Role == Role_Authority) //for thrusting consider !bNetOwner as its possibly redundant?
            bIsBoosting, bIsThrusting;
-  //reliable if(Role < Role_Authority)   //fixes dodge nicely
-  //         DodgeLeft,DodgeRight,ServerBoost;
+  reliable if(Role < Role_Authority)   //fixes dodge nicely
+           ServerBoost; //DodgeLeft,DodgeRight,
 }
 
 function Pawn CheckForHeadShot(Vector loc, Vector ray, float AdditionalScale)

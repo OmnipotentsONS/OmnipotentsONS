@@ -283,6 +283,7 @@ defaultproperties
      bNetTemporary=False
      bUpdateSimulatedPosition=True
      NetUpdateFrequency=10.000000
+     bDynamicLight=False
      CollisionRadius=5.000000
      CollisionHeight=5.000000
      Mass=10.000000

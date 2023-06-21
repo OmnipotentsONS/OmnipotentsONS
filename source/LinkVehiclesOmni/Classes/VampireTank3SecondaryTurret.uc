@@ -821,7 +821,7 @@ defaultproperties
      LinkBreakDelay=0.500000
      MomentumTransfer=2000.000000
      AltDamageType=Class'LinkVehiclesOmni.DamTypeVampireTank3Beam'
-     AltDamage=11
+     AltDamage=15
      MakeLinkForce="LinkActivated"
      LinkFlexibility=0.550000
      LinkVolume=240

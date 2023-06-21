@@ -529,7 +529,7 @@ simulated function OwnerEffects()
 		local TickWebCasterProjectile P;
 
    // log(self@"CeaseFire Called,bHoldingFire="@bHoldingFire@",bIsAltFire="@bIsAltFire);
-	//	if (!bIsAltFire) return;
+		//if (!bIsAltFire) return;
 		if (!bHoldingFire) return;
 
 		ClientPlayForceFeedback("BioRifleFire");
@@ -632,7 +632,7 @@ simulated function OwnerEffects()
 		else
 			PlayOwnedSound(FireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius,, false);
 
-		FireCountdown = FireInterval;
+		FireCountdown = AltFireInterval;
 	}
 
 
@@ -788,8 +788,8 @@ defaultproperties
      LinkScale(4)=1.400000
      LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
-     Damage=12  //link gun shaft is 9
-     DamageMin=12 
+     Damage=13  //link gun shaft is 9
+     DamageMin=13 
      Momentum=-10000  //sucking u in 
      LinkFlexibility=0.300000
      bInitAimError=True
@@ -829,7 +829,7 @@ defaultproperties
      VehicleHealScore = 200
      RangeExtPerLink = 500
      //AltFire
-     AltFireInterval=0.30000
+     AltFireInterval=0.50000
      AltFireSoundClass=Sound'ONSVehicleSounds-S.LaserSounds.Laser17'
      AltFireForce="BioRifleFire"
     // AltDamageType=Class'LinkVehiclesOmni.DmgTypeTickWebCaster'
