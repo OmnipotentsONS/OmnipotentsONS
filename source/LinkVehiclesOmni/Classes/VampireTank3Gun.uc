@@ -775,7 +775,7 @@ defaultproperties
      AltFireInterval=3.00000
      FireSoundVolume=255.000000
      DamageType=Class'DamTypeVampireTank3Beam'
-     TraceRange=6000.000000  // 1100 is link gun's trace range
+     TraceRange=6600.000000  // 1100 is link gun's trace range
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
      ShakeRotTime=6.000000
@@ -792,15 +792,15 @@ defaultproperties
      SoundVolume=150
     
      LinkMultiplier = 0.8;  //smaller since it heals itself
-		 SelfHealMultiplier = 1.0
-		 VehicleDamageMult = 1.2
+		 SelfHealMultiplier = 1.05
+		 VehicleDamageMult = 1.25
 		 VehicleHealScore=200
 		 RangeExtPerLink=500 // how much range is extended per linker
   
      AltFireRadius=1500.000000
      AltFireDamage=300.000000 // matches phoenix.
      AltFireDamageVehicleMult=2.000000
-     AltFireDamageEasterEggMult=6.000000
+     AltFireDamageEasterEggMult=6.500000
      AltFireMomentumVehicleMult=5.000000
      AltFireMomentumEasterEggMult=40.000000
      AltFireMomentum=20000.000000

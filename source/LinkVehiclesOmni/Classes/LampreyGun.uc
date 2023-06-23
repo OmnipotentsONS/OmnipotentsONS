@@ -714,7 +714,7 @@ defaultproperties
      //LinkScale(4)=1.400000
      //LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
-     Damage=13  //link gun shaft is 9, Scorp is 12, Hvy LinkTank 17  This is its primary close in weapon.
+     Damage=12  //link gun shaft is 9, Scorp is 12, Hvy LinkTank 17  This is its primary close in weapon.
      Momentum=-20000
      LinkFlexibility=1.20000
      bInitAimError=True
@@ -765,15 +765,15 @@ defaultproperties
    
     
      LinkMultiplier = 1.0; // not used here
-		 SelfHealMultiplier = 1.25;
+		 SelfHealMultiplier = 1.15;
 		 VehicleDamageMult = 1.2;
 		 VehicleHealScore = 200;
 		 RangeExtPerLink=500; // how much range is extended per linker
 		 
-     AltFireRadius=1500.000000
-     AltFireDamage=175.000000 // phoenix is 300
-     AltFireDamageVehicleMult=2.000000
-     AltFireDamageEasterEggMult=6.000000
+     AltFireRadius=550.000000
+     AltFireDamage=125.000000 // phoenix is 300
+     AltFireDamageVehicleMult=2.500000
+     AltFireDamageEasterEggMult=7.000000
      AltFireMomentumVehicleMult=5.000000
      AltFireMomentumEasterEggMult=40.000000
      AltFireMomentum=20000.000000

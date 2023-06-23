@@ -18,7 +18,7 @@ defaultproperties
          ColorScale(1)=(RelativeTime=0.700000,Color=(B=255,G=57,R=94))
          ColorScale(2)=(RelativeTime=1.000000)
          MaxParticles=2
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=10.000000)
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=5.000000)
          InitialParticlesPerSecond=500.000000
          LifetimeRange=(Min=0.7500000,Max=1.2500000)
      End Object
@@ -41,7 +41,7 @@ defaultproperties
          ColorScale(1)=(RelativeTime=0.500000,Color=(B=0,G=0,R=204))
          ColorScale(2)=(RelativeTime=1.000000)
          MaxParticles=3
-         SizeScale(1)=(RelativeTime=0.7500000,RelativeSize=9.500000)
+         SizeScale(1)=(RelativeTime=0.7500000,RelativeSize=5.500000)
          InitialParticlesPerSecond=500.000000
          LifetimeRange=(Min=0.7500000,Max=1.50000)
      End Object
@@ -147,8 +147,8 @@ defaultproperties
          MaxParticles=30
          DetailMode=DM_High
          StartLocationShape=PTLS_Sphere
-         SphereRadiusRange=(Min=110.000000,Max=750.000000)
-         StartSizeRange=(X=(Min=100.000000,Max=600.000000))
+         SphereRadiusRange=(Min=110.000000,Max=275.000000)
+         StartSizeRange=(X=(Min=100.000000,Max=285.000000))
          StartSpinRange=(X=(Max=1.000000),Y=(Max=1.000000),Z=(Max=1.000000))
          Texture=Texture'EpicParticles.Beams.WhiteStreak01aw'
          LifetimeRange=(Min=0.400000,Max=0.400000)

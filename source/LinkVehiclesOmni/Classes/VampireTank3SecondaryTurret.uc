@@ -845,7 +845,7 @@ defaultproperties
      FireForce="Explosion05"
      DamageMin=0
      DamageMax=0
-     TraceRange=6000.000000
+     TraceRange=6600.000000
      ProjectileClass=Class'LinkVehiclesOmni.VampireTank3ProjectileSmall'
      ShakeRotMag=(X=40.000000)
      ShakeRotRate=(X=2000.000000)
@@ -862,7 +862,7 @@ defaultproperties
      SoundPitch=112
      SoundRadius=512.000000
      TransientSoundRadius=1024.000000
-     SelfHealMultiplier = 0.8
+     SelfHealMultiplier = 1.1
      VehicleHealScore=200.0
      RangeExtPerLink=500
      
