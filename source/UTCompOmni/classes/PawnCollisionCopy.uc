@@ -245,7 +245,8 @@ function AddPawnToList(Pawn Other)
 {
     // Already got it, dont bother.
     // snarf this was commented out, uncommenting since it might be needed?
-    // snarf, recommenting out since we are having weird issue of unregs after first round
+    // comment out to try and fix unregs
+    // with commented out we always add to the list even if it was already here (might be memory leak?)
     //if(Other == CopiedPawn)
     //    return;         
 

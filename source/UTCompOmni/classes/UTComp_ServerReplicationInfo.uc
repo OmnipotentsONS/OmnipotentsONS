@@ -59,6 +59,7 @@ var bool bUseWhitelist;
 var string WhitelistBanMessage;
 var bool bUseDefaultScoreboardColor;
 var bool bDebugLogging;
+var int NetUpdateMaxNetSpeed;
 
 replication
 {
@@ -74,7 +75,7 @@ replication
         bAllowRestartVoteEvenIfMapVotingIsTurnedOff, MaxMultiDodges, MinNetSpeed, MaxNetSpeed,
         NodeIsolateBonusPct, VehicleHealScore, VehicleDamagePoints, PowerNodeScore, PowerCoreScore, NodeHealBonusPct, 
         bNodeHealBonusForLockedNodes, bNodeHealBonusForConstructor, bSilentAdmin, bUseDefaultScoreboardColor, 
-        bEnableWhitelist, bUseWhitelist, WhitelistBanMessage, bDebugLogging;
+        bEnableWhitelist, bUseWhitelist, WhitelistBanMessage, bDebugLogging, NetUpdateMaxNetSpeed;
 }
 
 defaultproperties
@@ -114,5 +115,6 @@ defaultproperties
      WhitelistBanMessage="Not allowed.  Contact the server adminstrator to gain access."
      bUseDefaultScoreboardColor=false
      bDebugLogging = false
+     NetUpdateMaxNetSpeed=10000
 }
 

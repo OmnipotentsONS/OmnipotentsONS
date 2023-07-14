@@ -80,6 +80,7 @@ var config bool bSilentAdmin;
 var config bool bEnableWhitelist;
 var config bool bUseWhitelist;
 var config string WhitelistBanMessage;
+var config int NetUpdateMaxNetSpeed;
 
 
 struct MapVotePair
@@ -736,6 +737,7 @@ function SpawnReplicationClass()
     RepInfo.WhitelistBanMessage=WhitelistBanMessage;
     RepInfo.bUseDefaultScoreboardColor = bUseDefaultScoreboardColor;
     RepInfo.bDebugLogging = bDebugLogging;
+    Repinfo.NetUpdateMaxNetSpeed = NetUpdateMaxNetSpeed;
 
     for(i=0; i<VotingGametype.Length && i<ArrayCount(RepInfo.VotingNames); i++)
         RepInfo.VotingNames[i]=VotingGametype[i].GameTypeName;
@@ -1491,9 +1493,9 @@ defaultproperties
      NewNetUpdateFrequency=200
      PingTweenTime=3.0
 
-     FriendlyName="UTComp Version 1.49 (Omni)"
+     FriendlyName="UTComp Version 1.53 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.49"
+     FriendlyVersionNumber=")o(mni 1.53"
      Description="A mutator for brightskins, hitsounds, and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
@@ -1665,7 +1667,7 @@ defaultproperties
      SuicideInterval = 3
 
      IgnoredHitSounds(0)="FireKill"
-     
+     NetUpdateMaxNetSpeed=10000
      
 }
  

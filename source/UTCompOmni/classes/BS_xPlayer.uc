@@ -216,6 +216,10 @@ function ServerSetNetUpdateRate(float Rate, int NetSpeed) {
     local float MinRate;
 
     MaxRate = class'MutUTComp'.default.MaxNetUpdateRate;
+    
+    //snarf clamp this
+    NetSpeed = Clamp(NetSpeed, 9636, class'MutUTComp'.default.NetUpdateMaxNetSpeed);
+    
     if (NetSpeed != 0)
         MaxRate = FMin(MaxRate, NetSpeed/100.0);
 
@@ -3360,9 +3364,16 @@ function UTComp_ReplicateMove(
     local int OldAccel;
     local vector BuildAccel, AccelNorm, MoveLoc, CompareAccel;
     local bool bPendingJumpStatus;
+    local int ClampedNetSpeed;
 
     MaxResponseTime = Default.MaxResponseTime * Level.TimeDilation;
     DeltaTime = FMin(DeltaTime, MaxResponseTime);
+
+    ClampedNetSpeed = Player.CurrentNetSpeed;
+    if(RepInfo != None)
+    {
+        ClampedNetSpeed = Clamp(Player.CurrentNetSpeed, 9636, RepInfo.NetUpdateMaxNetSpeed);
+    }
 
     // find the most recent move, and the most recent interesting move
     if ( SavedMoves != None )
@@ -3481,10 +3492,12 @@ function UTComp_ReplicateMove(
         if(RepInfo != None && RepInfo.bEnableEnhancedNetCode)
         {
             //snarf only use TimeBetweenUpdates if client net speed > 10000
-            if (Player.CurrentNetSpeed > 10000)
+            //if (Player.CurrentNetSpeed > 10000)
+            if(ClampedNetSpeed > 10000)
                 NetMoveDelta = TimeBetweenUpdates;
             else
-                NetMoveDelta = FMax(0.0222,2 * Level.MoveRepSize/Player.CurrentNetSpeed);
+                //NetMoveDelta = FMax(0.0222,2 * Level.MoveRepSize/Player.CurrentNetSpeed);
+                NetMoveDelta = FMax(0.0222,2 * Level.MoveRepSize/ClampedNetSpeed);
 
             //if ((Level.TimeSeconds - ClientUpdateTime) * Level.TimeDilation * 0.91 < TimeBetweenUpdates) {
             if ((Level.TimeSeconds - ClientUpdateTime) * Level.TimeDilation * 0.91 < NetMoveDelta) {
@@ -3495,10 +3508,12 @@ function UTComp_ReplicateMove(
         else
         {
             //snarf use old calc from PlayerController
-            if ( (Player.CurrentNetSpeed > 10000) && (GameReplicationInfo != None) && (GameReplicationInfo.PRIArray.Length <= 10) )
+            //if ( (Player.CurrentNetSpeed > 10000) && (GameReplicationInfo != None) && (GameReplicationInfo.PRIArray.Length <= 10) )
+            if ( (ClampedNetSpeed > 10000) && (GameReplicationInfo != None) && (GameReplicationInfo.PRIArray.Length <= 10) )
                 NetMoveDelta = 0.011;
             else
-                NetMoveDelta = FMax(0.0222,2 * Level.MoveRepSize/Player.CurrentNetSpeed);
+                //NetMoveDelta = FMax(0.0222,2 * Level.MoveRepSize/Player.CurrentNetSpeed);
+                NetMoveDelta = FMax(0.0222,2 * Level.MoveRepSize/ClampedNetSpeed);
 
             if ( (Level.TimeSeconds - ClientUpdateTime) * Level.TimeDilation * 0.91 < NetMoveDelta )
             {
@@ -3779,10 +3794,17 @@ function UTComp_ServerMove(
     local int maxPitch, ViewPitch, ViewYaw;
     local bool NewbPressedJump, OldbRun, OldbDoubleJump;
     local eDoubleClickDir OldDoubleClickMove;
+    local int ClampedNetSpeed;
 
     // If this move is outdated, discard it.
     if ( CurrentTimeStamp >= TimeStamp )
         return;
+
+    ClampedNetSpeed = Player.CurrentNetSpeed;
+    if(RepInfo != None)
+    {
+        ClampedNetSpeed = Clamp(Player.CurrentNetSpeed, 9636, RepInfo.NetUpdateMaxNetSpeed);
+    }
 
     if ( AcknowledgedPawn != Pawn )
     {
@@ -3913,7 +3935,8 @@ function UTComp_ServerMove(
         return;     // first part of double servermove
     else if ( Level.TimeSeconds - LastUpdateTime > 0.3 )
         ClientErr = 10000;
-    else if ( Level.TimeSeconds - LastUpdateTime > 180.0/Player.CurrentNetSpeed )
+    //else if ( Level.TimeSeconds - LastUpdateTime > 180.0/Player.CurrentNetSpeed )
+    else if ( Level.TimeSeconds - LastUpdateTime > 180.0/ClampedNetSpeed )
     {
         if ( Pawn == None )
             LocDiff = Location - ClientLoc;
@@ -4322,6 +4345,8 @@ simulated function SetMenuColor(int playerID)
     }
 }
 
+/* 
+// snarf this was attempt to fix unregs but now linkgun was not linking 
 function PawnDied(Pawn P)
 {
     local MutUTComp MutatorOwner;
@@ -4337,6 +4362,7 @@ function PawnDied(Pawn P)
 
     super.PawnDied(P);
 }
+*/
 
 defaultproperties
 {
