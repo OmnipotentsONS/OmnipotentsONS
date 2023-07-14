@@ -114,6 +114,13 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 	Destroy();
 }
 
+function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation, Vector momentum, class<DamageType> damageType)
+{
+    if (Damage > 0)
+        Explode(HitLocation, vect(0,0,0));
+}
+
+
 simulated function Tick(float DeltaTime)
 {
 
@@ -138,18 +145,18 @@ defaultproperties
      TrailClass=Class'XEffects.RedeemerTrail'
      AccelRate=2200.000000
      Speed=4000.000000
-     MaxSpeed=23000.000000
+     MaxSpeed=10000.000000
      //Damage=60.000000
      Damage=175
-     DamageRadius=350.000000
+     DamageRadius=450.000000
      MomentumTransfer=10000.000000
      MyDamageType=Class'HeavyTankV2Omni.DamTypeHeavyTankDrone'
      ExplosionDecal=Class'Onslaught.ONSRocketScorch'
      DrawType=DT_StaticMesh
      StaticMesh=StaticMesh'WeaponStaticMesh.RedeemerMissile'
      AmbientSound=Sound'WeaponSounds.RocketLauncher.RocketLauncherProjectile'
-     LifeSpan=6.000000
-     DrawScale=0.800000
+     LifeSpan=3.000000
+     DrawScale=1.10000
      DrawScale3D=(Y=0.400000,Z=0.400000)
      AmbientGlow=96
      FluidSurfaceShootStrengthMod=10.000000

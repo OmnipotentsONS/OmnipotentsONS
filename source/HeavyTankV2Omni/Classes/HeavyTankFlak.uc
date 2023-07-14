@@ -105,7 +105,7 @@ defaultproperties
      DrawType=DT_StaticMesh
      StaticMesh=StaticMesh'WeaponStaticMesh.FlakChunk'
      CullDistance=5000.000000
-     LifeSpan=3.000000
+     LifeSpan=2.000000
      DrawScale=10.000000
      AmbientGlow=254
      Style=STY_Alpha

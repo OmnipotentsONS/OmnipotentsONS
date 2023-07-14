@@ -156,7 +156,7 @@ defaultproperties
      RedSkin=Shader'VMVehicles-TX.NEWprvGroup.newPRVredSHAD'
      BlueSkin=Shader'VMVehicles-TX.NEWprvGroup.newPRVshad'
      FireInterval=0.75
-     AltFireInterval=2.000000
+     AltFireInterval=3.500000
      FlashEmitterClass=Class'Onslaught.ONSPRVSideGunMuzzleFlash'
      FireSoundClass=Sound'ONSVehicleSounds-S.PRV.PRVFire02'
      AltFireSoundClass=SoundGroup'WeaponSounds.RocketLauncher.RocketLauncherFire'

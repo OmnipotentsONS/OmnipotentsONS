@@ -169,7 +169,7 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Heavy Goliath"
-     VehicleNameString="Heavy Goliath 2.3"
+     VehicleNameString="Heavy Goliath 2.4"
      RanOverDamageType=Class'HeavyTankV2Omni.DamTypeTankRoadkill'
      CrushedDamageType=Class'HeavyTankV2Omni.DamTypeTankPancake'
      MaxDesireability=0.800000
