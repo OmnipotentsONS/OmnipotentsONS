@@ -33,7 +33,7 @@ var float lastDT;
 replication
 {
     reliable if(Role < Role_Authority)
-        NewNet_ServerStartFire, NewNet_OldServerStartFire, ServerBaseStartFire;
+        NewNet_ServerStartFire, NewNet_OldServerStartFire;
     unreliable if(Role == Role_Authority && bNetOwner)
         RandSeed;
 }
@@ -44,33 +44,6 @@ function DisableNet()
     NewNet_FlakFire(FireMode[0]).PingDT = 0.00;
     NewNet_FlakAltFire(FireMode[1]).bUseEnhancedNetCode = false;
     NewNet_FlakAltFire(FireMode[1]).PingDT = 0.00;
-}
-
-// same as weapon serverstartfire, but disable new net
-function ServerBaseStartFire(int Mode)
-{
-    DisableNet();
-	if ( (Instigator != None) && (Instigator.Weapon != self) )
-	{
-		if ( Instigator.Weapon == None )
-			Instigator.ServerChangedWeapon(None,self);
-		else
-			Instigator.Weapon.SynchronizeWeapon(self);
-		return;
-	}
-
-    if ( (FireMode[Mode].NextFireTime <= Level.TimeSeconds + FireMode[Mode].PreFireTime)
-		&& StartFire(Mode) )
-    {
-        FireMode[Mode].ServerStartFireTime = Level.TimeSeconds;
-        FireMode[Mode].bServerDelayStartFire = false;
-    }
-    else if ( FireMode[Mode].AllowFire() )
-    {
-        FireMode[Mode].bServerDelayStartFire = true;
-	}
-	else
-		ClientForceAmmoUpdate(Mode, AmmoAmount(Mode));
 }
 
 //// client only ////
@@ -84,20 +57,11 @@ simulated event ClientStartFire(int Mode)
         // since flak primary has a hard time hitting nodes for new net, only use old net
         if(Mode == 0 && AimingAtNode())
         {
-            DisableNet();
-            if ( Pawn(Owner).Controller.IsInState('GameEnded') || Pawn(Owner).Controller.IsInState('RoundEnded') )
-                return;
-            if (Role < ROLE_Authority)
-            {
-                if (StartFire(Mode))
-                {
-                    ServerBaseStartFire(Mode);
-                }
-            }
-            else
-            {
-                StartFire(Mode);
-            }            
+            NewNet_FlakFire(FireMode[0]).bUseEnhancedNetCode = false;
+            NewNet_FlakFire(FireMode[0]).PingDT = 0.00;
+            //NewNet_FlakFire(FireMode[0]).ProjectileClass = class'FlakChunk';
+            super.ClientStartFire(mode);
+            //NewNet_FlakFire(FireMode[0]).ProjectileClass = class'NewNet_FlakChunk';
         }
         else
         {

@@ -1064,7 +1064,8 @@ simulated function NotifyTeamChanged()
 
 defaultproperties
 {
-     bAlwaysRelevant=True
+     //snarf this is probably expensive?
+     //bAlwaysRelevant=True
 
      BrightSkinColors(0)=(A=255)
      BrightSkinColors(1)=(R=200,A=255)

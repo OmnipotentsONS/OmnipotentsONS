@@ -341,12 +341,14 @@ function bool PreventDeath(Pawn Victim, Controller Killer, class<DamageType> dam
 function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 {
 	
-	// pooty attempt fix end of round drama.
-    /*if(ONSOnslaughtGame(Level.Game) != none)
+    if(ONSOnslaughtGame(Level.Game) != none)
     {
-    	 return true; 
-         
-    }*/
+        if ( NextGameRules != None )
+            return NextGameRules.CheckEndGame(Winner,Reason);
+
+        //for ONS, return false to use default endgame logic from engine
+    	 return false; 
+    }
 
     if(UTCompMutator.bEnableTimedOvertime && Level.Game.bOverTime)
     {
@@ -355,8 +357,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
     }
     if ( NextGameRules != None )
 		return NextGameRules.CheckEndGame(Winner,Reason);
-		
-	return false;  // was true -- True end s the game.  We don't want to end it. - 03/2023 pooty
+	return true;
 }
 
 function bool OvertimeOver()

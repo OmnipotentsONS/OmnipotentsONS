@@ -245,10 +245,8 @@ function AddPawnToList(Pawn Other)
 {
     // Already got it, dont bother.
     // snarf this was commented out, uncommenting since it might be needed?
-    // comment out to try and fix unregs
-    // with commented out we always add to the list even if it was already here (might be memory leak?)
-    //if(Other == CopiedPawn)
-    //    return;         
+    if(Other == CopiedPawn)
+        return;         
 
     if(next==None)
     {
@@ -276,7 +274,6 @@ function PawnCollisionCopy RemovePawnFromList(Pawn Other, PawnCollisionCopy Head
             {
                 Previous.Next = Current.Next;
             }
-            Current.CopiedPawn=None;
             Current.LinkMesh(None);
             Current.Destroy();
             return Head;
