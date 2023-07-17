@@ -2,36 +2,31 @@
 
 class MutOmniONSScoring extends Mutator config;
 
-
 var() const editconst string Build;
-
 
 var config bool bCustomScoring;
 var config int CustomRegulationPoints;
 var config int CustomOvertimePoints;
 var config bool bDebug;
 
-
-
 var ONSOnslaughtGame ONSGame;
-
 
 function PostBeginPlay()
 {
 	log(Class$" build "$Build, 'OmniONSScoring');
-  ONSGame = ONSOnslaughtGame(Level.Game);
+    ONSGame = ONSOnslaughtGame(Level.Game);
 }	
 	
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
-	 local ONSPowerCore PC;
+	local ONSPowerCore PC;
 	  
-	  PC = ONSPowerCore(Other);
-	  if (PC!=None && bCustomScoring)
-        {
-        	  PC.OnCoreDestroyed = MainCoreDestroyedOmniScoring;
-        	  // Replace Stock MainCoreDestroyed Function with our own.
-            if (bDebug) log("Setting OnCoreDestoryed = Omni",'OmniONSScoring');
+	PC = ONSPowerCore(Other);
+	if (PC!=None && ONSPowerNode(Other) == None && bCustomScoring)
+    {
+        PC.OnCoreDestroyed = MainCoreDestroyedOmniScoring;
+        // Replace Stock MainCoreDestroyed Function with our own.
+        if (bDebug) log("Setting OnCoreDestoryed = Omni",'OmniONSScoring');
 	}
 	return true;
 }
@@ -46,10 +41,8 @@ function MainCoreDestroyedOmniScoring(byte T)
         Score = CustomOvertimePoints;
     else
         Score = CustomRegulationPoints;
-        
-   
 
-	 if (bDebug) log("Assigning Custom Points",'OmniONSScoring');
+	if (bDebug) log("Assigning Custom Points",'OmniONSScoring');
 
     if (T == 1)
     {
@@ -57,7 +50,7 @@ function MainCoreDestroyedOmniScoring(byte T)
         ONSGame.TeamScoreEvent(0, Score, "enemy_core_destroyed");
         ONSGame.Teams[0].Score += Score;
         ONSGame.Teams[0].NetUpdateTime = Level.TimeSeconds - 1;
-       ONSGame.CheckScore(ONSGame.PowerCores[ONSGame.FinalCore[1]].LastDamagedBy);
+        ONSGame.CheckScore(ONSGame.PowerCores[ONSGame.FinalCore[1]].LastDamagedBy);
     }
     else
     {
@@ -67,7 +60,9 @@ function MainCoreDestroyedOmniScoring(byte T)
         ONSGame.Teams[1].NetUpdateTime = Level.TimeSeconds - 1;
         ONSGame.CheckScore(ONSGame.PowerCores[ONSGame.FinalCore[0]].LastDamagedBy);
     }
-		if (bDebug) log("Begin Client Reset",'OmniONSScoring');
+
+    if (bDebug) log("Begin Client Reset",'OmniONSScoring');
+
     //round has ended
     for (C = Level.ControllerList; C != None; C = C.NextController)
     {
@@ -77,23 +72,26 @@ function MainCoreDestroyedOmniScoring(byte T)
             PC.ClientSetBehindView(true);
             PC.ClientSetViewTarget(ONSGame.PowerCores[ONSGame.FinalCore[T]]);
             PC.SetViewTarget(ONSGame.PowerCores[ONSGame.FinalCore[T]]);
-            if (!ONSGame.bGameEnded) {
+            if (!ONSGame.bGameEnded) 
+            {
                  PC.ClientRoundEnded();
                  if (bDebug) log("PC.ClientRoundEnded called for "$PC.PlayerReplicationInfo.PlayerName,'OmniONSScoring');
             } 
-            else { // match/game ended
-            	  PC.ClientGameEnded();
-            	   if (bDebug) log("PC.ClientGameEnded called for "$PC.PlayerReplicationInfo.PlayerName,'OmniONSScoring');
+            else 
+            { 
+                // match/game ended
+            	PC.ClientGameEnded();
+            	if (bDebug) log("PC.ClientGameEnded called for "$PC.PlayerReplicationInfo.PlayerName,'OmniONSScoring');
             }    
         }
+
        // this does fix UTComp End game drama, but its a bandaid
-       /*
-        if (!ONSGame.bGameEnded) {
-        	   if (bDebug) log("C.RoundHasEnded called",'OmniONSScoring');
-            C.RoundHasEnded();
-        }    
-        */
-        
+       // this is needed to set controller to correct state on server 
+       if (!ONSGame.bGameEnded) 
+       {
+           if (bDebug) log("C.RoundHasEnded called",'OmniONSScoring');
+           C.RoundHasEnded();
+       }    
     }
 
     if (bDebug) log("End Client Reset",'OmniONSScoring');
@@ -136,7 +134,7 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 static function FillPlayInfo (PlayInfo PlayInfo)
 {
 	PlayInfo.AddClass(Default.Class);
-	  PlayInfo.AddSetting("Omni ONS Scoring Settings", "bCustomScoring", "Enable Custom Scoring", 1, 1, "Check");
+	PlayInfo.AddSetting("Omni ONS Scoring Settings", "bCustomScoring", "Enable Custom Scoring", 1, 1, "Check");
     PlayInfo.AddSetting("Omni ONS Scoring Settings", "CustomRegulationPoints", "Points for Regulation Win",255, 1, "Text","1;1:10",,True,True);
     PlayInfo.AddSetting("Omni ONS Scoring Settings", "CustomOverTimePoints", "Points for Overtime Win",255, 1, "Text","1;1:10",,True,True);
     
