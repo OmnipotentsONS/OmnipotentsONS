@@ -636,6 +636,8 @@ simulated function string MakeDemoname(string S)
     return S;
 }
 
+/*
+snarf commenting out these states from ONSPlus
 state GameEnded
 {
     function BeginState()
@@ -716,6 +718,7 @@ ignores SeePlayer, HearNoise, KilledBy, NotifyBump, HitWall, NotifyHeadVolumeCha
 	}
 }
 //end onsplus
+*/
 
 
 //====================================
