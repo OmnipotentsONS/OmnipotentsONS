@@ -85,14 +85,18 @@ function MainCoreDestroyedOmniScoring(byte T)
             }    
         }
 
-       // this does fix UTComp End game drama, but its a bandaid
        // this is needed to set controller to correct state on server 
        if (!ONSGame.bGameEnded) 
        {
-           if (bDebug) log("C.RoundHasEnded called",'OmniONSScoring');
+           if (bDebug) log("C.RoundHasEnded called for "$PC.PlayerReplicationInfo.PlayerName,'OmniONSScoring');
            C.RoundHasEnded();
        }    
-    }
+
+
+    
+    } // for loop client stats
+
+   // this does fix UTComp End game drama, but its a bandaid
 
     if (bDebug) log("End Client Reset",'OmniONSScoring');
     
@@ -151,7 +155,7 @@ static function FillPlayInfo (PlayInfo PlayInfo)
 
 defaultproperties
 {
-	Build = "1.0"
+	Build = "1.2"
 	FriendlyName = "Omnip)o(tents Custom Scoring (Onslaught-only)"
 	Description  = "Special team scoring rules for public Onslaught matches."
 	bAddToServerPackages = True
