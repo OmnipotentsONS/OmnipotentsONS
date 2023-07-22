@@ -278,7 +278,7 @@ function UpdateLinkStateHook(ONSPowerCore Node)
 
 function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
-	local int CurDamage;
+	local int CurDamage, ptsDamage;
 
 	CurDamage = Damage;
     if ( NextGameRules != None )
@@ -295,13 +295,14 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
 
 		if (OPGRI != none)
 		{
+            ptsDamage = Min(curDamage, Vehicle(Injured).Health);
 			if (Vehicle(injured).Team != instigatedBy.Controller.PlayerReplicationInfo.TeamID)
             {
-				UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(float(CurDamage) / float(MutatorOwner.RepInfo.VehicleDamagePoints));
+				UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(float(ptsDamage) / float(MutatorOwner.RepInfo.VehicleDamagePoints));
             }
 			else
             {
-				UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(-1.0 * float(CurDamage) / float(MutatorOwner.RepInfo.VehicleDamagePoints));
+				UTComp_ONSPlayerReplicationInfo(instigatedBy.Controller.PlayerReplicationInfo).AddVehicleDamageBonus(-1.0 * float(ptsDamage) / float(MutatorOwner.RepInfo.VehicleDamagePoints));
             }
 		}
 	}
