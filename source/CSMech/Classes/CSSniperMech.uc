@@ -410,7 +410,7 @@ simulated event DrivingStatusChanged()
 
 defaultproperties
 {    
-    VehicleNameString="Snipertron 1.8"
+    VehicleNameString="Snipertron 2.0"
     VehiclePositionString="in a Snipertron"
     bExtraTwist=false
 

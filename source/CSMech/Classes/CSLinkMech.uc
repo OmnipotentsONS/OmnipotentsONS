@@ -202,7 +202,7 @@ function ClientVehicleCeaseFire(bool bWasAltFire)
 
 defaultproperties
 {    
-    VehicleNameString="Linkatron 1.8"
+    VehicleNameString="Linkatron 2.0"
     VehiclePositionString="in a Linkatron"
     Mesh=Mesh'CSMech.BotA'
     RedSkin=Texture'CSMech.LinkMechBodyRed';

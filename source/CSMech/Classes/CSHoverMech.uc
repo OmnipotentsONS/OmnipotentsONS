@@ -63,6 +63,7 @@ var float OldThrottle; // , OldSteering;  defined in Vehicle.uc
 var float lastFirstTap, lastSecondTap, doubleTapThreshold;
 var int dodgeDir, oldDodgeDir, firstDodgeDir, secondDodgeDir;
 var float DodgeForceMag, DodgeCountdown, DodgeDuration, DodgeAirSpeedMulti;
+var bool bDodgeEnabled;
 
 replication
 {
@@ -86,6 +87,7 @@ simulated function PostBeginPlay()
     AnimBlendParams(1, 1.0, 0.0, 0.2, FireRootBone);
     PlayAnim('JumpF_Land', animRate,tweenTime,0);
     PlayAnim('Biggun_Burst', animRate,tweenTime,1);
+    SetMesh();
 }
 
 simulated function PostNetBeginPlay()
@@ -738,8 +740,8 @@ simulated function CheckDodging(float DeltaTime)
 
             if((lastFirstTap - lastSecondTap) < doubleTapThreshold && firstDodgeDir == secondDodgeDir && dodgeDir < 0 && bOnGround)
             {
-                if(ROLE == ROLE_Authority)
-                    dodgeDir=firstDodgeDir;
+                if(ROLE == ROLE_Authority && bDodgeEnabled)
+                   dodgeDir=firstDodgeDir;
             }
         }
 
@@ -760,7 +762,7 @@ simulated function CheckDodging(float DeltaTime)
 
             if((lastFirstTap - lastSecondTap) < doubleTapThreshold && firstDodgeDir == secondDodgeDir && dodgeDir < 0 && bOnGround)
             {
-                if(ROLE == ROLE_Authority)
+                if(ROLE == ROLE_Authority && bDodgeEnabled)
                     dodgeDir=firstDodgeDir;
             }
         }
@@ -1429,4 +1431,5 @@ defaultproperties
     dodgeDir=-1
     OldSteering=-1
     OldThrottle=-1
+    bDodgeEnabled=false
 }

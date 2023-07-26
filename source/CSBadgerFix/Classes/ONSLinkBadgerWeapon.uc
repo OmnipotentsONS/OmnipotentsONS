@@ -133,6 +133,8 @@ simulated event Tick(float dt)
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
 	local LinkBeamEffect Beam;
+    local int score;
+    local float DamageAmount;
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
 
@@ -437,7 +439,17 @@ simulated event Tick(float dt)
 			AdjustedDamage = AltDamage * (1.5*NumLinks+1) * Instigator.DamageScaling;
 			if (Instigator.HasUDamage())
 				AdjustedDamage *= 2;
-			LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
+			if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+            {
+                score = 1;
+                if(LinkedVehicle.default.Health >= VehicleHealScore)
+                    score = LinkedVehicle.default.Health / VehicleHealScore;
+                 DamageAmount = (AdjustedDamage/1.5);
+
+                if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+                    ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(DamageAmount / LinkedVehicle.default.Health * score);
+            }
+
 			//if (!LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
 			//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 		}
@@ -590,4 +602,6 @@ defaultproperties
      Mesh=SkeletalMesh'CSBadgerFix.BadgerTurret'
      DrawScale=1.000000
      bSelected=True
+
+     VehicleHealScore=800
 }
