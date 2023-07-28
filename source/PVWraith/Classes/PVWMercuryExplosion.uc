@@ -151,4 +151,5 @@ defaultproperties
      bNetTemporary=True
      LifeSpan=1.100000
      TransientSoundVolume=0.500000
+     bDynamicLight=False // Dynamic light is pretty laggy 03/2023 pooty
 }
