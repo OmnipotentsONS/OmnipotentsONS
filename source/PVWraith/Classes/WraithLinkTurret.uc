@@ -315,7 +315,7 @@ function TraceBeamFire(float DeltaTime)
 	local DestroyableObjective Node;
   //Log("In WraithLinkTurret=TraceBeamFire");
   local int TeamNum;
-  local float score;
+  //local float score;
   
 
   LinkedActor = None;
