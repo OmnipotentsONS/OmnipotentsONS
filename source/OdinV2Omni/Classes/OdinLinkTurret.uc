@@ -19,7 +19,7 @@ var bool bIsFiringBeam;
 var Actor LinkedActor;
 var float SavedDamage, SavedHeal;
 var float DamageModifier;
-var float VehicleHealScore;
+var config int VehicleHealScore; // how much occupied vehicle healing = 1pt player score
 
 replication
 {
@@ -314,7 +314,7 @@ function TraceBeamFire(float DeltaTime)
 	local DestroyableObjective Node;
   //Log("In OdinLinkTurret=TraceBeamFire");
   local int TeamNum;
-  local float score;
+  local int AdjustedDamage;
   
 
   LinkedActor = None;
@@ -415,12 +415,10 @@ function TraceBeamFire(float DeltaTime)
 				 	  			HitVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
 				 	  	else // friendly not me		
 				 	  		{
-				 	  	   HitVehicle.HealDamage(Round(DamageAmount * HealMultiplier), Instigator.Controller, DamageType);
-				 	       score = 1;
-					        if(HitVehicle.default.Health >= VehicleHealScore)
-					            score = HitVehicle.default.Health / VehicleHealScore;
-					        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !HitVehicle.IsVehicleEmpty())
-					            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((Round(DamageAmount * HealMultiplier)/1.5) / HitVehicle.default.Health * score);
+				 	  		 AdjustedDamage = Round(DamageAmount * HealMultiplier);
+				 	  	   if(HitVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	     			        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !HitVehicle.IsVehicleEmpty())
+                        ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(FMin((AdjustedDamage * HitVehicle.LinkHealMult) / VehicleHealScore, HitVehicle.HealthMax - HitVehicle.Health)); 
 				         } //else friendly 				
 				 	  }
 				 	  else { // Enemy Vehicle
