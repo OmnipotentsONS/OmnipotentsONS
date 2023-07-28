@@ -28,7 +28,7 @@ var(LinkBeam) float VehicleDamageMult;
 var float LinkMultiplier;  // linkers increase factor, not used in vampire, but will leave the code just in case want to add it back
 var VampireTank3TurretBeamEffect Beam;
 var float SelfHealMultiplier; 
-var float VehicleHealScore;
+var config int VehicleHealScore;
 var VampireTank3 MyVampireTank;  // need reference to it to healit
 var float RangeExtPerLink;
 
@@ -240,7 +240,7 @@ simulated event Tick(float dt)
 	//local LinkBeamEffect LB;
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
-	local float score;
+	
 	//local VampireTank3TurretBeamEffect Beam;
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
@@ -433,14 +433,9 @@ simulated event Tick(float dt)
 		{
 			AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ) * Instigator.DamageScaling;
 		
-			if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
-	      {
-	        score = 1;
-	        if(LinkedVehicle.default.Health >= VehicleHealScore)
-	            score = LinkedVehicle.default.Health / VehicleHealScore;
-	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
-	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
-        }  				
+			 if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	     			   if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+                  ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(FMin((AdjustedDamage * LinkedVehicle.LinkHealMult) / VehicleHealScore, LInkedVehicle.HealthMax - LinkedVehicle.Health)); 
 			//LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
 			//if (!LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
 			//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
@@ -863,7 +858,7 @@ defaultproperties
      SoundRadius=512.000000
      TransientSoundRadius=1024.000000
      SelfHealMultiplier = 1.1
-     VehicleHealScore=200.0
+     VehicleHealScore=250.0
      RangeExtPerLink=500
      
 }

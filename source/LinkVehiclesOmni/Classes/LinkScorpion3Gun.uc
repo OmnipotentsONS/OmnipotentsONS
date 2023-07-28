@@ -23,7 +23,7 @@ var float	LinkScale[6];   // linkers display sizing factor
 var float LinkMultiplier;  // linkers increase factor
 var float VehicleDamageMult; // link does more damage to vehicles
 var float SelfHealMultiplier; // how much it heals itself as draining.
-var float VehicleHealScore; //  how many healing points of an occupied vehicle = 1pt score for player
+var config int VehicleHealScore; //  how many healing points of an occupied vehicle = 1pt score for player
 var float RangeExtPerLink; // how much range is extended per linker
 
 var String MakeLinkForce;
@@ -147,8 +147,7 @@ state InstantFireMode
 		local LinkScorpion3BeamEffect LB;
 		local DestroyableObjective HealObjective;
 		local Vehicle LinkedVehicle;
-	  local float score;
-	
+
 		Super.Tick(dt);
 		
 		MyLinkScorpion = LinkScorpion3Omni(Owner);
@@ -360,16 +359,9 @@ state InstantFireMode
 			{
 				AdjustedDamage = AdjustLinkDamage( MyLinkScorpion.Links, None, Damage );
 				
-				if (Instigator.HasUDamage())
-					AdjustedDamage *= 2;
-				if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
-	      {
-	        score = 1;
-	        if(LinkedVehicle.default.Health >= VehicleHealScore)
-	            score = LinkedVehicle.default.Health / VehicleHealScore;
-	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
-	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
-        }  		
+			  if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	     			   if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+                  ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(FMin((AdjustedDamage * LinkedVehicle.LinkHealMult) / VehicleHealScore, LInkedVehicle.HealthMax - LinkedVehicle.Health)); 
 			}
 			MyLinkScorpion.bLinking = (LockedPawn != None) || bIsHealingObjective;
 
@@ -641,8 +633,8 @@ defaultproperties
      SoundVolume=150
      
      LinkMultiplier = 1.5; // each linker adds 150%
-     VehicleDamageMult = 1.25 // more damage to vehicles.
+     VehicleDamageMult = 1.35 // more damage to vehicles.
      SelfHealMultiplier = 1.1 // good heal multiplier, it has to get close.
-     VehicleHealScore = 200.0
+     VehicleHealScore = 250.0
      RangeExtPerLink=500; // how much range is extended per linker
 }

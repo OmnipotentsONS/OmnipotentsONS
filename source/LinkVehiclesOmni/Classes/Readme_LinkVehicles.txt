@@ -49,6 +49,33 @@ Issues:  When you first enter and sitting on top of static mesh the view is mess
 ONSLinkFlyer 1.1 
 Added HUD when being linked. Fixed LinkBeam tracking on server -- before you'd see the beam not track properly if you were the client.
 
+Each LinkWeapon has a UT2004.ini config for VehicleHealScore, the number of healed points to equal one player score point. Default is 600 can be changed in the .ini
+like
+[LinkVehiclesOmni.LampreyGun]
+VehicleHealScore=600
+
+[LinkVehiclesOmni.LinkScorpion3Gun]
+VehicleHealScore=600
+
+[LinkVehiclesOmni.TickScorpion3Gun]
+VehicleHealScore=600
+
+[LinkVehiclesOmni.LinkTank3Gun]
+VehicleHealScore=600
+
+[LinkVehiclesOmni.LinkTank3HeavyGun]
+VehicleHealScore=600
+
+[LinkVehiclesOmni.VampireTank3Gun]
+VehicleHealScore=600
+[LinkVehiclesOmni.VampireTank3SecondaryTurret]
+VehicleHealScore=600
+
+
+
+
+
+
 
 
 - The Wraith/Odin do NOT stack because draining health and healing is too OP IMO, especially in a flyer -- Chupa (link flyer) is too OP IMO

@@ -26,7 +26,7 @@ var(LinkBeam) Sound BeamSounds[4];
 var(LinkBeam) float VehicleDamageMult;
 
 var float LinkMultiplier;  // linkers increase factor
-var float VehicleHealScore; // how much occupied vehicle healing = 1pt player score
+var config int VehicleHealScore; // how much occupied vehicle healing = 1pt player score
 var float RangeExtPerLink; // how much range is extended per linker
 
 // ============================================================================
@@ -216,7 +216,7 @@ simulated event Tick(float dt)
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
 	local LinkBeamEffect Beam;
-	local float score;
+
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
 
@@ -473,14 +473,9 @@ simulated event Tick(float dt)
 			AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ); // Target None = No vehicle damage multiplier
 			AdjustedDamage *= Instigator.DamageScaling;  // Not sure what this was, but left it in.
 			
-		if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
-	      {
-	        score = 1;
-	        if(LinkedVehicle.default.Health >= VehicleHealScore)
-	            score = LinkedVehicle.default.Health / VehicleHealScore;
-	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
-	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
-        }  		
+	 if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	     			   if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+                  ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(FMin((AdjustedDamage * LinkedVehicle.LinkHealMult) / VehicleHealScore, LInkedVehicle.HealthMax - LinkedVehicle.Health)); 
 			//if (!LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
 			//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
 		}
@@ -914,6 +909,6 @@ defaultproperties
      SoundPitch=112
      SoundRadius=512.000000
      TransientSoundRadius=1024.000000
-     VehicleHealScore=200
+     VehicleHealScore=250
      RangeExtPerLink=500 // how much range is extended per linker
 }

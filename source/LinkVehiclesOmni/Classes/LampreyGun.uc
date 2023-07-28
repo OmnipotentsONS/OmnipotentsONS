@@ -25,7 +25,7 @@ var() float LinkFlexibility;
 var float LinkMultiplier;
 var float SelfHealMultiplier; 
 var float VehicleDamageMult;
-var float VehicleHealScore;
+var config int VehicleHealScore;
 var float RangeExtPerLink; // how much range is extended per linker
 
 var		bool bDoHit;
@@ -148,7 +148,7 @@ simulated function tick(float dt)
 		local LampreyBeamEffect LB;
 		local DestroyableObjective HealObjective;
 		local Vehicle LinkedVehicle;
-		local float score;
+
 	
 		Super.Tick(dt);
 		
@@ -301,14 +301,9 @@ simulated function tick(float dt)
 			if ( LinkedVehicle != None && bDoHit ) {
 				AdjustedDamage = AdjustLinkDamage(0,None,Damage ) * Instigator.DamageScaling;
 				
-				if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
-	      {
-	        score = 1;
-	        if(LinkedVehicle.default.Health >= VehicleHealScore)
-	            score = LinkedVehicle.default.Health / VehicleHealScore;
-	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
-	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
-        }  		
+			  if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	     	   if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+                ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(FMin((AdjustedDamage * LinkedVehicle.LinkHealMult) / VehicleHealScore, LInkedVehicle.HealthMax - LinkedVehicle.Health)); 
 			}
 			
 			MyLamprey.bLinking = (LockedPawn != None) || bIsHealingObjective;
@@ -767,7 +762,7 @@ defaultproperties
      LinkMultiplier = 1.0; // not used here
 		 SelfHealMultiplier = 1.15;
 		 VehicleDamageMult = 1.2;
-		 VehicleHealScore = 200;
+		 VehicleHealScore = 250;
 		 RangeExtPerLink=500; // how much range is extended per linker
 		 
      AltFireRadius=550.000000

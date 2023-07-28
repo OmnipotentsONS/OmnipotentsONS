@@ -32,7 +32,7 @@ var() float LinkFlexibility;
 var float LinkMultiplier;
 var float SelfHealMultiplier; 
 var float VehicleDamageMultiplier;
-var float VehicleHealScore;
+var config int VehicleHealScore;
 var float RangeExtPerLink;
 
 var		bool bDoHit;
@@ -120,8 +120,8 @@ function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
 	local float AdjDamage;
 	
 	
-	AdjDamage =Min( DamageMin,Damage * (1*NumLinks+1)*CurrDrawScale);
-	//Damage = Damage * (LinkMultiplier*NumLinks+1);
+	AdjDamage =Min( DamageMin,Damage * (LinkMultiplier*NumLinks+1)*CurrDrawScale);
+	
 
 	if ( Other.IsA('Vehicle') ) AdjDamage *= VehicleDamageMultiplier;
   if (Instigator.HasUDamage()) 	AdjDamage *= 2;
@@ -194,7 +194,7 @@ simulated function ClientStartFire(Controller C, bool bWasAltFire)
 		local TickScorpion3BeamEffect LB;
 		local DestroyableObjective HealObjective;
 		local Vehicle LinkedVehicle;
-		local float score;
+
 	
 		Super.Tick(dt);
 		
@@ -396,14 +396,9 @@ simulated function ClientStartFire(Controller C, bool bWasAltFire)
 			if ( LinkedVehicle != None && bDoHit )
 			{
 				AdjustedDamage = AdjustLinkDamage( NumLinkers, Other, Damage );
-				if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
-	      {
-	        score = 1;
-	        if(LinkedVehicle.default.Health >= VehicleHealScore)
-	            score = LinkedVehicle.default.Health / VehicleHealScore;
-	        if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
-	            ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus((AdjustedDamage/1.5) / LinkedVehicle.default.Health * score);
-        }  		
+			  if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	     	   if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+               ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(FMin((AdjustedDamage * LinkedVehicle.LinkHealMult) / VehicleHealScore, LInkedVehicle.HealthMax - LinkedVehicle.Health)); 
 			}
 			MyTickScorpion.Linking = (LockedPawn != None) || bIsHealingObjective;
 
@@ -790,7 +785,7 @@ defaultproperties
      MakeLinkForce="LinkActivated"
      Damage=13  //link gun shaft is 9
      DamageMin=13 
-     Momentum=-10000  //sucking u in 
+     Momentum=-13000  //sucking u in 
      LinkFlexibility=0.300000
      bInitAimError=True
      LinkVolume=240
@@ -826,7 +821,7 @@ defaultproperties
      LinkMultiplier = 1.5
 		 SelfHealMultiplier = 1.1
 		 VehicleDamageMultiplier = 1.1 //  increased damage to vehicles might add some specific vehicles here?
-     VehicleHealScore = 200
+     VehicleHealScore = 250
      RangeExtPerLink = 500
      //AltFire
      AltFireInterval=0.50000
