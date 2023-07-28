@@ -133,8 +133,7 @@ simulated event Tick(float dt)
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
 	local LinkBeamEffect Beam;
-    local int score;
-    local float DamageAmount;
+  local float DamageAmount;
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
 
@@ -439,6 +438,12 @@ simulated event Tick(float dt)
 			AdjustedDamage = AltDamage * (1.5*NumLinks+1) * Instigator.DamageScaling;
 			if (Instigator.HasUDamage())
 				AdjustedDamage *= 2;
+				
+			if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	     	   if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+                  ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(FMin((AdjustedDamage * LinkedVehicle.LinkHealMult) / VehicleHealScore, LInkedVehicle.HealthMax - LinkedVehicle.Health)); 
+	
+/* Changed to be consistent and make math work - pooty 07-2023				
 			if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
             {
                 score = 1;
@@ -449,6 +454,7 @@ simulated event Tick(float dt)
                 if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
                     ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(DamageAmount / LinkedVehicle.default.Health * score);
             }
+*/
 
 			//if (!LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
 			//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);

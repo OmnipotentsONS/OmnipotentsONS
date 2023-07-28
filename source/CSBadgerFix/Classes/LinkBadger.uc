@@ -305,7 +305,7 @@ defaultproperties
      Wheels(3)=SVehicleWheel'CSBadgerFix.SVehicleWheel35'
 
      VehiclePositionString="in a Link Badger"
-     VehicleNameString="Link Badger"
+     VehicleNameString="Link Badger 1.1"
      HealthMax=1000.000000
      Health=1000
      Begin Object Class=KarmaParamsRBFull Name=KarmaParamsRBFull8
