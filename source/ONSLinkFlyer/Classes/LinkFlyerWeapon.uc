@@ -49,6 +49,9 @@ var Sound   OldAmbientSound;
 // CPed from WraithBellyGun Vampire
 var() float SelfHealMultiplier;
 
+var float LinkMultiplier;  // linkers increase factor
+var config int VehicleHealScore; // how much occupied vehicle healing = 1pt player score
+
 // ============================================================================
 // Replication
 // ============================================================================
@@ -368,10 +371,13 @@ simulated event Tick(float dt)
         LinkedVehicle=Vehicle(LockedPawn);
         if (LinkedVehicle!=None && bDoHit)
             {
-            AdjustedDamage=AltDamage * (1.5*NumLinks+1) * Instigator.DamageScaling;
+            AdjustedDamage=AltDamage * (LinkMultiplier*NumLinks+1) * Instigator.DamageScaling;
             if (Instigator.HasUDamage())
                 AdjustedDamage*=2;
-            LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
+            //LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
+            if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
+	     			   if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+                  ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(FMin((AdjustedDamage * LinkedVehicle.LinkHealMult) / VehicleHealScore, LInkedVehicle.HealthMax - LinkedVehicle.Health)); 
             }
 
         if (LinkFlyer!=None && bDoHit)
@@ -690,6 +696,8 @@ defaultproperties
      VehicleDamageMult=1.500000
      bInitAimError=True
      SelfHealMultiplier=0.600000
+     LinkMultiplier=1.5
+     VehicleHealScore=600
      YawBone="PlasmaGunBarrel"
      PitchBone="PlasmaGunBarrel"
      PitchUpLimit=18000
