@@ -498,15 +498,9 @@ simulated event Tick(float dt)
 			if (Instigator.HasUDamage())
 				AdjustedDamage *= 2;
 			if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
-            {
-                score = 1;
-                if(LinkedVehicle.default.Health >= VehicleHealScore)
-                    score = LinkedVehicle.default.Health / VehicleHealScore;
-                 DamageAmount = (AdjustedDamage/1.5);
-
-                if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
-                    ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(DamageAmount / LinkedVehicle.default.Health * score);
-            }
+	     	   if (ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo) != None && !LinkedVehicle.IsVehicleEmpty())
+                  ONSPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo).AddHealBonus(FMin((AdjustedDamage * LinkedVehicle.LinkHealMult) / VehicleHealScore, LInkedVehicle.HealthMax - LinkedVehicle.Health)); 
+	
 		}
 		if (LinkTank != None && bDoHit)
 		{
