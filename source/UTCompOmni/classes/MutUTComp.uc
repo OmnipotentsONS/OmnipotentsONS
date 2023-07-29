@@ -1477,7 +1477,7 @@ defaultproperties
 
      //ONS
      NodeIsolateBonusPct=20
-     VehicleHealScore=500
+     VehicleHealScore=200
      VehicleDamagePoints=400
      PowerCoreScore=10
      PowerNodeScore=5
@@ -1490,10 +1490,10 @@ defaultproperties
      NewNetUpdateFrequency=200
      PingTweenTime=3.0
 
-     FriendlyName="UTComp Version 1.56 (Omni)"
+     FriendlyName="UTComp Version 1.57 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.56"
-     Description="A mutator for brightskins, hitsounds, and various other features."
+     FriendlyVersionNumber=")o(mni 1.57"
+     Description="A mutator for brightskins, hitsounds, enhanced netcode, adjustable player scoring and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
      RemoteRole=ROLE_SimulatedProxy
