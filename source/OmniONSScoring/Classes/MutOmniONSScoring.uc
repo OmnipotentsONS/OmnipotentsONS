@@ -9,42 +9,48 @@ var config int CustomRegulationPoints;
 var config int CustomOvertimePoints;
 var config bool bDebug;
 
+var byte DestroyedCoreNum;
+var Controller C;
+var PlayerController PC;
+var int Score;
+
 var ONSOnslaughtGame ONSGame;
 
 function PostBeginPlay()
 {
+    super.PostBeginPlay();
 	log(Class$" build "$Build, 'OmniONSScoring');
     ONSGame = ONSOnslaughtGame(Level.Game);
 }	
 	
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
-	local ONSPowerCore PC;
+	local ONSPowerCore PowerCore;
 	  
-	PC = ONSPowerCore(Other);
-	if (PC!=None && ONSPowerNode(Other) == None && bCustomScoring)
+	PowerCore = ONSPowerCore(Other);
+	if (PowerCore!=None && PowerCore.bFinalCore && bCustomScoring)
     {
-        PC.OnCoreDestroyed = MainCoreDestroyedOmniScoring;
+        PowerCore.OnCoreDestroyed = MainCoreDestroyedOmniScoring;
         // Replace Stock MainCoreDestroyed Function with our own.
         if (bDebug) log("Setting OnCoreDestoryed = Omni",'OmniONSScoring');
 	}
 	return true;
 }
 
-function MainCoreDestroyedOmniScoring(byte T)
+state CoreDestroyed
 {
-    local Controller C;
-    local PlayerController PC;
-    local int Score;
+    ignores Tick;
+Begin:
 
+    Level.Disable('Tick');
     if (ONSGame.bOverTime)
         Score = CustomOvertimePoints;
     else
         Score = CustomRegulationPoints;
 
-	if (bDebug) log("Assigning Custom Points",'OmniONSScoring');
+    if (bDebug) log("Assigning Custom Points",'OmniONSScoring');
 
-    if (T == 1)
+    if (DestroyedCoreNum == 1)
     {
         BroadcastLocalizedMessage( class'ONSOnslaughtMessage', 0);
         ONSGame.TeamScoreEvent(0, Score, "enemy_core_destroyed");
@@ -70,33 +76,29 @@ function MainCoreDestroyedOmniScoring(byte T)
         if (PC != None)
         {
             PC.ClientSetBehindView(true);
-            PC.ClientSetViewTarget(ONSGame.PowerCores[ONSGame.FinalCore[T]]);
-            PC.SetViewTarget(ONSGame.PowerCores[ONSGame.FinalCore[T]]);
+            PC.ClientSetViewTarget(ONSGame.PowerCores[ONSGame.FinalCore[DestroyedCoreNum]]);
+            PC.SetViewTarget(ONSGame.PowerCores[ONSGame.FinalCore[DestroyedCoreNum]]);
             if (!ONSGame.bGameEnded) 
             {
-                 PC.ClientRoundEnded();
-                 if (bDebug) log("PC.ClientRoundEnded called for "$PC.PlayerReplicationInfo.PlayerName,'OmniONSScoring');
+                PC.ClientRoundEnded();
+                if (bDebug) log("PC.ClientRoundEnded called for "$PC.PlayerReplicationInfo.PlayerName,'OmniONSScoring');
             } 
             else 
             { 
                 // match/game ended
-            	PC.ClientGameEnded();
-            	if (bDebug) log("PC.ClientGameEnded called for "$PC.PlayerReplicationInfo.PlayerName,'OmniONSScoring');
+                PC.ClientGameEnded();
+                if (bDebug) log("PC.ClientGameEnded called for "$PC.PlayerReplicationInfo.PlayerName,'OmniONSScoring');
             }    
         }
 
-       // this is needed to set controller to correct state on server 
-       if (!ONSGame.bGameEnded) 
-       {
-           if (bDebug) log("C.RoundHasEnded called for "$PC.PlayerReplicationInfo.PlayerName,'OmniONSScoring');
-           C.RoundHasEnded();
-       }    
-
-
-    
-    } // for loop client stats
-
-   // this does fix UTComp End game drama, but its a bandaid
+        // this does fix UTComp End game drama, but its a bandaid
+        // this is needed to set controller to correct state on server 
+        if (!ONSGame.bGameEnded) 
+        {
+            if (bDebug) log("C.RoundHasEnded called",'OmniONSScoring');
+            C.RoundHasEnded();
+        }    
+    }
 
     if (bDebug) log("End Client Reset",'OmniONSScoring');
     
@@ -107,22 +109,31 @@ function MainCoreDestroyedOmniScoring(byte T)
     
     // the attempted fix doesn't work... might just leave it as is.
     //if (T==1) {
-       // this gets called for both cores, only need time reset once.
-       /*
-		    if (bDebug) log("RemainingTIme="$ONSGame.RemainingTime,'OmniONSScoring');
-		    ONSGame.RemainingTime = 60 * ONSGame.TimeLimit;
-		    ONSGame.GameReplicationInfo.RemainingMinute = ONSGame.RemainingTime;
-		    if (bDebug) log("RemainingTIme Setting="$ONSGame.RemainingTime,'OmniONSScoring');
-		    ONSGame.CountDown = ONSGame.Default.Countdown;
-		    if (bDebug) log("CountDown Setting="$ONSGame.CountDown,'OmniONSScoring');
-		    ONSGame.GameReplicationInfo.ElapsedTime = 0;
-		    //ONSGame.GameReplicationInfo.bStopCountdown = True;
-		    ONSGame.Timer();  // Need this to reset timer 
-		    */
-   // }
+    // this gets called for both cores, only need time reset once.
+    /*
+            if (bDebug) log("RemainingTIme="$ONSGame.RemainingTime,'OmniONSScoring');
+            ONSGame.RemainingTime = 60 * ONSGame.TimeLimit;
+            ONSGame.GameReplicationInfo.RemainingMinute = ONSGame.RemainingTime;
+            if (bDebug) log("RemainingTIme Setting="$ONSGame.RemainingTime,'OmniONSScoring');
+            ONSGame.CountDown = ONSGame.Default.Countdown;
+            if (bDebug) log("CountDown Setting="$ONSGame.CountDown,'OmniONSScoring');
+            ONSGame.GameReplicationInfo.ElapsedTime = 0;
+            //ONSGame.GameReplicationInfo.bStopCountdown = True;
+            ONSGame.Timer();  // Need this to reset timer 
+            */
+// }
 
     if (bDebug) log("CustomMainCoreDestroyedOver..",'OmniONSScoring');
+    Level.Enable('Tick');
+    GotoState('');
 }
+
+function MainCoreDestroyedOmniScoring(byte T)
+{
+    DestroyedCoreNum=T;
+    GotoState('CoreDestroyed');
+}
+
 function bool MutatorIsAllowed()
 {
 	return Level.Game.IsA('ONSOnslaughtGame') && Super.MutatorIsAllowed();
