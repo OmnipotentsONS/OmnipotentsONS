@@ -527,7 +527,7 @@ function Fire(Controller C)
 				}
 				else if (Vehicle(Victims) == None)
 				{
-					Victims.AddVelocity( DistScale * -AltFireMomentum * dir );
+					//Victims.AddVelocity( DistScale * -AltFireMomentum * dir );
 					Victims.TakeDamage(DistScale * AltFireDamage, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, class'DamTypeVampireTankShockwave');
 					MyVampireTank.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
 				}
@@ -634,8 +634,9 @@ function bool IsLinkable(Actor Other)
 		{
 			if ( Vehicle(P) != None )
 				return P.TeamLink( Instigator.GetTeamNum() );
-
-            return false;
+				
+					
+      return false;
 		}
 
         // pro-actively prevent link cycles from happening
@@ -786,15 +787,14 @@ defaultproperties
      SoundVolume=150
     
      LinkMultiplier = 0.8;  //smaller since it heals itself
-		 SelfHealMultiplier = 1.05
-		 VehicleDamageMult = 1.25
+		 SelfHealMultiplier = 1.0
 		 VehicleHealScore=250
 		 RangeExtPerLink=500 // how much range is extended per linker
   
      AltFireRadius=1500.000000
-     AltFireDamage=300.000000 // matches phoenix.
-     AltFireDamageVehicleMult=2.000000
-     AltFireDamageEasterEggMult=6.500000
+     AltFireDamage=250.000000 // matches phoenix.
+     AltFireDamageVehicleMult=1.000000 // ion blast already had 2.0 multipler... so it does 500 to vehicles.
+     AltFireDamageEasterEggMult=3.2500000
      AltFireMomentumVehicleMult=5.000000
      AltFireMomentumEasterEggMult=40.000000
      AltFireMomentum=20000.000000

@@ -528,15 +528,15 @@ function SetLinkTo(Pawn Other, optional bool bHealing)
 	// Sanity check
 	if (LockedPawn != Other)
 	{
-	    if (LockedPawn != None && VampireTank3(Owner) != None)
+	    if (LockedPawn != None && MyVampireTank != None)
 	    {
 			//log(self@"setlinkto"@other@"current"@LockedPawn,'KDebug');
-	        RemoveLink(1 + VampireTank3(Owner).GetLinks(), Instigator);
+	        RemoveLink(1 + MyVampireTank.GetLinks(), Instigator);
 
 	        if (!bHealing)
 	        {
 				//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to FALSE in SetLinkTo"@Other,'KDebug');
-	        	VampireTank3(Owner).bLinking = false;
+	        	MyVampireTank.bLinking = false;
 	        }
 	    }
 
@@ -550,12 +550,12 @@ function SetLinkTo(Pawn Other, optional bool bHealing)
 	    {
 			if (VampireTank3(Owner) != None)
 			{
-		        if (!AddLink(1 + VampireTank3(Owner).GetLinks(), Instigator))
+		        if (!AddLink(1 + MyVampireTank.GetLinks(), Instigator))
 		        {
 		            bFeedbackDeath = true;
 		        }
 		        			//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to TRUE in SetLinkTo"@Other,'KDebug');
-		        VampireTank3(Owner).bLinking = true;
+		        MyVampireTank.bLinking = true;
 			}
 	
 	        LockedPawn.PlaySound(MakeLinkSound, SLOT_None);
@@ -653,7 +653,7 @@ function bool IsLinkable(Actor Other)
             sanity++;
         }
 
-        return ( Level.Game.bTeamGame && P.GetTeamNum() == ONSVehicle(Owner).Team );
+        return ( Level.Game.bTeamGame && P.GetTeamNum() == Instigator.GetTeamNum() );
     }
 
     return false;

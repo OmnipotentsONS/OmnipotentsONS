@@ -824,7 +824,7 @@ defaultproperties
      VehicleHealScore = 250
      RangeExtPerLink = 500
      //AltFire
-     AltFireInterval=0.50000
+     AltFireInterval=0.750000
      AltFireSoundClass=Sound'ONSVehicleSounds-S.LaserSounds.Laser17'
      AltFireForce="BioRifleFire"
     // AltDamageType=Class'LinkVehiclesOmni.DmgTypeTickWebCaster'
