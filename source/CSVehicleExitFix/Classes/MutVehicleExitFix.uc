@@ -73,7 +73,7 @@ function bool DoKDriverLeave(bool bForceLeave, Vehicle V, Pawn P)
 	if ( C == V.Controller )	// If controller didn't change, clear it...
 		V.Controller = None;
 
-	//Level.Game.DriverLeftVehicle(self, Driver);
+	Level.Game.DriverLeftVehicle(V, V.Driver);
 
 	// Car now has no driver
 	V.Driver = None;
