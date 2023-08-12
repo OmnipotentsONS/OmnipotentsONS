@@ -432,6 +432,8 @@ simulated function ClientKDriverLeave(PlayerController PC)
     GearStatusChanged();
     Super.ClientKDriverLeave(PC);
 }
+
+// Same function as raptor
 function float ImpactDamageModifier()
 {
     local float Multiplier;
@@ -442,9 +444,11 @@ function float ImpactDamageModifier()
         Multiplier = 1-(ImpactInfo.ImpactNorm dot Z);
     else
         Multiplier = 1.0;
-
+   
+   
     return Super.ImpactDamageModifier() * Multiplier;
 }
+
 
 function bool RecommendLongRangedAttack()
 {
@@ -789,7 +793,7 @@ defaultproperties
      DestructionLinearMomentum=(Min=50000.000000,Max=150000.000000)
      DestructionAngularMomentum=(Min=100.000000,Max=300.000000)
      DamagedEffectOffset=(X=-120.000000,Y=10.000000,Z=65.000000)
-     ImpactDamageMult=0.001000
+     ImpactDamageMult=0.001000  // same as raptor
      HeadlightCoronaOffset(0)=(X=182.000000,Z=-5.000000)
      HeadlightCoronaMaterial=Texture'EpicParticles.Flares.FlashFlare1'
      HeadlightCoronaMaxSize=60.000000
@@ -805,7 +809,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a Predator"
-     VehicleNameString="Predator 1.8"
+     VehicleNameString="Predator 1.81"
      RanOverDamageType=Class'Onslaught.DamTypeAttackCraftRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
      FlagBone="PredatorGunTurret"

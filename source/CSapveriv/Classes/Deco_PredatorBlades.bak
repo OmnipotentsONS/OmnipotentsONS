@@ -23,7 +23,7 @@ var Controller	InstigatorController;
 var Actor LastTouched;
 var Actor HurtWall;
 var float MaxEffectDistance;
-var float BladeInstigatorDamage;  // when blades to damage to others vehicle takes some damage.
+
 
 replication
 {
@@ -111,7 +111,7 @@ simulated function ClientSideTouch(Actor Other, Vector HitLocation)
        Other.TakeDamage(Damage/3, instigator, Location, MomentumTransfer * Normal(Velocity), MyDamageType);
 	else
     Other.TakeDamage(Damage, instigator, Location, MomentumTransfer * Normal(Velocity), MyDamageType);
-    Instigator.TakeDamage(BladeInstigatorDamage, Instigator, HitLocation, Velocity * 100, class'DamType_Crashed');
+    Instigator.TakeDamage(500, Instigator, HitLocation, Velocity * 100, class'DamType_Crashed');
 }
 
 
@@ -139,7 +139,7 @@ simulated function Tick(float DT)
                 bLeftBladeBroke = True;
                 bClientLeftBladeBroke = True;
                 BladeBreakOff();
-                Instigator.TakeDamage(BladeInstigatorDamage, Instigator, HitLocation, Velocity * 100, class'DamType_Crashed');
+                Instigator.TakeDamage(500, Instigator, HitLocation, Velocity * 100, class'DamType_Crashed');
             }
         }
     }
@@ -166,7 +166,7 @@ simulated function Tick(float DT)
                 bRightBladeBroke = True;
                 bClientRightBladeBroke = True;
                 BladeBreakOff();
-                Instigator.TakeDamage(BladeInstigatorDamage, Instigator, HitLocation, Velocity * 100, class'DamType_Crashed');
+                Instigator.TakeDamage(500, Instigator, HitLocation, Velocity * 100, class'DamType_Crashed');
             }
         }
     }
@@ -192,7 +192,7 @@ simulated function Tick(float DT)
                 bFrontBladeBroke = True;
                 bClientFrontBladeBroke = True;
                 BladeBreakOff();
-                Instigator.TakeDamage(BladeInstigatorDamage, Instigator, HitLocation, Velocity * 100, class'DamType_Crashed');
+                Instigator.TakeDamage(500, Instigator, HitLocation, Velocity * 100, class'DamType_Crashed');
             }
         }
     }
@@ -219,7 +219,7 @@ simulated function Tick(float DT)
                 bRearBladeBroke = True;
                 bClientRearBladeBroke = True;
                 BladeBreakOff();
-                Instigator.TakeDamage(BladeInstigatorDamage, Instigator, HitLocation, Velocity * 100, class'DamType_Crashed');
+                Instigator.TakeDamage(500, Instigator, HitLocation, Velocity * 100, class'DamType_Crashed');
             }
         }
     }
@@ -241,10 +241,10 @@ simulated function BladeBreakOff()
 defaultproperties
 {
      BladeBreakSound=Sound'ONSVehicleSounds-S.RV.RVBladeBreakOff'
-     Damage=175.000000
+     //Damage=175.000000
+     Damage=0
      DamageRadius=256.000000
      MomentumTransfer=200000.000000
-     BladeInstigatorDamage=10
      MyDamageType=Class'CSAPVerIV.DamType_PredatorBlades'
      bStatic=False
      bStasis=False
