@@ -75,7 +75,8 @@ function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 
 	if ( (Damage > 0) && ((InstigatedBy == None) || (InstigatedBy.Controller == None) || (Instigator == None) || (Instigator.Controller == None) || !InstigatedBy.Controller.SameTeamAs(Instigator.Controller)) )
 	{
-		if ( (InstigatedBy == None) || DamageType.Default.bVehicleHit || (DamageType == class'Crushed') )
+		//if ( (InstigatedBy == None) || DamageType.Default.bVehicleHit || (DamageType == class'Crushed') )
+		if (InstigatedBy == None)
 			BlowUp(Location);
 		else
 		{
@@ -90,7 +91,8 @@ function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 				PlayerController(InstigatedBy.Controller).PlayRewardAnnouncement('Denied',1, true);
                 teamNum = instigatedBy.Controller.GetTeamNum();
             }
-            Explode(Location, Normal(Velocity));
+            SpawnDeniedEffects(hitlocation, Normal(velocity));
+            GotoState('Dying');
 		}
 	}
 }
@@ -138,6 +140,14 @@ simulated function SpawnEffects(vector HitLocation, vector HitNormal)
         {
             Spawn(class'CSLinkNuke.CSLinkNukeSphere',,, HitLocation, rotator(vect(0,0,1)));
         }
+    }
+}
+
+simulated function SpawnDeniedEffects(vector HitLocation, vector HitNormal)
+{
+    if(EffectIsRelevant(HitLocation, false))
+    {
+        Spawn(class'RocketExplosion',,, HitLocation, rotator(vect(0,0,1)));
     }
 }
 

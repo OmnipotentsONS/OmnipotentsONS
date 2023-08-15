@@ -77,7 +77,7 @@ defaultproperties
      SelectForce="SwitchToFlakCannon"
      AIRating=1.500000
      CurrentRating=1.500000
-     Description="YEAAAHHHHHHHHHHH Nuke 2.1"
+     Description="YEAAAHHHHHHHHHHH Nuke 2.2"
      DisplayFOV=60.000000
      Priority=16
      SmallViewOffset=(X=26.000000,Y=6.000000,Z=-34.000000)
@@ -94,7 +94,7 @@ defaultproperties
      AttachmentClass=Class'CSLinkNuke.CSLinkNukeAttachment'
      IconMaterial=Texture'HUDContent.Generic.HUD'
      IconCoords=(X1=4,Y1=350,X2=110,Y2=395)
-     ItemName="YEAAAHHHHHHHHHH Nuke 2.1"
+     ItemName="YEAAAHHHHHHHHHH Nuke 2.2"
      Mesh=SkeletalMesh'CSLinkNuke.Redeemer_1st'
      DrawScale=1.200000
 
