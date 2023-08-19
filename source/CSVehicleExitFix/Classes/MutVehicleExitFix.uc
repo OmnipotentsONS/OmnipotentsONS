@@ -112,6 +112,7 @@ static function FillPlayInfo(PlayInfo PlayInfo)
 	Super.FillPlayInfo(PlayInfo);
 
     weight=1;
+    PlayInfo.AddClass(default.Class);
 	PlayInfo.AddSetting("VehicleExitFix", "bEnabled", "Enabled", 0, weight++, "Checkbox");
 	PlayInfo.AddSetting("VehicleExitFix", "CrushSpawnProtection", "Spawn protection when self crushed", 0, weight++, "Text", "4;0.0:10");
 
