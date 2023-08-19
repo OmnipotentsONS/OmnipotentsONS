@@ -48,7 +48,8 @@ function bool DoKDriverLeave(bool bForceLeave, Vehicle V, Pawn P)
 	}
 
     //since we are forcing exit, give some spawn protection
-    P.SpawnTime = Level.TimeSeconds - DeathMatch(Level.Game).SpawnProtectionTime + CrushSpawnProtection;
+    if(!havePlaced)
+        P.SpawnTime = Level.TimeSeconds - DeathMatch(Level.Game).SpawnProtectionTime + CrushSpawnProtection;
 
 	V.bDriving = False;
 
