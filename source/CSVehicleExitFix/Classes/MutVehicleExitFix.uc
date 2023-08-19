@@ -1,6 +1,7 @@
 class MutVehicleExitFix extends Mutator;
 
 var config bool bEnabled;
+var config float CrushSpawnProtection;
 
 function bool CanLeaveVehicle(Vehicle V, Pawn P)
 {
@@ -34,7 +35,7 @@ function bool DoKDriverLeave(bool bForceLeave, Vehicle V, Pawn P)
 	    V.Driver.bHardAttach = false;
 	    V.Driver.bCollideWorld = true;
 	    V.Driver.SetCollision(true, true);
-	    havePlaced = PlaceExitingDriver(V);
+	    havePlaced = V.PlaceExitingDriver();
 
 	    // If we could not find a place to put the driver, leave driver inside as before.
 	    if (!havePlaced && !bForceLeave )
@@ -45,6 +46,9 @@ function bool DoKDriverLeave(bool bForceLeave, Vehicle V, Pawn P)
 	        return false;
 	    }
 	}
+
+    //since we are forcing exit, give some spawn protection
+    P.SpawnTime = Level.TimeSeconds - DeathMatch(Level.Game).SpawnProtectionTime + CrushSpawnProtection;
 
 	V.bDriving = False;
 
@@ -88,127 +92,45 @@ function bool DoKDriverLeave(bool bForceLeave, Vehicle V, Pawn P)
     return true;
 }
 
-function bool PlaceExitingDriver(Vehicle V)
+function PostBeginPlay()
 {
-	local int		i, j;
-	local vector	tryPlace, Extent, HitLocation, HitNormal, ZOffset, RandomSphereLoc;
-	local float BestDir, NewDir;
+	local NoDamageFromForceExitRules G;
 
-	if ( V.Driver == None )
-		return false;
-	Extent = V.Driver.default.CollisionRadius * vect(1,1,0);
-	Extent.Z = V.Driver.default.CollisionHeight;
-	ZOffset = V.Driver.default.CollisionHeight * vect(0,0,1);
+	Super.PostBeginPlay();
+	G = spawn(class'NoDamageFromForceExitRules');
 
-	//avoid running driver over by placing in direction perpendicular to velocity
-	if ( VSize(V.Velocity) > 100 )
-	{
-		tryPlace = Normal(V.Velocity cross vect(0,0,1)) * (V.CollisionRadius + V.Driver.default.CollisionRadius ) * 1.25 ;
-		if ( (V.Controller != None) && (V.Controller.DirectionHint != vect(0,0,0)) )
-		{
-			if ( (tryPlace dot V.Controller.DirectionHint) < 0 )
-				tryPlace *= -1;
-		}
-		else if ( FRand() < 0.5 )
-				tryPlace *= -1; //randomly prefer other side
-		if ( (Trace(HitLocation, HitNormal, V.Location + tryPlace + ZOffset, V.Location + ZOffset, false, Extent) == None && V.Driver.SetLocation(V.Location + tryPlace + ZOffset))
-		     || (Trace(HitLocation, HitNormal, V.Location - tryPlace + ZOffset, V.Location + ZOffset, false, Extent) == None && V.Driver.SetLocation(V.Location - tryPlace + ZOffset)) )
-			return true;
-	}
-
-	if ( (V.Controller != None) && (V.Controller.DirectionHint != vect(0,0,0)) )
-	{
-		// first try best position
-		tryPlace = V.Location;
-		BestDir = 0;
-		for( i=0; i<V.ExitPositions.Length; i++)
-		{
-			NewDir = Normal(V.ExitPositions[i] - V.Location) Dot V.Controller.DirectionHint;
-			if ( NewDir > BestDir )
-			{
-				BestDir = NewDir;
-				tryPlace = V.ExitPositions[i];
-			}
-		}
-		V.Controller.DirectionHint = vect(0,0,0);
-		if ( tryPlace != V.Location )
-		{
-			if ( V.bRelativeExitPos )
-			{
-				if ( V.ExitPositions[0].Z != 0 )
-					ZOffset = Vect(0,0,1) * V.ExitPositions[0].Z;
-				else
-					ZOffset = V.Driver.default.CollisionHeight * vect(0,0,2);
-
-				tryPlace = V.Location + ( (tryPlace-ZOffset) >> V.Rotation) + ZOffset;
-
-				// First, do a line check (stops us passing through things on exit).
-				if ( (Trace(HitLocation, HitNormal, tryPlace, V.Location + ZOffset, false, Extent) == None)
-					&& V.Driver.SetLocation(tryPlace) )
-					return true;
-			}
-			else if ( V.Driver.SetLocation(tryPlace) )
-				return true;
-		}
-	}
-
-	if ( !V.bRelativeExitPos )
-	{
-		for( i=0; i<V.ExitPositions.Length; i++)
-		{
-			tryPlace = V.ExitPositions[i];
-
-			if ( V.Driver.SetLocation(tryPlace) )
-				return true;
-			else
-			{
-				for (j=0; j<10; j++) // try random positions in a sphere...
-				{
-					RandomSphereLoc = VRand()*200* FMax(FRand(),0.5);
-					RandomSphereLoc.Z = Extent.Z * FRand();
-
-					// First, do a line check (stops us passing through things on exit).
-					if ( Trace(HitLocation, HitNormal, tryPlace+RandomSphereLoc, tryPlace, false, Extent) == None )
-					{
-						if ( V.Driver.SetLocation(tryPlace+RandomSphereLoc) )
-							return true;
-					}
-					else if ( V.Driver.SetLocation(HitLocation) )
-						return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	for( i=0; i<V.ExitPositions.Length; i++)
-	{
-		if ( V.ExitPositions[0].Z != 0 )
-			ZOffset = Vect(0,0,1) * V.ExitPositions[0].Z;
-		else
-			ZOffset = V.Driver.default.CollisionHeight * vect(0,0,2);
-
-		tryPlace = V.Location + ( (V.ExitPositions[i]-ZOffset) >> V.Rotation) + ZOffset;
-
-		// First, do a line check (stops us passing through things on exit).
-		if ( Trace(HitLocation, HitNormal, tryPlace, V.Location + ZOffset, false, Extent) != None )
-			continue;
-
-		// Then see if we can place the player there.
-		if ( !V.Driver.SetLocation(tryPlace) )
-			continue;
-
-		return true;
-	}
-
-	return false;
+	if ( Level.Game.GameRulesModifiers == None )
+		Level.Game.GameRulesModifiers = G;
+	else
+		Level.Game.GameRulesModifiers.AddGameRules(G);
 }
 
+static function FillPlayInfo(PlayInfo PlayInfo)
+{
+    local int weight;
+	Super.FillPlayInfo(PlayInfo);
+
+    weight=1;
+	PlayInfo.AddSetting("VehicleExitFix", "bEnabled", "Enabled", 0, weight++, "Checkbox");
+	PlayInfo.AddSetting("VehicleExitFix", "CrushSpawnProtection", "Spawn protection when self crushed", 0, weight++, "Text", "4;0.0:10");
+}
+
+static event string GetDescriptionText(string PropName)
+{
+	switch (PropName)
+	{
+		case "bEnabled":	            return "Exit Fix enabled";
+		case "CrushSpawnProtection":	return "Spawn protection when self crushed";
+	}
+
+	return Super.GetDescriptionText(PropName);
+}
 
 defaultproperties
 {
     bAddToServerPackages=true
-    FriendlyName="Vehicle Exit Fix (1.0)"
+    FriendlyName="Vehicle Exit Fix (1.1)"
     Description="Force vehicle exit"
     bEnabled=true
+    CrushSpawnProtection=0.50
 }
