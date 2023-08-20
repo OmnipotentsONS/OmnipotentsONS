@@ -125,8 +125,8 @@ defaultproperties
      AmbientSoundScaling=1.300000
      FireForce="minifireb"
      DamageType=Class'KopholusV2Omni.KBMachineGunTurretkill'
-     DamageMin=15
-     DamageMax=18
+     DamageMin=12
+     DamageMax=16
      TraceRange=15000.000000
      ShakeRotMag=(X=50.000000,Y=50.000000,Z=50.000000)
      ShakeRotRate=(X=10000.000000,Y=10000.000000,Z=10000.000000)

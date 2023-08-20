@@ -81,7 +81,7 @@ defaultproperties
      GunnerAttachmentBone="VHull"
      DualFireOffset=3.000000
      bDualIndependantTargeting=True
-     FireInterval=0.500000
+     FireInterval=0.50000
      FireSoundClass=Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01'
      FireForce="RocketLauncherFire"
      //ProjectileClass=Class'KopholusV2Omni.SkaarjViperProjectile'

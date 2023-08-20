@@ -747,7 +747,7 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Skaarj Viper"
-     VehicleNameString="Skaarj Viper 2.31"
+     VehicleNameString="Skaarj Viper 2.32"
      RanOverDamageType=Class'KopholusV2Omni.DamTypeSkaarjViperRoadkill'
      CrushedDamageType=Class'KopholusV2Omni.DamTypeSkaarjViperPancake'
      FlagBone="VHull"

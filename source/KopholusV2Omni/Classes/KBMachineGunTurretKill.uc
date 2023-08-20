@@ -17,5 +17,5 @@ defaultproperties
      FemaleSuicide="%o...Doh!"
      MaleSuicide="%o...Doh!"
      bDelayedDamage=True
-     VehicleDamageScaling=1.500000
+     VehicleDamageScaling=1.250000
 }
