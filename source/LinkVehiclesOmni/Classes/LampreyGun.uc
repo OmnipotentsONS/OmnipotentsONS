@@ -39,7 +39,7 @@ var byte	SentLinkVolume;
 var rotator DesiredAimError, CurrentAimError;
 
 var Sound BeamSounds[4];
-
+var class<DamageType>   AltDamageType;
 
 var float MinAim;
 var     float   AltFireMomentum, AltFireRadius, AltFireDamage, AltFireDamageVehicleMult, AltFireMomentumVehicleMult;
@@ -414,7 +414,8 @@ function Fire(Controller C)
 		local LampreyLightiningShockWave		Shock;
 		local float		DistScale, dist;
 		local vector	dir, StartLocation;
-		local Pawn		Victims;
+		local Actor		Victims;
+		local Pawn VictimPawn;
 
 		NetUpdateTime = Level.TimeSeconds - 1;
 		//bFireMode = true;
@@ -455,44 +456,60 @@ function Fire(Controller C)
 		Shock.SetBase( Instigator );
 
 
-
-		foreach VisibleCollidingActors( class'Pawn', Victims, AltFireRadius, StartLocation )
+foreach VisibleCollidingActors( class'Actor', Victims, AltFireRadius, StartLocation )
 		{
 			//log("found:" @ Victims.GetHumanReadableName() );
 			// don't let Shock affect fluid - VisibleCollisingActors doesn't really work for them - jag
 			
-			// only does damage if there's instigators/controllers doesn't affect empty stuff.
-			if( (Victims != Instigator) //&& (Victims.Controller != None)
-				&& (Victims.Controller != None && Victims.Controller.GetTeamNum() != Instigator.GetTeamNum())  // spare your team
-				&& (Victims.Role == ROLE_Authority) )
-			{
+			//log("Victims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
+				if (Victims != Instigator && !Victims.IsA('FluidSurfaceInfo')) { //&& (Victims.Controller != None)
+					dir = Victims.Location - StartLocation;
+					dir.Z = 0;
+					dist = FMax(1,VSize(dir));
+					dir = Normal(Dir)*0.5 + vect(0,0,1);
+					DistScale = 1 - FMax(0,(dist - Victims.CollisionRadius)/AltFireRadius);
+				
+					VictimPawn = Pawn(Victims);
+				
+				//log("VictimPawn:"@ "Victim Team:" @ VictimPawn.Controller.GetTeamNum() @ "Instigator Team:" @ Instigator.GetTeamNum()  );
+					if (VictimPawn != None && VictimPawn.Controller != None 
+			   		 && VictimPawn.Controller.GetTeamNum() != Instigator.GetTeamNum()  // spare your team
+				 		&& (Victims.Role == ROLE_Authority) )
+				 		// only does damage if there's instigators/controllers doesn't affect empty stuff. so no blast against empty vehicles.
+				  { // Handle Vehicles/Infantry (pawns)
+					//log("PawnVictims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
+				
+					if (Victims.IsA('Omnitaur')|| Victims.IsA('Minotaur')|| Victims.IsA('MinotaurClassic'))
+					{
+							// Special easter egg!  
+							VictimPawn.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumEasterEggMult);
+							VictimPawn.TakeDamage(DistScale * AltFireDamage * AltFireDamageEasterEggMult, Instigator, VictimPawn.Location, DistScale * AltFireMomentum * dir, AltDamageType);
+							MyLamprey.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+					}
+					else if (Vehicle(Victims) == None)
+							 {
+								//Victims.AddVelocity( DistScale * -AltFireMomentum * dir );
+								// I think add velocity was bypassing spawn protection.
+								VictimPawn.TakeDamage(DistScale * AltFireDamage, Instigator, VictimPawn.Location, DistScale * AltFireMomentum * dir, AltDamageType);
+								MyLamprey.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+							 }
+							 else
+							 { // Vehicles
+						  		VictimPawn.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumVehicleMult);
+									VictimPawn.TakeDamage(DistScale * AltFireDamage * AltFireDamageVehicleMult, Instigator, VictimPawn.Location, DistScale * AltFireMomentum * dir, AltDamageType);
+									MyLamprey.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+							 }
 
-				dir = Victims.Location - StartLocation;
-				dir.Z = 0;
-				dist = FMax(1,VSize(dir));
-				dir = Normal(Dir)*0.5 + vect(0,0,1);
-				DistScale = 1 - FMax(0,(dist - Victims.CollisionRadius)/AltFireRadius);
-				if (Victims.IsA('Omnitaur')|| Victims.IsA('Minotaur')|| Victims.IsA('MinotaurClassic'))
+				
+				} // end pawns
+				// non pawns (eg. Nodes here)
+				//log("Actor, Not Pawns" @ Victims);
+				if (Victims.IsA('ONSPowerCore') || Victims.IsA('ONSPowerNodeEnergySphere')) 
 				{
-					// Special easter egg!  
-					Victims.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumEasterEggMult);
-					Victims.TakeDamage(DistScale * AltFireDamage * AltFireDamageEasterEggMult, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, class'DamTypeVampireTankShockwave');
-					MyLamprey.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+					//log("FoundPowerCode/Node - Do Damage" $ Victims);
+					Victims.TakeDamage(DistScale * AltFireDamage  * AltFireDamageVehicleMult, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, DamageType);
+					MyLamprey.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
 				}
-				else if (Vehicle(Victims) == None)
-				{
-					Victims.AddVelocity( DistScale * -AltFireMomentum * dir );
-					Victims.TakeDamage(DistScale * AltFireDamage, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, class'DamTypeVampireTankShockwave');
-					MyLamprey.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
-				}
-				else
-				{
-					Victims.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumVehicleMult);
-					Victims.TakeDamage(DistScale * AltFireDamage * AltFireDamageVehicleMult, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, class'DamTypeVampireTankShockwave');
-					MyLamprey.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
-				}
-
-			//	log("Victims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
 			}
 		}
 	}
@@ -736,7 +753,7 @@ defaultproperties
      bInstantRotation=True
      bDoOffsetTrace=True
      FireInterval=0.120000
-     AltFireInterval=3.00000
+     AltFireInterval=3.25000
      FireSoundVolume=255.000000
      DamageType=Class'DamTypeLampreyBeam'
      TraceRange=5500.000000  // 1100 is link gun's trace range
@@ -772,6 +789,7 @@ defaultproperties
      AltFireMomentumVehicleMult=5.000000
      AltFireMomentumEasterEggMult=40.000000
      AltFireMomentum=20000.000000
+     AltDamageType=class'DamTypeLampreyShockwave'
      
      bShowChargingBar=True
 }

@@ -247,16 +247,16 @@ defaultproperties
      bInstantFire=True
      RedSkin=Texture'LinkTank3Tex.LinkTankTex.LinkTankLaserRed'
      BlueSkin=Texture'LinkTank3Tex.LinkTankTex.LinkTankLaserBlue'
-     FireInterval=0.150000
+     FireInterval=0.180000
      FireSoundClass=Sound'WeaponSounds.Misc.instagib_rifleshot'
      AmbientSoundScaling=1.300000
      FireForce="Laser01"
-     DamageType=Class'LinkVehiclesOmni.DamTypeLink3HeavyTurretBeam'
-     DamageMin=30
-     DamageMax=50
+     DamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3HeavyTurretLasers'
+     DamageMin=16
+     DamageMax=26
      TraceRange=20000.000000
      Momentum=10000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      Mesh=SkeletalMesh'ONSWeapons-A.TankMachineGun'
-     LinkMultiplier = 1.3
+     LinkMultiplier = 1.25
 }

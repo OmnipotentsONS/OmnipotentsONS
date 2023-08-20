@@ -37,6 +37,7 @@ var byte	LinkVolume;
 var byte	SentLinkVolume;
 
 var rotator DesiredAimError, CurrentAimError;
+var class<DamageType>   AltDamageType;
 
 var Sound BeamSounds[4];
 
@@ -461,7 +462,8 @@ function Fire(Controller C)
 		local VampireLightiningShockWave		Shock;
 		local float		DistScale, dist;
 		local vector	dir, StartLocation;
-		local Pawn		Victims;
+		local Actor		Victims;
+		local Pawn  VictimPawn;
 
 		NetUpdateTime = Level.TimeSeconds - 1;
 		//bFireMode = true;
@@ -502,47 +504,63 @@ function Fire(Controller C)
 
 
 
-		foreach VisibleCollidingActors( class'Pawn', Victims, AltFireRadius, StartLocation )
+		foreach VisibleCollidingActors( class'Actor', Victims, AltFireRadius, StartLocation )
 		{
 			//log("found:" @ Victims.GetHumanReadableName() );
 			// don't let Shock affect fluid - VisibleCollisingActors doesn't really work for them - jag
 			
-			// only does damage if there's instigators/controllers doesn't affect empty stuff.
-			if( (Victims != Instigator) //&& (Victims.Controller != None)
-				&& (Victims.Controller != None && Victims.Controller.GetTeamNum() != Instigator.GetTeamNum())  // spare your team
-				&& (Victims.Role == ROLE_Authority) )
-			{
+			//log("Victims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
+				if (Victims != Instigator && !Victims.IsA('FluidSurfaceInfo')) { //&& (Victims.Controller != None)
+					dir = Victims.Location - StartLocation;
+					dir.Z = 0;
+					dist = FMax(1,VSize(dir));
+					dir = Normal(Dir)*0.5 + vect(0,0,1);
+					DistScale = 1 - FMax(0,(dist - Victims.CollisionRadius)/AltFireRadius);
+				
+					VictimPawn = Pawn(Victims);
+				
+				//log("VictimPawn:"@ "Victim Team:" @ VictimPawn.Controller.GetTeamNum() @ "Instigator Team:" @ Instigator.GetTeamNum()  );
+					if (VictimPawn != None && VictimPawn.Controller != None 
+			   		 && VictimPawn.Controller.GetTeamNum() != Instigator.GetTeamNum()  // spare your team
+				 		&& (Victims.Role == ROLE_Authority) )
+				 		// only does damage if there's instigators/controllers doesn't affect empty stuff. so no blast against empty vehicles.
+				  { // Handle Vehicles/Infantry (pawns)
+					//log("PawnVictims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
+				
+					if (Victims.IsA('Omnitaur')|| Victims.IsA('Minotaur')|| Victims.IsA('MinotaurClassic'))
+					{
+							// Special easter egg!  
+							VictimPawn.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumEasterEggMult);
+							VictimPawn.TakeDamage(DistScale * AltFireDamage * AltFireDamageEasterEggMult, Instigator, VictimPawn.Location, DistScale * AltFireMomentum * dir, AltDamageType);
+							MyVampireTank.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+					}
+					else if (Vehicle(Victims) == None)
+							 {
+								//Victims.AddVelocity( DistScale * -AltFireMomentum * dir );
+								// I think add velocity was bypassing spawn protection.
+								VictimPawn.TakeDamage(DistScale * AltFireDamage, Instigator, VictimPawn.Location, DistScale * AltFireMomentum * dir, AltDamageType);
+								MyVampireTank.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+							 }
+							 else
+							 { // Vehicles
+						  		VictimPawn.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumVehicleMult);
+									VictimPawn.TakeDamage(DistScale * AltFireDamage * AltFireDamageVehicleMult, Instigator, VictimPawn.Location, DistScale * AltFireMomentum * dir, AltDamageType);
+									MyVampireTank.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+							 }
 
-				dir = Victims.Location - StartLocation;
-				dir.Z = 0;
-				dist = FMax(1,VSize(dir));
-				dir = Normal(Dir)*0.5 + vect(0,0,1);
-				DistScale = 1 - FMax(0,(dist - Victims.CollisionRadius)/AltFireRadius);
-				if (Victims.IsA('Omnitaur')|| Victims.IsA('Minotaur')|| Victims.IsA('MinotaurClassic'))
+				
+				} // end pawns
+				// non pawns (eg. Nodes here)
+				//log("Actor, Not Pawns" @ Victims);
+				if (Victims.IsA('ONSPowerCore') || Victims.IsA('ONSPowerNodeEnergySphere')) 
 				{
-					// Special easter egg!  
-					Victims.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumEasterEggMult);
-					Victims.TakeDamage(DistScale * AltFireDamage * AltFireDamageEasterEggMult, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, class'DamTypeVampireTankShockwave');
-					MyVampireTank.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+					//log("FoundPowerCode/Node - Do Damage" $ Victims);
+					Victims.TakeDamage(DistScale * AltFireDamage  * AltFireDamageVehicleMult, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, DamageType);
+					MyVampireTank.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
 				}
-				else if (Vehicle(Victims) == None)
-				{
-					//Victims.AddVelocity( DistScale * -AltFireMomentum * dir );
-					Victims.TakeDamage(DistScale * AltFireDamage, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, class'DamTypeVampireTankShockwave');
-					MyVampireTank.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
-				}
-				else
-				{
-					Victims.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumVehicleMult);
-					Victims.TakeDamage(DistScale * AltFireDamage * AltFireDamageVehicleMult, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, class'DamTypeVampireTankShockwave');
-					MyVampireTank.HealDamage(AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
-				}
-
-				//log("Victims:" @ Victims.GetHumanReadableName() @ "DistScale:" @ DistScale );
 			}
 		}
-	}
-
+	} // alt fire
 
 
 
@@ -767,10 +785,10 @@ defaultproperties
      bInstantFire=True
      bDoOffsetTrace=True
      FireInterval=0.120000
-     AltFireInterval=3.00000
+     AltFireInterval=3.750000
      FireSoundVolume=255.000000
      DamageType=Class'DamTypeVampireTank3Beam'
-     TraceRange=6600.000000  // 1100 is link gun's trace range
+     TraceRange=6000.000000  // 1100 is link gun's trace range, this same as heavy link tank beam
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
      ShakeRotTime=6.000000
@@ -788,16 +806,17 @@ defaultproperties
     
      LinkMultiplier = 0.8;  //smaller since it heals itself
 		 SelfHealMultiplier = 1.0
+		 VehicleDamageMult = 1.25
 		 VehicleHealScore=250
 		 RangeExtPerLink=500 // how much range is extended per linker
   
      AltFireRadius=1500.000000
-     AltFireDamage=250.000000 // matches phoenix.
-     AltFireDamageVehicleMult=1.000000 // ion blast already had 2.0 multipler... so it does 500 to vehicles.
-     AltFireDamageEasterEggMult=3.2500000
-     AltFireMomentumVehicleMult=5.000000
+     AltFireDamage=275.000000 //  phoenix. 350 but has no vehicle multiplier
+     AltFireDamageVehicleMult=2.000000 // ion blast already had 2.0 multipler... so it does 500 to vehicles.  Applies to nodes
+     AltFireDamageEasterEggMult=5.500000
+     AltFireMomentumVehicleMult=4.000000
      AltFireMomentumEasterEggMult=40.000000
      AltFireMomentum=20000.000000
-     
+     AltDamageType=Class'DamTypeVampireTankShockwave'
      bShowChargingBar=True
 }

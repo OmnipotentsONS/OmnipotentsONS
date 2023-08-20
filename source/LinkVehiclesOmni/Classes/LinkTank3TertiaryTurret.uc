@@ -249,9 +249,9 @@ defaultproperties
      FireSoundClass=Sound'WeaponSounds.Misc.instagib_rifleshot'
      AmbientSoundScaling=1.100000
      FireForce="Laser01"
-     DamageType=Class'LinkVehiclesOmni.DamTypeLink3TurretBeam'
-     DamageMin=25
-     DamageMax=35
+     DamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3TurretLasers'
+     DamageMin=14
+     DamageMax=22
      TraceRange=20000.000000
      Momentum=10000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
