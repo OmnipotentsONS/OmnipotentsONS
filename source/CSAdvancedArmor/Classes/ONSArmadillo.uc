@@ -437,7 +437,7 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Armadillo Troop Carrier"
-     VehicleNameString="Armadillo Troop Carrier"
+     VehicleNameString="Armadillo Troop Carrier 2.0"
      RanOverDamageType=Class'CSAdvancedArmor.DamType_ARMTankRoadkill'
      CrushedDamageType=Class'CSAdvancedArmor.DamType_ARMTankPancake'
      MaxDesireability=0.800000

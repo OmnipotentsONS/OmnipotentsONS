@@ -1,12 +1,11 @@
-class DamType_LaserBeam extends VehicleDamageType
+class DamType_ArmadilloChainGun extends DamTypeONSChainGun
 	abstract;
 
 defaultproperties
 {
      VehicleClass=Class'Engine.Vehicle'
-     DeathString="%k's Guns electrified %o."
+     DeathString="%k's Armadillo minigun chewed up %o."
      FemaleSuicide="%o somehow managed to shoot herself."
      MaleSuicide="%o somehow managed to shoot himself."
-     VehicleMomentumScaling=0.750000
-     VehicleDamageScaling=1.75
+     VehicleDamageScaling=1.35
 }

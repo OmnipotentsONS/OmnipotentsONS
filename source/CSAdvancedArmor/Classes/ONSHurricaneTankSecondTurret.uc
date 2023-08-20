@@ -118,8 +118,8 @@ defaultproperties
      FireSoundClass=Sound'WeaponSounds.Misc.instagib_rifleshot'
      FireForce="PRVRearFire"
      DamageType=Class'CSAdvancedArmor.DamType_LaserBeam'
-     DamageMin=35
-     DamageMax=55
+     DamageMin=16
+     DamageMax=28
      TraceRange=20000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      CullDistance=8000.000000

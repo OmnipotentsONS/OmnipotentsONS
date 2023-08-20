@@ -122,9 +122,9 @@ defaultproperties
      FireSoundClass=Sound'ONSVehicleSounds-S.Tank.TankMachineGun01'
      AmbientSoundScaling=1.300000
      FireForce="minifireb"
-     DamageType=Class'Onslaught.DamTypeONSChainGun'
-     DamageMin=17
-     DamageMax=22
+     DamageType=Class'CSAdvancedArmor.DamType_ArmadilloChainGun'
+     DamageMin=11
+     DamageMax=19
      TraceRange=15000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      CullDistance=8000.000000
