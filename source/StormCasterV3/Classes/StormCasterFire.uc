@@ -158,6 +158,7 @@ state Paint
 
 defaultproperties
 {
+	   TraceRange=20000
      MinTraceHeight=5000.000000
-     MinOtherStormDistance=10000.000000
+     MinOtherStormDistance=7000.000000  // storm radius is 2500 (5000 diameter).
 }
