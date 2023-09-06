@@ -26,6 +26,7 @@ var(LinkBeam) Sound BeamSounds[4];
 var(LinkBeam) float VehicleDamageMult;
 
 var float LinkMultiplier;  // linkers increase factor
+var float LinkMultiplierCap; // Max Damage increase from Linkers.
 var config int VehicleHealScore; // how much occupied vehicle healing = 1pt player score
 var float RangeExtPerLink; // how much range is extended per linker
 
@@ -597,7 +598,8 @@ function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage)
 {
 	local float AdjDamage;
 	
-	AdjDamage = Damage * (LinkMultiplier*NumLinks+1);
+	AdjDamage = Damage * FMin(LinkMultiplier*NumLinks+1,LinkMultiplierCap);
+	// no matter how many linkers Multiplier Cap
 
 	if (Target != None && Target.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
   if (Instigator.HasUDamage()) 	AdjDamage *= 2;
@@ -909,7 +911,8 @@ defaultproperties
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
      VehicleDamageMult=1.500000
-     LinkMultiplier = 1.50000
+     LinkMultiplier = 0.5000
+     LinkMultiplierCap = 3.5
      bInitAimError=True
      YawBone="Object02"
      PitchBone="Object02"

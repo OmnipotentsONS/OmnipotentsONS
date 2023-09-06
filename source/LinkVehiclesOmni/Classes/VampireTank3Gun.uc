@@ -27,6 +27,7 @@ var float SelfHealMultiplier;
 var float VehicleDamageMult;
 var config int VehicleHealScore; // how much occupied vehicle healing = 1pt player score
 var float RangeExtPerLink; // how much range is extended per linker
+var float LinkMultiplierCap;
 
 var		bool bDoHit;
 var()	bool bFeedbackDeath;
@@ -112,7 +113,8 @@ function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage )
 {
 	local float AdjDamage;
 	
-	AdjDamage = Damage * (LinkMultiplier*NumLinks+1);
+AdjDamage = Damage * FMin(LinkMultiplier*NumLinks+1,LinkMultiplierCap);
+	// no matter how many linkers Multiplier Cap
 
 	if (Target != None && Target.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
   if (Instigator.HasUDamage()) 	AdjDamage *= 2;
@@ -804,11 +806,12 @@ defaultproperties
      DrawScale=0.200000
      SoundVolume=150
     
-     LinkMultiplier = 0.8;  //smaller since it heals itself
+     LinkMultiplier = 0.66;  //smaller since it heals itself
 		 SelfHealMultiplier = 1.0
 		 VehicleDamageMult = 1.25
 		 VehicleHealScore=250
 		 RangeExtPerLink=500 // how much range is extended per linker
+		 LinkMultiplierCap = 3.5
   
      AltFireRadius=1500.000000
      AltFireDamage=275.000000 //  phoenix. 350 but has no vehicle multiplier

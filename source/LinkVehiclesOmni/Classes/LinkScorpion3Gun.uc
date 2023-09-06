@@ -25,6 +25,7 @@ var float VehicleDamageMult; // link does more damage to vehicles
 var float SelfHealMultiplier; // how much it heals itself as draining.
 var config int VehicleHealScore; //  how many healing points of an occupied vehicle = 1pt score for player
 var float RangeExtPerLink; // how much range is extended per linker
+var float LinkMultiplierCap;
 
 var String MakeLinkForce;
 
@@ -111,7 +112,7 @@ function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage )
 {
 	local float AdjDamage;
 	
-	AdjDamage = Damage * (LinkMultiplier*NumLinks+1);
+  AdjDamage = Damage * FMin(LinkMultiplier*NumLinks+1,LinkMultiplierCap);
 
   if (Target != None && Target.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
   if (Instigator.HasUDamage()) 	AdjDamage *= 2;
@@ -636,5 +637,6 @@ defaultproperties
      VehicleDamageMult = 1.35 // more damage to vehicles.
      SelfHealMultiplier = 1.1 // good heal multiplier, it has to get close.
      VehicleHealScore = 250.0
-     RangeExtPerLink=500; // how much range is extended per linker
+     RangeExtPerLink=700; // how much range is extended per linker
+     LinkMultiplierCap = 4.0
 }

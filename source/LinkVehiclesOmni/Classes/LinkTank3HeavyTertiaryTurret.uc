@@ -7,6 +7,8 @@ var() sound LinkedFireSound;
 
 var class<ONSTurretBeamEffect> BeamEffectClass[2];
 var float LinkMultiplier;
+var float LinkMultiplierCap;
+var float VehicleDamageMult;
 
 static function StaticPrecache(LevelInfo L)
 {
@@ -117,7 +119,7 @@ function TraceFire(Vector Start, Rotator Dir)
 	if (!Other.bWorldGeometry)
         {
             Damage = (DamageMin + Rand(DamageMax - DamageMin));
-            Damage = AdjustLinkDamage(NumLinks,Damage);
+            Damage = AdjustLinkDamage(NumLinks,Other,Damage);
             Other.TakeDamage(Damage, Instigator, HitLocation, Momentum*X, DamageType);
             HitNormal = vect(0,0,0);
         }
@@ -133,15 +135,24 @@ function TraceFire(Vector Start, Rotator Dir)
     SpawnHitEffects(Other, HitLocation, HitNormal);
 }
 
+
 // ============================================================================
 // AdjustLinkDamage
 // Return adjusted damage based on number of links
 // Takes a NumLinks argument instead of an actual LinkGun
 // ============================================================================
-simulated function float AdjustLinkDamage( int NumLinks, float Damage )
+function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage)
 {
-	Damage = Damage * ((LinkMultiplier*NumLinks)+1);
-	return Damage;
+	local float AdjDamage;
+	
+	AdjDamage = Damage * FMin(LinkMultiplier*NumLinks+1,LinkMultiplierCap);
+	// no matter how many linkers Multiplier Cap
+
+	if (Target != None && Target.IsA('Vehicle') ) 	AdjDamage *= VehicleDamageMult;
+  if (Instigator.HasUDamage()) 	AdjDamage *= 2;
+	
+	return AdjDamage;
+	
 }
 
 
@@ -247,16 +258,18 @@ defaultproperties
      bInstantFire=True
      RedSkin=Texture'LinkTank3Tex.LinkTankTex.LinkTankLaserRed'
      BlueSkin=Texture'LinkTank3Tex.LinkTankTex.LinkTankLaserBlue'
-     FireInterval=0.180000
+     FireInterval=0.20000
      FireSoundClass=Sound'WeaponSounds.Misc.instagib_rifleshot'
      AmbientSoundScaling=1.300000
      FireForce="Laser01"
      DamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3HeavyTurretLasers'
-     DamageMin=16
-     DamageMax=26
+     DamageMin=12
+     DamageMax=18
      TraceRange=20000.000000
      Momentum=10000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      Mesh=SkeletalMesh'ONSWeapons-A.TankMachineGun'
-     LinkMultiplier = 1.25
+     LinkMultiplier = 0.55000
+     LinkMultiplierCap = 3.75
+     VehicleDamageMult = 1.5
 }
