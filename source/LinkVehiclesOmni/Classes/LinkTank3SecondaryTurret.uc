@@ -65,6 +65,7 @@ defaultproperties
      PitchUpLimit=8000
      PitchDownLimit=58000
      WeaponFireAttachmentBone="RVfirePoint"
+     WeaponFireOffset=100.000000
      RotationsPerSecond=2.000000
      bInstantRotation=True
      FireInterval=0.200000
@@ -75,6 +76,6 @@ defaultproperties
      Mesh=SkeletalMesh'ONSWeapons-A.RVnewGun'
      RedSkin=Texture'LinkScorpion3Tex.LinkScorpGun'
      BlueSkin=Texture'LinkScorpion3Tex.LinkScorpGun'
-     DrawScale=1.500000
+     DrawScale=1.100000
      
 }

@@ -248,7 +248,7 @@ defaultproperties
      PitchUpLimit=12500
      PitchDownLimit=59500
      WeaponFireAttachmentBone="Object02"
-     WeaponFireOffset=95.000000
+     WeaponFireOffset=150.000000
      DualFireOffset=5.000000
      RotationsPerSecond=2.000000
      bInstantRotation=True
@@ -270,4 +270,5 @@ defaultproperties
      LinkMultiplierCap = 3.0
      VehicleDamageMult = 1.5
      bDoOffsetTrace=True
+     DrawScale3D=(X=1.0000,Y=1.0000,Z=1.50000)
 }
