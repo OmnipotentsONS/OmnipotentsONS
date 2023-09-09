@@ -806,7 +806,7 @@ defaultproperties
      DrawScale=0.200000
      SoundVolume=150
     
-     LinkMultiplier = 0.66;  //smaller since it heals itself
+     LinkMultiplier = 0.51;  //smaller since it heals itself
 		 SelfHealMultiplier = 1.0
 		 VehicleDamageMult = 1.25
 		 VehicleHealScore=250

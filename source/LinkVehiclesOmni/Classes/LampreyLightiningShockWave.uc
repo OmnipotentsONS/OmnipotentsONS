@@ -147,8 +147,8 @@ defaultproperties
          MaxParticles=30
          DetailMode=DM_High
          StartLocationShape=PTLS_Sphere
-         SphereRadiusRange=(Min=110.000000,Max=275.000000)
-         StartSizeRange=(X=(Min=100.000000,Max=285.000000))
+         SphereRadiusRange=(Min=110.000000,Max=290.000000)
+         StartSizeRange=(X=(Min=100.000000,Max=300.000000))
          StartSpinRange=(X=(Max=1.000000),Y=(Max=1.000000),Z=(Max=1.000000))
          Texture=Texture'EpicParticles.Beams.WhiteStreak01aw'
          LifetimeRange=(Min=0.400000,Max=0.400000)

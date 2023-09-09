@@ -16,5 +16,5 @@ defaultproperties
      bSkeletize=True
      DamageOverlayMaterial=Shader'UT2004Weapons.Shaders.ShockHitShader'
      DamageOverlayTime=1.000000
-     VehicleDamageScaling=1.000000
+     VehicleDamageScaling=1.00000
 }

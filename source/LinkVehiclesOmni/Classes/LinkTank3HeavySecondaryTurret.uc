@@ -74,4 +74,5 @@ defaultproperties
      RedSkin=Texture'LinkScorpion3Tex.LinkScorpGun'
      BlueSkin=Texture'LinkScorpion3Tex.LinkScorpGun'
      DrawScale=1.500000
+   
 }

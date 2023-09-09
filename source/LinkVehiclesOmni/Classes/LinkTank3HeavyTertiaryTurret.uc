@@ -251,7 +251,7 @@ defaultproperties
      PitchUpLimit=12500
      PitchDownLimit=59500
      WeaponFireAttachmentBone="Object02"
-     WeaponFireOffset=85.000000
+     WeaponFireOffset=95.000000
      DualFireOffset=5.000000
      RotationsPerSecond=2.000000
      bInstantRotation=True
@@ -263,8 +263,8 @@ defaultproperties
      AmbientSoundScaling=1.300000
      FireForce="Laser01"
      DamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3HeavyTurretLasers'
-     DamageMin=12
-     DamageMax=18
+     DamageMin=17
+     DamageMax=25
      TraceRange=20000.000000
      Momentum=10000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
@@ -272,4 +272,5 @@ defaultproperties
      LinkMultiplier = 0.55000
      LinkMultiplierCap = 3.75
      VehicleDamageMult = 1.5
+     bDoOffsetTrace=True
 }
