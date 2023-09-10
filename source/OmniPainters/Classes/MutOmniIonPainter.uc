@@ -8,16 +8,16 @@ function bool CheckReplacement( Actor Other, out byte bSuperRelevant )
 	bSuperRelevant = 1;
     if ( xWeaponBase(Other) != None )
     {
-		if ( xWeaponBase(Other).WeaponType == class'OnslaughtFull.ONSPainter' )
+		if ( xWeaponBase(Other).WeaponType == class'OnslaughtFull.ONSPainter' ||  xWeaponBase(Other).WeaponType == class'XWeapons.Painter' )
 			xWeaponBase(Other).WeaponType = class'OmniPainters.IonPainterOmni';
 	}
 	else if ( ONSPainterPickup(Other) != None )
-		ReplaceWith( Other, "OmniPainters.StrikePainterPickup");
+		ReplaceWith( Other, "OmniPainters.IonPainterOmniPickup");
 	else if ( WeaponLocker(Other) != None ) //Who the hell puts the Target Painter in a weapon locker?
 	{
 		L = WeaponLocker(Other);
 		for (i = 0; i < L.Weapons.Length; i++)
-			if (L.Weapons[i].WeaponClass == class'ONSPainter')
+			if (L.Weapons[i].WeaponClass == class'ONSPainter' || L.Weapons[i].WeaponClass == class'Painter')
 				L.Weapons[i].WeaponClass = class'IonPainterOmni';
 		return true;
 	}
