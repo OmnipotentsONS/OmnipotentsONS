@@ -505,7 +505,8 @@ simulated function GamePPH GetGamePPH()
             PRI = Level.GRI.PRIArray[i];
             Team = PRI.Team.TeamIndex;
 
-            iPPH = GetPointsPerHour(PRI); // binary search O(log m)
+            iPPH = FMin(GetPointsPerHour(PRI),EvenMatchMutator.MaxPPHScore); // binary search O(log m), subject to MaxPPHScore
+            // Multipliers applied after
             KPM = GetKnownPlayerMultplier(PRI);
             PPH = iPPH * KPM;
             if(Team == 0)
@@ -552,7 +553,7 @@ simulated function GamePPH ShuffleTeams(optional bool killPlayers)
 			PRI = Level.GRI.PRIArray[Index];
 			if (!PRI.bOnlySpectator && PlayerController(PRI.Owner) != None && PlayerController(PRI.Owner).bIsPlayer) {
 			
-				iPPH = GetPointsPerHour(PRI); // binary search O(log m)
+			  iPPH = FMin(GetPointsPerHour(PRI),EvenMatchMutator.MaxPPHScore); // binary search O(log m), subject to MaxPPHScore
 				KPM = GetKnownPlayerMultplier(PRI);
         PPH = iPPH * KPM;
 				TotalPPH += PPH;
@@ -751,6 +752,9 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 	}
 	// calculate current PPH
 	CurrentPPH = 3600 * FMax(PRI.Score, 0.1) / Max(Level.GRI.ElapsedTime - PRI.StartTime, 10);
+	// apply PPH cap pooty 09/2023
+	CurrentPPH = FMin(CurrentPPH,EvenMatchMutator.MaxPPHScore);
+	
 	PastPPH = -1;
 	PastPPHMap = -1;
 	
@@ -780,7 +784,8 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 			}
 			Recent.PPH[Index].CurrentPPH = PPH;
 			if (Recent.PPH[Index].PastPPH != -1)
-				PastPPH = Recent.PPH[Index].PastPPH;
+				PastPPH = FMin(Recent.PPH[Index].PastPPH,EvenMatchMutator.MaxPPHScore);
+				//pooty 09-2023 make sure past PPHs get capped at MaxPPHScore
 		}
 		
 		// also update map-specific PPH
@@ -795,7 +800,7 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 		else {
 			if (RecentMap.PPH[IndexMap].TS != MatchStartTS) {
 				if (RecentMap.PPH[IndexMap].PastPPH == -1)
-					RecentMap.PPH[IndexMap].PastPPH = RecentMap.PPH[IndexMap].CurrentPPH;
+					RecentMap.PPH[IndexMap].PastPPH = FMin(RecentMap.PPH[IndexMap].CurrentPPH,EvenMatchMutator.MaxPPHScore) ;
 				else
 					//RecentMap.PPH[IndexMap].PastPPH = 0.5 * (RecentMap.PPH[IndexMap].PastPPH + RecentMap.PPH[IndexMap].CurrentPPH);
 					// updated by pOOty to use same formula above, slower change on MapPPH just like regular PPH
@@ -805,18 +810,18 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 			}
 			RecentMap.PPH[IndexMap].CurrentPPH = PPH;
 			if (RecentMap.PPH[IndexMap].PastPPH != -1) 
-				PastPPHMap = RecentMap.PPH[IndexMap].PastPPH;
+				PastPPHMap = FMin(RecentMap.PPH[IndexMap].PastPPH,EvenMatchMutator.MaxPPHScore);
 		}
 	}
 	else {
 		PPH = -1;
 		if (Index < Recent.PPH.Length && Recent.PPH[Index].ID == ID) {
 			// No score yet, use PPH from earlier
-			PastPPH = Recent.PPH[Index].PastPPH;
+			PastPPH = FMin(Recent.PPH[Index].PastPPH,EvenMatchMutator.MaxPPHScore);
 		}
 		if (IndexMap < RecentMap.PPH.Length && RecentMap.PPH[IndexMap].ID == ID) {
 			// No score yet, use PPH from earlier
-			PastPPHMap = RecentMap.PPH[IndexMap].PastPPH;
+			PastPPHMap = FMin(RecentMap.PPH[IndexMap].PastPPH,EvenMatchMutator.MaxPPHScore);
 		}
 	}
 
@@ -859,8 +864,11 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 		default: // none of the above (should not be possible)
 			retval = CurrentPPH;
 	}
-
-    return retval;
+  
+  //added pooty to cap PPH scores.
+  retval = FMin(retval,EvenMatchMutator.MaxPPHScore);
+  
+  return retval;
 }
 
 
