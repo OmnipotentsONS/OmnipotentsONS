@@ -9,7 +9,7 @@ function bool CheckReplacement( Actor Other, out byte bSuperRelevant )
 
 	bSuperRelevant = 1;
   if ( xWeaponBase(Other) != None )
-    {
+  {
 		if ( xWeaponBase(Other).WeaponType.name == 'StrikePainter'  )
 			xWeaponBase(Other).WeaponType = class'OmniPainters.StrikePainterOmni';
 		if	( xWeaponBase(Other).WeaponType == class'OnslaughtFull.ONSPainter' ||  xWeaponBase(Other).WeaponType == class'XWeapons.Painter')
@@ -20,11 +20,12 @@ function bool CheckReplacement( Actor Other, out byte bSuperRelevant )
 	else if ( WeaponLocker(Other) != None ) //Who the hell puts the Target Painter in a weapon locker?
 	{
 		L = WeaponLocker(Other);
-		for (i = 0; i < L.Weapons.Length; i++)
+		for (i = 0; i < L.Weapons.Length; i++) {
 			if (L.Weapons[i].WeaponClass == class'ONSPainter' || L.Weapons[i].WeaponClass == class'Painter')
 				L.Weapons[i].WeaponClass = class'IonPainterOmni';
 			if (L.Weapons[i].WeaponClass.Name == 'StrikePainter' )
 				L.Weapons[i].WeaponClass = class'StrikePainterOmni';	
+		}		
 		return true;
 	}
 	else
@@ -34,6 +35,6 @@ function bool CheckReplacement( Actor Other, out byte bSuperRelevant )
 
 defaultproperties
 {
-     FriendlyName="Omni Painters 1.0"
+     FriendlyName="Omni Painters 1.01"
      Description="Replaces the Short Range Ion Painter, Nuke Strike Painters with Omni longer range versions"
 }
