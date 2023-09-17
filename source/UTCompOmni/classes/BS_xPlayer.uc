@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-class BS_xPlayer extends xPlayer;
+class BS_xPlayer extends ModernPlayer;
 
 var float LastHitSoundTime;
 
@@ -29,6 +29,7 @@ var bool oldbShowScoreBoard;
 
 var sound LoadedEnemySound, LoadedFriendlySound;
 
+var UTComp_Warmup uWarmup;
 var UTComp_ServerReplicationInfo RepInfo;
 var UTComp_PRI UTCompPRI;
 
@@ -124,12 +125,22 @@ var int PreferredExitPoint;
 var bool bTempSpec;
 var bool bDidWhitelistCheck;
 
+//damage indicator stuff
+var int LastDamage;
+var int SumDamage;
+var float SumDamageTime;
+var int HitDamage;
+var bool bHitContact;
+var Pawn HitPawn;
+
+
+
 replication
 {
     unreliable if(Role==Role_Authority)
         ReceiveHit, ReceiveStats, ReceiveHitSound;
     reliable if (Role==Role_Authority)
-        StartDemo, SetClockTime, NotifyRestartMap, SetClockTimeOnly, SetEndTimeOnly, 
+        StartDemo, NotifyEndWarmup, SetClockTime, NotifyRestartMap, SetClockTimeOnly, SetEndTimeOnly, 
         TimeBetweenUpdates, SetMenuColor, DenyPlayer, WhitelistCheck;
     reliable if(Role<Role_Authority)
         SetbStats, TurnOffNetCode, ServerSetEyeHeightAlgorithm, ServerSetNetUpdateRate, ServerViewPlayer;
@@ -430,9 +441,15 @@ simulated function ChangeDeathMessageOrder()
 
 event PlayerTick(float deltatime)
 {
+    local int Damage;
+
     if (RepInfo==None)
         foreach DynamicActors(Class'UTComp_ServerReplicationInfo', RepInfo)
             break;
+
+    if (uWarmup==None)
+        foreach Dynamicactors(class'UTComp_Warmup', uWarmup)
+            break;            
 
     if(!bDidWhitelistCheck && PlayerReplicationInfo != None && RepInfo != None)
     {
@@ -444,7 +461,8 @@ event PlayerTick(float deltatime)
         UTCompPRI=class'UTComp_Util'.static.GetUTCompPRIFor(self);
     if (Level.NetMode!=NM_DedicatedServer && !Blah && PlayerReplicationInfo !=None && PlayerReplicationInfo.CustomReplicationInfo!=None && myHud !=None && RepInfo!=None && UTCompPRI!=None)
     {
-        StartDemo();
+        if (uWarmup==None || !uWarmup.bInWarmup)
+        	StartDemo();
         InitializeStuff();
         blah=true;
     }
@@ -482,6 +500,27 @@ event PlayerTick(float deltatime)
     {
         log("UTComp: WARN net is saturated");
         LastSaturatedTime = Level.TimeSeconds + 3.0;
+    }
+    
+    if(HitDamage != LastDamage)
+    {
+        Damage = HitDamage - LastDamage;
+            
+        if(HitPawn != None && RepInfo.bDamageIndicator)
+        {
+            if (HUDSettings.DamageIndicatorType == 2)
+            {
+                if ( (Level.TimeSeconds - SumDamageTime > 1) || (SumDamage > 0 ^^ Damage > 0) )
+                    SumDamage = 0;
+                SumDamage += Damage;
+                SumDamageTime = Level.TimeSeconds;
+            }
+            
+            if(HUDSettings.DamageIndicatorType == 3)
+                class'Emitter_Damage'.static.ShowDamage(HitPawn, HitPawn.Location, Damage);        
+        }        
+
+        LastDamage = HitDamage;
     }
 
     Super.PlayerTick(deltatime);
@@ -636,8 +675,6 @@ simulated function string MakeDemoname(string S)
     return S;
 }
 
-/*
-snarf commenting out these states from ONSPlus
 state GameEnded
 {
     function BeginState()
@@ -660,6 +697,8 @@ state GameEnded
     }
 }
 
+/*
+snarf commenting out these states from ONSPlus
 // onsplus
 state RoundEnded
 {
@@ -725,8 +764,18 @@ ignores SeePlayer, HearNoise, KilledBy, NotifyBump, HitWall, NotifyHeadVolumeCha
 // Stats / Hitsounds
 //====================================
 
+simulated function DamageIndicatorHit(int Damage, pawn injured, pawn instigatedBy)
+{
+    local vector EyeHeight;
+
+    HitDamage += Damage;
+    EyeHeight.z = instigatedBy.EyeHeight;
+    bHitContact = FastTrace(injured.Location, instigatedBy.Location + EyeHeight);
+    HitPawn = injured;
+}
+
 // both stat/hitsound
-simulated function ReceiveHit(class<DamageType> DamageType, int Damage, pawn Injured)
+simulated function ReceiveHit(class<DamageType> DamageType, int Damage, pawn Injured, pawn instigatedBy)
 {
     if(Level.NetMode==NM_DedicatedServer)
         return;
@@ -736,6 +785,7 @@ simulated function ReceiveHit(class<DamageType> DamageType, int Damage, pawn Inj
     else if(Injured.GetTeamNum()==255 || (Injured.GetTeamNum() != GetTeamNum()))
     {
         RegisterEnemyHit(DamageType, Damage);
+        DamageIndicatorHit(Damage, injured, instigatedBy);
         if(!IsIgnoredDamageSound(DamageType))
         {
             if(Settings.bCPMAStyleHitsounds && (DamageType == class'DamTypeFlakChunk' || DamageType == class'DamTypeFlakShell') && (RepInfo==None || RepInfo.EnableHitSoundsMode==2 || LineOfSightTo(Injured)))
@@ -749,6 +799,7 @@ simulated function ReceiveHit(class<DamageType> DamageType, int Damage, pawn Inj
     else
     {
         RegisterTeammateHit(DamageType, Damage);
+        DamageIndicatorHit(-Damage, injured, instigatedBy);
         if(!IsIgnoredDamageSound(DamageType))
         {
             if(Settings.bCPMAStyleHitsounds && (DamageType == class'DamTypeFlakChunk' || DamageType == class'DamTypeFlakShell') && (RepInfo==None || RepInfo.EnableHitSoundsMode==2 || LineOfSightTo(Injured)))
@@ -761,7 +812,7 @@ simulated function ReceiveHit(class<DamageType> DamageType, int Damage, pawn Inj
     }
 }
 
-simulated function ServerReceiveHit(class<DamageType> DamageType, int Damage, pawn Injured)
+simulated function ServerReceiveHit(class<DamageType> DamageType, int Damage, pawn Injured, pawn instigatedBy)
 {
     if(Injured!=None && Injured.Controller!=None && Injured.Controller==Self)
         ServerRegisterSelfHit(DamageType, Damage);
@@ -2088,7 +2139,9 @@ function bool IsValidVote(byte b, byte p, out string S, string S2)
         ClientMessage("Sorry, a vote is already in progress.");
         return false;
     }
- 
+    if(uWarmup==None)
+        foreach DynamicActors(class'UTComp_Warmup', uWarmup)
+            break;
     if(b>10 || b<0)
     {
         ClientMessage("An Error occured, this is an invalid vote");
@@ -2114,6 +2167,18 @@ function bool IsValidVote(byte b, byte p, out string S, string S2)
         }
     }
     return true;
+}
+
+
+simulated function NotifyEndWarmup()
+{
+    NotReady(true);
+    if(GameReplicationInfo!=None)
+        SetClockTime(GameReplicationInfo.TimeLimit*60+1);
+    ResetEpicStats();
+    ResetUTCompStats();
+    StartDemo();
+    bInTimedOvertime=false;
 }
 
 simulated function NotifyRestartMap()
@@ -2207,6 +2272,9 @@ simulated function ResetEpicStats()
 
 simulated function SetClockTime(int iTime)
 {
+    if(uWarmup!=None && uWarmup.bInWarmup && PlayerReplicationInfo!=None)
+        ReceiveLocalizedMessage(class'UTComp_InWarmupMessage',,,,self);
+
     if(GameReplicationInfo!=None)
     {
         GameReplicationInfo.Remainingtime = iTime;
@@ -2231,6 +2299,11 @@ simulated function SetEndTimeOnly(int iTime)
     bInTimedOvertime=True;
 }
 
+exec function AdminReady()
+{
+    ServerAdminReady();
+}
+
 function BroadcastVote(bool b)
 {
     if(b)
@@ -2251,7 +2324,11 @@ function ServerAdminReady()
 {
     if(PlayerReplicationInfo!=None && PlayerReplicationInfo.bAdmin)
     {
-;
+        if(uWarmup==None)
+            foreach DynamicActors(class'UTComp_Warmup', uWarmup)
+                break;
+        if(uWarmup!=None)
+            uWarmup.bAdminBypassReady=True;
     }
 }
 
@@ -3256,6 +3333,7 @@ function int FractionCorrection(float in, out float fraction) {
     return result;
 }
 
+//from 3SPHorst
 function UpdateRotation(float DeltaTime, float maxPitch)
 {
     local rotator newRotation, ViewRotation;
@@ -4328,8 +4406,8 @@ simulated function SetMenuColor(int playerID)
 defaultproperties
 {
 
-     UTCompMenuClass="UTCompOmni.UTComp_Menu_OpenedMenu"
-     UTCompVotingMenuClass="UTCompOmni.UTComp_Menu_VoteInProgress"
+     UTCompMenuClass="UTComp_Menu_OpenedMenu"
+     UTCompVotingMenuClass="UTComp_Menu_VoteInProgress"
      redmessagecolor=(B=64,G=64,R=255,A=255)
      greenmessagecolor=(B=128,G=255,R=128,A=255)
      bluemessagecolor=(B=255,G=192,R=64,A=255)
@@ -4389,9 +4467,10 @@ defaultproperties
      TimeBetweenUpdates=0.0111111;
      LastWeaponEffectSent=-1
 
-     LoadedEnemySound=sound'UTCompOmni.Sounds.HitSound'
-     LoadedFriendlySound=sound'UTCompOmni.Sounds.HitSoundFriendly'
+     LoadedEnemySound=sound'Sounds.HitSound'
+     LoadedFriendlySound=sound'Sounds.HitSoundFriendly'
 
      PreferredExitPoint=-1
      bDidWhitelistCheck=False
+
 }

@@ -57,7 +57,7 @@ struct ClanSkinTripple
 };
 
 var config string FallbackCharacterName;
-
+var config bool bEnemyBasedSkins;
 var config byte ClientSkinModeRedTeammate;
 var config byte ClientSkinModeBlueEnemy;
 var config byte PreferredSkinColorRedTeammate;
@@ -66,7 +66,6 @@ var config color BlueEnemyUTCompSkinColor;
 var config color RedTeammateUTCompSkinColor;
 var config bool bBlueEnemyModelsForced;
 var config bool bRedTeammateModelsForced;
-
 var config string BlueEnemyModelName;
 var config string RedTeammateModelName;
 var config bool bEnableDarkSkinning;
@@ -75,24 +74,29 @@ var config array<string> DisallowedEnemyNames;
 var config bool bEnemyBasedModels;
 var config bool bUseNewEyeHeightAlgorithm;
 var config float DesiredNetUpdateRate;
-var config bool bEnemyBasedSkins;
+
+var config bool bTeamColorRockets;
+var config bool bTeamColorBio;
+var config bool bTeamColorFlak;
+var config bool bTeamColorShock;
+var config bool bTeamColorSniper;
+var config Color TeamColorRed, TeamColorBlue;
+var config bool bTeamColorUseTeam;
 
 var UTComp_Settings instance;
 
 function CheckSettings() {
     local string PackageName;
-    local string CheckPackageName;
     local int CheckLen;
 
-    CheckPackageName = "UTCompOmni";
-    CheckLen = Len(CheckPackageName);
 
     PackageName = string(self.Class);
     PackageName = Left(PackageName, InStr(PackageName, "."));
+    CheckLen = Len(PackageName);
 
-    if (Left(FriendlySound, CheckLen) ~= CheckPackageName)
+    if (Left(FriendlySound, CheckLen) ~= PackageName)
         FriendlySound = PackageName$Mid(FriendlySound, InStr(FriendlySound, "."));
-    if (Left(EnemySound, CheckLen) ~= CheckPackageName)
+    if (Left(EnemySound, CheckLen) ~= PackageName)
         EnemySound = PackageName$Mid(EnemySound, InStr(EnemySound, "."));
 
     //SaveConfig();
@@ -109,18 +113,18 @@ defaultproperties
 {
     Version=0
     bFirstRun=True
-    bStats=False
+    bStats=True
     DemoRecordingMask="%d-(%t)-%m-%p"
     ScreenShotMask="%d-(%t)-%m-%p"
-    FriendlySound="UTCompOmni.Sounds.HitSoundFriendly"
-    EnemySound="UTCompOmni.Sounds.HitSound"
+    FriendlySound="Sounds.HitSoundFriendly"
+    EnemySound="Sounds.HitSound"
     bEnableHitSounds=true
     HitSoundVolume=1.0
     bCPMAStyleHitsounds=true
     CPMAPitchModifier=1.40
     SavedSpectateSpeed=800.00
     bShowSelfInTeamOverlay=True
-    bEnableEnhancedNetCode=False
+    bEnableEnhancedNetCode=True
     ballowcoloredmessages=True
     bEnableColoredNamesInTalk=True
     CurrentSelectedColoredName=255
@@ -159,6 +163,15 @@ defaultproperties
     bEnemyBasedSkins=False
     bEnemyBasedModels=False
     bUseDefaultScoreboard=True
+
+    bTeamColorRockets=true
+    bTeamColorBio=true
+    bTeamColorFlak=true
+    bTeamColorShock=true
+    bTeamColorSniper=true
+    TeamColorRed=(R=255,G=91,B=46,A=255)
+    TeamColorBlue=(R=46,G=137,B=255,A=255)
+    bTeamColorUseTeam=true
 
     instance=none
 }

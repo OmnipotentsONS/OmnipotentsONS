@@ -17,7 +17,7 @@ function int NetDamage( int OriginalDamage, int Damage, pawn injured, pawn insti
     {
         if(UTCompMutator.EnableHitSoundsMode>0)
         {
-            BS_xPlayer(InstigatedBy.Controller).ReceiveHit(DamageType, Damage, Injured);
+            BS_xPlayer(InstigatedBy.Controller).ReceiveHit(DamageType, Damage, Injured, instigatedBy);
 
             if(InstigatedBy==Injured)
                 HitSoundType=0;
@@ -38,7 +38,7 @@ function int NetDamage( int OriginalDamage, int Damage, pawn injured, pawn insti
             BS_xPlayer(InstigatedBy.Controller).ReceiveStats(DamageType, Damage, Injured);
         }
 
-        BS_xPlayer(InstigatedBy.Controller).ServerReceiveHit(DamageType, Damage, Injured);
+        BS_xPlayer(InstigatedBy.Controller).ServerReceiveHit(DamageType, Damage, Injured, instigatedBy);
     }
     if(Injured!=None && Injured.Controller!=None && BS_xPlayer(Injured.Controller)!=None)
     {
@@ -340,7 +340,13 @@ function bool PreventDeath(Pawn Victim, Controller Killer, class<DamageType> dam
 
 function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 {
-	
+    if(UTCompMutator.WarmupClass!=None && UTCompMutator.WarmupClass.bInWarmup)
+        return false;
+    if(UTCompMutator.bEnableTimedOvertime && Level.Game.bOverTime && !Level.Game.IsA('UTComp_ClanArena'))
+    {
+        if(!OvertimeOver())
+            return false;
+    }
     if(ONSOnslaughtGame(Level.Game) != none)
     {
         if ( NextGameRules != None )
@@ -350,11 +356,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
     	 return false; 
     }
 
-    if(UTCompMutator.bEnableTimedOvertime && Level.Game.bOverTime)
-    {
-        if(!OvertimeOver())
-            return false;
-    }
+
     if ( NextGameRules != None )
 		return NextGameRules.CheckEndGame(Winner,Reason);
 	return true;
@@ -378,6 +380,15 @@ function UpdateClock(float F)
     if(bFirstEndOT && F<=0.0)
     {
         bFirstEndOt=False;
+    }
+    if(UTCompMutator!=None && UTCompMutator.WarmupClass!=None)
+    {
+        UTCompMutator.WarmupClass.SetClientTimerOnly(int(Round(F)));
+        if(bFirstEndOT && F<=0.0)
+        {
+            UTCompMutator.WarmupClass.SetEndTimeOnly(int(Round(F)));
+            bFirstEndOt=False;
+        }
     }
 }
 
