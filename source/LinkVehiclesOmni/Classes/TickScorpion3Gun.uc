@@ -820,7 +820,7 @@ defaultproperties
      NumLinkers = 1
      LinkMultiplier = 1.5
 		 SelfHealMultiplier = 1.1
-		 VehicleDamageMultiplier = 1.1 //  increased damage to vehicles might add some specific vehicles here?
+		 VehicleDamageMultiplier = 1.25 //  increased damage to vehicles might add some specific vehicles here?
      VehicleHealScore = 250
      RangeExtPerLink = 500
      //AltFire

@@ -634,7 +634,7 @@ defaultproperties
      SoundVolume=150
      
      LinkMultiplier = 1.5; // each linker adds 150%
-     VehicleDamageMult = 1.35 // more damage to vehicles.
+     VehicleDamageMult = 1.5 // more damage to vehicles.
      SelfHealMultiplier = 1.1 // good heal multiplier, it has to get close.
      VehicleHealScore = 250.0
      RangeExtPerLink=700; // how much range is extended per linker

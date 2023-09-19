@@ -703,7 +703,7 @@ defaultproperties
 
      bScriptedRise=True
      VehiclePositionString="in a Link Scorpion"
-     VehicleNameString="Link Scorpion 3.3"
+     VehicleNameString="Link Scorpion 3.34"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkScorp3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkScorp3Pancake'
      Begin Object Class=KarmaParamsRBFull Name=KParams0

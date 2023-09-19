@@ -778,12 +778,12 @@ defaultproperties
     
      LinkMultiplier = 1.0; // not used here
 		 SelfHealMultiplier = 0.9;
-		 VehicleDamageMult = 1.2;
+		 VehicleDamageMult = 1.25;
 		 VehicleHealScore = 250;
 		 RangeExtPerLink=500; // how much range is extended per linker
 		 
-     AltFireRadius=600.000000
-     AltFireDamage=140.000000 // phoenix is 300, does less damage farther away
+     AltFireRadius=666.000000 // phoenix is 800 radius
+     AltFireDamage=200.000000 // phoenix is 300 always, lamprey does less damage farther away
      AltFireDamageVehicleMult=2.00000
      AltFireDamageEasterEggMult=7.000000
      AltFireMomentumVehicleMult=5.000000
