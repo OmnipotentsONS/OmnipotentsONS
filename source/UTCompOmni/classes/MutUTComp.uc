@@ -90,6 +90,7 @@ var config bool bUseWhitelist;
 var config string WhitelistBanMessage;
 var config bool bAllowColorWeapons;
 var config bool bDamageIndicator;
+var config int MaxSavedMoves;
 
 struct MapVotePair
 {
@@ -203,6 +204,8 @@ var string WeaponPickupClassNamesUTComp[13];
 
 var bool bDefaultWeaponsChanged;
 
+var config bool bEndOfRoundNetcodeFix;
+var bool bNetcodeResetTriggered;
 
 //==========================
 //  End Enhanced Netcode stuff
@@ -867,6 +870,7 @@ function SpawnReplicationClass()
     RepInfo.bDebugLogging = bDebugLogging;
     RepInfo.bAllowColorWeapons = bAllowColorWeapons;
     RepInfo.bDamageIndicator = bDamageIndicator;
+    RepInfo.MaxSavedMoves = MaxSavedMoves;
 
     for(i=0; i<VotingGametype.Length && i<ArrayCount(RepInfo.VotingNames); i++)
         RepInfo.VotingNames[i]=VotingGametype[i].GameTypeName;
@@ -1588,6 +1592,39 @@ function string GetInventoryClassOverride(string InventoryClassName)
 	return InventoryClassName;
 }
 
+// attempt to fix unregs after first round in round based games
+// this is called by each controller going to RoundEnded state
+// but we only want it called once so use boolean flag and timer
+function TriggerNetcodeReset()
+{
+    if(!bNetcodeResetTriggered)
+    {
+        bNetcodeResetTriggered=true;
+        // 1 sec should be long enough for all controllers to have called this
+        SetTimer(1.0, false);
+    }
+}
+
+// reset all netcode timing related stuff
+function ResetNetcode()
+{
+    AverDT=0;
+    LastReplicatedAverDT=0;
+    ClientTimeStamp=0;
+    counter=0;
+    SetPawnStamp();
+}
+
+// called by TriggerNetcodeReset
+function Timer()
+{
+    if(bNetcodeResetTriggered)
+    {
+        ResetNetcode();
+        bNetcodeResetTriggered=false;
+    }
+}
+
 defaultproperties
 {
      bAddToServerPackages=True
@@ -1647,9 +1684,9 @@ defaultproperties
      NewNetUpdateFrequency=200
      PingTweenTime=3.0
 
-     FriendlyName="UTComp Version 1.61 (Omni)"
+     FriendlyName="UTComp Version 1.65 (Omni)"
      FriendlyVersionPrefix="UTComp Version"
-     FriendlyVersionNumber=")o(mni 1.61"
+     FriendlyVersionNumber=")o(mni 1.65"
      Description="A mutator for warmup, brightskins, hitsounds, enhanced netcode, adjustable player scoring and various other features."
      bNetTemporary=True
      bAlwaysRelevant=True
@@ -1824,4 +1861,7 @@ defaultproperties
 
      bAllowColorWeapons=true
      bDamageIndicator=true
+     MaxSavedMoves=350
+
+     bEndOfRoundNetcodeFix=true
 }

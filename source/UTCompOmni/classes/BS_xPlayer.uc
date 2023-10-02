@@ -535,6 +535,11 @@ function SetBStats(bool b)
         UTCompPRI.bSendWepStats=b;
 }
 
+function SetMaxSavedMoves()
+{
+    if(RepInfo != None)
+        MaxSavedMoves = RepInfo.MaxSavedMoves;
+}
 
 simulated function InitializeStuff()
 {
@@ -562,6 +567,7 @@ simulated function InitializeStuff()
     SetBStats(class'UTComp_Scoreboard'.default.bDrawStats || class'UTComp_ScoreBoard'.default.bOverrideDisplayStats);
     SetEyeHeightAlgorithm(Settings.bUseNewEyeHeightAlgorithm);
     ServerSetNetUpdateRate(Settings.DesiredNetUpdateRate, Player.CurrentNetSpeed);
+    SetMaxSavedMoves();
     if(Settings.bFirstRun)
     {
         Settings.bFirstRun=False;
@@ -3491,7 +3497,7 @@ function UTComp_ReplicateMove(
     }
 
     // Get a SavedMove actor to store the movement in.
-    NewMove = GetFreeMove();
+    NewMove = GetFreeMoveEx();
     if ( NewMove == None )
         return;
     NewMove.SetMoveFor(self, DeltaTime, NewAccel, DoubleClickMove);
@@ -4403,11 +4409,46 @@ simulated function SetMenuColor(int playerID)
     }
 }
 
+// snarf attempt to fix netcode breaking after round ends
+function RoundHasEnded()
+{
+    local MutUTComp MutatorOwner;
+
+    foreach DynamicActors(Class'MutUTComp', MutatorOwner)
+        break;
+
+    if(Role == ROLE_Authority && MutatorOwner != None && MutatorOwner.bEndOfRoundNetcodeFix)
+    {
+        if(MutatorOwner.PCC != none && Pawn != None)
+        {
+            MutatorOwner.PCC = MutatorOwner.PCC.RemovePawnFromList(Pawn, MutatorOwner.PCC);
+        }
+
+        MutatorOwner.TriggerNetcodeReset();
+    }
+
+    // don't state transition if we are getting deleted
+    if(bPendingDestroy)
+        return;
+
+    super.RoundHasEnded();
+}
+
+// snarf attempt to fix netcode breaking after round ends
+function ClientRoundEnded()
+{
+    // don't state transition if we are getting deleted
+    if(bPendingDestroy)
+        return;
+
+    super.ClientRoundEnded();
+}
+
 defaultproperties
 {
 
-     UTCompMenuClass="UTComp_Menu_OpenedMenu"
-     UTCompVotingMenuClass="UTComp_Menu_VoteInProgress"
+     UTCompMenuClass="UTCompOmni.UTComp_Menu_OpenedMenu"
+     UTCompVotingMenuClass="UTCompOmni.UTComp_Menu_VoteInProgress"
      redmessagecolor=(B=64,G=64,R=255,A=255)
      greenmessagecolor=(B=128,G=255,R=128,A=255)
      bluemessagecolor=(B=255,G=192,R=64,A=255)
