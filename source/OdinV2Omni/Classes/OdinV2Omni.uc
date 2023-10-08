@@ -222,14 +222,14 @@ defaultproperties
      FPCamPos=(X=-150.000000,Y=0.000000,Z=320.000000)
      TPCamWorldOffset=(Z=350.000000)
      VehiclePositionString="in an Odin"
-     VehicleNameString="Odin 2.51"
+     VehicleNameString="Odin 2.6"
      VehicleDescription="Odin, the chief god of Norse mythology. His spear, Gungnir, is said to never miss its target. The Odin hover tank is equipped with a focused ion turret and two plasma turrets."
      RanOverDamageType=Class'OdinV2Omni.DamTypeOdinRoadkill'
      CrushedDamageType=Class'OdinV2Omni.DamTypeOdinPancake'
      bSuperSize=True
      NavigationPointRange=190.000000
-     HealthMax=2250
-     Health=1550
+     HealthMax=1650
+     Health=1350
      Mesh=SkeletalMesh'WVHoverTankV2.Odin.OdinTankChassis'
      SoundPitch=60
      

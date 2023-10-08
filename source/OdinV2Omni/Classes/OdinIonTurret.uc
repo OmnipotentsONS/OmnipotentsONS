@@ -380,7 +380,7 @@ defaultproperties
      WeaponFireAttachmentBone="Firepoint"
      RotationsPerSecond=0.200000
      bInstantFire=True
-     FireInterval=3.000000
+     FireInterval=3.500000
      FireSoundClass=Sound'OdinV2Omni.OdinMainFire'
      FireSoundVolume=512.000000
      DamageType=Class'OdinV2Omni.DamTypeOdinIonBeam'

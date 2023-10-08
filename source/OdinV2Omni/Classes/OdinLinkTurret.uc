@@ -407,13 +407,14 @@ function TraceBeamFire(float DeltaTime)
 				 
 				 HitVehicle=Vehicle(HitActor);
 				 //log("OdinLinkTurret:HitActor"$HitActor$"MyTeam="$TeamNum);
-				 if (HitVehicle != None  && HitVehicle.Health > 0 ) { // VEhicle
+				 if (HitVehicle != None  && HitVehicle.Health > 0 && !HitActor.IsA('ONSSpecialLinkBeamCatcher')) { // VEhicle , except Dumbass ONSSpecials made stupid beamcatcher as subclsss of vehicle!  Dumb.  03/2023 pooty
 				 	  if (HitVehicle.GetTeamNum() == TeamNum) { // Team Vehicle
 				 	  	//log("OdinLinkTurret:HealFriendlyVehicle");
 				 	  	
-				 	  	if (HitVehicle == ONSWeaponPawn(Owner).VehicleBase) // self
-				 	  			HitVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
-				 	  	else // friendly not me		
+				 	  	if (HitVehicle != ONSWeaponPawn(Owner).VehicleBase) // self
+				 	  			// Removed Self Heal Pooty 10/2023
+				 	  			//HitVehicle.HealDamage(Round(DamageAmount * SelfHealMultiplier), Instigator.Controller, DamageType);
+				 	  	//else // friendly not me		
 				 	  		{
 				 	  		 AdjustedDamage = Round(DamageAmount * HealMultiplier);
 				 	  	   if(HitVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
@@ -433,7 +434,13 @@ function TraceBeamFire(float DeltaTime)
 				 	
 				 	 Node = DestroyableObjective(HitActor);
 				 	 // shield or sphere Make the hit the node itself, so heals can construct
-				 	 if ((ONSPowerNodeEnergySphere(HitActor) != None) || (ONSPowerNodeShield(HitActor) != None)) Node = DestroyableObjective(HitActor.Owner);
+				 	 //if ((ONSPowerNodeEnergySphere(HitActor) != None) || (ONSPowerNodeShield(HitActor) != None)) Node = DestroyableObjective(HitActor.Owner);
+				 	  if (HitActor.IsA('ONSPowerNodeEnergySphere') 
+				 	    || HitActor.IsA('ONSPowerNodeShield') 
+				 	    || HitActor.IsA('ONSSpecialLinkBeamCatcher')
+				 	    || HitActor.IsA('ONSSpecialPowerNodeShield') 
+				 	    || HitActor.IsA('ONSSpecialPowerNodeEnergySphere')) 
+				 	    Node = DestroyableObjective(HitActor.Owner);
 				  		
 				  if (Node != None) {
 				  	//log("OdinLinkTurret:HitActorNode"$HitActor$"ONSPowerCore(Node).PoweredBy(TeamNum"$TeamNum$")="$ONSPowerCore(Node).PoweredBy(TeamNum));
