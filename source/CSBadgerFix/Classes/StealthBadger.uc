@@ -220,8 +220,8 @@ defaultproperties
 
      VehicleMass=5.000000
      VehicleNameString="Stealth Badger"
-     HealthMax=300.000000
-     Health=300
+     HealthMax=450.000000
+     Health=450
      SoundVolume=255
      SoundPitch=48
      SoundRadius=100.000000

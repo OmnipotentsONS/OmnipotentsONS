@@ -133,7 +133,7 @@ simulated event Tick(float dt)
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
 	local LinkBeamEffect Beam;
-  local float DamageAmount;
+ // local float DamageAmount;
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
 
@@ -435,7 +435,7 @@ simulated event Tick(float dt)
 		LinkedVehicle = Vehicle(LockedPawn);
 		if ( LinkedVehicle != None && bDoHit )
 		{
-			AdjustedDamage = AltDamage * (1.5*NumLinks+1) * Instigator.DamageScaling;
+			AdjustedDamage = AltDamage * (LinkMultiplier*NumLinks+1) * Instigator.DamageScaling;
 			if (Instigator.HasUDamage())
 				AdjustedDamage *= 2;
 				
@@ -610,4 +610,5 @@ defaultproperties
      bSelected=True
 
      VehicleHealScore=800
+     LinkMultiplier=1.4
 }

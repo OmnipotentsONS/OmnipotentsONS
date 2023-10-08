@@ -118,8 +118,8 @@ defaultproperties
      VehiclePositionString="in a BioBadger"
      VehicleNameString="BioBadger"
      HornSounds(0)=Sound'BioAegis_Sound.BioTank.BioTankHorn0'
-     HealthMax=900.000000
-     Health=900
+     HealthMax=700.000000
+     Health=700
      Begin Object Class=KarmaParamsRBFull Name=KarmaParamsRBFull5
          KInertiaTensor(0)=1.300000
          KInertiaTensor(3)=4.000000

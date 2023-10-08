@@ -12,6 +12,7 @@ var() array<Material> LinkSkin_Gold, LinkSkin_Green, LinkSkin_Red, LinkSkin_Blue
 var() int LinkBeamSkin;
 var() sound LinkedFireSound;
 var() float HealMult;
+var() float LinkMultiplier;
 
 // CPed from LinkFire
 var(LinkBeam) class<LinkBeamEffect>	BeamEffectClass;
@@ -217,8 +218,8 @@ simulated event Tick(float dt)
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
 	local LinkBeamEffect Beam;
-    local int score;
-    local float DamageAmount;
+    //local int score;
+    //local float DamageAmount;
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
 
@@ -520,7 +521,7 @@ simulated event Tick(float dt)
 		LinkedVehicle = Vehicle(LockedPawn);
 		if ( LinkedVehicle != None && bDoHit )
 		{
-			AdjustedDamage = AltDamage * (1.5*NumLinks+1) * Instigator.DamageScaling;
+			AdjustedDamage = AltDamage * (HealMult*NumLinks+1) * Instigator.DamageScaling;
 			if (Instigator.HasUDamage())
 				AdjustedDamage *= 2;
 			if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
@@ -616,7 +617,7 @@ simulated event Tick(float dt)
 // ============================================================================
 simulated function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
 {
-	Damage = Damage * (1.5*NumLinks+1);
+	Damage = Damage * (LinkMultiplier*NumLinks+1);
 
 	if ( Other.IsA('Vehicle') )
 		Damage *= VehicleDamageMult;
@@ -927,7 +928,7 @@ defaultproperties
      BeamSounds(1)=Sound'WeaponSounds.LinkGun.BLinkGunBeam2'
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
-     VehicleDamageMult=1.500000
+     VehicleDamageMult=1.400000
      bInitAimError=True
      YawBone="Object02"
      PitchBone="Object02"
@@ -958,4 +959,6 @@ defaultproperties
      TransientSoundRadius=1024.000000
 
      VehicleHealScore=800
+     LinkMultiplier = 0.9
 }
+

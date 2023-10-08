@@ -15,6 +15,7 @@ function bool IsBadgerClass(name className)
     || className == 'MyBadger'
     || className == 'BioBadger'
     || className == 'FireBadger'
+    || className == 'FlameBadger'
     || className == 'IonPlasmaBadger'
     || className == 'LinkBadger'
     || className == 'LinkBadger2'
@@ -56,6 +57,10 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
         else if(factory.VehicleClass.Name == 'FireBadger')
         {
             SVehicleFactory(Other).VehicleClass = class'CSBadgerFix.FireBadger';
+        }
+        else if(factory.VehicleClass.Name == 'FlameBadger')
+        {
+            SVehicleFactory(Other).VehicleClass = class'CSBadgerFix.FlameBadger';
         }
         else if(factory.VehicleClass.Name == 'ReverseBadger')
         {

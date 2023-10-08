@@ -113,8 +113,8 @@ defaultproperties
 
      VehiclePositionString="in an Ion Plasma Badger"
      VehicleNameString="Ion Plasma Badger"
-     HealthMax=750.000000
-     Health=750
+     HealthMax=700.000000
+     Health=700
      Begin Object Class=KarmaParamsRBFull Name=KarmaParamsRBFull16
          KInertiaTensor(0)=1.000000
          KInertiaTensor(3)=3.000000
