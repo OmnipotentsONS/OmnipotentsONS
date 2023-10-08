@@ -727,7 +727,7 @@ defaultproperties
      //LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
      Damage=12  //link gun shaft is 9, Scorp is 12, Hvy LinkTank 17  This is its primary close in weapon.
-     Momentum=-10000
+     Momentum=-13000
      LinkFlexibility=1.20000
      bInitAimError=True
      LinkVolume=240
@@ -756,7 +756,7 @@ defaultproperties
      AltFireInterval=3.25000
      FireSoundVolume=255.000000
      DamageType=Class'DamTypeLampreyBeam'
-     TraceRange=5500.000000  // 1100 is link gun's trace range
+     TraceRange=4500.000000  // 1100 is link gun's trace range
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
      ShakeRotTime=6.000000
@@ -778,7 +778,7 @@ defaultproperties
     
      LinkMultiplier = 1.0; // not used here
 		 SelfHealMultiplier = 0.9;
-		 VehicleDamageMult = 1.25;
+		 VehicleDamageMult = 1.4;
 		 VehicleHealScore = 250;
 		 RangeExtPerLink=500; // how much range is extended per linker
 		 

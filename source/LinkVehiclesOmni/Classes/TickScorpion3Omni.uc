@@ -598,7 +598,7 @@ defaultproperties
 		 VehicleMass = 3.3
      bScriptedRise=True
      VehiclePositionString="in a Tick Scorpion"
-     VehicleNameString="Tick Scorpion 3.34"
+     VehicleNameString="Tick Scorpion 3.4"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkScorp3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkScorp3Pancake'
      Begin Object Class=KarmaParamsRBFull Name=KParams0
@@ -611,7 +611,7 @@ defaultproperties
          KInertiaTensor(0)=1.000000
          KInertiaTensor(3)=3.000000
          KInertiaTensor(5)=3.000000
-         KCOMOffset=(X=-0.250000,Z=-0.40000)
+         KCOMOffset=(X=-0.00000,Z=-0.40000)
          KLinearDamping=0.050000
          KAngularDamping=0.450000
          bKStayUpright=True

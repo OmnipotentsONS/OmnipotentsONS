@@ -289,9 +289,9 @@ defaultproperties
      DisintegrationEffectClass=None
      DisintegrationHealth=0.000000
      VehiclePositionString="in a Chupacabra"
-     VehicleNameString="Chupacabra 1.2"
+     VehicleNameString="Chupacabra 1.4"
      GroundSpeed=2200.000000
-     HealthMax=450.000000
+     HealthMax=325.000000
      Mesh=SkeletalMesh'LinkFlyer_Mesh.LinkFlyer.LinkFinal'
      CollisionRadius=130.000000
      Begin Object Class=KarmaParamsRBFull Name=KParams0

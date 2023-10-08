@@ -421,7 +421,7 @@ simulated event Tick(float dt)
 // ============================================================================
 simulated function float AdjustLinkDamage(int NumLinks, Actor Other, float Damage)
     {
-    Damage=Damage * (1.5*NumLinks+1);
+    Damage=Damage * (LinkMultiplier*NumLinks+1);
 
     if (Other != None && Other.IsA('Vehicle'))
         Damage*=VehicleDamageMult;
@@ -693,10 +693,10 @@ defaultproperties
      BeamSounds(1)=Sound'WeaponSounds.LinkGun.BLinkGunBeam2'
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
-     VehicleDamageMult=1.500000
+     VehicleDamageMult=1.350000
      bInitAimError=True
-     SelfHealMultiplier=0.600000
-     LinkMultiplier=1.5
+     SelfHealMultiplier=0.500000
+     LinkMultiplier=0.9
      VehicleHealScore=600
      YawBone="PlasmaGunBarrel"
      PitchBone="PlasmaGunBarrel"

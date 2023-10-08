@@ -871,7 +871,7 @@ defaultproperties
      LinkBreakDelay=0.500000
      MomentumTransfer=2000.000000
      AltDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3HeavyBeam'
-     AltDamage=21
+     AltDamage=19
      MakeLinkForce="LinkActivated"
      LinkFlexibility=0.550000
      LinkVolume=240
@@ -880,7 +880,7 @@ defaultproperties
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
      VehicleDamageMult=1.500000
-     LinkMultiplier = 0.70000
+     LinkMultiplier = 1.00000
      bInitAimError=True
      YawBone="Object02"
      PitchBone="Object02"

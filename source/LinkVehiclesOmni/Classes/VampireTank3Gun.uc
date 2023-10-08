@@ -771,7 +771,7 @@ defaultproperties
      //LinkScale(4)=1.400000
      //LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
-     Damage=19  //link gun shaft is 9, Scorp,Badger is 15,  Regular link tank, 18 Hvy LinkTank 21  This is its primary close in weapon.
+     Damage=17  //link gun shaft is 9, Scorp,Badger is 15,  Regular link tank, 17 Hvy LinkTank 19  This is its primary close in weapon.
      Momentum=-25000
      LinkFlexibility=0.700000
      bInitAimError=True
@@ -808,7 +808,7 @@ defaultproperties
     
      LinkMultiplier = 0.51;  //smaller since it heals itself
 		 SelfHealMultiplier = 1.0
-		 VehicleDamageMult = 1.25
+		 VehicleDamageMult = 1.20
 		 VehicleHealScore=250
 		 RangeExtPerLink=500 // how much range is extended per linker
 		 LinkMultiplierCap = 3.5

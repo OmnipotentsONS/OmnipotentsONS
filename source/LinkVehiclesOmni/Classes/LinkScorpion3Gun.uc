@@ -602,7 +602,7 @@ defaultproperties
      LinkScale(5)=3.00000 
      
      MakeLinkForce="LinkActivated"
-     Damage=15 // link gun damage is 9, link badger = 15
+     Damage=13 // link gun damage is 9, link badger = 15
      LinkFlexibility=0.350000
      bInitAimError=True
      PitchUpLimit=13000
@@ -633,7 +633,7 @@ defaultproperties
      BlueSkin=Texture'LinkScorpion3Tex.LinkScorpGun'
      SoundVolume=150
      
-     LinkMultiplier = 1.5; // each linker adds 150%
+     LinkMultiplier = 0.8; // each linker adds 80%
      VehicleDamageMult = 1.5 // more damage to vehicles.
      SelfHealMultiplier = 1.1 // good heal multiplier, it has to get close.
      VehicleHealScore = 250.0

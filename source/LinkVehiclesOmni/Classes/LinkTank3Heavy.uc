@@ -483,11 +483,11 @@ defaultproperties
      TPCamWorldOffset=(Z=300.000000)
      
      VehiclePositionString="in a Heavy Link Tank"
-     VehicleNameString="Heavy Link Tank 3.3"
+     VehicleNameString="Heavy Link Tank 3.4"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3HeavyRoadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3HeavyPancake'
-     HealthMax=1550.000000
-     Health=1250.00000
+     HealthMax=1450.000000
+     Health=1150.00000
      Mesh=SkeletalMesh'ONSToys1Mesh.LinkTankChassis'
      Skins(0)=Combiner'LinkTank3Tex.HeavyLinkTank.LinkTankBodyRed-Idle'
      Skins(1)=Texture'LinkTank3Tex.HeavyLinkTank.LinkTankTread'

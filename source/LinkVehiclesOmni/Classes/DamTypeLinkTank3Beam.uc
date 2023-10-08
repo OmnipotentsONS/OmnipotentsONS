@@ -12,4 +12,5 @@ defaultproperties
      DeathString="%o received the long green shaft of %k's Link Tank."
      FemaleSuicide="%o gave herself the shaft... oh dear"
      MaleSuicide="%o gave himself the shaft... oh dear"
+     VehicleDamageScaling = 1.30
 }

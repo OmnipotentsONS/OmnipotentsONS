@@ -646,7 +646,7 @@ defaultproperties
      bAllowBigWheels=True
      AirTurnTorque=35.000000
      AirPitchTorque=55.000000
-     AirPitchDamping=55.000000
+     AirPitchDamping=35.000000
      AirRollTorque=35.000000
      AirRollDamping=35.000000
      MaxJumpSpin=100.000000
@@ -703,7 +703,7 @@ defaultproperties
 
      bScriptedRise=True
      VehiclePositionString="in a Link Scorpion"
-     VehicleNameString="Link Scorpion 3.34"
+     VehicleNameString="Link Scorpion 3.4"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkScorp3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkScorp3Pancake'
      Begin Object Class=KarmaParamsRBFull Name=KParams0
@@ -715,11 +715,12 @@ defaultproperties
          KAngularDamping=0.0500000*/
         KInertiaTensor(0)=1.000000
          KInertiaTensor(3)=3.000000
-         KInertiaTensor(5)=3.000000
-         KCOMOffset=(X=-0.250000,Z=-0.40000)
+         KInertiaTensor(5)=3.500000
+         KCOMOffset=(X=-0.00000,Y=0.00000,Z=-0.40000)
          KLinearDamping=0.050000
-         KAngularDamping=0.450000
+         KAngularDamping=0.050000
          bKStayUpright=True
+         bKAllowRotate=False
          StayUprightStiffness=50
          StayUprightDamping=2
          KStartEnabled=True

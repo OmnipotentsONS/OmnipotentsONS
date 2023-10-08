@@ -783,8 +783,8 @@ defaultproperties
      LinkScale(4)=1.400000
      LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
-     Damage=13  //link gun shaft is 9
-     DamageMin=13 
+     Damage=15  //link gun shaft is 9
+     DamageMin=15 
      Momentum=-13000  //sucking u in 
      LinkFlexibility=0.300000
      bInitAimError=True
@@ -817,10 +817,10 @@ defaultproperties
      SoundVolume=150
     
      CurrDrawScale = 1
-     NumLinkers = 1
+     NumLinkers = 0
      LinkMultiplier = 1.5
 		 SelfHealMultiplier = 1.1
-		 VehicleDamageMultiplier = 1.25 //  increased damage to vehicles might add some specific vehicles here?
+		 VehicleDamageMultiplier = 1.5 //  increased damage to vehicles might add some specific vehicles here?
      VehicleHealScore = 250
      RangeExtPerLink = 500
      //AltFire
