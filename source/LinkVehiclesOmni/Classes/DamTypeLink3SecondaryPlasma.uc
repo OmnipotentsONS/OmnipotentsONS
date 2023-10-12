@@ -12,4 +12,5 @@ defaultproperties
      DeathString="%o swallowed some of %k's steaming hot plasma."
      FemaleSuicide="%o swallowed her own plasma."
      MaleSuicide="%o swallowed his own plasma."
+     VehicleDamageScaling = 1.60
 }

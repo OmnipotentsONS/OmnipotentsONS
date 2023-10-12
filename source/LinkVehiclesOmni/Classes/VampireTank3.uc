@@ -487,7 +487,7 @@ defaultproperties
      TPCamWorldOffset=(Z=300.000000)
      
      VehiclePositionString="in a Vampire Tank"
-     VehicleNameString="Vampire Tank 3.4"
+     VehicleNameString="Vampire Tank 3.41"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Pancake'
      HealthMax=1366.000000
@@ -500,6 +500,7 @@ defaultproperties
     GroundSpeed=2300
     MaxGroundSpeed=2800
     MaxAirSpeed=8500
+    HoverCheckDist=67 // raise it just bit to avoid snags
     Begin Object Class=KarmaParamsRBFull Name=KParams0
 			KStartEnabled=True
 			KFriction=0.4

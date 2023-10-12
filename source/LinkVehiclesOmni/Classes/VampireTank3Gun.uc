@@ -808,7 +808,7 @@ defaultproperties
     
      LinkMultiplier = 0.51;  //smaller since it heals itself
 		 SelfHealMultiplier = 1.0
-		 VehicleDamageMult = 1.20
+		 VehicleDamageMult = 1.20  // set here instead DamType
 		 VehicleHealScore=250
 		 RangeExtPerLink=500 // how much range is extended per linker
 		 LinkMultiplierCap = 3.5
@@ -816,7 +816,7 @@ defaultproperties
      AltFireRadius=1500.000000
      AltFireDamage=275.000000 //  phoenix. 350 but has no vehicle multiplier
      AltFireDamageVehicleMult=2.000000 // ion blast already had 2.0 multipler... so it does 500 to vehicles.  Applies to nodes
-     AltFireDamageEasterEggMult=5.500000
+     AltFireDamageEasterEggMult=6.500000
      AltFireMomentumVehicleMult=4.000000
      AltFireMomentumEasterEggMult=40.000000
      AltFireMomentum=20000.000000

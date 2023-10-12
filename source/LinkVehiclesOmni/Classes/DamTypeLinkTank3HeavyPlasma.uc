@@ -12,5 +12,6 @@ defaultproperties
      DeathString="%o choked down some of %k's steaming hot Link Tank plasma."
      FemaleSuicide="%o gulped down her own plasma."
      MaleSuicide="%o gulped down his own plasma."
-     VehicleDamageScaling = 1.25
+     VehicleDamageScaling = 1.50
+     // VehicleDamageMult also set in PROJ_LinkTurret_Plasama don't need it twice
 }

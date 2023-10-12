@@ -910,8 +910,8 @@ defaultproperties
      BeamSounds(1)=Sound'WeaponSounds.LinkGun.BLinkGunBeam2'
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
-     VehicleDamageMult=1.500000
-     LinkMultiplier = 0.90000
+     VehicleDamageMult=1.500000  // for beam, plasma proj handled in projectile
+     LinkMultiplier = 0.90000  // for plasma this is hard coded in PROJ_LinkTurretPlasma = 1
      LinkMultiplierCap = 3.5
      bInitAimError=True
      YawBone="Object02"

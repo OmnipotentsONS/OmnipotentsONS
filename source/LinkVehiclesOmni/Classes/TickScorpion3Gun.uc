@@ -32,6 +32,7 @@ var() float LinkFlexibility;
 var float LinkMultiplier;
 var float SelfHealMultiplier; 
 var float VehicleDamageMultiplier;
+var float EasterEggVehicleDamageMultiplier;
 var config int VehicleHealScore;
 var float RangeExtPerLink;
 
@@ -123,7 +124,11 @@ function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
 	AdjDamage =Min( DamageMin,Damage * (LinkMultiplier*NumLinks+1)*CurrDrawScale);
 	
 
-	if ( Other.IsA('Vehicle') ) AdjDamage *= VehicleDamageMultiplier;
+	if ( Other.IsA('Vehicle') ) 
+		if 	(Other.IsA('Omnitaur')|| Other.IsA('Minotaur')|| Other.IsA('MinotaurClassic') || Other.Isa('ONSMobileAssaultStation'))
+				AdjDamage *= EasterEggVehicleDamageMultiplier;
+		else 		
+		   AdjDamage *= VehicleDamageMultiplier;
   if (Instigator.HasUDamage()) 	AdjDamage *= 2;
 	
 	return AdjDamage;
@@ -821,6 +826,7 @@ defaultproperties
      LinkMultiplier = 1.5
 		 SelfHealMultiplier = 1.1
 		 VehicleDamageMultiplier = 1.5 //  increased damage to vehicles might add some specific vehicles here?
+		 EasterEggVehicleDamageMultiplier = 2.75 // special mult for certain vehicles.
      VehicleHealScore = 250
      RangeExtPerLink = 500
      //AltFire

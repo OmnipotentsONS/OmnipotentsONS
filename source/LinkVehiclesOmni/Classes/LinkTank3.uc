@@ -481,7 +481,7 @@ defaultproperties
      TPCamWorldOffset=(Z=300.000000)
      
      VehiclePositionString="in a Link Tank"
-     VehicleNameString=" Link Tank 3.4"
+     VehicleNameString=" Link Tank 3.41"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Pancake'
      HealthMax=1150.00000
@@ -491,7 +491,8 @@ defaultproperties
      Skins(1)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
      Skins(2)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
      MaxGroundSpeed=875.000000
-      Begin Object Class=KarmaParamsRBFull Name=KParams0
+		HoverCheckDist=67 // raise it just bit to avoid snags      
+		Begin Object Class=KarmaParamsRBFull Name=KParams0
          KInertiaTensor(0)=1.300000
          KInertiaTensor(3)=4.000000
          KInertiaTensor(5)=4.500000

@@ -186,10 +186,10 @@ simulated function ProcessTouch (Actor Other, vector HitLocation)
 
 defaultproperties
 {
-     VehicleDamageMult=4.000000
+     VehicleDamageMult=3.000000
      Speed=3000.000000
      MaxSpeed=5000.000000
-     Damage=50.000000
+     Damage=40.000000
      DamageRadius=120.000000
      MomentumTransfer=5000.000000
      MyDamageType=Class'LinkVehiclesOmni.DamTypeLink3SecondaryPlasma'
