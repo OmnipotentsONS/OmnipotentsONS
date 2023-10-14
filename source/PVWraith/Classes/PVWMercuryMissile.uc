@@ -282,7 +282,11 @@ Returns how a contact with another object affects this projectile's movement.
 */
 simulated function bool ShouldPenetrate(Actor Other, vector HitNormal)
 {
-	return UnrealPawn(Other) != None && !Other.IsInState('Frozen') && VSize(Velocity) - Normal(Velocity) dot Other.Velocity > PunchThroughSpeed && UnrealPawn(Other).GetShieldStrength() == 0;
+	return (Other != none && !Other.bBlockProjectiles) ||
+    UnrealPawn(Other) != None 
+    && !Other.IsInState('Frozen') 
+    && VSize(Velocity) - Normal(Velocity) dot Other.Velocity > PunchThroughSpeed 
+    && UnrealPawn(Other).GetShieldStrength() == 0;
 }
 
 /**
