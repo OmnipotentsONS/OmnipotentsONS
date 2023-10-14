@@ -37,7 +37,7 @@ defaultproperties
      FPCamPos=(X=150.000000,Z=120.000000)
      TPCamDistance=850.000000
      VehiclePositionString="in a Human Viper"
-     VehicleNameString="Human Viper 2.32"
+     VehicleNameString="Human Viper 2.33"
      RanOverDamageType=Class'KopholusV2Omni.DamTypeHumanViperRoadkill'
      CrushedDamageType=Class'KopholusV2Omni.DamTypeHumanViperPancake'
      Mesh=SkeletalMesh'KASPvehicles.HumanViper'

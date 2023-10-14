@@ -22,7 +22,7 @@ defaultproperties
      DrivePos=(X=-19.000000,Y=58.000000,Z=183.000000)
      TPCamDistance=700.000000
      VehiclePositionString="in a Mobreaker"
-     VehicleNameString="Mobreaker 1.2"
+     VehicleNameString="Mobreaker 1.21"
      FlagBone="Roof"
      HornSounds(0)=Sound'Minotaur_Sound.Minotaurhorn'
      HealthMax=1600.000000

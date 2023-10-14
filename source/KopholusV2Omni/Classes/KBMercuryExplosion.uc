@@ -59,7 +59,7 @@ simulated event PostNetBeginPlay()
 	}
 }
 
-auto simulated state ExplMobreakerg
+auto simulated state ExplKopholusV2Omnig
 {
 Begin:
 	if (PhysicsVolume.bWaterVolume || bWaterExplosion)
@@ -109,7 +109,7 @@ defaultproperties
          VelocityLossRange=(X=(Min=1.500000,Max=2.500000),Y=(Min=1.500000,Max=2.500000),Z=(Min=1.500000,Max=2.500000))
          GetVelocityDirectionFrom=PTVD_AddRadial
      End Object
-     Emitters(0)=SpriteEmitter'Mobreaker.KBMercuryExplosion.ExplosionRing'
+     Emitters(0)=SpriteEmitter'KopholusV2Omni.KBMercuryExplosion.ExplosionRing'
 
      Begin Object Class=SpriteEmitter Name=ExplosionSmokeRing
          FadeOut=True
@@ -141,7 +141,7 @@ defaultproperties
          VelocityLossRange=(X=(Min=1.000000,Max=1.000000),Y=(Min=1.000000,Max=1.000000),Z=(Min=1.000000,Max=1.000000))
          GetVelocityDirectionFrom=PTVD_AddRadial
      End Object
-     Emitters(1)=SpriteEmitter'Mobreaker.KBMercuryExplosion.ExplosionSmokeRing'
+     Emitters(1)=SpriteEmitter'KopholusV2Omni.KBMercuryExplosion.ExplosionSmokeRing'
 
      AutoDestroy=True
      bNoDelete=False

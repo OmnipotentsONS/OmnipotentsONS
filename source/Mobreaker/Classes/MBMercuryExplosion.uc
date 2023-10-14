@@ -9,7 +9,7 @@
 
 class MBMercuryExplosion extends Emitter notplaceable;
 
-#exec obj load file=WVMercuryMissles_Tex.utx
+#exec obj load file=WVMercuryMissiles_Tex.utx
 
 //=============================================================================
 // Variables
@@ -59,7 +59,7 @@ simulated event PostNetBeginPlay()
 	}
 }
 
-auto simulated state ExplBansheeg
+auto simulated state ExplMobreakerg
 {
 Begin:
 	if (PhysicsVolume.bWaterVolume || bWaterExplosion)

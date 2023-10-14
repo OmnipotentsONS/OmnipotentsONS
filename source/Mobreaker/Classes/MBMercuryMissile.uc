@@ -411,7 +411,11 @@ simulated function ProcessContact(bool bPenetrate, Actor Other, vector HitLocati
 	if (!bPenetrate) {
 		SpawnExplosionEffects(Other, HitLocation, HitNormal);
 	}
-	if (Role == ROLE_Authority || Other == None || Other.Role < ROLE_Authority) {
+	//	if (Role == ROLE_Authority || Other == None || Other.Role < ROLE_Authority) {
+	 // fix bug here on pally shields they have Other.Role = ROLE_Authority  Other.Role < ROLE_Authority which was always false on the client
+	 // Other things like terrain, meshes, nodes other actors do make this true Other.Role < ROLE_Authority but not for pally shields.  I think this whole if is pointless
+	 // pooty 10/23
+
 		if (bPenetrate) {
 			Velocity -= VDiff;
 			SpawnPenetrationEffects(Other, HitLocation, HitNormal);
@@ -430,7 +434,7 @@ simulated function ProcessContact(bool bPenetrate, Actor Other, vector HitLocati
 			}
 			return;
 		}
-	}
+	//} pointless if
 
 	if (PC != None && (HeadshotPawn == None || HeadshotPawn.bDeleteMe || HeadshotPawn.Health <= 0)) {
 		PC.ReceiveLocalizedMessage(class'MBHeadshotVictimMessage',, InstigatorController.PlayerReplicationInfo);
@@ -691,7 +695,7 @@ defaultproperties
      UDamageMomentumBoost=1.500000
      RocketJumpBoost=3.000000
      Team=255
-     ExplodeOnPlayerSound=Sound'WVBanshee.Effects.MercHitArmor'
+     ExplodeOnPlayerSound=Sound'WVMercuryMissilesSounds.Effects.MercHitArmor'
      TeamSkins(0)=TexScaler'WVMercuryMissiles_Tex.Skins.MercuryMissileTexRed'
      TeamSkins(1)=TexScaler'WVMercuryMissiles_Tex.Skins.MercuryMissileTexBlue'
      TeamSkins(2)=TexScaler'WVMercuryMissiles_Tex.Skins.MercuryMissileTexGreen'

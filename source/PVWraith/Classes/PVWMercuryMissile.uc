@@ -282,11 +282,19 @@ Returns how a contact with another object affects this projectile's movement.
 */
 simulated function bool ShouldPenetrate(Actor Other, vector HitNormal)
 {
-	return (Other != none && !Other.bBlockProjectiles) ||
-    UnrealPawn(Other) != None 
-    && !Other.IsInState('Frozen') 
-    && VSize(Velocity) - Normal(Velocity) dot Other.Velocity > PunchThroughSpeed 
-    && UnrealPawn(Other).GetShieldStrength() == 0;
+	
+	return (UnrealPawn(Other) != None 
+	       &&  !Other.IsInState('Frozen')
+	       && VSize(Velocity) - Normal(Velocity) dot Other.Velocity > PunchThroughSpeed 
+	       && UnrealPawn(Other).GetShieldStrength() == ImpactDamageAmount/2);
+	
+	
+	
+	//return (Other != none && !Other.bBlockProjectiles) ||
+  //  UnrealPawn(Other) != None 
+  //  && !Other.IsInState('Frozen') 
+  //  && VSize(Velocity) - Normal(Velocity) dot Other.Velocity > PunchThroughSpeed 
+  //  && UnrealPawn(Other).GetShieldStrength() == 0;
 }
 
 /**
@@ -372,9 +380,9 @@ simulated function ProcessContact(bool bPenetrate, Actor Other, vector HitLocati
 	if (Vehicle(Other) != None) {
 		HeadShotPawn = Vehicle(Other).CheckForHeadShot(HitLocation, Normal(Velocity), HeadShotSizeAdjust);
 	}
+	
 	if (HeadShotPawn != None) {
-		if (LastTouched == Other)
-			LastTouched = HeadShotPawn;
+		if (LastTouched == Other) 	LastTouched = HeadShotPawn;
 		bPenetrate = ShouldPenetrate(HeadShotPawn, HitNormal);
 		Other = HeadShotPawn;
 	}
@@ -404,24 +412,28 @@ simulated function ProcessContact(bool bPenetrate, Actor Other, vector HitLocati
 		PC = PlayerController(HeadShotPawn.Controller);
 	}
 
-	if (Role == ROLE_Authority && Level.NetMode == NM_Client) {
+	if (Role == ROLE_Authority && Level.NetMode == NM_Client) return;
 		// already torn off, do nothing
-		return;
-	}
-	if (Role == ROLE_Authority) {
-		MakeNoise(1.0);
-	}
+	if (Role == ROLE_Authority) MakeNoise(1.0);
+	
 	ApplyDamage(HitLocation, VDiff, bPenetrate, DamageType, HeadshotPawn);
+	//log("Making Noise, Applied Damage bPenetrate="@bPenetrate, 'PVWMercuryMissle');
 	if (!bPenetrate) {
 		SpawnExplosionEffects(Other, HitLocation, HitNormal);
 	}
-	if (Role == ROLE_Authority || Other == None || Other.Role < ROLE_Authority) {
+	//log("Role="@Role@" Other="@Other@" Other.Role="@Other.Role, 'PVWMercuryMissle');
+//	if (Role == ROLE_Authority || Other == None || Other.Role < ROLE_Authority) {
+	 // fix bug here on pally shields they have Other.Role = ROLE_Authority  Other.Role < ROLE_Authority which was always false on the client
+	 // Other things like terrain, meshes, nodes other actors do make this true Other.Role < ROLE_Authority but not for pally shields.  I think this whole if is pointless
+	 // pooty 10/23
 		if (bPenetrate) {
 			Velocity -= VDiff;
 			SpawnPenetrationEffects(Other, HitLocation, HitNormal);
+			//log("SpawnedPenetrationEffects", 'PVWMercuryMissle');
 		}
 		else {
 			if (Role == ROLE_Authority) {
+				//log("ROLE_Authority FakeDestroy", 'PVWMercuryMissle');
 				ExplosionEffectInfo.Other = Other;
 				ExplosionEffectInfo.HitLocation = HitLocation;
 				ExplosionEffectInfo.HitNormal = HitNormal * 1000;
@@ -431,10 +443,11 @@ simulated function ProcessContact(bool bPenetrate, Actor Other, vector HitLocati
 			}
 			else {
 				Destroy();
+			//	log("!ROLE_Authority Destroy", 'PVWMercuryMissle');
 			}
 			return;
 		}
-	}
+	// } // bad if, shame on  you wormbo for that crappy if.
 
 	if (PC != None && (HeadshotPawn == None || HeadshotPawn.bDeleteMe || HeadshotPawn.Health <= 0)) {
 		PC.ReceiveLocalizedMessage(class'PVWHeadshotVictimMessage',, InstigatorController.PlayerReplicationInfo);
