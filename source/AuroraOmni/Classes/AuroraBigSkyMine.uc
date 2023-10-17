@@ -159,7 +159,7 @@ defaultproperties
      ChainReactionDelay=0.150000
      BeamEffectClass=Class'XWeapons.ShockBeamEffect'
      ProjectileEffectClass=Class'AuroraOmni.AuroraSkyMineEffect'
-     ComboDamage=175.000000
+     ComboDamage=150.000000
      ComboRadius=1100.000000
      ComboDamageType=Class'AuroraOmni.AuroraCombo'
      Speed=2600.000000
