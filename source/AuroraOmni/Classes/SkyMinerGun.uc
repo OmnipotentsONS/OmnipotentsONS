@@ -1,4 +1,4 @@
-class AuroraBigGun extends ONSWeapon;
+class SkyMinerGun extends ONSWeapon;
 
 #exec OBJ LOAD FILE=..\Animations\ONSWeapons-A.ukx
 
@@ -165,7 +165,7 @@ defaultproperties
      bInstantFire=True
      bDoOffsetTrace=True
      FireInterval=0.400000
-     AltFireInterval=0.70000
+     AltFireInterval=0.750000
      FlashEmitterClass=Class'AuroraOmni.AuroraMuzzleFlash'
      FireSoundClass=Sound'ONSVehicleSounds-S.PRV.PRVFire01'
      AltFireSoundClass=Sound'ONSVehicleSounds-S.PRV.PRVFire02'
@@ -173,13 +173,13 @@ defaultproperties
      AltFireForce="PRVSideAltFire"
      DamageType=Class'AuroraOmni.AuroraLaser'
      DamageMin=40
-     DamageMax=50
-     ProjectileClass=Class'AuroraOmni.AuroraBigSkyMine'
+     DamageMax=45
+     ProjectileClass=Class'AuroraOmni.AuroraSkyMine'
      ShakeRotMag=(X=60.000000,Y=20.000000)
      ShakeRotRate=(X=1000.000000,Y=1000.000000)
      ShakeRotTime=2.000000
      AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.200000,RefireRate=1.000000)
      AIInfo(1)=(bInstantHit=True,RefireRate=0.000000)
-     CullDistance=8000.000000
+     CullDistance=6000.000000
      Mesh=SkeletalMesh'ONSWeapons-A.PlasmaGun'
 }

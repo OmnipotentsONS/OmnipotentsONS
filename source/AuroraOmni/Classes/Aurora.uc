@@ -394,11 +394,11 @@ defaultproperties
      RedSkin=Texture'GorzBirds_Tex.Aurora.AuroraRed'
      BlueSkin=Texture'GorzBirds_Tex.Aurora.AuroraBlue'
      VehiclePositionString="in an Aurora"
-     VehicleNameString="Aurora 2.0"
+     VehicleNameString="Aurora 2.1"
      RanOverDamageType=Class'AuroraOmni.AuroraDamTypeRoadkill'
      CrushedDamageType=Class'AuroraOmni.AuroraDamTypePancake'
-     HealthMax=400.000000
-     Health=400
+     HealthMax=350.000000
+     Health=350
      Mesh=SkeletalMesh'Gorz_BB_Mesh.Birds.Aurora'
      Begin Object Class=KarmaParamsRBFull Name=KParams0
          KInertiaTensor(0)=1.000000

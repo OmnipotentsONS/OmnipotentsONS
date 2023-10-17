@@ -390,15 +390,15 @@ defaultproperties
      StreamerOpacityRamp=(Min=1200.000000,Max=1600.000000)
      StreamerOpacityChangeRate=1.000000
      StreamerOpacityMax=0.700000
-     DriverWeapons(0)=(WeaponClass=Class'AuroraOmni.AuroraGun')
+     DriverWeapons(0)=(WeaponClass=Class'AuroraOmni.SkyMinerGun')
      RedSkin=Texture'SkyMiner_Tex.SkyMiner.SkyMinerRed'
      BlueSkin=Texture'SkyMiner_Tex.SkyMiner.SkyMinerBlue'
      VehiclePositionString="in an SkyMiner"
-     VehicleNameString="SkyMiner 1.0"
+     VehicleNameString="SkyMiner 2.1"
      RanOverDamageType=Class'AuroraOmni.AuroraDamTypeRoadkill'
      CrushedDamageType=Class'AuroraOmni.AuroraDamTypePancake'
-     HealthMax=400.000000
-     Health=400
+     HealthMax=325.000000
+     Health=325
      Mesh=SkeletalMesh'Gorz_BB_Mesh.Birds.Aurora'
      Begin Object Class=KarmaParamsRBFull Name=KParams0
          KInertiaTensor(0)=1.000000

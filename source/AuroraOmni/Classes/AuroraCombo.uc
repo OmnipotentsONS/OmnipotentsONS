@@ -8,6 +8,6 @@ defaultproperties
      FemaleSuicide="%o was a little hasty detonation her skymines."
      MaleSuicide="%o was a little hasty detonating his skymines."
      bDelayedDamage=True
-     VehicleDamageScaling=0.750000
-     VehicleMomentumScaling=0.500000
+     VehicleDamageScaling=0.650000
+     VehicleMomentumScaling=0.65000
 }

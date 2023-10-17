@@ -156,20 +156,20 @@ defaultproperties
 {
      bDoChainReaction=True
      MaxChainReactionDist=8000.000000
-     ChainReactionDelay=0.200000
+     ChainReactionDelay=0.150000
      BeamEffectClass=Class'XWeapons.ShockBeamEffect'
      ProjectileEffectClass=Class'AuroraOmni.AuroraSkyMineEffect'
      ComboDamage=175.000000
-     ComboRadius=1050.000000
+     ComboRadius=1100.000000
      ComboDamageType=Class'AuroraOmni.AuroraCombo'
-     Speed=2400.000000
-     MaxSpeed=2400.000000
+     Speed=2600.000000
+     MaxSpeed=2600.000000
      Damage=40.000000
      MomentumTransfer=150000.000000
      MyDamageType=Class'AuroraOmni.AuroraSkyMineKill'
      DrawType=DT_None
-     LifeSpan=4.500000
-     DrawScale=3.050000
+     LifeSpan=4.650000
+     DrawScale=3.10000
      Style=STY_Additive
      CollisionRadius=20.000000
      CollisionHeight=20.000000
