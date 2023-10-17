@@ -172,8 +172,8 @@ defaultproperties
      FireForce="PRVSideFire"
      AltFireForce="PRVSideAltFire"
      DamageType=Class'AuroraOmni.AuroraLaser'
-     DamageMin=40
-     DamageMax=50
+     DamageMin=45
+     DamageMax=55
      ProjectileClass=Class'AuroraOmni.AuroraBigSkyMine'
      ShakeRotMag=(X=60.000000,Y=20.000000)
      ShakeRotRate=(X=1000.000000,Y=1000.000000)
