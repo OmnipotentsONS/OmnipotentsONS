@@ -125,7 +125,7 @@ defaultproperties
      LightBrightness=150.000000
      LightRadius=3.000000
      bNoDelete=False
-     bDynamicLight=True
+     // bDynamicLight=True  Dynlight often caues FPS drops
      bTrailerSameRotation=True
      Physics=PHYS_Trailer
      AmbientSound=Sound'GeneralAmbience.firefx11'

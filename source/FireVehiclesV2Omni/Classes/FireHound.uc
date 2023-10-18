@@ -434,7 +434,7 @@ defaultproperties
      TPCamWorldOffset=(Z=100.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a FireHound"
-     VehicleNameString="FireHound 2.0"
+     VehicleNameString="FireHound 2.93"
      RanOverDamageType=Class'FireVehiclesV2Omni.FireHoundRoadkill'
      HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.DixieHorn'
      HornSounds(1)=Sound'GorzWheels_Sounds.FireHound.FireHoundHorn'

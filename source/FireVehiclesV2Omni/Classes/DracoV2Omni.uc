@@ -84,12 +84,13 @@ if (DamageType.name == 'FalconPlasma')
     Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
 }
 
+/*
 function KDriverEnter(Pawn p)
 {
 	p.ReceiveLocalizedMessage(class'FireVehiclesV2Omni.DracoEnterMessage', 0);
 	Super.KDriverEnter(p);
 }
-
+*/
 
 
 //=============================================================================
@@ -130,7 +131,7 @@ defaultproperties
      FPCamViewOffset=(X=50.000000,Z=50.000000)
      TPCamWorldOffset=(Z=200.000000)
      VehiclePositionString="in a Draco"
-     VehicleNameString="Draco 2.922"
+     VehicleNameString="Draco 2.93"
      VehicleDescription="Draco is the latin word for 'dragon' - and this one breathes fire!"
      RanOverDamageType=Class'FireVehiclesV2Omni.DamTypeDracoRoadkill'
      CrushedDamageType=Class'FireVehiclesV2Omni.DamTypeDracoPancake'
@@ -138,7 +139,7 @@ defaultproperties
      
      // Increase explosion damage if they killing you hitting node should take the node out..
      ExplosionDamage=750.000000
-     ExplosionRadius=1500.000000  // reduce it a bit 2500 - 1500
+     ExplosionRadius=1250.000000  // reduce it a bit 2500 - 1500
      ExplosionMomentum=150000.000000
      ExplosionDamageType=Class'FireVehiclesV2Omni.DamTypeDracoExplosion'
     

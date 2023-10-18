@@ -151,7 +151,7 @@ defaultproperties
      DamageType=Class'FireVehiclesV2Omni.HeatRay'
      DamageMin=20
      DamageMax=23
-     TraceRange=80000.000000
+     TraceRange=40000.000000
      Momentum=0.000000
           
      AIInfo(0)=(bInstantHit=True,aimerror=400.000000)

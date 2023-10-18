@@ -1,4 +1,4 @@
-class FireMantaProjectile extends Projectile;
+class FireMantaProjectile_ORIG extends Projectile;
 
 var bool		bHitWater, bWaterStart;
 var vector		Dir;
@@ -14,7 +14,6 @@ var xEmitter Flame;
 var() class<xEmitter> FlameClass;
 var() class<DamageType> DamageType, BurnDamageType;
 var bool bDoTouch;
-
 
 replication
 {
@@ -50,52 +49,62 @@ if (Level.NetMode != NM_DedicatedServer)
 
 }
 
-// this was updated by pooty, per snarf's suggestions on the forum to get rid of the timer calls.
+simulated function Timer()
+{
+	local float VelMag;
+	local vector ForceDir;
+	local Pawn P;
+	local BurnerSmall Inv;
+
+	if (HomingTarget == None)
+		return;
+
+	ForceDir = Normal(HomingTarget.Location - Location);
+	if (ForceDir dot InitialDir > 0)
+	{
+	    	VelMag = VSize(Velocity);
+
+	    	ForceDir = Normal(ForceDir * 0.7 * VelMag + Velocity);
+		Velocity =  VelMag * ForceDir;
+    		Acceleration = Normal(Velocity) * AccelRate;
+
+		SetRotation(rotator(Velocity));
+	}
+	if(Role == ROLE_Authority && bDoTouch)
+	{
+		foreach TouchingActors(class'Pawn', P)
+		{
+			If(P != class'ONSPowerCore'&& P.Controller != None)
+                        {
+                        if(P.Health > 0 && (!Level.Game.bTeamGame || !P.Controller.SameTeamAs(InstigatorController)))
+			{
+				P.CreateInventory("BurnerSmall");
+				Inv = BurnerSmall(P.FindInventoryType(class'BurnerSmall'));
+
+				if(Inv != None)
+				{
+					Inv.DamageType = BurnDamageType;
+					Inv.Chef = Instigator;
+					Inv.DamageDealt = 0;
+					Inv.Temperature += 1.5;
+					Inv.WaitTime = 0;
+				}
+			}
+			
+			}
+		}
+	}
+
+	bDoTouch = !bDoTouch;
+}
 
 simulated function ProcessTouch (Actor Other, Vector HitLocation)
 {
-    local Pawn P;
-  //local float VelMag;
-	//local vector ForceDir;
-	
-	local Burner Inv;
-	
-    if ( (Other != instigator) && (!Other.IsA('Projectile') || Other.bProjTarget) )
-    {
-        P = Pawn(Other);
-        If(P != None && P != class'ONSPowerCore'&& P.Controller != None)
-        {
-            if(P.Health > 0 && (!Level.Game.bTeamGame || !P.Controller.SameTeamAs(InstigatorController)))
-            {
-                P.CreateInventory("FireVehiclesV2Omni.Burner");
-                Inv = Burner(P.FindInventoryType(class'FireVehiclesV2Omni.Burner'));
-
-                if(Inv != None)
-                {
-                    Inv.DamageType = BurnDamageType;
-                    Inv.Chef = Instigator;
-                    Inv.DamageDealt = 0;
-                    Inv.Temperature += 1.5;
-                    Inv.WaitTime = 0;
-                }
-            }
-        }
-
-    //    Explode(HitLocation,Vect(0,0,1));
-    }
-    // Moved so it always explodes
-    Explode(HitLocation,Vect(0,0,1));
+	if ( (Other != instigator) && (!Other.IsA('Projectile') || Other.bProjTarget) )
+	{
+		Explode(HitLocation,Vect(0,0,1));
+	}
 }
-
-
-//simulated function ProcessTouch (Actor Other, Vector HitLocation)
-//{
-//	if ( (Other != instigator) && (!Other.IsA('Projectile') || Other.bProjTarget) )
-//	{
-//		Explode(HitLocation,Vect(0,0,1));
-//	}
-//}
-
 
 simulated function Explode(vector HitLocation, vector HitNormal)
 {
@@ -130,9 +139,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 	start = Location + 10 * HitNormal;
 	if ( Role == ROLE_Authority )
 	{
-		HurtRadius(Damage, DamageRadius, MyDamageType, MomentumTransfer, HitLocation);	
-		// this happesn in blow up.
-		
+		HurtRadius(damage, 220, MyDamageType, MomentumTransfer, HitLocation);	
 		for (i=0; i<6; i++)
 		{
 			rot = Rotation;

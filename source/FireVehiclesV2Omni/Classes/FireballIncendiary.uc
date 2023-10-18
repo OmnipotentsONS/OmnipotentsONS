@@ -15,6 +15,7 @@ var() class<xEmitter> FlameClass;
 var() class<DamageType> DamageType, BurnDamageType;
 var bool bDoTouch;
 
+
 replication
 {
 	reliable if (bNetInitial && Role==ROLE_Authority)
@@ -127,7 +128,8 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 	start = Location + 10 * HitNormal;
 	if ( Role == ROLE_Authority )
 	{
-		HurtRadius(Damage, 220, MyDamageType, MomentumTransfer, HitLocation);	
+		//HurtRadius(Damage, DamageRadius, MyDamageType, MomentumTransfer, HitLocation);	
+		// Called in Blowup (Projectile Class)
 		
 		for (i=0; i<6; i++)
 		{
@@ -171,7 +173,7 @@ defaultproperties
      MaxSpeed=17000.000000
      Damage=285.000000
      DamageRadius=1001.000000
-     MomentumTransfer=1000.000000
+     MomentumTransfer=15000.000000
      MyDamageType=Class'FireVehiclesV2Omni.FireBall'
      ExplosionDecal=Class'XEffects.RocketMark'
      DrawType=DT_StaticMesh

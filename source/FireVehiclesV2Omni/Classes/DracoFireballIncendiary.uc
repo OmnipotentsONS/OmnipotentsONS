@@ -127,7 +127,8 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 	start = Location + 10 * HitNormal;
 	if ( Role == ROLE_Authority )
 	{
-		HurtRadius(Damage, DamageRadius, MyDamageType, MomentumTransfer, HitLocation);	
+			//HurtRadius(Damage, DamageRadius, MyDamageType, MomentumTransfer, HitLocation);	
+		// Called in Blowup (Projectile Class)
 		
 		/* 
 		for (i=0; i<6; i++)
@@ -169,7 +170,7 @@ defaultproperties
      Speed=14000.000000
      MaxSpeed=14000.000000
      Damage=55.000000
-     DamageRadius=1701.000000
+     DamageRadius=800.000000
      MomentumTransfer=1000.000000
      MyDamageType=Class'FireVehiclesV2Omni.FireBall'
      ExplosionDecal=Class'XEffects.RocketMark'

@@ -140,7 +140,7 @@ defaultproperties
      bDoOffsetTrace=True
      RedSkin=Texture'FireTank_Tex.FireTank.FireTankRed'
      BlueSkin=Texture'FireTank_Tex.FireTank.FireTankBlue'
-     FireInterval=0.180000
+     FireInterval=0.20000
      AltFireInterval=0.100000
      FireSoundClass=Sound'CuddlyArmor_Sound.FireTank.FireTankBeam'
      FireSoundVolume=500.000000
@@ -148,9 +148,9 @@ defaultproperties
      AltFireSoundVolume=200.000000
      FireForce="Laser01"
      DamageType=Class'FireVehiclesV2Omni.HeatRay'
-     DamageMin=18
-     DamageMax=21
-     TraceRange=80000.000000
+     DamageMin=20
+     DamageMax=25
+     TraceRange=40000.000000
      Momentum=0.000000
      AltFireProjectileClass=Class'FireVehiclesV2Omni.FireProjectile'
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
