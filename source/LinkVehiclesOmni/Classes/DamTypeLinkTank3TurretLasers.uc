@@ -12,5 +12,5 @@ defaultproperties
      DeathString="%o got poked by long, thick green shafts of %k's Link Laser Turret."
      FemaleSuicide="%o gave herself the shaft... oh dear"
      MaleSuicide="%o gave himself the shaft... oh dear"
-     VehicleDamageScaling=1.5
+     VehicleDamageScaling=1.0 // DO ANY SCALING IN THE TURRET CLASS SINCE ITS SCALED ON LINKERS.
 }
