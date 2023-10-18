@@ -1,0 +1,88 @@
+class FireHoundDriverWeapon extends ONSWeapon;
+
+var vector OldDir;
+var rotator OldRot;
+
+simulated function UpdatePrecacheStaticMeshes()
+{
+	Level.AddPrecacheStaticMesh(StaticMesh'WeaponStaticMesh.RocketProj');
+	Super.UpdatePrecacheStaticMeshes();
+}
+
+function byte BestMode()
+{
+	return 0;
+}
+
+simulated function PostBeginPlay()
+{
+	Super.PostBeginPlay();
+
+	OldDir = Vector(CurrentAim);
+}
+
+function Tick(float Delta)
+{
+	local int i;
+	local xPawn P;
+	local vector NewDir, PawnDir;
+    local coords WeaponBoneCoords;
+
+
+    Super.Tick(Delta);
+
+	if ( (Role == ROLE_Authority) && (Base != None) )
+	{
+	    WeaponBoneCoords = GetBoneCoords(YawBone);
+		NewDir = WeaponBoneCoords.XAxis;
+		if ( (Vehicle(Base).Controller != None) && (NewDir.Z < 0.9) )
+		{
+			for ( i=0; i<Base.Attached.Length; i++ )
+			{
+				P = XPawn(Base.Attached[i]);
+				if ( (P != None) && (P.Physics != PHYS_None) && (P != Vehicle(Base).Driver) )
+				{
+					PawnDir = P.Location - WeaponBoneCoords.Origin;
+					PawnDir.Z = 0;
+					PawnDir = Normal(PawnDir);
+					if ( ((PawnDir.X <= NewDir.X) && (PawnDir.X > OldDir.X))
+						|| ((PawnDir.X >= NewDir.X) && (PawnDir.X < OldDir.X)) )
+					{
+						if ( ((PawnDir.Y <= NewDir.Y) && (PawnDir.Y > OldDir.Y))
+							|| ((PawnDir.Y >= NewDir.Y) && (PawnDir.X < OldDir.Y)) )
+						{
+							P.SetPhysics(PHYS_Falling);
+							P.Velocity = WeaponBoneCoords.YAxis;
+							if ( ((NewDir - OldDir) Dot WeaponBoneCoords.YAxis) < 0 )
+								P.Velocity *= -1;
+							P.Velocity = 500 * (P.Velocity + 0.3*NewDir);
+							P.Velocity.Z = 200;
+						}
+					}
+				}
+			}
+		}
+		OldDir = NewDir;
+	}
+}
+
+defaultproperties
+{
+     YawBone="Object83"
+     PitchBone="Object83"
+     WeaponFireAttachmentBone="Object85"
+     GunnerAttachmentBone="Object83"
+     RotationsPerSecond=3.000000
+     bAmbientFireSound=True
+     bIsRepeatingFF=True
+     Spread=0.002000
+     FireInterval=0.100000
+     FireSoundVolume=900.000000
+     FireForce="minifireb"
+     ProjectileClass=Class'FireVehiclesV2Omni.FireHoundFlameProjectile'
+     AIInfo(0)=(bLeadTarget=True)
+     CullDistance=8000.000000
+     Mesh=SkeletalMesh'ONSFullAnimations.MASPassengerGun'
+     DrawScale=0.500000
+     DrawScale3D=(X=0.500000,Y=0.500000,Z=0.500000)
+}
