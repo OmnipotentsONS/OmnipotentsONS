@@ -337,13 +337,13 @@ if (DamageType.name == 'DamTypeBioGlob')
     Damage *= 3.0;
 
 if (DamageType.name == 'FlameKill')
-		Damage *= 0.50;
+		Damage *= 0.70;
 
 if (DamageType.name == 'FireKill')
-		Damage *= 0.20;
+		Damage *= 0.60;
 				
 if (DamageType.name == 'Burned')
-		Damage *= 0.50;
+		Damage *= 0.60;
 		
 if (DamageType.name == 'FireBall')
 		Damage *= 0.25;
@@ -364,7 +364,7 @@ if (DamageType.name == 'DamTypeDracoFlamethrower')
 		Damage *= 1.20;
 
 if (DamageType.name == 'DamTypeDracoNapalmRocket')
-		Damage *= 0.50;
+		Damage *= 1.20;
 
 if (DamageType.name == 'DamTypeDracoNapalmGlob')
 		Damage *= 1.2;
@@ -503,7 +503,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in the Ifrit"
-     VehicleNameString="Ifrit 2.93"
+     VehicleNameString="Ifrit 2.94"
      RanOverDamageType=Class'FireVehiclesV2Omni.DamTypeFireRaptorRoadkill'
      CrushedDamageType=Class'FireVehiclesV2Omni.DamTypeFireRaptorPancake'
      MaxDesireability=0.600000

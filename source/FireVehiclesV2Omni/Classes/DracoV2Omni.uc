@@ -44,7 +44,7 @@ if (DamageType.name == 'FlameKillRaptor')
 		Damage *= 0.50;
 
 	if (DamageType.name == 'HeatRay')
-		Damage *= 0.10;
+		Damage *= 0.40;
 
 if (DamageType.name == 'DamTypeDracoFlamethrower')
 		Damage *= 0.20;
@@ -56,25 +56,19 @@ if (DamageType.name == 'DamTypeDracoNapalmGlob')
 		Damage *= 0.20;
 		
 if (DamageType == class'DamTypeShockBeam')
-		Damage *= 0.5;
+		Damage *= 0.75;
 
 if (DamageType == class'DamTypeONSAVRiLRocket')
-	 Damage *= 0.75;
+	 Damage *= 1.1;
 	 
 if (DamageType == class'DamTypeFlakChunk')
 	 Damage *= 0.75;
-
-if (DamageType == class'DamTypeLinkPlasma')
-	 Damage *= 0.5;
-
-if (DamageType == class'DamTypeLinkShaft')
-	 Damage *= 0.5;
 
 if (DamageType == class'DamTypeMinigunBullet')
 	 Damage *= 0.5;
 	 
 if (DamageType == class'DamTypeShockCombo')
-	Damage *= 0.5;
+	Damage *= 1.25;
 	
 if (DamageType.name == 'FalconPlasma')
 	Damage *= 0.5;
@@ -131,16 +125,17 @@ defaultproperties
      FPCamViewOffset=(X=50.000000,Z=50.000000)
      TPCamWorldOffset=(Z=200.000000)
      VehiclePositionString="in a Draco"
-     VehicleNameString="Draco 2.93"
+     VehicleNameString="Draco 2.94"
      VehicleDescription="Draco is the latin word for 'dragon' - and this one breathes fire!"
      RanOverDamageType=Class'FireVehiclesV2Omni.DamTypeDracoRoadkill'
      CrushedDamageType=Class'FireVehiclesV2Omni.DamTypeDracoPancake'
      NavigationPointRange=100.000000
      
      // Increase explosion damage if they killing you hitting node should take the node out..
-     ExplosionDamage=750.000000
-     ExplosionRadius=1250.000000  // reduce it a bit 2500 - 1500
-     ExplosionMomentum=150000.000000
+     // setting it back to default draco.
+     ExplosionDamage=150.000000
+     ExplosionRadius=500.000000  // reduce it a bit 2500 - 1500
+     ExplosionMomentum=100000.000000
      ExplosionDamageType=Class'FireVehiclesV2Omni.DamTypeDracoExplosion'
     
      //Additional Health

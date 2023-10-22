@@ -38,4 +38,6 @@ static function ScoreKill(Controller Killer, Controller Killed)
 
 defaultproperties
 {
+	VehicleDamageScaling=4.0
+	VehicleMomentumScaling=1.5
 }

@@ -111,17 +111,17 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 		TrailEmitter = None;
 	}
 
-    if ( EffectIsRelevant(Location, false) )
+  if ( EffectIsRelevant(Location, false) )
     {
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*3, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*20, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*16, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*1, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*3, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*20, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*16, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*1, rotator(HitNormal));
     	Spawn(class'FireballBlowup',,, HitLocation + HitNormal*16, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*10, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*13, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*5, rotator(HitNormal));
-	Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*9, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*10, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*13, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*5, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*9, rotator(HitNormal));
 		if ( (ExplosionDecal != None) && (Level.NetMode != NM_DedicatedServer) )
 			Spawn(ExplosionDecal,self,,Location, rotator(-HitNormal));
     }

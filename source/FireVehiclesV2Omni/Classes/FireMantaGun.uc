@@ -45,7 +45,7 @@ defaultproperties
      WeaponFireOffset=25.000000
      DualFireOffset=25.000000
      RotationsPerSecond=0.800000
-     FireInterval=1.000000
+     FireInterval=1.100000
      AltFireInterval=0.500000
      FireSoundClass=Sound'XEffects.Effects.FlakExplosionSnd'
      FireForce="HoverBikeFire"

@@ -215,13 +215,49 @@ event TakeDamage(int Damage, Pawn EventInstigator, Vector Hitlocation, Vector Mo
 		Damage *= 0.70;
 
 	if (DamageType == class'DamTypeShockBeam')
-		Momentum *= 0.00;
+		Momentum *= 0.15;
 
 	if (DamageType == class'FireHoundCombo')
 		Momentum *= 0.00;
 
-    if (DamageType == class'FireHoundKill' && EventInstigator != None && EventInstigator == self)
+   if (DamageType == class'FireHoundKill' && EventInstigator != None && EventInstigator == self)
         return;
+
+		if (DamageType.name == 'FlameKill')
+				Damage *= 0.10;
+
+		if (DamageType.name == 'FireKill')
+				Damage *= 0.15;
+						
+		if (DamageType.name == 'Burned')
+				Damage *= 0.15;
+				
+		if (DamageType.name == 'FireBall')
+				Damage *= 0.20;
+				
+		if (DamageType.name == 'DamTypeFirebugFlame')
+				Damage *= 0.20;
+
+		if (DamageType.name == 'DamTypeTurretFlames')
+				Damage *= 0.20;
+
+
+		if (DamageType.name == 'FlameKillRaptor')
+				Damage *= 0.50;
+
+			if (DamageType.name == 'HeatRay')
+				Damage *= 0.40;
+
+		if (DamageType.name == 'DamTypeDracoFlamethrower')
+				Damage *= 0.20;
+
+		if (DamageType.name == 'DamTypeDracoNapalmRocket')
+				Damage *= 0.20;
+
+		if (DamageType.name == 'DamTypeDracoNapalmGlob')
+				Damage *= 0.20;
+				
+
 
         Super.TakeDamage(Damage, EventInstigator, Hitlocation, Momentum, damageType);
 }
@@ -434,7 +470,7 @@ defaultproperties
      TPCamWorldOffset=(Z=100.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a FireHound"
-     VehicleNameString="FireHound 2.93"
+     VehicleNameString="FireHound 2.94"
      RanOverDamageType=Class'FireVehiclesV2Omni.FireHoundRoadkill'
      HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.DixieHorn'
      HornSounds(1)=Sound'GorzWheels_Sounds.FireHound.FireHoundHorn'

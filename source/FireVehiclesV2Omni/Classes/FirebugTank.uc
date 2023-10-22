@@ -413,15 +413,17 @@ defaultproperties
      BlueSkin=Shader'WVHoverTankV2.Skins.FirebugShaderBlue'
      DisintegrationEffectClass=Class'FireVehiclesV2Omni.FirebugExplosionEffect'
      
-     // Increase explosion damage if they killing you hitting node should take the node out..
-     ExplosionDamage=750.000000
-     ExplosionRadius=2500.000000
-     ExplosionMomentum=150000.000000
-     
-    // ExplosionDamage=250.000000
-    // ExplosionRadius=800.000000
-    // ExplosionMomentum=100000.000000
+      
+     ExplosionDamage=150.000000
+     ExplosionRadius=500.000000
+     ExplosionMomentum=100000.000000
     // Made similar to Draco, big boom upon death
+    // these are ONSVehicleDefault
+     //ExplosionDamage=100.000000
+     //ExplosionRadius=300.000000
+     //ExplosionMomentum=60000.000000
+    
+    
     
      ExplosionDamageType=Class'FireVehiclesV2Omni.DamTypeFirebugExplosion'
      VehicleMass=8.000000
@@ -434,7 +436,7 @@ defaultproperties
      TPCamLookat=(Z=100.000000)
      TPCamWorldOffset=(Z=150.000000)
      VehiclePositionString="in a Firebug"
-     VehicleNameString="Firebug 2.93"
+     VehicleNameString="Firebug 2.94"
      VehicleDescription="The Firebug is a small and agile hover tank that can quickly turn enemies into a smoking pile of ashes with its twin flamethrowers."
      RanOverDamageType=Class'FireVehiclesV2Omni.DamTypeFirebugRoadkill'
      CrushedDamageType=Class'FireVehiclesV2Omni.DamTypeFirebugPancake'
