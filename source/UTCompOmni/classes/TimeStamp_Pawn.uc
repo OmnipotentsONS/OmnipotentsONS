@@ -50,4 +50,6 @@ DefaultProperties
     bBlockPlayers=false
     bDisturbFluidSurface=false
     Physics=Phys_None
+
+    bstasis=false
 }
