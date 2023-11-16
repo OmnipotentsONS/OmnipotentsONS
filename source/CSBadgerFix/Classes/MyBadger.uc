@@ -62,6 +62,7 @@ defaultproperties
          KLinearDamping=0.150000
          KAngularDamping=0.000000
          KStartEnabled=True
+         bKNonSphericalInertia=True
          bHighDetailOnly=False
          bClientOnly=False
          bKDoubleTickRate=True
@@ -71,7 +72,7 @@ defaultproperties
          bDoSafetime=True
          KFriction=0.500000
          KImpactThreshold=700.000000
-         KCOMOffset=(X=0.0,Y=0.0,Z=-1.0)        
+         KCOMOffset=(X=0.0,Y=0.0,Z=-1.35)        
      End Object
      KParams=KarmaParamsRBFull'CSBadgerFix.KarmaParamsRBFull3'
 

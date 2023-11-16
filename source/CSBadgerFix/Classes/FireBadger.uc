@@ -77,7 +77,7 @@ defaultproperties
          bDoSafetime=True
          KFriction=0.500000
          KImpactThreshold=500.000000
-         KCOMOffset=(X=0.0,Y=0.0,Z=-1.0)        
+         KCOMOffset=(X=0.0,Y=0.0,Z=-1.35)        
      End Object
      KParams=KarmaParamsRBFull'CSBadgerFix.KarmaParamsRBFull6'
 
