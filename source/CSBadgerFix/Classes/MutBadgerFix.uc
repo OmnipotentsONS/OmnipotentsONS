@@ -25,21 +25,6 @@ function bool IsBadgerClass(name className)
     return isBadger;
 }
 
-/*
-function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
-{
-    local ONSVehicle badger;
-	
-    badger = ONSVehicle(Other);
-    if(badger != None && IsBadgerClass(badger.name))
-    {
-        KarmaParamsRBFull(badger.KParams).KCOMOffset = vect(0,0,-0.7);
-    }
-
-	return true;
-}
-*/
-
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
     local SVehicleFactory factory;
