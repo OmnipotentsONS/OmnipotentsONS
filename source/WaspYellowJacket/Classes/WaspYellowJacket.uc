@@ -79,7 +79,7 @@ defaultproperties
      BlueSkin=Texture'GorzBirds_Tex.Wasp.WaspBlue'
      TPCamDistance=250.000000
      VehiclePositionString="in a Yellow Jacket Wasp"
-     VehicleNameString="Yellow Jake Wasp 1.0"
+     VehicleNameString="Yellow Jacket Wasp 1.0"
      WaterDamage=0
      Mesh=SkeletalMesh'Gorz_BB_Mesh.Birds.Wasp'
 }
