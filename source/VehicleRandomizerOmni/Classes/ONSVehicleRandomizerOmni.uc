@@ -30,7 +30,7 @@ struct NodeGroup
 													// spawn here. (If 0, Worth is ignored)
 	var() float MinWorth;							// Min worth of vehicles allowed to
 													// spawn here
-//var() bool bFlyingOnly; // true only vehicles with Vehicle.bCanFly = true
+   var() bool bFlyingOnly; // true only vehicles with Vehicle.bCanFly = true
 // Haven't figured out how to get vehicle data in here
 	
 };
@@ -87,6 +87,10 @@ var class<Vehicle> ArenaVehicle;
 var() bool bRandomizeEveryRound;	// if true, we randomize on each reset and not
 									// just once.
 var() bool bRandomizeLinkSetup;		// Randomizes link setup too.
+
+const OVRVersion = "2.0";
+
+
 
 // PBP, determine if we go Vehicle Arena or regular vehicle randomizing.
 event PostBeginPlay()
@@ -231,6 +235,7 @@ function VehicleRandomizerSetup()
 	local ONSPowerCoreSpecial core;
 	local ONSPowerNodeSpecial node;
 	local ONSForcedVehicleFactory fvfact;
+  local bool bGotFlyer;
 
 //	log(self@"Vehicle Randomization Start",'KDebug');
 
@@ -296,39 +301,53 @@ function VehicleRandomizerSetup()
 								// ie. OnslaughtToys1.ONSTurretFactory
 		 					
 						{
-							// Select a random vehicle and insert it
-							UseVehicles.Insert(0,1);
-						  m = rand(Vehicles.Length);
-							// m was never intialized originally relying on default int as 0?? which mean first match would alwasy get selected - pooty
-							// If it's a unique vehicle already used somewhere else, 
-							// keep trying
-							bBanned = true;
-							//log(self@"check if banned"@Vehicles[m].VehicleClass,'KDebug');
-							while ((Vehicles[m].bUnique && Vehicles[m].bAlreadyUsed) || bBanned )
-							       // || (!NodeGroups[i].bFlyingOnly || (NodeGroups[i].bFlyingOnly && Vehicles[m].VehicleClass.bCanFly)	)
-							       //if FlyingOnly False (ie not true then fine), if FO = True, Vehicle has to be true
-							       // UT Script doesn't like bCanFly, it shows VehicleClass as just 'Class' and not 'Vehicle'
-							     
-							{
-								m = rand(Vehicles.Length);
-								bBanned = false;
-								for (l = 0; l < NodeGroups[i].BannedVehicles.Length; l++)
-								{
-									//log("check"@NodeGroups[i].BannedVehicles[l],'KDebug');
-									if (Vehicles[m].VehicleClass == NodeGroups[i].BannedVehicles[l])
+								// Select a random vehicle and insert it
+								UseVehicles.Insert(0,1);
+							 // m = rand(Vehicles.Length);
+								// m was never intialized originally relying on default int as 0?? which mean first match would alwasy get selected - pooty
+								// If it's a unique vehicle already used somewhere else, 
+								// keep trying
+								bBanned = true;
+								//log(self@"check if banned"@Vehicles[m].VehicleClass,'KDebug');
+								//lVehicle = Vehicles[m].VehicleClass;
+								
+								
+							  // Check Banned Vehicles - stock code
+							  while ((Vehicles[m].bUnique && Vehicles[m].bAlreadyUsed) || bBanned)
 									{
-										//log("banned",'KDebug');
-										bBanned = true;
+										m = rand(Vehicles.Length);
+										bBanned = false;
+										for (l = 0; l < NodeGroups[i].BannedVehicles.Length; l++)
+										{
+											//log("check"@NodeGroups[i].BannedVehicles[l],'KDebug');
+											if (Vehicles[m].VehicleClass == NodeGroups[i].BannedVehicles[l])
+											{
+												//log("banned",'KDebug');
+												bBanned = true;
+											}
+										}
 									}
-								}
-							}
 							
+						//  log(self@"Vehicle="@Vehicles[m].VehicleClass@" VehicleCanFly"@Vehicles[m].VehicleClass.default.bCanFly);
+						//	log(self@"NodeGroups[i].Nodes="@NodeGroups[i].Nodes[0]@" bFlyingOnly="@NodeGroups[i].bFlyingOnly);
+							// the above freaking works!
 							
+							// Check non Flying if flying only
+							bGotFlyer = false;
+							while (NodeGroups[i].bFlyingOnly && !bGotFlyer)
+							    {
+								    m = rand(Vehicles.Length);
+								  //  log(self@"In FlyerCheck Vehicle="@Vehicles[m].VehicleClass@" VehicleCanFly"@Vehicles[m].VehicleClass.default.bCanFly);
+								    if (Vehicles[m].VehicleClass.default.bCanFly) {
+								        bGotFlyer=True;
+								    //    log(self@"GotFlyer="@Vehicles[m].VehicleClass);
+								    }    
+									}
 							
 							UseVehicles[0] = Vehicles[m];
 							Vehicles[m].bAlreadyUsed = true;
 							CurrentWorth += UseVehicles[0].Worth;
-//							log("Vehicle"@k@": "@UseVehicles[0].VehicleClass,'KDebug');
+							//log(self@"Vehicle"@k@": "@UseVehicles[0].VehicleClass,'KDebug');
 						}
 /*
 						// If restoring from an Arena game, reset Forced Factories to their regular class
@@ -339,7 +358,7 @@ function VehicleRandomizerSetup()
 						}
 */
 					}
-//					log("Final vehicle setup is worth"@CurrentWorth@"-- Target worth between"@NodeGroups[i].MinWorth@"and"@NodeGroups[i].MaxWorth,'XADebug');
+					//log(self@"Final vehicle setup is worth"@CurrentWorth@"-- Target worth between"@NodeGroups[i].MinWorth@"and"@NodeGroups[i].MaxWorth,'XADebug');
 				}
 			}
 
@@ -382,5 +401,5 @@ defaultproperties
 	// to do set default mesh
 	Texture = Texture'Engine.S_KVehFact'
 	DrawScale = 3.0
-	
+
 }

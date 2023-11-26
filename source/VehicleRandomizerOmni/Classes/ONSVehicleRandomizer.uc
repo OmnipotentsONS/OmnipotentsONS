@@ -132,7 +132,7 @@ function ArenaVehicleSetup()
 {
 	local ONSVehicleFactory ovf;
 	local int i;
-	local ONSPowerCore CloseCore;
+//	local ONSPowerCore CloseCore;
 	local ONSPowerNodeSpecial node;
 	local ONSPowerCoreSpecial core;
 
