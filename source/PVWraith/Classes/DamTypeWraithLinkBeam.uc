@@ -15,4 +15,6 @@ defaultproperties
      bSkeletize=True
      bCausesBlood=False
      bLeaveBodyEffect=True
+     VehicleDamageScaling=1.33
+     VehicleMomentumScaling=1.20
 }

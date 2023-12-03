@@ -25,4 +25,6 @@ defaultproperties
      GibModifier=2.000000
      GibPerterbation=0.500000
      KDeathVel=400.000000
+     VehicleDamageScaling=1.5
+     VehicleMomentumScaling=1.5
 }

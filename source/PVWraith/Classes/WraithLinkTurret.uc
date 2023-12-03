@@ -616,7 +616,7 @@ defaultproperties
      
      YawBone="GatlingGun"
      PitchBone="GatlingGun"
-     PitchUpLimit=-1950  // 0 is fine on client, but on Server it hits the vehicle hitbox
+     PitchUpLimit=-600  
      PitchDownLimit=50000
      WeaponFireAttachmentBone="GatlingGunFirePoint"
      bDoOffsetTrace=True
@@ -627,13 +627,13 @@ defaultproperties
      DualFireOffset=5.000000 //18
      bAmbientAltFireSound=True
      FireInterval=0.200000
-     AltFireInterval=0.100000
+     AltFireInterval=0.120000
      FireSoundClass=Sound'ONSVehicleSounds-S.LaserSounds.Laser17'
      AltFireSoundClass=Sound'PVWraith.WraithLinkAmbient'
      FireForce="Laser01"
      DamageType=Class'PVWraith.DamTypeWraithLinkBeam'
-     DamageMin=15
-     DamageMax=17
+     DamageMin=16
+     DamageMax=19
      TraceRange=6666.000000
      Momentum=-30000.000000
      ProjectileClass=Class'PVWraith.WraithLinkPlasmaProjectile'

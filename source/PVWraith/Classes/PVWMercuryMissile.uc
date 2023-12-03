@@ -701,7 +701,7 @@ defaultproperties
      PunchThroughDamage=Class'PVWraith.PVWDamTypeMercuryPunchThrough'
      ThroughHeadDamage=Class'PVWraith.PVWDamTypeMercuryPunchThroughHead'
      AccelRate=15000.000000
-     HeadShotDamageMult=2.500000
+     HeadShotDamageMult=3.500000
      HeadShotSizeAdjust=1.200000
      PunchThroughSpeed=7000.000000
      PunchThroughVelocityLossPercent=0.400000
@@ -725,7 +725,7 @@ defaultproperties
      direction=-1
      Speed=5000.000000
      MaxSpeed=25000.000000
-     Damage=50.000000
+     Damage=33.000000
      DamageRadius=500.000000
      MomentumTransfer=4.000000
      MyDamageType=Class'PVWraith.PVWDamTypeMercuryDirectHit'

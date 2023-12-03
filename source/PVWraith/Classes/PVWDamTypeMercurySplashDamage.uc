@@ -39,4 +39,6 @@ defaultproperties
      GibPerterbation=0.150000
      KDeathVel=150.000000
      KDeathUpKick=50.000000
+     VehicleDamageScaling=1.4
+     VehicleMomentumScaling=1.0
 }

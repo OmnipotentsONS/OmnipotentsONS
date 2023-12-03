@@ -42,4 +42,6 @@ defaultproperties
      KDamageImpulse=20000.000000
      KDeathVel=550.000000
      KDeathUpKick=100.000000
+     VehicleDamageScaling=1.51
+     VehicleMomentumScaling=1.75
 }
