@@ -38,13 +38,13 @@ defaultproperties
    
    // Manta props modified
    
-     MaxPitchSpeed=1200.000000
+     MaxPitchSpeed=800.000000
      JumpDuration=0.40000
-     JumpForceMag=130.000000
-     JumpDelay=1.500000
-     DuckForceMag=250.000000
-     RollTorqueStrafeFactor=75.000000
-     RollTorqueMax=250.000000
+     JumpForceMag=110.000000
+     JumpDelay=3.0000
+     DuckForceMag=170.000000
+     RollTorqueStrafeFactor=50.000000
+     RollTorqueMax=25.000000
      
      
      
@@ -60,10 +60,10 @@ defaultproperties
      
      DriverDamageMult=0.000000
      VehiclePositionString="in a Lamprey Manta"
-     VehicleNameString="Lamprey Manta 3.4"
-     GroundSpeed=1650.000000
-     HealthMax=300.000000
-     Health=250
+     VehicleNameString="Lamprey Manta 3.42"
+     GroundSpeed=1450.000000
+     HealthMax=266.000000
+     Health=200
      Mesh=SkeletalMesh'ONSVehicles-A.HoverBike'
      
      

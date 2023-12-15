@@ -788,9 +788,9 @@ defaultproperties
      LinkScale(4)=1.400000
      LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
-     Damage=15  //link gun shaft is 9
-     DamageMin=15 
-     Momentum=-13000  //sucking u in 
+     Damage=13  //link gun shaft is 9
+     DamageMin=13 
+     Momentum=-12000  //sucking u in 
      LinkFlexibility=0.300000
      bInitAimError=True
      LinkVolume=240
@@ -806,7 +806,7 @@ defaultproperties
      bDoOffsetTrace=True
      FireInterval=0.120000
      FireSoundVolume=255.000000
-     DamageType=Class'XWeapons.DamTypeLinkShaft'
+     DamageType=Class'XWeapons.DamTypeLinkShaft'  //no vehicle mult set in base class
      TraceRange=5500.000000  // 1100 is link gun's trace range
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
@@ -823,14 +823,14 @@ defaultproperties
     
      CurrDrawScale = 1
      NumLinkers = 0
-     LinkMultiplier = 1.5
-		 SelfHealMultiplier = 1.1
+     LinkMultiplier = 1.0
+		 SelfHealMultiplier = 0.85
 		 VehicleDamageMultiplier = 1.5 //  increased damage to vehicles might add some specific vehicles here?
-		 EasterEggVehicleDamageMultiplier = 2.75 // special mult for certain vehicles.
+		 EasterEggVehicleDamageMultiplier = 3.0 // special mult for certain vehicles.
      VehicleHealScore = 250
      RangeExtPerLink = 500
      //AltFire
-     AltFireInterval=0.750000
+     AltFireInterval=1.0000
      AltFireSoundClass=Sound'ONSVehicleSounds-S.LaserSounds.Laser17'
      AltFireForce="BioRifleFire"
     // AltDamageType=Class'LinkVehiclesOmni.DmgTypeTickWebCaster'

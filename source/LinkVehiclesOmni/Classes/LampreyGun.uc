@@ -149,7 +149,7 @@ simulated function tick(float dt)
 		local DestroyableObjective HealObjective;
 		local Vehicle LinkedVehicle;
 
-	
+	//Warning: LampreyGun ONS-Dria-Randomizer-V22.LampreyGun (Function LinkVehiclesOmni.LampreyGun.InstantFireMode.Tick:0672) Accessed None 'LockedPawn'
 		Super.Tick(dt);
 		
 		MyLamprey = LampreyManta(Owner);
@@ -285,6 +285,7 @@ simulated function tick(float dt)
 											else {
 												Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, Momentum*X, DamageType);
 												// heal itself
+												// Error here? Warning: LampreyGun ONS-Dria-Randomizer-V22.LampreyGun (Function LinkVehiclesOmni.LampreyGun.InstantFireMode.Tick:0672) Accessed None 'LockedPawn'
 												 if (MyLamprey!=None&&MyLamprey.Health<MyLamprey.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
 				                     MyLamprey.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
 											}
@@ -726,8 +727,8 @@ defaultproperties
      //LinkScale(4)=1.400000
      //LinkScale(5)=1.500000
      MakeLinkForce="LinkActivated"
-     Damage=12  //link gun shaft is 9, Scorp is 12, Hvy LinkTank 17  This is its primary close in weapon.
-     Momentum=-13000
+     Damage=11  //link gun shaft is 9, Scorp is 12, Hvy LinkTank 17  This is its primary close in weapon.
+     Momentum=-12000
      LinkFlexibility=1.20000
      bInitAimError=True
      LinkVolume=240
@@ -756,7 +757,7 @@ defaultproperties
      AltFireInterval=3.25000
      FireSoundVolume=255.000000
      DamageType=Class'DamTypeLampreyBeam'
-     TraceRange=4500.000000  // 1100 is link gun's trace range
+     TraceRange=3300.000000  // 1100 is link gun's trace range
      ShakeRotMag=(Z=60.000000)
      ShakeRotRate=(Z=4000.000000)
      ShakeRotTime=6.000000
@@ -777,8 +778,8 @@ defaultproperties
    
     
      LinkMultiplier = 1.0; // not used here
-		 SelfHealMultiplier = 0.9;
-		 VehicleDamageMult = 1.4;
+		 SelfHealMultiplier = 0.75;
+		 VehicleDamageMult = 1.5; // set here not in DamType
 		 VehicleHealScore = 250;
 		 RangeExtPerLink=500; // how much range is extended per linker
 		 

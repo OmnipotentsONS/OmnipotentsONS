@@ -879,7 +879,7 @@ defaultproperties
      BeamSounds(1)=Sound'WeaponSounds.LinkGun.BLinkGunBeam2'
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
-     VehicleDamageMult=1.500000
+     VehicleDamageMult=1.000000 // set it in DamType instead.
      LinkMultiplier = 1.00000
      bInitAimError=True
      YawBone="Object02"
