@@ -247,6 +247,31 @@ function bool RecommendLongRangedAttack()
 	return true;
 }
 
+// show linker count on the HUD pooty 12/2023
+simulated function DrawHUD(Canvas C)
+{
+	local PlayerController PC;
+	local HudCTeamDeathMatch PlayerHud;
+
+	//Hax. :P
+    Super.DrawHUD(C);
+	PC = PlayerController(Controller);
+	if (Health < 1 || PC == None || PC.myHUD == None || PC.MyHUD.bShowScoreboard)
+		return;
+		
+	PlayerHud=HudCTeamDeathMatch(PC.MyHud);
+	
+	if ( Links > 0 )
+	{
+		PlayerHud.totalLinks.value = Links;
+		PlayerHud.DrawSpriteWidget (C, PlayerHud.LinkIcon);
+		PlayerHud.DrawNumericWidget (C, PlayerHud.totalLinks, PlayerHud.DigitsBigPulse);
+		PlayerHud.totalLinks.value = Links;
+	}
+}
+
+
+
 defaultproperties
 {
      LinkSkin_Gold(0)=Texture'MoreBadgers.LinkBadger.LinkBadgerRed'
@@ -256,7 +281,7 @@ defaultproperties
      LinkSkin_Red(0)=Texture'MoreBadgers.LinkBadger.LinkBadgerRed'
      LinkSkin_Blue(1)=Texture'MoreBadgers.LinkBadger.LinkBadgerBlue'
      DriverWeapons(0)=(WeaponClass=Class'CSBadgerFix.ONSLinkBadgerWeapon',WeaponBone="TurretSpawn")
-    PassengerWeapons(0)=(WeaponPawnClass=Class'CSBadgerFix.BadgerMinigun',WeaponBone="MinigunSpawn")
+     PassengerWeapons(0)=(WeaponPawnClass=Class'CSBadgerFix.BadgerMinigun',WeaponBone="MinigunSpawn")
 
      RedSkin=Texture'MoreBadgers.LinkBadger.LinkBadgerRed'
      BlueSkin=Texture'MoreBadgers.LinkBadger.LinkBadgerBlue'
