@@ -809,7 +809,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a Predator"
-     VehicleNameString="Predator 1.81"
+     VehicleNameString="Predator 1.9"
      RanOverDamageType=Class'Onslaught.DamTypeAttackCraftRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
      FlagBone="PredatorGunTurret"
@@ -821,7 +821,7 @@ defaultproperties
      GroundSpeed=2000.000000
      HealthMax=350.000000
      Health=350
-     Mesh=SkeletalMesh'APVerIV_Anim.PredatorMesh'
+     Mesh=SkeletalMesh'CSAPVerIV_Anim.PredatorMesh'
      SoundVolume=240
      CollisionRadius=150.000000
      CollisionHeight=70.000000

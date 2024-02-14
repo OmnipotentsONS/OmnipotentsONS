@@ -204,9 +204,9 @@ defaultproperties
      AccelRate=2000.000000
      AccelerationAddPerSec=750.000000
      Range=2256.000000
-     Speed=2200.000000
-     MaxSpeed=4000.000000
-     Damage=115.000000
+     Speed=2500.000000
+     MaxSpeed=5000.000000
+     Damage=125.000000
      DamageRadius=550.000000
      MomentumTransfer=80000.000000
      MyDamageType=Class'CSAPVerIV.DamType_PredatorMissile'

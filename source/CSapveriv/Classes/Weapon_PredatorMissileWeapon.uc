@@ -37,7 +37,7 @@ defaultproperties
 {
      MinAim=0.900000
      //MaxLockRange=30000.000000
-     MaxLockRange=8000.000000
+     MaxLockRange=9500.000000
      LockAim=0.975000
      YawBone="PlasmaGunBarrel"
      PitchBone="PlasmaGunBarrel"

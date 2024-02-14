@@ -1100,7 +1100,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a Reaper"
-     VehicleNameString="Reaper 1.81"
+     VehicleNameString="Reaper 1.9"
      RanOverDamageType=Class'Onslaught.DamTypeAttackCraftRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
      FlagBone="Main"
@@ -1112,7 +1112,7 @@ defaultproperties
      GroundSpeed=2000.000000
      HealthMax=300.000000
      Health=300
-     Mesh=SkeletalMesh'APVerIV_Anim.ReaperMesh'
+     Mesh=SkeletalMesh'CSAPVerIV_Anim.ReaperMesh'
      Skins(0)=Shader'APVerIV_Tex.ExcaliburSkins.GlassShader'
      Skins(1)=Texture'ONSBPTextures.fX.Missile'
      Skins(2)=Texture'APVerIV_Tex.PhantomSkins.PhantomSkinA'

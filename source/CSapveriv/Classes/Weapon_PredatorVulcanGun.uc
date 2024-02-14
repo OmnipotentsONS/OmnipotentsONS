@@ -46,7 +46,9 @@ simulated function ClientStopFire(Controller C, bool bWasAltFire)
 	if (Role < ROLE_Authority && AmbientEffectEmitter != None)
 		AmbientEffectEmitter.SetEmitterStatus(false);
 
-		DualFireOffset = 85;
+	//	DualFireOffset = 85;
+	// WTF is this here for its single fire weapon! 
+	// it fucked up the tracers pooty 
 
 }
 
@@ -102,8 +104,8 @@ state InstantFireMode
         LastHitLocation = HitLocation;
         SpawnHitEffects(Other, HitLocation, HitNormal);
     }
-
-    simulated function SpawnHitEffects(actor HitActor, vector HitLocation, vector HitNormal)
+/* Should this be here? pooty 1/2024
+	simulated function SpawnHitEffects(actor HitActor, vector HitLocation, vector HitNormal)
 	{
 		local Emitter Beam;
         local vector SpawnDir, SpawnVel;
@@ -158,8 +160,81 @@ state InstantFireMode
 
             PlaySound(FireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius,, false);
 		}
+		
 	}
+	*/
 }
+
+// below added by pooty 1/2024 to fix tracer issues code taken from ONSHoverTankTurret
+simulated function Destroyed()
+{
+    if (mTracer != None)
+        mTracer.Destroy();
+
+    Super.Destroyed();
+}
+
+
+simulated function UpdateTracer()
+{
+    local vector SpawnDir, SpawnVel;
+    local float hitDist;
+
+    if (Level.NetMode == NM_DedicatedServer)
+        return;
+
+    if (mTracer == None)
+    {
+        mTracer = Spawn(mTracerClass);
+    }
+
+    if (Level.bDropDetail || Level.DetailMode == DM_Low)
+        mTracerInterval = 2 * Default.mTracerInterval;
+    else
+        mTracerInterval = Default.mTracerInterval;
+
+    if (mTracer != None && Level.TimeSeconds > mLastTracerTime + mTracerInterval)
+    {
+        mTracer.SetLocation(WeaponFireLocation);
+
+        hitDist = VSize(LastHitLocation - WeaponFireLocation) - mTracerPullback;
+
+        if (Instigator != None && Instigator.IsLocallyControlled())
+            SpawnDir = vector(WeaponFireRotation);
+        else
+            SpawnDir = Normal(LastHitLocation - WeaponFireLocation);
+
+        if(hitDist > mTracerMinDistance)
+        {
+            SpawnVel = SpawnDir * mTracerSpeed;
+
+            mTracer.Emitters[0].StartVelocityRange.X.Min = SpawnVel.X;
+            mTracer.Emitters[0].StartVelocityRange.X.Max = SpawnVel.X;
+            mTracer.Emitters[0].StartVelocityRange.Y.Min = SpawnVel.Y;
+            mTracer.Emitters[0].StartVelocityRange.Y.Max = SpawnVel.Y;
+            mTracer.Emitters[0].StartVelocityRange.Z.Min = SpawnVel.Z;
+            mTracer.Emitters[0].StartVelocityRange.Z.Max = SpawnVel.Z;
+
+            mTracer.Emitters[0].LifetimeRange.Min = hitDist / mTracerSpeed;
+            mTracer.Emitters[0].LifetimeRange.Max = mTracer.Emitters[0].LifetimeRange.Min;
+
+            mTracer.SpawnParticle(1);
+        }
+
+        mLastTracerTime = Level.TimeSeconds;
+    }
+}
+
+simulated function FlashMuzzleFlash()
+{
+    Super.FlashMuzzleFlash();
+
+    if (Role < ROLE_Authority)
+        DualFireOffset *= -1;
+
+    UpdateTracer();
+}
+
 
 defaultproperties
 {
@@ -167,31 +242,35 @@ defaultproperties
      mTracerInterval=0.060000
      mTracerPullback=150.000000
      mTracerSpeed=15000.000000
-     YawBone="GunBaseAttach"
+     //YawBone="GunBaseAttach"
+     YawBone="BarrelAttach"
      PitchBone="BarrelAttach"
-     PitchUpLimit=8000
+     PitchUpLimit=800
      PitchDownLimit=49153
      WeaponFireAttachmentBone="Firepoint"
+     WeaponFireOffset=0.0
+     DualFireOffset=0.0
+     //WeaponFireAttachmentBone="BarrelAttach"
+     //WeaponFireOffset=120.0
      RotationsPerSecond=1.200000
      bInstantRotation=True
      bInstantFire=True
      bDoOffsetTrace=True
-     //WeaponFireOffset=20.0
-     //Spread=0.010000
-     Spread=0.0
+     
+     Spread=0.010000
      //FireInterval=0.200000
      FireInterval=0.100000
      AmbientEffectEmitterClass=Class'Onslaught.ONSRVChainGunFireEffect'
      FireSoundClass=Sound'ONSVehicleSounds-S.Tank.TankMachineGun01'
      AmbientSoundScaling=1.300000
      FireForce="minifireb"
-     DamageType=Class'Onslaught.DamTypeONSChainGun'
+     DamageType=Class'CSAPVerIV.DamType_VulcanGun'
      //DamageMin=25
      //DamageMax=25
-     DamageMin=35
-     DamageMax=35
+     DamageMin=12
+     DamageMax=16
      TraceRange=15000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
      CullDistance=+15000.0
-     Mesh=SkeletalMesh'APVerIV_Anim.PredatorVulcanMesh'
+     Mesh=SkeletalMesh'CSAPVerIV_Anim.PredatorVulcanMesh'
 }

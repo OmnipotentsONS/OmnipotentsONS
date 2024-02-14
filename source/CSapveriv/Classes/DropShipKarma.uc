@@ -288,10 +288,11 @@ function bool CanAttachVehicle(ONSVehicle vehicle)
             && vehicle.bCannotBeBased==false
             && vehicle.bMovable==true;
 
+		
     if(Team != vehicle.Team)
     {
         //if other team, can attach if not locked and not occupied
-        canAttach = canAttach && !vehicle.bTeamLocked && !vehicle.Occupied();
+        canAttach = canAttach && !vehicle.bTeamLocked && !vehicle.Occupied() && vehicle.NumPassengers()==0;  //updated pooty to fix jacking vehicls with gunners only
     }
         
     return canAttach;
@@ -919,7 +920,7 @@ defaultproperties
     TPCamWorldOffset=(Z=200.000000)
     DriverDamageMult=0.000000
     VehiclePositionString="in a DropShip"
-    VehicleNameString="DropShip 1.8"
+    VehicleNameString="DropShip 1.9"
     RanOverDamageType=Class'Onslaught.DamTypeAttackCraftRoadkill'
     CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
     MaxDesireability=0.600000

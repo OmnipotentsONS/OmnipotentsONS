@@ -80,13 +80,19 @@ defaultproperties
 {
      LaserClass=Class'UT2k4Assault.FX_Laser_Blue'
      //Speed=30000.000
-     Speed=24000.000
-     MaxSpeed=40000.000000
+     //Speed=24000.00
+     Speed=9900.000000
+     MaxSpeed=30000.000000  //slightly faster than Falcon
+     // MaxSpeed=40000.000000  // too fast Pooty 1/2024
      //Damage=40.000000
-     Damage=35.000000
+     Damage=30.000000
+     DamageRadius=200.0
      MomentumTransfer=1000.000000
-     MyDamageType=Class'UT2k4Assault.DamTypeSentinelLaser'
+     //MyDamageType=Class'UT2k4Assault.DamTypeSentinelLaser'
+     MyDamageType=Class'CSAPVerIV.DamType_PredatorLaserPlasma'
+     // Does multiplier to vehicles.
      DrawType=DT_None
+     DrawScale=1.15
      AmbientSound=Sound'WeaponSounds.LinkGun.LinkGunProjectile'
      LifeSpan=3.000000
      SoundVolume=255
@@ -94,5 +100,5 @@ defaultproperties
      ForceType=FT_Constant
      ForceRadius=30.000000
      ForceScale=5.000000
-     DamageRadius=120.0
+     
 }

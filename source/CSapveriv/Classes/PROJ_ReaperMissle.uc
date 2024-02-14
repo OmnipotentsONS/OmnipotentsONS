@@ -40,6 +40,8 @@ defaultproperties
      //DamageRadius=550
      Damage=150.000000
      DamageRadius=500
+     Speed=2300.000000
+     MaxSpeed=4250.000000
      StaticMesh=StaticMesh'APVerIV_ST.AP_Weapons_ST.RLMissile'
      DrawScale=0.400000
 }

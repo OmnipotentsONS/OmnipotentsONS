@@ -101,7 +101,7 @@ simulated function DrawHUD(Canvas Canvas)
 defaultproperties
 {
      GunClass=Class'CSAPVerIV.Weapon_PredatorVulcanGun'
-     CameraBone="GunBaseAttach"
+     CameraBone="Firepoint"
      bDrawDriverInTP=False
      bHasAltFire=false
      DrivePos=(Z=130.000000)
@@ -109,10 +109,24 @@ defaultproperties
      ExitPositions(1)=(Y=200.000000,Z=100.000000)
      EntryPosition=(X=40.000000,Y=50.000000,Z=-100.000000)
      EntryRadius=130.000000
-     FPCamPos=(Z=20.000000)
-     FPCamViewOffset=(X=64.000000,Z=-64.000000)
-     TPCamDistance=100.000000
-     TPCamLookat=(X=64.000000,Z=0.000000)
+     //FPCamPos=(Z=20.000000)
+     //FPCamViewOffset=(X=64.000000,Z=-64.000000)
+     //TPCamDistance=100.000000
+     //TPCamLookat=(X=64.000000,Z=0.000000)
+     
+// good     FPCamPos=(Z=-20.000000)
+//     FPCamViewOffset=(X=0.000000,Y=0.000000,Z=0.000000)
+
+    FPCamPos=(Z=-20.000000)
+    FPCamViewOffset=(X=0.000000,Y=0.000000,Z=-60.000000)
+     
+// good     TPCamDistance=140.000000
+//     TPCamLookat=(X=0.000000,Y=0.000000,Z=-30.000000)
+
+     TPCamDistance=150.000000
+     TPCamLookat=(X=0.000000,Y=0.000000,Z=-120.000000)
+     TPCamDistRange=(Min=0.000000,Max=0.000000)
+
      DriverDamageMult=0.000000
      VehiclePositionString="in a Predator Turret"
      VehicleNameString="Predator Gun Turret"
