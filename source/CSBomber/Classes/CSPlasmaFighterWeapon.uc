@@ -423,7 +423,8 @@ defaultproperties
     DamageType=Class'CSPlasmaFighterDamTypeRailTurret'
     DamageMin=350
     DamageMax=350
-    TraceRange=20000.000000
+    //TraceRange=20000.000000
+    TraceRange=14500.000000  // range reduction pooty 2/24 similar to omega
     Momentum=50000.000000
     AIInfo(0)=(bTrySplash=False,bLeadTarget=False,bInstantHit=True,WarnTargetPct=1.000000,RefireRate=0.850000)
 }
