@@ -7,7 +7,8 @@
 class WaspYellowJacket extends ONSAttackCraft
 	placeable;
 
-#exec OBJ LOAD FILE=..\textures\GorzBirds_Tex.utx
+//#exec OBJ LOAD FILE=..\textures\GorzBirds_Tex.utx
+#exec OBJ LOAD FILE=..\textures\WaspYJ_Tex.utx
 
 static function StaticPrecache(LevelInfo L)
 {
@@ -27,8 +28,8 @@ static function StaticPrecache(LevelInfo L)
     L.AddPrecacheMaterial(Material'AW-2004Particles.Weapons.SmokePanels2');
     L.AddPrecacheMaterial(Material'AW-2004Particles.Fire.NapalmSpot');
     L.AddPrecacheMaterial(Material'EpicParticles.Fire.SprayFire1');
-    L.AddPrecacheMaterial(Material'Gorzbirds_Tex.Wasp.WaspRed');
-    L.AddPrecacheMaterial(Material'Gorzbirds_Tex.Wasp.WaspBlue');
+    L.AddPrecacheMaterial(Material'WaspYJ_Tex.WaspYJ.WaspYJRed');
+    L.AddPrecacheMaterial(Material'WaspYJ_Tex.WaspYJ.WaspYJBlue');
 	L.AddPrecacheMaterial(Material'AW-2004Particles.Weapons.TrailBlura');
     L.AddPrecacheMaterial(Material'Engine.GRADIENT_Fade');
     L.AddPrecacheMaterial(Material'VMVehicles-TX.AttackCraftGroup.raptorCOLORtest');
@@ -57,8 +58,8 @@ simulated function UpdatePrecacheMaterials()
     Level.AddPrecacheMaterial(Material'AW-2004Particles.Weapons.SmokePanels2');
     Level.AddPrecacheMaterial(Material'AW-2004Particles.Fire.NapalmSpot');
     Level.AddPrecacheMaterial(Material'EpicParticles.Fire.SprayFire1');
-    Level.AddPrecacheMaterial(Material'Gorzbirds_Tex.Wasp.WaspRed');
-    Level.AddPrecacheMaterial(Material'Gorzbirds_Tex.Wasp.WaspBlue');
+    Level.AddPrecacheMaterial(Material'WaspYJ_Tex.WaspYJ.WaspYJRed');
+    Level.AddPrecacheMaterial(Material'WaspYJ_Tex.WaspYJ.WaspYJBlue');
 	Level.AddPrecacheMaterial(Material'AW-2004Particles.Weapons.TrailBlura');
     Level.AddPrecacheMaterial(Material'Engine.GRADIENT_Fade');
     Level.AddPrecacheMaterial(Material'VMVehicles-TX.AttackCraftGroup.raptorCOLORtest');
@@ -75,11 +76,11 @@ defaultproperties
      MaxRiseForce=150.000000
      MaxYawRate=2.200000
      DriverWeapons(0)=(WeaponClass=Class'WaspYellowJacket.WaspYJFlakGun')
-     RedSkin=Texture'GorzBirds_Tex.Wasp.WaspRed'
-     BlueSkin=Texture'GorzBirds_Tex.Wasp.WaspBlue'
+     RedSkin=Texture'WaspYJ_Tex.WaspYJ.WaspYJRed'
+     BlueSkin=Texture'WaspYJ_Tex.WaspYJ.WaspYJBlue'
      TPCamDistance=250.000000
      VehiclePositionString="in a Yellow Jacket Wasp"
-     VehicleNameString="Yellow Jacket Wasp 1.0"
+     VehicleNameString="Yellow Jacket Wasp 1.01"
      WaterDamage=0
      Mesh=SkeletalMesh'Gorz_BB_Mesh.Birds.Wasp'
 }
