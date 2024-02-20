@@ -77,11 +77,11 @@ defaultproperties
     MyDamageType=class'CSBomber.CSPlasmaFighterDamTypePrimary'
     PlasmaEffectClass=class'CSBomber.CSPlasmaFighterPrimaryEffect'
     HitEffectClass=class'Onslaught.ONSPlasmaHitRed'
-    Damage=10
-    DamageRadius=150.0
+    Damage=27  // fires 6 volleys so 6*25 = 150
+    DamageRadius=250.0
     Speed=4500
-    MaxSpeed=15000
-    AccelerationMagnitude=24000
+    MaxSpeed=12000
+    AccelerationMagnitude=8000
 
     ExplosionDecal=class'LinkBoltScorch'
     Lifespan=1.6

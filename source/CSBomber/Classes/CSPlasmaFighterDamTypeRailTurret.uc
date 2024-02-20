@@ -17,5 +17,6 @@ defaultproperties
      bDetonatesGoop=True
      bThrowRagdoll=True
      bBulletHit=True
-     VehicleMomentumScaling=0.750000
+     VehicleMomentumScaling=1.000000
+     VehicleDamageScaling=2.0
 }

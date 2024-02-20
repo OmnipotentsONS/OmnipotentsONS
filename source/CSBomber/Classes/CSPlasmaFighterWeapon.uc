@@ -337,6 +337,8 @@ simulated event FlashMuzzleFlash()
 	}
 }
 
+
+
 function bool CanAttack(Actor Other)
 {
 	local vector X, Y, Z, Dir;
@@ -396,10 +398,10 @@ defaultproperties
     ZFireOffset=40
     GunOffset=55
     BombFireOffset=5
-    FireInterval=0.4
+    FireInterval=1.25
     PrimaryInterval=0.05
 
-    AltFireInterval=2.5
+    AltFireInterval=3.0
     SecondaryInterval=0.2
     PitchUpLimit=18000
     PitchDownLimit=49153
@@ -421,10 +423,13 @@ defaultproperties
     BeamEffectClass(1)=Class'CSPlasmaFighterBeamEffect'
      EffectEmitterClass=None
     DamageType=Class'CSPlasmaFighterDamTypeRailTurret'
-    DamageMin=350
-    DamageMax=350
+    //DamageMin=350
+    //DamageMax=350
+    DamageMin=88
+    DamageMax=138
+    // Vehicles take double via VehicleDamageScaling
     //TraceRange=20000.000000
-    TraceRange=14500.000000  // range reduction pooty 2/24 similar to omega
+    TraceRange=17000.000000  // range reduction pooty 2/24 similar to omega
     Momentum=50000.000000
     AIInfo(0)=(bTrySplash=False,bLeadTarget=False,bInstantHit=True,WarnTargetPct=1.000000,RefireRate=0.850000)
 }
