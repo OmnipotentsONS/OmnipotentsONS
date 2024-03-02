@@ -401,7 +401,7 @@ defaultproperties
     FireInterval=1.25
     PrimaryInterval=0.05
 
-    AltFireInterval=3.0
+    AltFireInterval=2.75
     SecondaryInterval=0.2
     PitchUpLimit=18000
     PitchDownLimit=49153
@@ -425,11 +425,11 @@ defaultproperties
     DamageType=Class'CSPlasmaFighterDamTypeRailTurret'
     //DamageMin=350
     //DamageMax=350
-    DamageMin=88
-    DamageMax=138
-    // Vehicles take double via VehicleDamageScaling
+    DamageMin=113
+    DamageMax=113
+    // Vehicles take double via VehicleDamageScaling  so 225.
     //TraceRange=20000.000000
-    TraceRange=17000.000000  // range reduction pooty 2/24 similar to omega
+    TraceRange=17000.000000  // range reduction pooty 2/24 
     Momentum=50000.000000
     AIInfo(0)=(bTrySplash=False,bLeadTarget=False,bInstantHit=True,WarnTargetPct=1.000000,RefireRate=0.850000)
 }
