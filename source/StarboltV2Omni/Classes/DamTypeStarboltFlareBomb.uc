@@ -1,4 +1,4 @@
-class DamTypeFlareBomb extends VehicleDamageType;
+class DamTypeStarboltFlareBomb extends VehicleDamageType;
 
 defaultproperties
 {
@@ -10,4 +10,5 @@ defaultproperties
      bThrowRagdoll=True
      bFlaming=True
      GibPerterbation=0.150000
+     VehicleDamageScaling=1.5
 }

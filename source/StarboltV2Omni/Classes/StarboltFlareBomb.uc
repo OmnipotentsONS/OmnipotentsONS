@@ -1,4 +1,4 @@
-class FlareBomb extends ONSDecoy;
+class StarBoltFlareBomb extends ONSDecoy;
 #exec audio import file=Sounds\FlareBombExplosion.wav
 var Sound ExplosionSound;
 
@@ -32,7 +32,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 	PlaySound(ExplosionSound,,5.5*TransientSoundVolume);
     if ( EffectIsRelevant(Location,false) )
     {
-    	Spawn(class'FlareBombExplosion',,,HitLocation + HitNormal*16, rotator(HitNormal) + rot(-16384,0,0));
+    	Spawn(class'StarboltFlareBombExplosion',,,HitLocation + HitNormal*16, rotator(HitNormal) + rot(-16384,0,0));
 		if ( (ExplosionDecal != None) && (Level.NetMode != NM_DedicatedServer) )
 			Spawn(ExplosionDecal,self,,Location, rotator(-HitNormal));
     }
@@ -44,12 +44,13 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 defaultproperties
 {
      ExplosionSound=Sound'StarboltV2Omni.FlareBombExplosion'
-     DecoyFlightSFXClass=Class'StarboltV2Omni.FlareDecoyFlight'
+     DecoyFlightSFXClass=Class'StarboltV2Omni.StarboltFlareDecoyFlight'
      MaxSpeed=5600.000000
-     Damage=500.000000
+     Damage=267.000000
+     // was 500.  Added Vehicle Damage Scaling of 1.5
      DamageRadius=850.000000
-     MomentumTransfer=125000.000000
-     MyDamageType=Class'StarboltV2Omni.DamTypeFlareBomb'
+     MomentumTransfer=90000.000000
+     MyDamageType=Class'StarboltV2Omni.DamTypeStarboltFlareBomb'
      LifeSpan=15.000000
      bFullVolume=True
      SoundVolume=255

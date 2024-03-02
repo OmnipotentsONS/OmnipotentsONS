@@ -36,15 +36,17 @@ defaultproperties
      CullDistance=20000
      // Default was 25
      // old version did 25 * 10 (beams / sec) 250 pts/s
-     // new version 27 *.7.5 = 202 pts/sec avg.
-     DamageMin=25
-     DamageMax=28
+     // Added VehicleDamageScaling * 1.5
+     // Damage to vehicles now is 180 pts/s
+     
+     DamageMin=18
+     DamageMax=20
      PitchUpLimit=18000
-     FireInterval=0.133333  //slowed just a touch as it lags on the server.
+     FireInterval=0.15  //slowed just a touch as it lags on the server.
      AltFireInterval=3.000000
      AltFireSoundClass=Sound'CicadaSnds.Decoy.DecoyLaunch'
      DamageType=Class'StarboltV2Omni.DamTypeStarboltLaser'
-     AltFireProjectileClass=Class'StarboltV2Omni.FlareBomb'
+     AltFireProjectileClass=Class'StarboltV2Omni.StarboltFlareBomb'
      Mesh=SkeletalMesh'ONSWeapons-A.PlasmaGun'
      bSelected=True
      StarBeamEffectClass(0)=class'StarboltTurretBeamEffect'

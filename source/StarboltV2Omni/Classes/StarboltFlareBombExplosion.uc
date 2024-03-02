@@ -1,4 +1,4 @@
-class FlareBombExplosion extends NewExplosionA
+class StarboltFlareBombExplosion extends NewExplosionA
 	placeable;
 
 defaultproperties

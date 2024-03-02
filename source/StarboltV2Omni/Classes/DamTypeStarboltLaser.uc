@@ -20,4 +20,5 @@ defaultproperties
      DeathString="%k's Starbolt's blasters sizzled %o to death."
      FemaleSuicide="%o used her blaster on herself."
      MaleSuicide="%o used his blaster on himself."
+     VehicleDamageScaling=1.5
 }

@@ -1,4 +1,4 @@
-class FlareDecoyFlight extends ONSDecoyFlight;
+class StarboltFlareDecoyFlight extends ONSDecoyFlight;
 
 defaultproperties
 {
@@ -17,7 +17,7 @@ defaultproperties
          Texture=Texture'AW-2004Particles.Weapons.PlasmaStar'
          LifetimeRange=(Min=0.100000,Max=0.100000)
      End Object
-     Emitters(0)=SpriteEmitter'StarboltV2Omni.FlareDecoyFlight.SpriteEmitter11324'
+     Emitters(0)=SpriteEmitter'StarboltV2Omni.StarboltFlareDecoyFlight.SpriteEmitter11324'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter11325
          UseColorScale=True
@@ -49,7 +49,7 @@ defaultproperties
          VelocityScale(0)=(RelativeVelocity=(X=1.000000,Y=1.000000,Z=1.000000))
          VelocityScale(1)=(RelativeTime=1.000000)
      End Object
-     Emitters(1)=SpriteEmitter'StarboltV2Omni.FlareDecoyFlight.SpriteEmitter11325'
+     Emitters(1)=SpriteEmitter'StarboltV2Omni.StarboltFlareDecoyFlight.SpriteEmitter11325'
 
      LifeSpan=15.000000
 }
