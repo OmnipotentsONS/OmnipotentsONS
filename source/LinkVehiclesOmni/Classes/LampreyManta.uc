@@ -37,10 +37,14 @@ defaultproperties
    */  
    
    // Manta props modified
+   // Manta defaults.
+    //JumpDuration=0.220000
+    // JumpForceMag=100.000000
+    // JumpDelay=3.000000
    
      MaxPitchSpeed=800.000000
-     JumpDuration=0.40000
-     JumpForceMag=110.000000
+     JumpDuration=0.250000
+     JumpForceMag=105.000000
      JumpDelay=3.0000
      DuckForceMag=170.000000
      RollTorqueStrafeFactor=50.000000
@@ -60,7 +64,7 @@ defaultproperties
      
      DriverDamageMult=0.000000
      VehiclePositionString="in a Lamprey Manta"
-     VehicleNameString="Lamprey Manta 3.42"
+     VehicleNameString="Lamprey Manta 3.43"
      GroundSpeed=1450.000000
      HealthMax=266.000000
      Health=200

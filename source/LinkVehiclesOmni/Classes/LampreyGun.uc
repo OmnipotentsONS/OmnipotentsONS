@@ -778,8 +778,8 @@ defaultproperties
    
     
      LinkMultiplier = 1.0; // not used here
-		 SelfHealMultiplier = 0.75;
-		 VehicleDamageMult = 1.5; // set here not in DamType
+		 SelfHealMultiplier = 0.65;
+		 VehicleDamageMult = 1.35; // set here not in DamType
 		 VehicleHealScore = 250;
 		 RangeExtPerLink=500; // how much range is extended per linker
 		 
