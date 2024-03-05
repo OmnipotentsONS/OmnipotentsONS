@@ -1,5 +1,7 @@
 class StarboltV2Omni extends ONSAttackCraft;
 
+/*  Since we reduced the bomb power make we don't need hand weapons to do extra, its health is only 200 so one avril takes it out
+
 function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
 {
 
@@ -11,11 +13,13 @@ if (DamageType == class'DamTypeMinigunBullet')
  		Damage *= 2;
 
 if (DamageType == class'DamTypeSniperShot')
- 		Damage *= 2;
+ 		Damage *= 1.3;
 
     Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
 	
 }
+*/
+
 
 defaultproperties
 {
@@ -36,10 +40,10 @@ defaultproperties
      BlueSkin=Shader'Starbolt_Tex.Starbolt.ShieldBodyBlue'
      ImpactDamageMult=0.0010000
      VehiclePositionString="in a Starbolt"
-     VehicleNameString="Starbolt 2.5"
+     VehicleNameString="Starbolt 2.52"
      GroundSpeed=3550.000000
-     HealthMax=200.000000
-     Health=200
+     HealthMax=225.000000
+     Health=225
      CollisionRadius=130.000000
      Begin Object Class=KarmaParamsRBFull Name=KParams0
          KInertiaTensor(0)=1.000000

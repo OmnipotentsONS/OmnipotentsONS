@@ -45,7 +45,8 @@ defaultproperties
 {
      ExplosionSound=Sound'StarboltV2Omni.FlareBombExplosion'
      DecoyFlightSFXClass=Class'StarboltV2Omni.StarboltFlareDecoyFlight'
-     MaxSpeed=5600.000000
+     //MaxSpeed=5600.000000
+     MaxSpeed=1600.000000 // Taken from Flare Raptor
      Damage=267.000000
      // was 500.  Added Vehicle Damage Scaling of 1.5
      DamageRadius=850.000000
