@@ -69,7 +69,7 @@ defaultproperties
      StaticMesh=StaticMesh'WeaponStaticMesh.RedeemerMissile'
      DrawScale=1.000000
      CullDistance=12000
-     DamageRadius=512
-     Damage=125 // close in flak chunkss/shrapnel do more
+     DamageRadius=850
+     Damage=150 // close in flak chunkss/shrapnel do more
      NumBomblets=4
 }

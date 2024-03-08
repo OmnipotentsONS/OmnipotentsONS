@@ -183,7 +183,7 @@ defaultproperties
      bAmbientFireSound=True
      bIsRepeatingFF=True
      Spread=0.005000
-     FireInterval=0.450000
+     FireInterval=0.33333
      AltFireInterval=4.000000
      AmbientEffectEmitterClass=Class'Onslaught.ONSRVChainGunFireEffect'
      FireSoundClass=Sound'FireBladeAudioB001.CannonFire2'
@@ -192,8 +192,8 @@ defaultproperties
      FireForce="minifireb"
      AltFireForce="Laser01"
      DamageType=Class'FireBladeOmni.DamTypeFireBladeOmniCannon'
-     DamageMin=25
-     DamageMax=35
+     DamageMin=30
+     DamageMax=36
      TraceRange=17000.000000
      ProjectileClass=Class'FireBladeOmni.FireBladeOmniRocketProj'
      AltFireProjectileClass=Class'FireBladeOmni.FireBladeOmniBomb'

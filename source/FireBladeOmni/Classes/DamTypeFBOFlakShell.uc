@@ -8,5 +8,5 @@ defaultproperties
      bThrowRagdoll=True
      GibPerterbation=0.250000
      VehicleMomentumScaling=1.00000
-     VehicleDamageScaling=1.0000
+     VehicleDamageScaling=1.3000
 }

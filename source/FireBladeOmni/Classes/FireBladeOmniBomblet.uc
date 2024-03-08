@@ -74,6 +74,6 @@ defaultproperties
      CullDistance=12000
      DamageRadius=512
      Damage=50 // close in flak chunkss/shrapnel do more
-     NumBomblets=3
+     NumBomblets=4
      MomentumTransfer=20000
 }

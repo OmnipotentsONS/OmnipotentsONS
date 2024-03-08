@@ -684,7 +684,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a FireBlade"
-     VehicleNameString="FireBlade 2.0"
+     VehicleNameString="FireBlade 2.1"
      RanOverDamageType=Class'Onslaught.DamTypeAttackCraftRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
      FlagBone="LeftGun"
