@@ -599,7 +599,7 @@ defaultproperties
      LinkScale(2)=1.25000
      LinkScale(3)=2.0000 
      LinkScale(4)=3.00000
-     LinkScale(5)=3.00000 
+     LinkScale(5)=3.50000 
      
      MakeLinkForce="LinkActivated"
      Damage=13 // link gun damage is 9, link badger = 15
