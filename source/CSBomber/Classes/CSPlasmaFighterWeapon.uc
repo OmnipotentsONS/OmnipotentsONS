@@ -398,7 +398,7 @@ defaultproperties
     ZFireOffset=40
     GunOffset=55
     BombFireOffset=5
-    FireInterval=1.25
+    FireInterval=1.00
     PrimaryInterval=0.05
 
     AltFireInterval=2.75
@@ -426,7 +426,7 @@ defaultproperties
     //DamageMin=350
     //DamageMax=350
     DamageMin=113
-    DamageMax=113
+    DamageMax=115
     // Vehicles take double via VehicleDamageScaling  so 225.
     //TraceRange=20000.000000
     TraceRange=17000.000000  // range reduction pooty 2/24 
