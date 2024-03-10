@@ -59,6 +59,9 @@ function bool InternalOnClick(GUIComponent C)
     else if(C==UTCompMenuButtons[9])
         PlayerOwner().ClientReplaceMenu(string(class'UTComp_Menu_Extra'));
 
+    else if(C==UTCompMenuButtons[10])
+        PlayerOwner().ClientReplaceMenu(string(class'UTComp_Menu_Emoticons'));
+
     return false;
 }
 
@@ -148,7 +151,7 @@ defaultproperties
          WinTop=0.220000
          WinLeft=0.11250000
          //WinWidth=0.180000
-         WinWidth=0.144
+         WinWidth=0.12
          WinHeight=0.060000
          OnClick=InternalOnClick
      End Object
@@ -157,9 +160,9 @@ defaultproperties
      Begin Object class=GUIButton name=AutoDemoButton
          Caption="Auto Demo/SS"
          WinTop=0.220000
-         WinLeft=0.2725
+         WinLeft=0.2458
          //WinWidth=0.180000
-         WinWidth=0.144
+         WinWidth=0.12
          WinHeight=0.060000
          OnClick=InternalOnClick
      End Object
@@ -168,9 +171,9 @@ defaultproperties
      Begin Object class=GUIButton name=MiscButton
          Caption="Misc"
          WinTop=0.220000
-         WinLeft=0.4325
+         WinLeft=0.3791
          //WinWidth=0.180000
-         WinWidth=0.144
+         WinWidth=0.12
          WinHeight=0.060000
          OnClick=InternalOnClick
      End Object
@@ -179,9 +182,9 @@ defaultproperties
      Begin Object class=GUIButton name=WeaponConfigButton
          Caption="Weapon Config"
          WinTop=0.220000
-         WinLeft=0.5925
+         WinLeft=0.5124
          //WinWidth=0.180000
-         WinWidth=0.144
+         WinWidth=0.12
          WinHeight=0.060000
          OnClick=InternalOnClick
      End Object
@@ -190,13 +193,24 @@ defaultproperties
      Begin Object class=GUIButton name=ExtraButton
          Caption="Extra"
          WinTop=0.220000
-         WinLeft=0.7525
+         WinLeft=0.6458
          //WinWidth=0.180000
-         WinWidth=0.144
+         WinWidth=0.12
          WinHeight=0.060000
          OnClick=InternalOnClick
      End Object
      UTCompMenuButtons(9)=GUIButton'ExtraButton'
+
+     Begin Object class=GUIButton name=EmoteButton
+         Caption="Emotes"
+         WinTop=0.220000
+         WinLeft=0.7791
+         //WinWidth=0.180000
+         WinWidth=0.12
+         WinHeight=0.060000
+         OnClick=InternalOnClick
+     End Object
+     UTCompMenuButtons(10)=GUIButton'EmoteButton'
 
      Begin Object class=GUIButton name=AdminButton
          Caption="Admin"
@@ -208,7 +222,7 @@ defaultproperties
          OnClick=InternalOnClick
          bVisible=false
      End Object
-     UTCompMenuButtons(10)=GUIButton'AdminButton'
+     UTCompMenuButtons(11)=GUIButton'AdminButton'
 
      Begin Object Class=GUITabControl Name=LoginMenuTC
          bFillSpace=True
