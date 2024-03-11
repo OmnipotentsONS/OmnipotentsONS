@@ -1,24 +1,25 @@
 class StarboltV2Omni extends ONSAttackCraft;
 
-/*  Since we reduced the bomb power make we don't need hand weapons to do extra, its health is only 200 so one avril takes it out
+
 
 function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
 {
 
 
-if (DamageType == class'DamTypeShockBeam')
-		Damage *= 2;
-		
-if (DamageType == class'DamTypeMinigunBullet')
- 		Damage *= 2;
+	//remember all these handheld weapons has reduced damage vs vehicles.
+	if (DamageType == class'DamTypeShockBeam')
+	Damage *= 1.5; //4 shots kill starbolt.
 
-if (DamageType == class'DamTypeSniperShot')
- 		Damage *= 1.3;
+	if (DamageType == class'DamTypeMinigunBullet')
+	Damage *= 1.25; // has 0.75 vehicle damage scaling, so this makes it 1.0 overall.
+
+	if (DamageType == class'DamTypeSniperShot')
+	Damage *= 1.4; // 3 Shots kill starbolt
 
     Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
 	
 }
-*/
+
 
 
 defaultproperties
@@ -40,7 +41,7 @@ defaultproperties
      BlueSkin=Shader'Starbolt_Tex.Starbolt.ShieldBodyBlue'
      ImpactDamageMult=0.0010000
      VehiclePositionString="in a Starbolt"
-     VehicleNameString="Starbolt 2.52"
+     VehicleNameString="Starbolt 2.53"
      GroundSpeed=3550.000000
      HealthMax=225.000000
      Health=225
