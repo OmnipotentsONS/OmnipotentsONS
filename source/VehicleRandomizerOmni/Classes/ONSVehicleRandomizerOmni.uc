@@ -88,7 +88,7 @@ var() bool bRandomizeEveryRound;	// if true, we randomize on each reset and not
 									// just once.
 var() bool bRandomizeLinkSetup;		// Randomizes link setup too.
 
-const OVRVersion = "2.0";
+const OVRVersion = "2.1";
 
 
 
@@ -303,7 +303,7 @@ function VehicleRandomizerSetup()
 						{
 								// Select a random vehicle and insert it
 								UseVehicles.Insert(0,1);
-							 // m = rand(Vehicles.Length);
+							  m = rand(Vehicles.Length);
 								// m was never intialized originally relying on default int as 0?? which mean first match would alwasy get selected - pooty
 								// If it's a unique vehicle already used somewhere else, 
 								// keep trying
@@ -325,6 +325,7 @@ function VehicleRandomizerSetup()
 												//log("banned",'KDebug');
 												bBanned = true;
 											}
+																					
 										}
 									}
 							
@@ -334,12 +335,15 @@ function VehicleRandomizerSetup()
 							
 							// Check non Flying if flying only
 							bGotFlyer = false;
-							while (NodeGroups[i].bFlyingOnly && !bGotFlyer)
+							while (NodeGroups[i].bFlyingOnly && !bGotFlyer )
+						
 							    {
 								    m = rand(Vehicles.Length);
 								  //  log(self@"In FlyerCheck Vehicle="@Vehicles[m].VehicleClass@" VehicleCanFly"@Vehicles[m].VehicleClass.default.bCanFly);
-								    if (Vehicles[m].VehicleClass.default.bCanFly) {
-								        bGotFlyer=True;
+								    if (Vehicles[m].VehicleClass.default.bCanFly ) {
+								    		// add checks to unique 03/2024 pooty
+								    		if (!(Vehicles[m].bUnique && Vehicles[m].bAlreadyUsed))
+								           bGotFlyer=True;
 								    //    log(self@"GotFlyer="@Vehicles[m].VehicleClass);
 								    }    
 									}
