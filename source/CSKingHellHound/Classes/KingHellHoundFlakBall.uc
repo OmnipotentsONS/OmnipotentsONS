@@ -16,6 +16,9 @@ defaultproperties
      DeathString="%o was ripped up by %k's flak."
      FemaleSuicide="%o flakked herself."
      MaleSuicide="%o flakked himself."
-     bDelayedDamage=True
+     //bDelayedDamage=True
      VehicleDamageScaling=1.500000
+     bDetonatesGoop=True
+     bThrowRagdoll=True
+     GibPerterbation=0.250000
 }

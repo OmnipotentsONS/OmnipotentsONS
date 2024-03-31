@@ -351,8 +351,8 @@ defaultproperties
      MinBrakeFriction=4.000000
      MaxSteerAngleCurve=(Points=((OutVal=25.000000),(InVal=1500.000000,OutVal=8.000000),(InVal=1000000000.000000,OutVal=8.000000)))
      //TorqueCurve=(Points=((OutVal=9.000000),(InVal=200.000000,OutVal=10.000000),(InVal=1500.000000,OutVal=11.000000),(InVal=2500.000000)))
-     // Same as KingHH
-     TorqueCurve=(Points=((OutVal=14.000000),(InVal=200.000000,OutVal=16.000000),(InVal=1500.000000,OutVal=19.000000),(InVal=2500.000000)))
+     
+     TorqueCurve=(Points=((OutVal=15.000000),(InVal=200.000000,OutVal=17.500000),(InVal=1350.000000,OutVal=20.000000),(InVal=2600.000000)))
      GearRatios(0)=-0.537810
      GearRatios(1)=0.660000
      GearRatios(2)=0.850000
@@ -454,7 +454,7 @@ defaultproperties
      End Object
      Wheels(3)=SVehicleWheel'FireVehiclesV2Omni.FireHound.SVehicleWheel7'
 
-     VehicleMass=4.000000
+     VehicleMass=4.500000
      bDrawDriverInTP=True
      bDrawMeshInFP=True
      DrivePos=(X=16.921000,Y=-40.284000,Z=65.793999)
@@ -467,10 +467,11 @@ defaultproperties
      TPCamDistance=550.000000
      CenterSpringForce="SpringONSSPRV"
      TPCamLookat=(X=0.000000,Z=0.000000)
-     TPCamWorldOffset=(Z=100.000000)
+     TPCamWorldOffset=(Z=135.000000)
      DriverDamageMult=0.000000
+     MomentumMult=2.500000 // reduce knockaround default is 4.000
      VehiclePositionString="in a FireHound"
-     VehicleNameString="FireHound 2.94"
+     VehicleNameString="FireHound 2.95"
      RanOverDamageType=Class'FireVehiclesV2Omni.FireHoundRoadkill'
      HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.DixieHorn'
      HornSounds(1)=Sound'GorzWheels_Sounds.FireHound.FireHoundHorn'

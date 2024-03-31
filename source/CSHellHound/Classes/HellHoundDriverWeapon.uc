@@ -180,6 +180,7 @@ defaultproperties
      GunnerAttachmentBone="Object83"
      FireInterval=0.200000
      AltFireInterval=1.500000
+     PitchUpLimit=6500
      FireSoundClass=Sound'ONSVehicleSounds-S.HoverBike.HoverBikeFire01'
      AltFireSoundClass=Sound'ONSVehicleSounds-S.HoverBike.HoverBikeFire01'
      FireForce="HoverBikeFire"

@@ -18,5 +18,5 @@ defaultproperties
      MaleSuicide="%o was perforated by his own Flak."
      bDelayedDamage=True
      bBulletHit=True
-     VehicleMomentumScaling=0.500000
-}
+     VehicleMomentumScaling=0.750000
+     VehicleDamageScaling=1.3

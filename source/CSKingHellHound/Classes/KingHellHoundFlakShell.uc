@@ -35,4 +35,5 @@ defaultproperties
      Damage=110.000000
      MyDamageType=Class'CSKingHellHound.KingHellHoundFlakBall'
      Physics=PHYS_Flying
+     DrawScale=1.5
 }

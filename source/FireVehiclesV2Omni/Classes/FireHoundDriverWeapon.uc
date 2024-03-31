@@ -159,9 +159,10 @@ defaultproperties
      FireSoundClass=Sound'WVHoverTankV2.FirebugFireLoop'
      AmbientSoundScaling=2.000000
      FireForce="minifireb"
+     PitchUpLimit=7000
      ProjectileClass=Class'FireVehiclesV2Omni.FireHoundFlameProjectile'
      AIInfo(0)=(bLeadTarget=True)
-     CullDistance=8000.000000
+     CullDistance=6000.000000
      Mesh=SkeletalMesh'ONSFullAnimations.MASPassengerGun'
      DrawScale=0.500000
      DrawScale3D=(X=0.500000,Y=0.500000,Z=0.500000)

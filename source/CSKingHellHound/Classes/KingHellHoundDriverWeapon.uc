@@ -170,18 +170,19 @@ function Projectile SpawnAdvancedProjectile(class<Projectile> ProjClass, bool bA
 
 defaultproperties
 {
-     ProjPerFire=10
+     ProjPerFire=12
      AltFireProjPerFire=1
      ProjSpread=1000
      AltFireProjSpread=1000
      SpreadStyle=SS_Random
-     AltFireSpreadStyle=SS_Random
+     AltFireSpreadStyle=SS_Line
      YawBone="Object83"
      PitchBone="Object83"
      WeaponFireAttachmentBone="Object85"
      GunnerAttachmentBone="Object83"
      FireInterval=1.000000
      AltFireInterval=1.000000
+     PitchUpLimit=6500
      FireSoundClass=SoundGroup'WeaponSounds.FlakCannon.FlakCannonFire'
      AltFireSoundClass=SoundGroup'WeaponSounds.FlakCannon.FlakCannonAltFire'
      FireForce="FlakCannonFire"

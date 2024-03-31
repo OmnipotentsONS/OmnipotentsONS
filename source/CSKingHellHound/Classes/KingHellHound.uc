@@ -317,7 +317,7 @@ defaultproperties
      MinBrakeFriction=4.000000
      MaxSteerAngleCurve=(Points=((OutVal=25.000000),(InVal=1500.000000,OutVal=8.000000),(InVal=1000000000.000000,OutVal=8.000000)))
 //     TorqueCurve=(Points=((OutVal=9.000000),(InVal=200.000000,OutVal=10.000000),(InVal=1500.000000,OutVal=11.000000),(InVal=2500.000000)))
-     TorqueCurve=(Points=((OutVal=14.000000),(InVal=200.000000,OutVal=16.000000),(InVal=1500.000000,OutVal=19.000000),(InVal=2500.000000)))
+     TorqueCurve=(Points=((OutVal=15.000000),(InVal=200.000000,OutVal=18.500000),(InVal=1400.000000,OutVal=21.000000),(InVal=2800.000000)))
      GearRatios(0)=-0.537810
      GearRatios(1)=0.660000
      GearRatios(2)=0.850000
@@ -432,10 +432,11 @@ defaultproperties
      TPCamDistance=500.000000
      CenterSpringForce="SpringONSSPRV"
      TPCamLookat=(X=0.000000,Z=0.000000)
-     TPCamWorldOffset=(Z=100.000000)
+     TPCamWorldOffset=(Z=135.000000)
      DriverDamageMult=0.000000
+     MomentumMult=2.250000 // reduce knockaround default is 4.000
      VehiclePositionString="in a King HellHound"
-     VehicleNameString="King HellHound 2.1"
+     VehicleNameString="King HellHound 2.2"
      RanOverDamageType=Class'CSKingHellHound.KingHellHoundRoadkill'
      HornSounds(0)=Sound'GorzWheels_Sounds.KingHellHound.KHHHorn1'
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.DixieHorn'

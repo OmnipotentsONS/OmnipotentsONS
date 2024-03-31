@@ -423,10 +423,11 @@ defaultproperties
      TPCamDistance=550.000000
      CenterSpringForce="SpringONSSPRV"
      TPCamLookat=(X=0.000000,Z=0.000000)
-     TPCamWorldOffset=(Z=100.000000)
+     TPCamWorldOffset=(Z=135.000000)
      DriverDamageMult=0.000000
+     MomentumMult=2.500000 // reduce knockaround default is 4.000
      VehiclePositionString="in a HellHound"
-     VehicleNameString="HellHound 2.1"
+     VehicleNameString="HellHound 2.2"
      RanOverDamageType=Class'CSHellHound.HellHoundRoadkill'
      HornSounds(0)=Sound'GorzWheels_Sounds.HellHound.HHHorn0'
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.Horn01'
