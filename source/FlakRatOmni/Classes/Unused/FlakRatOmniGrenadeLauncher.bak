@@ -1,0 +1,267 @@
+class FlakRatOmniGrenadeLauncher extends ONSWeapon;
+
+var() int ProjPerFire;
+var() int AltFireProjPerFire;
+var() int ProjSpread;
+var() int AltFireProjSpread;
+var() enum ESpreadStyle
+{
+    SS_None,
+    SS_Random, // spread is max random angle deviation
+    SS_Line,   // spread is angle between each projectile
+    SS_Ring
+} SpreadStyle;
+
+var bool bProjOffset;
+var rotator ProjSpawnOffset;
+
+
+var array<ONSGrenadeProjectile> Grenades;
+var int CurrentGrenades; //should be sync'ed with Grenades.length
+var int MaxGrenades;
+var color FadedColor;
+
+replication
+{
+    reliable if (bNetOwner && bNetDirty && ROLE == ROLE_Authority)
+        CurrentGrenades;
+}
+
+
+static function StaticPrecache(LevelInfo L)
+{
+    L.AddPrecacheMaterial(Texture'XEffects.FlakTrailTex');
+    if ( L.DetailMode != DM_Low )
+		L.AddPrecacheMaterial(Texture'XEffects.fexpt');
+    L.AddPrecacheMaterial(Texture'XEffects.ExplosionFlashTex');
+    L.AddPrecacheMaterial(Texture'XEffects.GoldGlow');
+    L.AddPrecacheMaterial(Texture'WeaponSkins.FlakTex0');
+    L.AddPrecacheMaterial(Texture'WeaponSkins.FlakTex1');
+    L.AddPrecacheMaterial(Texture'WeaponSkins.FlakChunkTex');
+    L.AddPrecacheMaterial(Texture'XWeapons.NewFlakSkin');
+    L.AddPrecacheMaterial(Texture'XGameShaders.flak_flash');
+	L.AddPrecacheStaticMesh(StaticMesh'WeaponStaticMesh.flakchunk');
+	L.AddPrecacheStaticMesh(StaticMesh'WeaponStaticMesh.flakshell');
+	L.AddPrecacheStaticMesh(StaticMesh'WeaponStaticMesh.FlakCannonPickup');
+
+}
+
+simulated function UpdatePrecacheMaterials()
+{
+    Level.AddPrecacheMaterial(Texture'XEffects.FlakTrailTex');
+    if ( Level.DetailMode != DM_Low )
+		Level.AddPrecacheMaterial(Texture'XEffects.fexpt');
+    Level.AddPrecacheMaterial(Texture'XEffects.ExplosionFlashTex');
+    Level.AddPrecacheMaterial(Texture'XEffects.GoldGlow');
+    Level.AddPrecacheMaterial(Texture'WeaponSkins.FlakTex0');
+    Level.AddPrecacheMaterial(Texture'WeaponSkins.FlakTex1');
+    Level.AddPrecacheMaterial(Texture'WeaponSkins.FlakChunkTex');
+    Level.AddPrecacheMaterial(Texture'XWeapons.NewFlakSkin');
+    Level.AddPrecacheMaterial(Texture'XGameShaders.flak_flash');
+
+    Super.UpdatePrecacheMaterials();
+}
+
+simulated function UpdatePrecacheStaticMeshes()
+{
+	Level.AddPrecacheStaticMesh(StaticMesh'WeaponStaticMesh.flakchunk');
+	Level.AddPrecacheStaticMesh(StaticMesh'WeaponStaticMesh.flakshell');
+	Super.UpdatePrecacheStaticMeshes();
+}
+
+
+simulated function NewDrawWeaponInfo(Canvas Canvas, float YPos)
+{
+    local int i, Half;
+    local float ScaleFactor;
+
+    ScaleFactor = 99 * Canvas.ClipX/3200;
+    Half = (MaxGrenades + 1) / 2;
+    Canvas.Style = ERenderStyle.STY_Alpha;
+    Canvas.DrawColor = class'HUD'.Default.WhiteColor;
+    for (i = 0; i < Half; i++)
+    {
+        if (i >= CurrentGrenades)
+            Canvas.DrawColor = FadedColor;
+        Canvas.SetPos(Canvas.ClipX - (i+1) * ScaleFactor * 1.25, YPos);
+        Canvas.DrawTile(Material'HudContent.Generic.HUD', ScaleFactor, ScaleFactor, 324, 325, 54, 54);
+    }
+    for (i = Half; i < MaxGrenades; i++)
+    {
+        if (i >= CurrentGrenades)
+            Canvas.DrawColor = FadedColor;
+        Canvas.SetPos(Canvas.ClipX - (i-Half+1) * ScaleFactor * 1.25, YPos - ScaleFactor);
+        Canvas.DrawTile(Material'HudContent.Generic.HUD', ScaleFactor, ScaleFactor, 324, 325, 54, 54);
+    }
+}
+
+
+simulated function Destroyed()
+{
+    local int x;
+
+    if (Role == ROLE_Authority)
+    {
+        for (x = 0; x < Grenades.Length; x++)
+            if (Grenades[x] != None)
+                Grenades[x].Explode(Grenades[x].Location, vect(0,0,1));
+        Grenades.Length = 0;
+    }
+
+    Super.Destroyed();
+}
+
+
+simulated function bool AllowFire()
+{
+    return (CurrentGrenades < MaxGrenades);
+}
+
+
+state ProjectileFireMode
+{
+    function Fire(Controller C)
+    {
+    	log("Fire in ProjectileFireMode, AllowFire="@AllowFire(),'FlakRatOmni');
+    	If (AllowFire()) DoFireEffect(ProjectileClass, False);
+    	// only fire if we have more grenades
+    }
+
+    function AltFire(Controller C)
+    {
+      local int x;
+
+     for (x = 0; x < Grenades.Length; x++)
+        if (Grenades[x] != None)
+            Grenades[x].Explode(Grenades[x].Location, vect(0,0,1));
+
+    Grenades.length = 0;
+    CurrentGrenades = 0;
+    }
+}
+
+function DoFireEffect(class<Projectile> ProjClass, bool bFire)
+{
+	local Rotator R, AdjustedAim;
+	local int p;
+	local int SpawnCount;
+	local float theta;
+	local ONSWeaponPawn WeaponPawn;
+	local vector StartLocation, HitLocation, HitNormal, Extent, X;
+
+	AdjustedAim = WeaponFireRotation;
+
+	if (bFire && bProjOffset)
+		AdjustedAim = WeaponFireRotation + ProjSpawnOffset;
+	
+	if (bDoOffsetTrace)
+	{
+		Extent = ProjClass.default.CollisionRadius * vect(1,1,0);
+		Extent.Z = ProjClass.default.CollisionHeight;
+		WeaponPawn = ONSWeaponPawn(Owner);
+		if (WeaponPawn != None && WeaponPawn.VehicleBase != None)
+    		{
+			if (!WeaponPawn.VehicleBase.TraceThisActor(HitLocation, HitNormal, WeaponFireLocation, WeaponFireLocation + vector(AdjustedAim) * (WeaponPawn.VehicleBase.CollisionRadius * 1.5), Extent))
+				StartLocation = HitLocation;
+			else
+				StartLocation = WeaponFireLocation + vector(AdjustedAim) * (ProjClass.default.CollisionRadius * 1.1);
+		}
+		else
+		{
+			if (!Owner.TraceThisActor(HitLocation, HitNormal, WeaponFireLocation, WeaponFireLocation + vector(AdjustedAim) * (Owner.CollisionRadius * 1.5), Extent))
+				StartLocation = HitLocation;
+			else
+				StartLocation = WeaponFireLocation + vector(AdjustedAim) * (ProjClass.default.CollisionRadius * 1.1);
+		}
+	}
+	else
+		StartLocation = WeaponFireLocation;
+  log("just before bFire in DoFireEffect",'FlakRatOmni');
+	if (!bFire)
+	{
+		SpawnCount = Max(1, ProjPerFire);
+    CurrentGrenades++;
+    log("incrementing CurrentGrenades"@CurrentGrenades,'FlakRatOmni');
+		switch (SpreadStyle)
+		{
+			case SS_Random:
+				X = Vector(AdjustedAim);
+				for (p = 0; p < SpawnCount; p++)
+				{
+					R.Yaw = ProjSpread * (FRand()-0.5);
+					R.Pitch = ProjSpread * (FRand()-0.5);
+					R.Roll = ProjSpread * (FRand()-0.5);
+					SpawnAdvancedProjectile(ProjClass,bFire,StartLocation, Rotator(X >> R));
+				}
+				break;
+			case SS_Line:
+				for (p = 0; p < SpawnCount; p++)
+				{
+					theta = ProjSpread*PI/32768*(p - float(SpawnCount-1)/2.0);
+					X.X = Cos(theta);
+					X.Y = Sin(theta);
+					X.Z = 0.0;
+					SpawnAdvancedProjectile(ProjClass,bFire,StartLocation, Rotator(X >> AdjustedAim));
+				}
+				break;
+			default:
+				SpawnAdvancedProjectile(ProjClass,bFire,StartLocation,AdjustedAim);
+		}
+		if (bAmbientFireSound)
+			AmbientSound = FireSoundClass;
+		else
+			PlayOwnedSound(FireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius,, false);
+	}
+	
+		//if (bAmbientAltFireSound)
+	//		AmbientSound = AltFireSoundClass;
+//		else
+//			PlayOwnedSound(AltFireSoundClass, SLOT_None, FireSoundVolume/255.0,, AltFireSoundRadius,, false);
+} // DoFireEffect
+
+
+function Projectile SpawnAdvancedProjectile(class<Projectile> ProjClass, bool bAltFire, vector Loc, rotator Rot)
+{
+    local Projectile P;
+
+    P = spawn(ProjClass, self, , Loc, Rot);
+
+    if (P != None)
+    {
+        if (bInheritVelocity)
+            P.Velocity = Instigator.Velocity;
+
+        FlashMuzzleFlash();
+
+    }
+    return P;
+}
+
+defaultproperties
+{
+	   MaxGrenades=12
+     CurrentGrenades=0
+     ProjPerFire=1
+     
+     ProjSpread=1000
+     SpreadStyle=SS_Random
+     YawBone="MortarBase"
+     PitchBone="MortarElevation"
+     PitchUpLimit=15000
+     WeaponFireAttachmentBone="MortarFire"
+     GunnerAttachmentBone="MortarGunner"
+     bDoOffsetTrace=True
+     FireInterval=0.750000
+     
+     FireSoundClass=SoundGroup'WeaponSounds.FlakCannon.FlakCannonFire'
+     AltFireSoundClass=SoundGroup'WeaponSounds.FlakCannon.FlakCannonAltFire'
+     FireForce="FlakCannonFire"
+     //AltFireForce="FlakCannonAltFire"
+     ProjectileClass=Class'Onslaught.ONSGrenadeProjectile'
+          //AltFireProjectileClass=Class'FlakRatOmni.FlakRatOmniShell'
+     // Altfire to detonate
+     AIInfo(0)=(bLeadTarget=True,aimerror=200.000000,RefireRate=1.500000)
+     AIInfo(1)=(bTrySplash=True,bLeadTarget=True,aimerror=200.000000,RefireRate=2.000000)
+     Mesh=SkeletalMesh'ONSFlakRat.FlakMortar'
+     FadedColor=(B=128,G=128,R=128,A=128)
+}
