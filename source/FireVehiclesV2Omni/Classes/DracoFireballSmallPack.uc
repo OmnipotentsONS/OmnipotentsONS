@@ -91,7 +91,7 @@ defaultproperties
      DualFireOffset=32.000000
      bDualIndependantTargeting=True
      Spread=0.015000
-     FireInterval=2.00000
+     FireInterval=1.50000
      
      FireSoundClass=Sound'WVDraco.NapalmRocketFire'
      FireForce="RocketLauncherFire"

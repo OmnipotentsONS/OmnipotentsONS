@@ -15,6 +15,7 @@ var() class<xEmitter> FlameClass;
 var() class<DamageType> DamageType, BurnDamageType;
 var bool bDoTouch;
 var float ExplosionRadius;
+var int NumFireballs;
 
 replication
 {
@@ -182,7 +183,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 	{
 				//HurtRadius(Damage, DamageRadius, MyDamageType, MomentumTransfer, HitLocation);	
 		// Called in Blowup (Projectile Class)
-		for (i=0; i<6; i++)
+		for (i=0; i<NumFireBalls; i++)
 		{
 			rot = Rotation;
 			/*	rot.yaw += FRand()*32000-16000;
@@ -221,11 +222,11 @@ defaultproperties
      AccelRate=1000.000000
      BurnDamageType=Class'FireVehiclesV2Omni.Burned'
      Speed=8000.000000
-     MaxSpeed=9000.000000
-     Damage=85.000000
-     DamageRadius=300.000000
-     
-     MomentumTransfer=10000.000000
+     MaxSpeed=10000.000000
+     Damage=80.000000
+     DamageRadius=350.000000
+     NumFireBalls=5
+     MomentumTransfer=20000.000000
      MyDamageType=Class'FireVehiclesV2Omni.FlameKillRaptor'
      ExplosionDecal=Class'XEffects.RocketMark'
      DrawType=DT_StaticMesh

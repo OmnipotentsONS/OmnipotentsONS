@@ -173,8 +173,8 @@ defaultproperties
      FireForce="PRVSideFire"
      AltFireForce="PRVSideAltFire"
      DamageType=Class'FireVehiclesV2Omni.FireHoundLaser'
-     DamageMin=25
-     DamageMax=25
+     DamageMin=27
+     DamageMax=37
      ProjectileClass=Class'FireVehiclesV2Omni.FireHoundSkyMine'
      ShakeRotMag=(X=60.000000,Y=20.000000)
      ShakeRotRate=(X=1000.000000,Y=1000.000000)

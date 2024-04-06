@@ -156,15 +156,16 @@ defaultproperties
 {
      bDoChainReaction=True
      MaxChainReactionDist=10000.000000
-     ChainReactionDelay=0.500000
+     ChainReactionDelay=0.350000
      BeamEffectClass=Class'XWeapons.ShockBeamEffect'
      ProjectileEffectClass=Class'FireVehiclesV2Omni.FireHoundSkyMineEffect'
      ComboSound=Sound'ONSVehicleSounds-S.Explosions.VehicleExplosion02'
-     ComboRadius=590.000000
+     ComboDamage=230.000000
+     ComboRadius=650.000000
      ComboDamageType=Class'FireVehiclesV2Omni.FireHoundCombo'
      Speed=1300.000000
      MaxSpeed=3000.000000
-     Damage=40.000000
+     Damage=45.000000
      MomentumTransfer=25000.000000
      MyDamageType=Class'FireVehiclesV2Omni.FireHoundSkyMineKill'
      DrawType=DT_None

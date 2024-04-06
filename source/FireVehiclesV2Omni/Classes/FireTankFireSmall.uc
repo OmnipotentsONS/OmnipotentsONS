@@ -233,7 +233,7 @@ defaultproperties
      TouchDetonationDelay=1.000000
      DripTime=0.200000
      ExplodeSound=SoundGroup'WeaponSounds.BioRifle.BioRifleGoo1'
-     HeatDamage=1.000000
+     HeatDamage=2.000000
      Speed=2000.000000
      bSwitchToZeroCollision=True
      Damage=18.000000

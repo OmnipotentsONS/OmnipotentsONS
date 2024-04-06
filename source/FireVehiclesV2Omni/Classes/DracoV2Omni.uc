@@ -125,7 +125,7 @@ defaultproperties
      FPCamViewOffset=(X=50.000000,Z=50.000000)
      TPCamWorldOffset=(Z=200.000000)
      VehiclePositionString="in a Draco"
-     VehicleNameString="Draco 2.94"
+     VehicleNameString="Draco 2.95"
      VehicleDescription="Draco is the latin word for 'dragon' - and this one breathes fire!"
      RanOverDamageType=Class'FireVehiclesV2Omni.DamTypeDracoRoadkill'
      CrushedDamageType=Class'FireVehiclesV2Omni.DamTypeDracoPancake'
