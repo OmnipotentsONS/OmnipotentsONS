@@ -97,9 +97,9 @@ function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 		else
 		{
 	 		Spawn(class'SmallRedeemerExplosion');
-		    SetCollision(false,false,false);
-		    HurtRadius(Damage, DamageRadius*0.125, MyDamageType, MomentumTransfer, Location);
-		    Destroy();
+		  SetCollision(false,false,false);
+		  HurtRadius(Damage, DamageRadius*0.125, MyDamageType, MomentumTransfer, Location);
+		  Destroy();
 		}
 	}
 }
@@ -121,7 +121,7 @@ function BlowUp(vector HitLocation)
 	MakeNoise(1.0);
 	SetPhysics(PHYS_None);
 	bHidden = true;
-    GotoState('Dying');
+  GotoState('Dying');
 }
 
 state Dying
@@ -227,7 +227,7 @@ defaultproperties
      Team=255
      Speed=25000.000000
      MaxSpeed=27549.000000
-     Damage=400.000000
+     Damage=411.000000
      DamageRadius=2000.000000
      MomentumTransfer=50000.000000
      MyDamageType=Class'CSBallista.BallistaShell'

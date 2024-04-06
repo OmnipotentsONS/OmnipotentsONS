@@ -192,11 +192,12 @@ defaultproperties
      FireSoundClass=Sound'ONSVehicleSounds-S.PRV.PRVFire04'
      FireForce="PRVRearFire"
      DamageType=Class'CSBallista.BallistaBeam'
-     DamageMin=300
-     DamageMax=300
-     TraceRange=23000.000000
+     DamageMin=325
+     DamageMax=325
+     TraceRange=25000.000000
      Momentum=150000.000000
      AIInfo(0)=(bInstantHit=True,bFireOnRelease=True,RefireRate=0.850000)
      Mesh=SkeletalMesh'AS_VehiclesFull_M.IONTankMachineGun'
+     DrawScale=1.2
      bSelected=True
 }

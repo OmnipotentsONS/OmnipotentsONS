@@ -65,6 +65,14 @@ simulated function PostBeginPlay()
 	OldDir = Vector(CurrentAim);
 }
 
+
+
+simulated function float ChargeBar()
+{
+	return FClamp(0.999 - (FireCountDown / FireInterval), 0.0, 0.999);
+}
+
+
 function Tick(float Delta)
 {
 	local int i;
@@ -145,11 +153,15 @@ defaultproperties
      PitchDownLimit=61500
      WeaponFireAttachmentBone="TankBarrel"
      WeaponFireOffset=200.000000
-     RotationsPerSecond=0.070000
+     //RotationsPerSecond=0.070000
+     RotationsPerSecond=0.140000
      Spread=0.000001
-     RedSkin=Texture'DevilsArsenal_Tex.SniperTanks.SniperTankRed'
-     BlueSkin=Texture'DevilsArsenal_Tex.SniperTanks.SniperTankBlue'
-     FireInterval=4.500000
+     //RedSkin=Texture'DevilsArsenal_Tex.SniperTanks.SniperTankRed'
+     //BlueSkin=Texture'DevilsArsenal_Tex.SniperTanks.SniperTankBlue'
+     RedSkin=Texture'SieEng_TexExtra.Sniper.Ballista_RED'
+     BlueSkin=Texture'SieEng_TexExtra.Sniper.Ballista_BLUE'
+     FireInterval=5.00000
+     bShowChargingBar=True
      EffectEmitterClass=Class'Onslaught.ONSTankFireEffect'
      FireSoundClass=Sound'ONSVehicleSounds-S.Tank.TankFire01'
      FireSoundVolume=400.000000

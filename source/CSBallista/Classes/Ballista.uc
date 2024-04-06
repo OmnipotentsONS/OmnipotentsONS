@@ -4,7 +4,8 @@ class Ballista extends ONSTreadCraft;
 #exec OBJ LOAD FILE=..\Sounds\ONSVehicleSounds-S.uax
 #exec OBJ LOAD FILE=InterfaceContent.utx
 #exec OBJ LOAD FILE=..\textures\VMVehicles-TX.utx
-#exec OBJ LOAD FILE=..\textures\DevilsArsenal_Tex
+//#exec OBJ LOAD FILE=..\textures\DevilsArsenal_Tex
+#exec OBJ LOAD FILE=..\textures\SieEng_TexExtra.utx
 
 var()   float   MaxPitchSpeed;
 var VariableTexPanner LeftTreadPanner, RightTreadPanner;
@@ -193,30 +194,34 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Mo
 		Damage *= 0.70;
 
 	//if (DamageType == class'MinotaurTurretkill')
-	if (DamageType.name == 'MinotaurTurretkill')
-		Damage *= 0.50;
+	if (DamageType.name == 'MinotaurTurretkill') 		Damage *= 0.50;
+
+	if (DamageType.name == 'MinotaurSecondaryTurretKill') 		Damage *= 0.50;
 
 	if (DamageType == class'DamTypeONSCicadaRocket')
 		Damage *= 0.70;
 
-	if (DamageType == class'DamTypeAttackCraftPlasma')
+if (DamageType == class'DamTypeONSCicadaRocket' || DamageType.name == 'PVWDamTypeMercuryDirectHit' )
 		Damage *= 0.70;
 
-	//if (ClassIsChildOf(DamageType,class'DamTypeAirPower'))
-	if (DamageType.name == 'AuroraLaser' || DamageType.name == 'WaspFlak')
-		Damage *= 0.70;
+	if (DamageType == class'DamTypeAttackCraftPlasma') 	Damage *= 0.70;
 
-	//if (DamageType == class'MinotaurSecondaryTurretKill')
-	if (DamageType.name == 'MinotaurSecondaryTurretKill')
-		Damage *= 0.50;
+	if (DamageType.name == 'FalconPlasma' || DamageType.name == 'DamType_FighterPlasma') 	Damage *= 0.60;
 
+		if  (inStr(DamageType.name,'Flak')>=0) 		Damage *= 0.60;
+
+	if  (inStr(DamageType.name,'Bio')>=0) 		Damage *= 2.50;
+	
 	//if (DamageType == class'HeatRay')
 	if (DamageType.name == 'HeatRay' || DamageType.name == 'FireBadsgerheawtRayKill')
 		Damage *= 0.30;
 
 	//if (DamageType == class'FireKill')
-	if (DamageType.name == 'FireKill')
-		Damage *= 0.30;
+  if (inStr(DamageType.name, "Fire")>= 0)  Damage *= 0.50;
+
+  // can i do this 
+  if (inStr(DamageType.name, "Laser")>= 0)  Damage *= 0.50;
+
 
 	Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
 }
@@ -225,10 +230,10 @@ static function StaticPrecache(LevelInfo L)
 {
     Super.StaticPrecache(L);
 
-	L.AddPrecacheStaticMesh(StaticMesh'ONSDeadVehicles-SM.TANKexploded.TankTurret');
-	L.AddPrecacheStaticMesh(StaticMesh'AW-2004Particles.Debris.Veh_Debris2');
-	L.AddPrecacheStaticMesh(StaticMesh'AW-2004Particles.Debris.Veh_Debris1');
-	L.AddPrecacheStaticMesh(StaticMesh'WeaponStaticMesh.RocketProj');
+	  L.AddPrecacheStaticMesh(StaticMesh'ONSDeadVehicles-SM.TANKexploded.TankTurret');
+	  L.AddPrecacheStaticMesh(StaticMesh'AW-2004Particles.Debris.Veh_Debris2');
+  	L.AddPrecacheStaticMesh(StaticMesh'AW-2004Particles.Debris.Veh_Debris1');
+  	L.AddPrecacheStaticMesh(StaticMesh'WeaponStaticMesh.RocketProj');
 
     L.AddPrecacheMaterial(Material'AW-2004Particles.Energy.SparkHead');
     L.AddPrecacheMaterial(Material'ExplosionTex.Framed.exp2_frames');
@@ -238,12 +243,12 @@ static function StaticPrecache(LevelInfo L)
     L.AddPrecacheMaterial(Material'AW-2004Particles.Fire.MuchSmoke1');
     L.AddPrecacheMaterial(Material'AW-2004Particles.Fire.NapalmSpot');
     L.AddPrecacheMaterial(Material'EpicParticles.Fire.SprayFire1');
-    L.AddPrecacheMaterial(Material'DevilsArsenal_Tex.SniperTanks.SniperTankRed');
-    L.AddPrecacheMaterial(Material'DevilsArsenal_Tex.SniperTanks.SniperTankBlue');
+    L.AddPrecacheMaterial(Material'SieEng_TexExtra.Sniper.Ballista_RED');
+    L.AddPrecacheMaterial(Material'SieEng_TexExtra.Sniper.Ballista_BLUE');
     L.AddPrecacheMaterial(Material'VMVehicles-TX.HoverTankGroup.TankNoColor');
     L.AddPrecacheMaterial(Material'VMVehicles-TX.HoverTankGroup.tankTreads');
     L.AddPrecacheMaterial(Material'VMParticleTextures.EJECTA.Tex');
-	L.AddPrecacheMaterial(Material'AW-2004Particles.Weapons.TrailBlur');
+	  L.AddPrecacheMaterial(Material'AW-2004Particles.Weapons.TrailBlur');
     L.AddPrecacheMaterial(Material'Engine.GRADIENT_Fade');
     L.AddPrecacheMaterial(Material'AW-2004Explosions.Fire.Fireball3');
     L.AddPrecacheMaterial(Material'AW-2004Particles.Fire.SmokeFragment');
@@ -269,8 +274,8 @@ simulated function UpdatePrecacheMaterials()
     Level.AddPrecacheMaterial(Material'AW-2004Particles.Fire.MuchSmoke1');
     Level.AddPrecacheMaterial(Material'AW-2004Particles.Fire.NapalmSpot');
     Level.AddPrecacheMaterial(Material'EpicParticles.Fire.SprayFire1');
-    Level.AddPrecacheMaterial(Material'DevilsArsenal_Tex.SniperTanks.SniperTankRed');
-    Level.AddPrecacheMaterial(Material'DevilsArsenal_Tex.SniperTanks.SniperTankBlue');
+    Level.AddPrecacheMaterial(Material'SieEng_TexExtra.Sniper.Ballista_RED');
+    Level.AddPrecacheMaterial(Material'SieEng_TexExtra.Sniper.Ballista_BLUE');
     Level.AddPrecacheMaterial(Material'VMVehicles-TX.HoverTankGroup.TankNoColor');
     Level.AddPrecacheMaterial(Material'VMVehicles-TX.HoverTankGroup.tankTreads');
     Level.AddPrecacheMaterial(Material'VMParticleTextures.EJECTA.Tex');
@@ -293,7 +298,6 @@ defaultproperties
 {
      MaxPitchSpeed=500.000000
      TreadVelocityScale=450.000000
-     MaxGroundSpeed=500.000000
      MaxAirSpeed=5000.000000
      ThrusterOffsets(0)=(X=190.000000,Y=145.000000,Z=10.000000)
      ThrusterOffsets(1)=(X=65.000000,Y=145.000000,Z=10.000000)
@@ -308,7 +312,7 @@ defaultproperties
      HoverCheckDist=65.000000
      UprightStiffness=500.000000
      UprightDamping=300.000000
-     MaxThrust=55.000000
+     MaxThrust=70.000000
      MaxSteerTorque=50.000000
      ForwardDampFactor=0.100000
      LateralDampFactor=0.500000
@@ -318,8 +322,8 @@ defaultproperties
      DriverWeapons(0)=(WeaponClass=Class'CSBallista.BallistaCannon',WeaponBone="TankCannonWeapon")
      PassengerWeapons(0)=(WeaponPawnClass=Class'CSBallista.BallistaChargeGunPawn',WeaponBone="MachineGunTurret")
      bHasAltFire=False
-     RedSkin=Texture'DevilsArsenal_Tex.SniperTanks.SniperTankRed'
-     BlueSkin=Texture'DevilsArsenal_Tex.SniperTanks.SniperTankBlue'
+     RedSkin=Texture'SieEng_TexExtra.Sniper.Ballista_RED'
+     BlueSkin=Texture'SieEng_TexExtra.Sniper.Ballista_BLUE'
      IdleSound=Sound'ONSVehicleSounds-S.Tank.TankEng01'
      StartUpSound=Sound'ONSVehicleSounds-S.Tank.TankStart01'
      ShutDownSound=Sound'ONSVehicleSounds-S.Tank.TankStop01'
@@ -355,7 +359,7 @@ defaultproperties
      TPCamWorldOffset=(Z=250.000000)
      MomentumMult=0.300000
      DriverDamageMult=0.000000
-     VehiclePositionString="in a Ballista"
+     VehiclePositionString="in a Ballista 2.1"
      VehicleNameString="Ballista"
      RanOverDamageType=Class'CSBallista.BallistaDamTypeRoadkill'
      CrushedDamageType=Class'CSBallista.BallistaDamTypePancake'
@@ -365,9 +369,11 @@ defaultproperties
      HornSounds(0)=Sound'CuddlyArmor_Sound.Horns.Horn5'
      HornSounds(1)=Sound'CuddlyArmor_Sound.Horns.Horn6'
      bCanStrafe=True
-     GroundSpeed=520.000000
-     HealthMax=600.000000
-     Health=600
+     //GroundSpeed=520.000000
+     MaxGroundSpeed=650.000000
+     GroundSpeed=650.000000
+     HealthMax=750.000000
+     Health=750
      Mesh=SkeletalMesh'ONSNewTank-A.HoverTank'
      Skins(1)=Texture'VMVehicles-TX.HoverTankGroup.tankTreads'
      Skins(2)=Texture'VMVehicles-TX.HoverTankGroup.tankTreads'
@@ -381,7 +387,7 @@ defaultproperties
          KLinearDamping=0.000000
          KAngularDamping=0.000000
          KStartEnabled=True
-         KMaxSpeed=500.000000
+         //KMaxSpeed=700.000000
          bHighDetailOnly=False
          bClientOnly=False
          bKDoubleTickRate=True
