@@ -212,7 +212,8 @@ defaultproperties
 {
      ProjPerFire=7
      AltFireProjPerFire=1
-     ProjSpread=1000
+     //ProjSpread=1000
+     ProjSpread=600  // same as wasp
      SpreadStyle=SS_Random
      bAltFireProjOffset=True
      AltFireProjSpawnOffset=(Pitch=1000)
@@ -223,7 +224,7 @@ defaultproperties
      GunnerAttachmentBone="GunFire"
      bDoOffsetTrace=True
      FireInterval=0.450000
-     AltFireInterval=1.25000
+     AltFireInterval=0.66000
      FireSoundClass=SoundGroup'WeaponSounds.FlakCannon.FlakCannonFire'
      AltFireSoundClass=SoundGroup'WeaponSounds.FlakCannon.FlakCannonAltFire'
      FireForce="FlakCannonFire"

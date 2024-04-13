@@ -250,7 +250,7 @@ defaultproperties
      TPCamWorldOffset=(Z=150.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a Omni FlakRat"
-     VehicleNameString="Omni FlakRat 1.0"
+     VehicleNameString="Omni FlakRat 1.01"
      RanOverDamageType=Class'FlakRatOmni.DamTypeFlakRatOmniRoadkill'
      CrushedDamageType=Class'FlakRatOmni.DamTypeFlakRatOmniPancake'
      MaxDesireability=0.400000
