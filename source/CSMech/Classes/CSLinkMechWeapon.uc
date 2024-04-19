@@ -331,9 +331,6 @@ simulated event Tick(float dt)
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
 	local LinkBeamEffect Beam;
-    local int score;
-    local float DamageAmount;
-
 
 	// I don't think ONSWeapon has a tick by default but it's always a good idea to call super when in doubt
 	Super.Tick(dt);

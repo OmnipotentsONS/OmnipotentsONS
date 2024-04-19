@@ -17,7 +17,7 @@ simulated function DrawHUD(Canvas Canvas)
   
 defaultproperties
 {
-    VehicleNameString="Bombotron 2.0"
+    VehicleNameString="Bombotron 2.1"
     VehiclePositionString="in an Bombotron"
     bExtraTwist=false
     Mesh=Mesh'CSMech.XanF02'

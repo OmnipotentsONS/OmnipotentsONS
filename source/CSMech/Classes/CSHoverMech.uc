@@ -977,11 +977,11 @@ function UpdateCollision()
     {
         if(Rise < 0 && bOnGround)
         {
-            SetCollisionSize(180,100);
+            SetCollisionSize(default.CollisionRadius,default.CollisionHeight/2);
         }
         else
         {
-            SetCollisionSize(180,200);
+            SetCollisionSize(default.CollisionRadius,default.CollisionHeight);
         }
 
         oldCollisionRise = Rise;
@@ -1198,8 +1198,8 @@ defaultproperties
     tweenTime=0.6
     bClientAnim=false
 
-    CollisionRadius=180.0
-    CollisionHeight=200.0
+    CollisionRadius=200.0
+    CollisionHeight=260.0
     DriverDamageMult=0.000000
 
     DrivePos=(X=-18.438,Y=0.0,Z=220.0)

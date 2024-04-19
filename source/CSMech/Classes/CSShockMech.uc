@@ -10,7 +10,7 @@ class CSShockMech extends CSHoverMech
 
 defaultproperties
 {    
-    VehicleNameString="Shockatron 2.0"
+    VehicleNameString="Shockatron 2.1"
     VehiclePositionString="in a Shockatron"
     Mesh=Mesh'CSMech.BotD'
     RedSkin=Texture'CSMech.ShockMechBodyRed';

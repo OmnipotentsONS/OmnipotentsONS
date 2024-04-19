@@ -170,7 +170,7 @@ function RenderChargeBar( Canvas Canvas )
 
 defaultproperties
 {
-    VehicleNameString="Armortron 2.0"
+    VehicleNameString="Armortron 2.1"
     VehiclePositionString="in an Armortron"
     bExtraTwist=false
     //Mesh=Mesh'CSMech.XanM03'
