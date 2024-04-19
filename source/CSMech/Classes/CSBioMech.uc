@@ -35,7 +35,7 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Mo
 
 defaultproperties
 {    
-    VehicleNameString="Biotron 2.0"
+    VehicleNameString="Biotron 2.1"
     VehiclePositionString="in a Biotron"
     bExtraTwist=false
 

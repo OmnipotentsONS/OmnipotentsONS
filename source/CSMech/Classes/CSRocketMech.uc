@@ -15,7 +15,7 @@ defaultproperties
     BlueSkin=Texture'CSMech.RocketMechBodyBlue';
     BlueSkinHead=Texture'CSMech.RocketMechHeadBlue';
 
-    VehicleNameString="Rocketron 2.0"
+    VehicleNameString="Rocketron 2.1"
     VehiclePositionString="in a Rocketron"
     Mesh=Mesh'CSMech.BotC'
 	Health=1800

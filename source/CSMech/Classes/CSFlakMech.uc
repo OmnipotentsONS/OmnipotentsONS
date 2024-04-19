@@ -10,7 +10,7 @@ class CSFlakMech extends CSHoverMech
 
 defaultproperties
 {    
-    VehicleNameString="Flakatron 2.0"
+    VehicleNameString="Flakatron 2.1"
     VehiclePositionString="in a Flakatron"
     Mesh=Mesh'CSMech.BotB'
     RedSkin=Texture'CSMech.FlakMechBodyRed';
