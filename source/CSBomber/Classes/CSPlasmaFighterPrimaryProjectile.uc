@@ -79,7 +79,7 @@ defaultproperties
     HitEffectClass=class'Onslaught.ONSPlasmaHitRed'
     Damage=30  // fires 6 volleys so 6*30 = 180
     DamageRadius=280.0
-    Speed=4500
+    Speed=5000
     MaxSpeed=12000
     AccelerationMagnitude=8000
 

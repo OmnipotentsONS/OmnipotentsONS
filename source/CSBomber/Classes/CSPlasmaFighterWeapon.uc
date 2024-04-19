@@ -6,6 +6,8 @@ class CSPlasmaFighterWeapon extends ONSWeapon;
 var int GunOffset, BombFireOffset, ZFireOffset;
 var float primaryInterval, secondaryInterval,MaxLockRange, LockAim;
 var Controller CurrentController;
+var float               AltFireCountdown;
+
 
 var class<Projectile> TeamProj[2];
 
@@ -14,6 +16,8 @@ var float OuterTraceOffset;
 var float TraceThickness;
 var class<ShockBeamEffect> BeamEffectClass[2];
 /*************/
+
+
 
 simulated function CalcWeaponFire()
 {
@@ -384,6 +388,84 @@ function bool CanAttack(Actor Other)
 
 	return false;
 }
+
+/******** Code for independent weapon fire times*************************/
+
+simulated function Tick(float DT)
+{
+    local ONSVehicle V;
+    super.Tick(DT);
+
+    V = ONSVehicle(Owner);
+    if(AltFireCountdown > 0)
+    {
+        AltFireCountdown -= DT;
+        if(AltFireCountdown <= 0 && Level.NetMode != NM_DedicatedServer)
+        {
+            if(V != None && V.IsLocallyControlled() && V.IsHumanControlled() && V.bWeaponIsAltFiring)
+            {
+                OwnerEffects();
+            }
+        }
+    }
+
+    if(Instigator != None && Instigator.Controller != None)
+    {
+        if (Role == ROLE_Authority && AltFireCountdown <= 0)
+        {
+            if (V != None && V.bWeaponisAltFiring)
+            {
+                if (AttemptFire(Instigator.Controller, true))
+                    V.ApplyFireImpulse(true);
+            }
+        }
+    }
+}
+
+event bool AttemptFire(Controller C, bool bAltFire)
+{
+  	if(Role != ROLE_Authority || bForceCenterAim)
+		return False;
+
+	if (FireCountdown <= 0 && !bAltFire)
+	{
+		CalcWeaponFire();
+		if (bCorrectAim)
+			WeaponFireRotation = AdjustAim(bAltFire);
+		if (Spread > 0)
+			WeaponFireRotation = rotator(vector(WeaponFireRotation) + VRand()*FRand()*Spread);
+
+        	DualFireOffset *= -1;
+
+		Instigator.MakeNoise(1.0);
+        FireCountdown = FireInterval;
+        Fire(C);
+		AimLockReleaseTime = Level.TimeSeconds + FireCountdown * FireIntervalAimLock;
+
+	    return True;
+	}
+
+	if (AltFireCountdown <= 0 && bAltFire)
+	{
+		DualFireOffset=0; // Rail gun no offset
+		CalcWeaponFire();
+		if (bCorrectAim)
+			WeaponFireRotation = AdjustAim(bAltFire);
+
+		if (Spread > 0)
+			WeaponFireRotation = rotator(vector(WeaponFireRotation) + VRand()*FRand()*Spread);
+
+		Instigator.MakeNoise(1.0);
+        AltFireCountdown = AltFireInterval;
+        AltFire(C);
+		AimLockReleaseTime = Level.TimeSeconds + AltFireCountdown * FireIntervalAimLock;
+
+	    return True;
+	}
+
+	return False;
+}
+
 
 /***************************************/
 

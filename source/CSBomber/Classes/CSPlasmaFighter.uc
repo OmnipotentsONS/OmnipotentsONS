@@ -5,19 +5,19 @@ class CSPlasmaFighter extends CSBomber
 
 defaultproperties
 {
-    VehicleNameString="Arbiter 1.45"
+    VehicleNameString="Arbiter 1.46"
     VehiclePositionString="in an Arbiter"
     RedSkin=Shader'CSBomber.CSPlasmaFighterRedShader'
     BlueSkin=Shader'CSBomber.CSPlasmaFighterBlueShader'
     DriverWeapons(0)=(WeaponClass=class'CSBomber.CSPlasmaFighterWeapon',WeaponBone=FrontGunMount)
 
-    MaxThrustForce=165.000000
+    MaxThrustForce=170.000000
     MaxStrafeForce=105.000000
     MaxRiseForce=65.000000
     VehicleMass=4.0
     Health=275
     HealthMax=275
 
-    BoostMaxThrust=650.000000
-    BoostTime=1.750000
+    BoostMaxThrust=750.000000
+    BoostTime=2.2000
 }
