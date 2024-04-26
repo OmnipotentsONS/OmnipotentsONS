@@ -170,18 +170,20 @@ event bool AttemptFire(Controller C, bool bAltFire)
 	return False;
 }
 
-/*function WeaponCeaseFire(Controller C, bool bWasAltFire)
+/* Theese aren't in ONSSHockTAnkCannon */
+function WeaponCeaseFire(Controller C, bool bWasAltFire)
 {
 	Super.WeaponCeaseFire(C, bWasAltFire);
 	CeaseAltFire();
 }
-*/
+
 
 function CeaseFire(Controller C)
 {
 	Super.CeaseFire(C);
 	CeaseAltFire();
 }
+
 
 function CeaseAltFire()
 {
@@ -311,7 +313,9 @@ simulated function Tick(float DT)
 {
     Super.Tick(DT);
 
-    if (HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase) != None)
+		
+		
+    if (Owner != None && HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase) != None)
 			NumLinks = HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase).Links;
 	  else
 		  NumLinks = 0;

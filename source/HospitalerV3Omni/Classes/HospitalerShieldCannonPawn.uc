@@ -2,7 +2,8 @@
 //
 //-----------------------------------------------------------
 class HospitalerShieldCannonPawn extends ONSWeaponPawn;
-
+/*  I think this mess of code was screwing up on the server.
+ its not really needed - oooty works ifine without it.
 function AltFire(optional float F)
 {
 	local PlayerController PC;
@@ -33,6 +34,7 @@ function ClientVehicleCeaseFire(bool bWasAltFire)
 	Gun.WeaponCeaseFire(PC, bWasAltFire);
 
 }
+*/
 
 simulated function ClientKDriverLeave(PlayerController PC)
 {
