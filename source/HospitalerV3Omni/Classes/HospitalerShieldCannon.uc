@@ -375,9 +375,10 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 			dir = dir/dist;
 			damageScale = 1 - FMax(0,(dist - Victims.CollisionRadius)/DamageRadius);
 			Victims.TakeDamage(damageScale * DamageAmount,Instigator,Victims.Location - 0.5 * (Victims.CollisionHeight + Victims.CollisionRadius) * dir,(damageScale * ActualMomentum * dir),	DamageType);
-			damageTotal += damageScale * DamageAmount;
-			if (Vehicle(Victims) != None && Vehicle(Victims).Health > 0)
+			if (Pawn(Victims) != None && Pawn(Victims).GetTeamNum() != Instigator.Controller.GetTeamNum()) damageTotal += (damageScale * DamageAmount);
+			if (Vehicle(Victims) != None && Vehicle(Victims).Health > 0) {
 				Vehicle(Victims).DriverRadiusDamage(DamageAmount, DamageRadius, Instigator.Controller, DamageType, ActualMomentum, HitLocation);
+			}	
 				
 
       //Friendlies gain Health!
@@ -440,7 +441,7 @@ defaultproperties
      
      LinkMultiplier=0.5 // number of linkers +1 * shield Recharge rate.
      SelfHealAmount=50
-     HealTeamBaseAmount=100
-     SelfHealMultiplier=0.5  //self heal from Shield Combo  pt heal for 1  pts damage
+     HealTeamBaseAmount=125
+     SelfHealMultiplier=0.20  //self heal from Shield Combo  pt heal for 1  pts damage
      RegenerationMaterial=Shader'XGameShaders.PlayerShaders.PlayerShieldSh'
 }

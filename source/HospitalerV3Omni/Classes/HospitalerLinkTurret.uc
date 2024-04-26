@@ -405,8 +405,8 @@ simulated event Tick(float dt)
 														 AdjustedDamage = AdjustLinkDamage( NumLinks, Other, AltDamage );
 														 Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, MomentumTransfer*X, AltDamageType);
 														 //log(self@"Just before HealDamage to MyHospitaler="@MyHospitaler); 
-														 if (MyHospitaler!=None&&MyHospitaler.Health<MyHospitaler.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
-						                     MyHospitaler.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
+														// if (MyHospitaler!=None&&MyHospitaler.Health<MyHospitaler.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
+						                //     MyHospitaler.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
 													}	
 												}
 
@@ -422,7 +422,7 @@ simulated event Tick(float dt)
 		
 		//log(self@" LinkedVehicle="@LinkedVehicle@" ONSWeaponPawn(Owner).VehicleBase="@ONSWeaponPawn(Owner).VehicleBase);
 		// exclude self healing.
-		if ( LinkedVehicle != None && bDoHit && (LinkedVehicle != ONSWeaponPawn(Owner).VehicleBase) )
+		if ( LinkedVehicle != None && bDoHit && (LinkedVehicle != ONSWeaponPawn(Owner).VehicleBase) && LinkedVehicle != Instigator )
 		{
 			AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ) * Instigator.DamageScaling;
 		
