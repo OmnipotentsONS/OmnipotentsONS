@@ -12,6 +12,7 @@ placeable;
 #exec AUDIO IMPORT FILE=Sounds\BellToll.wav
 #exec AUDIO IMPORT FILE=Sounds\FaithShield.wav
 
+#exec OBJ LOAD FILE=Textures\HospitalerTex.utx PACKAGE=HospitalerV3Omni
 
 var()       sound   DeploySound;
 var()       sound   HideSound;
@@ -29,6 +30,11 @@ var			vector  DeployedTPCamWorldOffset;
 
 var			vector  UnDeployedFPCamPos;
 var			vector  DeployedFPCamPos;
+
+// begin teleport
+var         TeleporterHUDOverlay HospitalerOverlay;
+var()       bool bEnableTeleporter;
+// end teleport
 
 // ============================================================================
 // Internal vars for linkers.
@@ -59,9 +65,46 @@ replication
 {
 	unreliable if(Role==ROLE_Authority)
         ServerPhysics, bDeployed;
-  unreliable if (Role == ROLE_Authority && bNetDirty)
+    unreliable if (Role == ROLE_Authority && bNetDirty)
         Links;
 }
+
+// BEGIN Teleport
+simulated function PostBeginPlay()
+{
+    super.PostBeginPlay();
+    if(bEnableTeleporter)
+    {
+        class'PlayerMonitor'.static.Init(Level);
+        SetTimer(1.0,true);
+    }
+}
+
+// we use a timer to setup the HUD overlay for players
+// we could do this once in e.g. postnetbeginplay, but using a timer
+// covers the case where players join/leave.  player join/leave is hooked 
+// in mutator class, but I don't want to add a special mutator just to make this work,
+// so hack around it
+simulated function Timer()
+{
+    local PlayerController PC;
+
+    if(Level.NetMode == NM_DedicatedServer)
+        return;
+
+    if(HospitalerOverlay == None)
+    {
+        HospitalerOverlay = spawn(class'TeleporterHUDOverlay');
+        HospitalerOverlay.Vehicle = self;
+    }
+
+    PC = Level.GetLocalPlayerController();
+    if(PC != None && PC.myHUD != None)
+    {
+        PC.myHUD.AddHudOverlay(HospitalerOverlay);
+    }
+}
+// END Teleport
 
 simulated function SpecialCalcBehindView(PlayerController PC, out actor ViewActor, out vector CameraLocation, out rotator CameraRotation )
 {
@@ -506,6 +549,12 @@ simulated event Tick(float DT)
 		
 defaultproperties
 {
+     //these are needed for teleport to work
+     bStasis=false
+     bAlwaysRelevant=true
+     bEnableTeleporter=false
+     // end teleporter    
+
      DeploySound=Sound'ONSVehicleSounds-S.MAS.MASDeploy01'
      HideSound=Sound'ONSVehicleSounds-S.MAS.MASDeploy01'
      DeployForce="MASDeploy"
