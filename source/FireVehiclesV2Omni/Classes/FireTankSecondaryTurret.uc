@@ -94,6 +94,7 @@ state InstantFireMode
 			Beam.SpawnEffects(HitLocation, HitNormal);
 		}
 	}
+	/* This made alt fire a flame thrower which would have worked well with W zoom
 	function AltFire(Controller C)
 	{
  		WeaponFireOffset=85.000000;
@@ -101,8 +102,10 @@ state InstantFireMode
      		bDoOffsetTrace=False;
 		gotostate('projectilefiremode');
 	}
+	*/
 }
 
+/*
 state ProjectileFireMode
 {
 
@@ -123,6 +126,7 @@ state ProjectileFireMode
             	SpawnProjectile(AltFireProjectileClass, True);
     }
 }
+*/
 
 defaultproperties
 {

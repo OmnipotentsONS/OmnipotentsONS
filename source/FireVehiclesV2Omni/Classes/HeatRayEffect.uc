@@ -20,7 +20,7 @@ simulated function SpawnEffects(vector HitLocation, vector HitNormal)
 	{
 		Emitters[2].Disabled = true;
 		Emitters[3].Disabled = true;
-		Emitters[4].Disabled = true;
+		//Emitters[4].Disabled = true;
 	}
 	if ( bFogDist && !PC.BeyondViewDistance(HitLocation, 4000) )
 	{
@@ -107,8 +107,9 @@ defaultproperties
          StartSpinRange=(X=(Max=1.000000))
          SizeScale(0)=(RelativeSize=1.000000)
          SizeScale(1)=(RelativeTime=1.000000)
-         StartSizeRange=(X=(Min=150.000000,Max=200.000000))
-         InitialParticlesPerSecond=20.000000
+         //StartSizeRange=(X=(Min=150.000000,Max=200.000000))
+         StartSizeRange=(X=(Min=55.000000,Max=70.000000))
+         InitialParticlesPerSecond=12.000000
          Texture=Texture'AW-2004Particles.Weapons.PlasmaStar2'
          LifetimeRange=(Min=0.200000,Max=0.200000)
      End Object
@@ -134,18 +135,18 @@ defaultproperties
          StartSpinRange=(X=(Max=0.025000))
          SizeScale(0)=(RelativeSize=0.250000)
          SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.000000)
-         StartSizeRange=(X=(Min=20.000000,Max=50.000000))
+         StartSizeRange=(X=(Min=10.000000,Max=20.000000))
          InitialParticlesPerSecond=900.000000
          Texture=Texture'AW-2004Particles.Weapons.SmokePanels1'
          TextureUSubdivisions=4
          TextureVSubdivisions=4
-         LifetimeRange=(Min=1.500000,Max=1.500000)
+         LifetimeRange=(Min=0.750000,Max=0.750000)
          StartVelocityRange=(Z=(Max=15.000000))
          WarmupTicksPerSecond=1.000000
          RelativeWarmupTime=0.200000
      End Object
      Emitters(3)=SpriteEmitter'FireVehiclesV2Omni.HeatRayEffect.SpriteEmitter19'
-
+/*
      Begin Object Class=SpriteEmitter Name=SpriteEmitter20
          UseColorScale=True
          RespawnDeadParticles=False
@@ -173,7 +174,7 @@ defaultproperties
          LifetimeRange=(Min=0.200000,Max=0.200000)
      End Object
      Emitters(4)=SpriteEmitter'FireVehiclesV2Omni.HeatRayEffect.SpriteEmitter20'
-
+*/
      AutoDestroy=True
      bNoDelete=False
 }

@@ -50,6 +50,7 @@ function ShouldTargetMissile(Projectile P)
 defaultproperties
 {
      GunClass=Class'FireTankSecondaryTurret'
+     bHasAltFire=False
      CameraBone="Object02"
      bDrawDriverInTP=False
      DrivePos=(Z=130.000000)

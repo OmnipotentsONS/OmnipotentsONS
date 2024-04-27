@@ -238,7 +238,7 @@ defaultproperties
      IdleSound=Sound'CuddlyArmor_Sound.FireTank.FireTankEngine'
      VehicleMass=19.000000
      VehiclePositionString="in a Fire Tank"
-     VehicleNameString="Fire Tank 2.93"
+     VehicleNameString="Fire Tank 2.95"
      RanOverDamageType=Class'FireVehiclesV2Omni.FireTankDamTypeRoadkill'
      HornSounds(0)=Sound'CuddlyArmor_Sound.Horns.FireTankHorn'
      HornSounds(1)=Sound'CuddlyArmor_Sound.Horns.Horn3'

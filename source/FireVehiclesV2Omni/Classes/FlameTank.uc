@@ -237,7 +237,7 @@ defaultproperties
      IdleSound=Sound'BioAegis_Sound.BioTank.BioTankEngine'
      VehicleMass=15.000000
      VehiclePositionString="in a Flame Tank"
-     VehicleNameString="Flame Tank 2.93"
+     VehicleNameString="Flame Tank 2.95"
      HornSounds(0)=Sound'CuddlyArmor_Sound.Horns.FireTankHorn'
      HornSounds(1)=Sound'CuddlyArmor_Sound.Horns.Horn3'
      GroundSpeed=850.000000
