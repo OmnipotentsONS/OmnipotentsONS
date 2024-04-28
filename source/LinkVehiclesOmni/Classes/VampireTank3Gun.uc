@@ -773,7 +773,7 @@ defaultproperties
      MakeLinkForce="LinkActivated"
      Damage=17  //link gun shaft is 9, Scorp,Badger is 15,  Regular link tank, 17 Hvy LinkTank 19  This is its primary close in weapon.
      Momentum=-25000
-     LinkFlexibility=0.700000
+     LinkFlexibility=0.5500000
      bInitAimError=True
      LinkVolume=240
      BeamSounds(0)=Sound'WeaponSounds.LinkGun.BLinkGunBeam1'
@@ -809,9 +809,9 @@ defaultproperties
      LinkMultiplier = 0.51;  //smaller since it heals itself
 		 SelfHealMultiplier = 1.0
 		 VehicleDamageMult = 1.20  // set here instead DamType
-		 VehicleHealScore=250
+		 VehicleHealScore=350
 		 RangeExtPerLink=500 // how much range is extended per linker
-		 LinkMultiplierCap = 3.5
+		 LinkMultiplierCap = 2.5
   
      AltFireRadius=1500.000000
      AltFireDamage=275.000000 //  phoenix. 350 but has no vehicle multiplier

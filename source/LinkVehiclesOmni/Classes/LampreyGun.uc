@@ -24,6 +24,7 @@ var() int Damage;
 var() float LinkFlexibility;
 var float LinkMultiplier;
 var float SelfHealMultiplier; 
+var float ComboSelfHealMultiplier;
 var float VehicleDamageMult;
 var config int VehicleHealScore;
 var float RangeExtPerLink; // how much range is extended per linker
@@ -485,20 +486,20 @@ foreach VisibleCollidingActors( class'Actor', Victims, AltFireRadius, StartLocat
 							// Special easter egg!  
 							VictimPawn.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumEasterEggMult);
 							VictimPawn.TakeDamage(DistScale * AltFireDamage * AltFireDamageEasterEggMult, Instigator, VictimPawn.Location, DistScale * AltFireMomentum * dir, AltDamageType);
-							MyLamprey.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+							MyLamprey.HealDamage(DistScale * AltFireDamage * ComboSelfHealMultiplier, Instigator.Controller, DamageType);
 					}
 					else if (Vehicle(Victims) == None)
 							 {
 								//Victims.AddVelocity( DistScale * -AltFireMomentum * dir );
 								// I think add velocity was bypassing spawn protection.
 								VictimPawn.TakeDamage(DistScale * AltFireDamage, Instigator, VictimPawn.Location, DistScale * AltFireMomentum * dir, AltDamageType);
-								MyLamprey.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+								MyLamprey.HealDamage(DistScale * AltFireDamage * ComboSelfHealMultiplier, Instigator.Controller, DamageType);
 							 }
 							 else
 							 { // Vehicles
 						  		VictimPawn.AddVelocity( DistScale * -AltFireMomentum * dir * AltFireMomentumVehicleMult);
 									VictimPawn.TakeDamage(DistScale * AltFireDamage * AltFireDamageVehicleMult, Instigator, VictimPawn.Location, DistScale * AltFireMomentum * dir, AltDamageType);
-									MyLamprey.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+									MyLamprey.HealDamage(DistScale * AltFireDamage * ComboSelfHealMultiplier, Instigator.Controller, DamageType);
 							 }
 
 				
@@ -509,7 +510,7 @@ foreach VisibleCollidingActors( class'Actor', Victims, AltFireRadius, StartLocat
 				{
 					//log("FoundPowerCode/Node - Do Damage" $ Victims);
 					Victims.TakeDamage(DistScale * AltFireDamage  * AltFireDamageVehicleMult, Instigator, Victims.Location, DistScale * AltFireMomentum * dir, DamageType);
-					MyLamprey.HealDamage(DistScale * AltFireDamage * SelfHealMultiplier, Instigator.Controller, DamageType);
+					MyLamprey.HealDamage(DistScale * AltFireDamage * ComboSelfHealMultiplier, Instigator.Controller, DamageType);
 				}
 			}
 		}
@@ -729,7 +730,8 @@ defaultproperties
      MakeLinkForce="LinkActivated"
      Damage=11  //link gun shaft is 9, Scorp is 12, Hvy LinkTank 17  This is its primary close in weapon.
      Momentum=-12000
-     LinkFlexibility=1.20000
+     //LinkFlexibility=1.20000
+     LinkFlexibility=0.60000
      bInitAimError=True
      LinkVolume=240
      BeamSounds(0)=Sound'WeaponSounds.LinkGun.BLinkGunBeam1'
@@ -779,6 +781,7 @@ defaultproperties
     
      LinkMultiplier = 1.0; // not used here
 		 SelfHealMultiplier = 0.65;
+		 ComboSelfHealMultiplier = 0.35;
 		 VehicleDamageMult = 1.35; // set here not in DamType
 		 VehicleHealScore = 250;
 		 RangeExtPerLink=500; // how much range is extended per linker

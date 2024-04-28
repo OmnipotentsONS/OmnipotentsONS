@@ -458,6 +458,57 @@ function bool RecommendLongRangedAttack()
 
 // ============================================================================
 
+
+function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
+{
+
+
+	if (DamageType.name == 'FlameKill')
+		Damage *= 1.25;
+
+if (DamageType.name == 'FireKill'  || DamageType.name == 'Burned')
+		Damage *= 1.25;
+				
+if (DamageType.name == 'FireBall')
+		Damage *= 1.25;
+		
+if (DamageType.name == 'DamTypeFirebugFlame')
+		Damage *= 1.6;
+		
+if (DamageType.name == 'DamTypeFirebugExplosion')
+		Damage *= 2.5;
+
+if (DamageType.name == 'DamTypeDracoExplosion')
+		Damage *= 2.5;
+
+if (DamageType.name == 'DamTypeTurretFlames')
+		Damage *= 2.5;
+
+if (DamageType.name == 'FireHoundKill' || DamageType.name == 'FireHoundCombo')
+		Damage *= 2.1;
+
+
+if (DamageType.name == 'FlameKillRaptor')
+		Damage *= 1.20;
+
+	if (DamageType.name == 'HeatRay' || DamageType.name == 'FireHoundLaser')
+		Damage *= 1.20;
+
+if (DamageType.name == 'DamTypeDracoFlamethrower')
+		Damage *= 1.7;
+
+if (DamageType.name == 'DamTypeDracoNapalmRocket')
+		Damage *= 1.5;
+
+if (DamageType.name == 'DamTypeDracoNapalmGlob')
+		Damage *= 1.5;
+		
+	  
+
+    Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
+}
+
+
 defaultproperties
 {
 	  // maybe update the skins? Combiners?
