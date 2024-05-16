@@ -359,7 +359,7 @@ defaultproperties
      TPCamWorldOffset=(Z=250.000000)
      MomentumMult=0.300000
      DriverDamageMult=0.000000
-     VehiclePositionString="in a Ballista 2.1"
+     VehiclePositionString="in a Ballista 2.2"
      VehicleNameString="Ballista"
      RanOverDamageType=Class'CSBallista.BallistaDamTypeRoadkill'
      CrushedDamageType=Class'CSBallista.BallistaDamTypePancake'

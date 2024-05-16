@@ -33,4 +33,9 @@ defaultproperties
      GibPerterbation=0.150000
      KDamageImpulse=20000.000000
      VehicleMomentumScaling=1.300000
+     bArmorStops=False
+     bSuperWeapon=True
+     bKUseOwnDeathVel=True
+     KDeathVel=600.000000
+     KDeathUpKick=600.000000
 }

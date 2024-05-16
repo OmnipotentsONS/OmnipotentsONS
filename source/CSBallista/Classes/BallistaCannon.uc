@@ -166,7 +166,7 @@ defaultproperties
      FireSoundClass=Sound'ONSVehicleSounds-S.Tank.TankFire01'
      FireSoundVolume=400.000000
      FireForce="Explosion05"
-     ProjectileClass=Class'CSBallista.BallistaProjectile'
+     ProjectileClass=Class'CSBallista.BallistaDeemerProjectile'
      ShakeRotMag=(Z=250.000000)
      ShakeRotRate=(Z=2500.000000)
      ShakeRotTime=6.000000

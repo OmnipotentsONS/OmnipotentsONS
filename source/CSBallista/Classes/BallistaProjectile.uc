@@ -191,9 +191,8 @@ replication
 
 simulated function Destroyed()
 {
-     if (Role == ROLE_Authority && HomingTarget != None)
-		if(HomingTarget.IsA('Vehicle'))
-		  Vehicle(HomingTarget).NotifyEnemyLostLock();
+  if (Role == ROLE_Authority && HomingTarget != None)
+	  	if(HomingTarget.IsA('Vehicle')) Vehicle(HomingTarget).NotifyEnemyLostLock();
 	if ( SmokeTrailEffect != None )
 		SmokeTrailEffect.Kill();
 	if ( Corona != None )
@@ -205,13 +204,11 @@ function SetHomingTarget()
 {
 	if (HomingTarget != None)
 	    {
-	     if(HomingTarget.IsA('Vehicle'))
-		  Vehicle(HomingTarget).NotifyEnemyLostLock();
+	     if(HomingTarget.IsA('Vehicle')) Vehicle(HomingTarget).NotifyEnemyLostLock();
         }
 	if (HomingTarget != None)
 	    {
-	     if(HomingTarget.IsA('Vehicle'))
-		     Vehicle(HomingTarget).NotifyEnemyLockedOn();
+	     if(HomingTarget.IsA('Vehicle')) Vehicle(HomingTarget).NotifyEnemyLockedOn();
 	    }
 }
 
