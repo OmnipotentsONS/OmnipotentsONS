@@ -204,7 +204,7 @@ simulated function ActivateShield()
     bShieldActive = true;
 
     if (ShockShield != None)
-        ShockShield.ActivateShield(Team);
+        ShockShield.ActivateShield(Instigator.Controller.GetTeamNum());
 }
 
 simulated function DeactivateShield()
@@ -256,7 +256,7 @@ simulated function PostNetReceive()
 
     if (ShockShield != None && ShieldHitCount != LastShieldHitCount)
     {
-        ShockShield.SpawnHitEffect(Team);
+        ShockShield.SpawnHitEffect(Instigator.Controller.GetTeamNum());
 
         LastShieldHitCount = ShieldHitCount;
     }
@@ -407,7 +407,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 defaultproperties
 {
      MaxShieldHealth=3000.000000
-     MaxDelayTime=0.3300000
+     MaxDelayTime=0.330000
      ShieldRechargeRate=400.000000
      CurrentShieldHealth=3000.000000
      YawBone="SIDEgunBASE"
@@ -420,7 +420,7 @@ defaultproperties
      bShowChargingBar=True
      RedSkin=Texture'IllyHeavyCrusaderSkins.HeavyCrusader.HeavyCrusader_0'
      BlueSkin=Texture'IllyHeavyCrusaderSkins.HeavyCrusader.HeavyCrusader_1'
-     FireInterval=2.350000
+     FireInterval=1.50000
      //EffectEmitterClass=Class'OnslaughtFull.FX_IonPlasmaTank_ShockWave'
      EffectEmitterClass=Class'OnslaughtBP.ONSShockTankMuzzleFlash'
      FireSoundClass=Sound'ONSBPSounds.ShockTank.ShockBallFire'
@@ -435,13 +435,13 @@ defaultproperties
      bNetNotify=True
      
      ComboDamage=250;
-     ComboRadius=1000;
+     ComboRadius=1250;
      ComboMomentum=150000;
      
      
      LinkMultiplier=0.5 // number of linkers +1 * shield Recharge rate.
-     SelfHealAmount=50
-     HealTeamBaseAmount=125
+     SelfHealAmount=150
+     HealTeamBaseAmount=250
      SelfHealMultiplier=0.20  //self heal from Shield Combo  pt heal for 1  pts damage
      RegenerationMaterial=Shader'XGameShaders.PlayerShaders.PlayerShieldSh'
 }

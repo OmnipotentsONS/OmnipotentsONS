@@ -53,7 +53,7 @@ defaultproperties
          Texture=Texture'EpicParticles.Flares.SoftFlare'
          LifetimeRange=(Min=0.700000,Max=0.700000)
      End Object
-     Emitters(0)=SpriteEmitter'OnslaughtBP.ONSShockTankShockExplosion.SpriteEmitter43'
+     Emitters(0)=SpriteEmitter'HospitalerV3Omni.HospitalerShockExplosion.SpriteEmitter43'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter25
          UseColorScale=True
@@ -80,7 +80,7 @@ defaultproperties
          WarmupTicksPerSecond=1.000000
          RelativeWarmupTime=1.000000
      End Object
-     Emitters(1)=SpriteEmitter'OnslaughtBP.ONSShockTankShockExplosion.SpriteEmitter25'
+     Emitters(1)=SpriteEmitter'HospitalerV3Omni.HospitalerShockExplosion.SpriteEmitter25'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter37
          UseColorScale=True
@@ -100,7 +100,7 @@ defaultproperties
          Texture=Texture'AW-2004Particles.Energy.JumpDuck'
          LifetimeRange=(Min=0.600000,Max=0.600000)
      End Object
-     Emitters(2)=SpriteEmitter'OnslaughtBP.ONSShockTankShockExplosion.SpriteEmitter37'
+     Emitters(2)=SpriteEmitter'HospitalerV3Omni.HospitalerShockExplosion.SpriteEmitter37'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter35
          UseColorScale=True
@@ -119,7 +119,7 @@ defaultproperties
          Texture=Texture'AW-2004Particles.Energy.SmoothRing'
          LifetimeRange=(Min=0.500000,Max=0.500000)
      End Object
-     Emitters(3)=SpriteEmitter'OnslaughtBP.ONSShockTankShockExplosion.SpriteEmitter35'
+     Emitters(3)=SpriteEmitter'HospitalerV3Omni.HospitalerShockExplosion.SpriteEmitter35'
 
      Begin Object Class=MeshEmitter Name=MeshEmitter10
          StaticMesh=StaticMesh'AW-2004Particles.Weapons.PlasmaSphere'
@@ -138,7 +138,7 @@ defaultproperties
          InitialParticlesPerSecond=500.000000
          LifetimeRange=(Min=0.500000,Max=0.500000)
      End Object
-     Emitters(4)=MeshEmitter'OnslaughtBP.ONSShockTankShockExplosion.MeshEmitter10'
+     Emitters(4)=MeshEmitter'HospitalerV3Omni.HospitalerShockExplosion.MeshEmitter10'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter39
          UseColorScale=True
@@ -159,7 +159,7 @@ defaultproperties
          Texture=Texture'AW-2004Particles.Weapons.BoloBlob'
          LifetimeRange=(Min=0.600000,Max=0.600000)
      End Object
-     Emitters(5)=SpriteEmitter'OnslaughtBP.ONSShockTankShockExplosion.SpriteEmitter39'
+     Emitters(5)=SpriteEmitter'HospitalerV3Omni.HospitalerShockExplosion.SpriteEmitter39'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter36
          UseColorScale=True
@@ -180,7 +180,7 @@ defaultproperties
          Texture=Texture'AW-2004Particles.Fire.BlastMark'
          LifetimeRange=(Min=0.500000,Max=0.500000)
      End Object
-     Emitters(6)=SpriteEmitter'OnslaughtBP.ONSShockTankShockExplosion.SpriteEmitter36'
+     Emitters(6)=SpriteEmitter'HospitalerV3Omni.HospitalerShockExplosion.SpriteEmitter36'
 
      Begin Object Class=SpriteEmitter Name=SpriteEmitter1
          UseColorScale=True
@@ -207,7 +207,7 @@ defaultproperties
          StartVelocityRadialRange=(Min=50.000000,Max=80.000000)
          GetVelocityDirectionFrom=PTVD_AddRadial
      End Object
-     Emitters(7)=SpriteEmitter'OnslaughtBP.ONSShockTankShockExplosion.SpriteEmitter1'
+     Emitters(7)=SpriteEmitter'HospitalerV3Omni.HospitalerShockExplosion.SpriteEmitter1'
 
      AutoDestroy=True
      bNoDelete=False

@@ -21,7 +21,7 @@ defaultproperties
          InitialParticlesPerSecond=5000.000000
          LifetimeRange=(Min=0.100000,Max=0.100000)
      End Object
-     Emitters(0)=MeshEmitter'HospitalerV2.HospitalerShieldEffectRed.MeshEmitter18'
+     Emitters(0)=MeshEmitter'HospitalerV3Omni.HospitalerShieldEffectRed.MeshEmitter18'
 
      bNoDelete=False
      AmbientGlow=254

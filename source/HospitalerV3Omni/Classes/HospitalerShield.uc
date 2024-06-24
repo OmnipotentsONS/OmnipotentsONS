@@ -46,7 +46,7 @@ simulated function ActivateShield(byte TeamNum)
     {
         if (ShockShieldEffect == None)
         {
-            if (TeamNum == 1)
+           if (TeamNum == 1)
                 ShockShieldEffect = spawn(class'HospitalerShieldEffectBlue', self);
             else
                 ShockShieldEffect = spawn(class'HospitalerShieldEffectRed', self);
