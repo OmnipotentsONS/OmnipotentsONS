@@ -11,7 +11,8 @@ simulated function Render(Canvas C)
     local FinalBlend Icon;
 
     ONSHUD = ONSHUDOnslaught(Owner);
-    if(ONSHUD != None 
+    if(Vehicle != None 
+        && ONSHUD != None 
         && ONSHUD.PlayerOwner != None 
         && ONSHUD.PlayerOwner.GetTeamNum() == Vehicle.GetTeamNum() 
         && !ONSHUD.PlayerOwner.IsInState('Dead')

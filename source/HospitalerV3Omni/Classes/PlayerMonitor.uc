@@ -31,5 +31,6 @@ static function Init(LevelInfo Level)
 defaultproperties
 {
     bHidden=true
+    bStasis=false
     RemoteRole=ROLE_None
 }

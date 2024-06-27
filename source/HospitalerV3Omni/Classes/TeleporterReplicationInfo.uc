@@ -22,14 +22,14 @@ simulated function PostBeginPlay()
 {
     super.PostBeginPlay();
 
-        SetTimer(1.0, true);
+    if(Level.NetMode == NM_DedicatedServer)
+        return;
+
+    SetTimer(1.0, true);
 }
 
 simulated function Timer()
 {
-    if(Level.NetMode == NM_DedicatedServer)
-        return;
-
     if(Tab_ONSMap == None)
         DoSetup();
     else
@@ -84,14 +84,14 @@ simulated function ClientCloseMenu()
         Tab_ONSMap.Controller.CloseMenu(false);
 }
 
-function ServerTeleportToVehicle(Vehicle V, PlayerController PC)
+function bool ServerTeleportToVehicle(Vehicle V, PlayerController PC)
 {
     local int i;
     local vector PrevLocation;
 
     if(Role<ROLE_Authority)
     {
-        return;
+        return false;
     }
 
     if(PC.Pawn == None || PC.IsInState('Dead'))
@@ -110,10 +110,12 @@ function ServerTeleportToVehicle(Vehicle V, PlayerController PC)
                     xPawn(PC.Pawn).PlayTeleportEffect(false, false);
                 }
 
-                return;
+                return true;
             }
         }
     }
+
+    return false;
 }
 
 function ServerTeleportToCore(ONSPowerCore Core, PlayerController PC)
@@ -130,7 +132,10 @@ function ServerTeleportToCore(ONSPowerCore Core, PlayerController PC)
     {
         //PRI.SetStartCore(Core, true);
         PRI.TemporaryStartCore = Core;
-        PRI.DoTeleport();
+        //two tries
+        if(!PRI.DoTeleport() && !PRI.DoTeleport())
+        {
+        }
         ClientCloseMenu();
     }
 }
@@ -218,7 +223,12 @@ simulated function bool OnClick(GUIComponent sender)
             ClientCloseMenu();
 
             if(CanTeleport(PC))
-                ServerTeleportToVehicle(V, PC);
+            {
+                //two tries
+                if(!ServerTeleportToVehicle(V, PC) && !ServerTeleportToVehicle(V, PC))
+                {
+                }
+            }
 
             return true;
         }
