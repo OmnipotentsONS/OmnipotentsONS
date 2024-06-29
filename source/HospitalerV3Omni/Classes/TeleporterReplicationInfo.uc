@@ -421,19 +421,17 @@ simulated function ONSPowerCore GetCurrentNode(ONSPlayerReplicationInfo PRI)
 simulated function DoSetup()
 {
     if(Tab_ONSMap == None)
-    {
         foreach AllObjects(class'UT2K4Tab_OnslaughtMap', Tab_ONSMap)
-        {
-            if(Tab_ONSMap != None)
-            {
-                // thankfully the gui controls all use delegates so we can patch them up with
-                // different function pointers
-                OldOnDraw = Tab_ONSMap.i_Background.OnDraw;
-                Tab_ONSMap.i_Background.OnDraw = OnDraw;
-                OldOnClick = Tab_ONSMap.i_Background.OnClick;
-                Tab_ONSMap.i_Background.OnClick = OnClick;
-            }
-        }
+            break;
+
+    if(Tab_ONSMap != None)
+    {
+        // thankfully the gui controls all use delegates so we can patch them up with
+        // different function pointers
+        OldOnDraw = Tab_ONSMap.i_Background.OnDraw;
+        Tab_ONSMap.i_Background.OnDraw = OnDraw;
+        OldOnClick = Tab_ONSMap.i_Background.OnClick;
+        Tab_ONSMap.i_Background.OnClick = OnClick;
     }
 }
 
