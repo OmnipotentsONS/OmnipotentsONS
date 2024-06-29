@@ -76,10 +76,6 @@ simulated function PostBeginPlay()
     if(bEnableTeleporter)
     {
         class'PlayerMonitor'.static.Init(Level);
-
-        if(Level.NetMode == NM_DedicatedServer)
-            return;
-
         SetTimer(1.0,true);
     }
 }
@@ -92,6 +88,9 @@ simulated function PostBeginPlay()
 simulated function Timer()
 {
     local PlayerController PC;
+
+    if(Level.NetMode == NM_DedicatedServer)
+        return;
 
     if(HospitalerOverlay == None)
     {
