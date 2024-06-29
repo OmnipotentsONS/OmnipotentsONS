@@ -121,6 +121,8 @@ function bool ServerTeleportToVehicle(Vehicle V, PlayerController PC)
 function ServerTeleportToCore(ONSPowerCore Core, PlayerController PC)
 {
     local ONSPlayerReplicationInfo PRI;
+    local GameRules GR;
+    local ONSPowerCore OldStartCore;
 
     if(Role<ROLE_Authority)
     {
@@ -130,12 +132,30 @@ function ServerTeleportToCore(ONSPowerCore Core, PlayerController PC)
     PRI = ONSPlayerReplicationInfo(PC.PlayerReplicationInfo);
     if(PRI != None && PC.IsInState('PlayerWalking'))
     {
+        // SetStartCore won't work here because it checks if you 
+        // are touching a node, here we are touching hospitaler
         //PRI.SetStartCore(Core, true);
+        OldStartCore = PRI.StartCore;
         PRI.TemporaryStartCore = Core;
-        //two tries
+        PRI.StartCore = Core;
+
+        // HUGE HACK HERE
+        // DoTeleport calls FindPlayerStart which uses GameRulesModifiers if available
+        // We want base ONS DoTeleport only, no modified version like ONSPlus 
+        // so we temporarily remove game rules modifiers when calling these
+        GR = Level.Game.GameRulesModifiers;
+        Level.Game.GameRulesModifiers = None;
+
+        //two tries (base engine code also does this)
         if(!PRI.DoTeleport() && !PRI.DoTeleport())
         {
         }
+        // restore gamerulesmodifiers
+        Level.Game.GameRulesModifiers = GR;
+
+        // restore core
+        PRI.StartCore = OldStartCore;
+
         ClientCloseMenu();
     }
 }
