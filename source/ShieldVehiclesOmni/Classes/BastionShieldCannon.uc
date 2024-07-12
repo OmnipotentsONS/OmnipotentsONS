@@ -467,7 +467,7 @@ defaultproperties
      bForceSkelUpdate=True
      bNetNotify=True
      
-     ComboDamage=250;
+     ComboDamage=333;  //damage scales down with distance.
      ComboRadius=1050;
      ComboMomentum=150000;
      

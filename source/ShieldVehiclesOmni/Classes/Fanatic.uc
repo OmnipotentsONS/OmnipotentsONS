@@ -176,8 +176,10 @@ event TakeDamage(int Damage, Pawn EventInstigator, vector HitLocation, vector Mo
 		return;
 
     // Don't take self inflicated damage from proximity explosion
-    if (DamageType == class'DamTypeShockTankProximityExplosion' && EventInstigator != None && EventInstigator == self)
-        return;
+    if (DamageType == class'DamTypeShockTankProximityExplosion' && EventInstigator != None && EventInstigator == self) return;
+    // Don't take self inflicated damage/momentum from own shockball
+    if (DamageType == class'XWeapons.DamTypeShockBall' && EventInstigator != None && EventInstigator == self)        return;
+    if (DamageType == class'DamTypeShockTankShockBall' && EventInstigator != None && EventInstigator == self)        return;
 
     Super.TakeDamage(Damage, EventInstigator, HitLocation, Momentum, DamageType);
 }

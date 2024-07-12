@@ -120,16 +120,16 @@ function SuperExplosion()
 defaultproperties
 {
      ComboSound=Sound'ONSBPSounds.ShockTank.ShockBallExplosion'
-     ComboRadius=450.000000
-     ComboMomentumTransfer=200000.000000
+     ComboRadius=400.000000
+     ComboMomentumTransfer=150000.000000
      Speed=11000.000000
      MaxSpeed=11000.000000
      Damage=100.000000
-     DamageRadius=250.000000
+     DamageRadius=225.000000
      DrawType=DT_None
      AmbientSound=Sound'ONSBPSounds.ShockTank.ShockBallAmbient'
      Texture=None
-     DrawScale=2.000000
+     DrawScale=1.750000
      Skins(0)=None
      CollisionRadius=0.000000
      CollisionHeight=0.000000

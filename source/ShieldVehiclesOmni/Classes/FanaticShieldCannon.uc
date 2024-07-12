@@ -253,11 +253,11 @@ function ProximityExplosion()
     ComboHit = Spawn(class'FanaticShieldComboHit', self);
 	if ( Level.NetMode == NM_DedicatedServer )
 	{
-		ComboHit.LifeSpan = 0.6;
+		ComboHit.LifeSpan = 0.5;
 	}
     AttachToBone(ComboHit, 'BigGun');
     ComboHit.SetRelativeLocation(vect(300,0,0));
-    SetTimer(0.5, false);
+    SetTimer(0.4, false);
 }
 
 function Timer()
@@ -450,10 +450,10 @@ defaultproperties
      YawBone="8WheelerTop"
      PitchBone="TurretAttach"
      PitchUpLimit=18000
-     PitchDownLimit=58000
+     PitchDownLimit=61500 //58000
      WeaponFireAttachmentBone="Firepoint"
-     WeaponFireOffset=80  //TO DO Tweak?
-     
+     WeaponFireOffset=80 
+     // TODO Tweak offset, pitchdown for combo.
      RotationsPerSecond=0.500000
      bShowChargingBar=True
      RedSkin=Texture'IllyCrusaderSkins.Crusader.Crusader_0'
@@ -474,7 +474,7 @@ defaultproperties
      bForceSkelUpdate=True
      bNetNotify=True
      
-     ComboDamage=175;
+     ComboDamage=225;
      ComboRadius=750;
      ComboMomentum=100000;
      
