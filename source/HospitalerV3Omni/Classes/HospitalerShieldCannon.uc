@@ -5,7 +5,8 @@ class HospitalerShieldCannon extends ONSWeapon;
 
 var()   float   MaxShieldHealth;
 var()   float   MaxDelayTime;
-var()   float   ShieldRechargeRate;
+var()   float   ShieldRechargeRate; // Rate at which shield recharges when deactivated.
+var float ShieldRechargeRateActive; // Rate at which the shield recharges when UP and linked.
 var		float	LastShieldHitTime;
 
 var     float   CurrentShieldHealth;
@@ -21,11 +22,15 @@ var float ComboDamage;
 var float ComboRadius;
 var float ComboMomentum;
 
+var HospitalerV3Omni MyHospitaler;
+
 var float LinkMultiplier;  // linkers increase shield Regen
 var int NumLinks; // set from main vehicle
 var float SelfHealAmount; // Combo does some self heal always
 var float HealTeamBaseAmount;  // base amount to heal team
 var float SelfHealMultiplier; // Combo alos gains health based on total damage times this multiplier
+var float MaxDamageHealthHeal; // max healing per damage
+
 var Material RegenerationMaterial;
 
 replication
@@ -173,22 +178,23 @@ event bool AttemptFire(Controller C, bool bAltFire)
 /* Theese aren't in ONSSHockTAnkCannon */
 function WeaponCeaseFire(Controller C, bool bWasAltFire)
 {
+	if (bWasAltFire) CeaseAltFire();
 	Super.WeaponCeaseFire(C, bWasAltFire);
-	CeaseAltFire();
 }
 
 
 function CeaseFire(Controller C)
 {
 	Super.CeaseFire(C);
-	CeaseAltFire();
+  //if (HospitalerShieldCannonPawn(Owner).bShieldUp) CeaseAltFire(); // don't drop shield on normal ceasefire.
+  // tODO this isn't working right on Dedicated sERver.  bWeaponisAltFiring isn't REPLICATED so here its unreliable.
+  // not sure why we altCeasefire in ceasefire?!
 }
 
 
 function CeaseAltFire()
 {
-    if (ShockShield != None)
-        DeactivateShield();
+    if (ShockShield != None) DeactivateShield();
 }
 
 simulated function Destroyed()
@@ -205,6 +211,28 @@ simulated function ActivateShield()
 
     if (ShockShield != None)
         ShockShield.ActivateShield(Instigator.Controller.GetTeamNum());
+        ScaleShieldStrengthEffect();
+}
+
+simulated function ScaleShieldStrengthEffect() 
+{
+	// tried a bunch left it all here for reference... the one line seems to work best.
+	//ShockShield.ShockShieldEffect.Emitters[0].ColorScale[0].Color = class'Canvas'.static.MakeColor( 64,(CurrentShieldHealth/MaxShieldHealth)*128 + 127,64);
+	//ShockShield.ShockShieldEffect.Emitters[0].ColorScale[0].Color = class'Canvas'.static.MakeColor( 128,(CurrentShieldHealth/MaxShieldHealth)*128 + 127,64);
+	 //ShockShield.ShockShieldEffect.Emitters[0].ColorScale[1].RelativeTime = FClamp(((MaxShieldHealth - CurrentShieldHealth)/MaxShieldHealth),0,1);
+				//
+     //   if (Instigator.Controller.GetTeamNum() == 1) // blue
+        // Color is RGB by position
+     //   		ShockShield.ShockShieldEffect.Emitters[0].ColorScale[0].Color = class'Canvas'.static.MakeColor( (CurrentShieldHealth/MaxShieldHealth)*255,(CurrentShieldHealth/MaxShieldHealth)*128,(CurrentShieldHealth/MaxShieldHealth)*64);
+      //  else { // Red
+            //
+           // ShockShield.ShockShieldEffect.Emitters[0].ColorScale[1].Color = class'Canvas'.static.MakeColor( (CurrentShieldHealth/MaxShieldHealth)*255,(CurrentShieldHealth/MaxShieldHealth)*64,(CurrentShieldHealth/MaxShieldHealth)*32);
+            
+       // }
+    // ShockShield.ShockShieldEffect.LightHue =(CurrentShieldHealth/MaxShieldHealth)*192 + 64;
+     //ShockShield.ShockShieldEffect.LightBrightness =(CurrentShieldHealth/MaxShieldHealth)*192 + 64;
+     //ShockShield.ShockShieldEffect.AmbientGlow =(CurrentShieldHealth/MaxShieldHealth)*254;
+     if (ShockShield.ShockShieldEffect!=None) ShockShield.ShockShieldEffect.Emitters[0].Opacity=FMax(0.3,(CurrentShieldHealth/MaxShieldHealth)*1);
 }
 
 simulated function DeactivateShield()
@@ -230,13 +258,13 @@ function ProximityExplosion()
 	}
     AttachToBone(ComboHit, 'SIDEgunBARREL');
     ComboHit.SetRelativeLocation(vect(300,0,0));
-    SetTimer(0.5, false);
+    SetTimer(0.4, false);
 }
 
 function Timer()
 {
     PlaySound(sound'ONSBPSounds.ShockTank.ShockBallExplosion', SLOT_None,1.0,,800);
-    Spawn(class'ONSShockTankProximityExplosion', self,, Location + vect(0,0,-70));
+    Spawn(class'HospitalerV3Omni.HospitalerProximityExplosion', self,, Location + vect(0,0,-70));
     HurtRadius(ComboDamage, ComboRadius, class'DamTypeHospitalerShockProximityExplosion', ComboMomentum, Location);
 }
 
@@ -302,10 +330,11 @@ function NotifyShieldHit(int Dam, Pawn instigatedBy)
 {
     if (Pawn(Owner) != None && Pawn(Owner).Controller != None && ((InstigatedBy == None) || (InstigatedBy.Controller == None) || !InstigatedBy.Controller.SameTeamAs(Pawn(Owner).Controller)))
     {
-		LastShieldHitTime = Level.TimeSeconds;
-        CurrentShieldHealth -= Dam;
-        ShieldHitCount++;
-        ShockShield.SpawnHitEffect(Team);
+		   LastShieldHitTime = Level.TimeSeconds;
+       CurrentShieldHealth -= Dam;
+       ShieldHitCount++;
+       ShockShield.SpawnHitEffect(Team);
+       ScaleShieldStrengthEffect();
     }
 }
 
@@ -329,7 +358,7 @@ simulated function Tick(float DT)
     if (bShieldActive && (CurrentShieldHealth < MaxShieldHealth))  // Shield is on and needs recharge
     // only recharge while up if Hospitaler is being linkend
     {
-       CurrentShieldHealth += (ShieldRechargeRate * ((NumLinks*LinkMultiplier))) * DT;
+       CurrentShieldHealth += (ShieldRechargeRateActive * ((NumLinks*LinkMultiplier))) * DT;
        //if num links is 0, then no recharging while shield is up.
        if (CurrentShieldHealth >= MaxShieldHealth) CurrentShieldHealth = MaxShieldHealth;
     }
@@ -397,18 +426,19 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 	}
 	// self heal base amount
 	//log(self@":HurtRadius - SelfHealBaseAmount-CurrentHealth"@ONSWeaponPawn(Owner).VehicleBase.Health);
-	HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase).HealDamage(SelfHealAmount, Instigator.Controller, DamageType);
+	HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase).GiveHealth(SelfHealAmount, HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase).HealthMax);
   //log(self@":HurtRadius - AFTER SelfHealBaseAmount-CurrentHealth"@ONSWeaponPawn(Owner).VehicleBase.Health);
 
 	//  self heal based on Damage
-	HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase).HealDamage(Round(damageTotal * SelfHealMultiplier), Instigator.Controller, DamageType);
+	HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase).GiveHealth(FMin(damageTotal * SelfHealMultiplier, MaxDamageHealthHeal), HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase).HealthMax);
 }
 
 defaultproperties
 {
-     MaxShieldHealth=3000.000000
+     MaxShieldHealth=2500.000000
      MaxDelayTime=0.330000
-     ShieldRechargeRate=400.000000
+     ShieldRechargeRate=325.000000
+     ShieldRechargeRateActive=150.000
      CurrentShieldHealth=3000.000000
      YawBone="SIDEgunBASE"
      PitchBone="SIDEgunBARREL"
@@ -434,14 +464,15 @@ defaultproperties
      bForceSkelUpdate=True
      bNetNotify=True
      
-     ComboDamage=250;
+     ComboDamage=333;
      ComboRadius=1250;
-     ComboMomentum=150000;
+     ComboMomentum=170000;
      
      
-     LinkMultiplier=0.5 // number of linkers +1 * shield Recharge rate.
-     SelfHealAmount=150
-     HealTeamBaseAmount=250
+     LinkMultiplier=0.8 // number of linkers +1 * shield Recharge rate.
+     SelfHealAmount=120  // this is health, 
+     HealTeamBaseAmount=150  // this is real health
      SelfHealMultiplier=0.20  //self heal from Shield Combo  pt heal for 1  pts damage
+     MaxDamageHealthHeal= 400  // max self heal from Shield combo.
      RegenerationMaterial=Shader'XGameShaders.PlayerShaders.PlayerShieldSh'
 }

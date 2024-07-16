@@ -2,23 +2,36 @@
 //
 //-----------------------------------------------------------
 class HospitalerShieldCannonPawn extends ONSWeaponPawn;
-/*  I think this mess of code was screwing up on the server.
- its not really needed - oooty works ifine without it.
+
+var bool bShieldUp;
+
+replication 
+{
+	
+	unreliable if( bNetDirty && Role==ROLE_Authority )
+	bShieldUp;
+}
+
+
 function AltFire(optional float F)
 {
-	local PlayerController PC;
-
-	PC = PlayerController(Controller);
-	if (PC == None)
-		return;
-
-	bWeaponIsAltFiring = true;
+	bShieldUp = true;  
 	super.AltFire(f);
+}
+
+// this needs to go in here somehow
+
+function VehicleCeaseFire(bool bWasAltFire)
+{
+    Super.VehicleCeaseFire(bWasAltFire);
+
+    if (bWasAltFire && Gun != None)    Gun.WeaponCeaseFire(Controller, bWasAltFire);
+
 }
 
 function ClientVehicleCeaseFire(bool bWasAltFire)
 {
-	local PlayerController PC;
+//	local PlayerController PC;
 
 	if (!bWasAltFire)
 	{
@@ -26,23 +39,22 @@ function ClientVehicleCeaseFire(bool bWasAltFire)
 		return;
 	}
 
-	PC = PlayerController(Controller);
-	if (PC == None)
-		return;
+//	PC = PlayerController(Controller);
+//	if (PC == None)	return;
 
-	bWeaponIsAltFiring = false;
-	Gun.WeaponCeaseFire(PC, bWasAltFire);
-
+	if (bWasAltFire) bShieldUp = false;
+	Gun.WeaponCeaseFire(Controller, bWasAltFire);
+	Super.ClientVehicleCeaseFire(bWasAltFire);
+  VehicleCeaseFire(bWasAltFire);
+  
 }
-*/
+
 
 simulated function ClientKDriverLeave(PlayerController PC)
 {
 	Super.ClientKDriverLeave(PC);
-
-	bWeaponIsAltFiring = false;
-	Gun.CeaseFire(PC);
-
+  Gun.CeaseFire(PC);
+	bShieldUp = false;
 }
 
 // ============================================================================
@@ -103,4 +115,5 @@ defaultproperties
      TPCamLookat=(X=50.000000,Z=160.000000)
      VehiclePositionString="in a Hospitaler shield turret"
      VehicleNameString="Hospitaler Shieldman"
+     bShieldUp=False
 }
