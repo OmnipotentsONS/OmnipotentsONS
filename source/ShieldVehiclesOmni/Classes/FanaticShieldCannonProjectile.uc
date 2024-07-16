@@ -124,7 +124,7 @@ defaultproperties
      ComboMomentumTransfer=150000.000000
      Speed=11000.000000
      MaxSpeed=11000.000000
-     Damage=100.000000
+     Damage=125.000000
      DamageRadius=225.000000
      DrawType=DT_None
      AmbientSound=Sound'ONSBPSounds.ShockTank.ShockBallAmbient'

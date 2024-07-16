@@ -176,7 +176,7 @@ event TakeDamage(int Damage, Pawn EventInstigator, vector HitLocation, vector Mo
 		return;
 
     // Don't take self inflicated damage from proximity explosion
-    if (DamageType == class'DamTypeShockTankProximityExplosion' && EventInstigator != None && EventInstigator == self) return;
+    if (DamageType == class'DamTypeFanaticProximityExplosion' && EventInstigator != None && EventInstigator == self) return;
     // Don't take self inflicated damage/momentum from own shockball
     if (DamageType == class'XWeapons.DamTypeShockBall' && EventInstigator != None && EventInstigator == self)        return;
     if (DamageType == class'DamTypeShockTankShockBall' && EventInstigator != None && EventInstigator == self)        return;
@@ -354,6 +354,7 @@ defaultproperties
      DaredevilThreshInAirDistance=21.000000
      bDoStuntInfo=True
      bAllowBigWheels=True
+     bAllowAirControl=True
      AirTurnTorque=35.000000
      AirPitchTorque=55.000000
      AirPitchDamping=35.000000
@@ -450,7 +451,7 @@ defaultproperties
      CenterSpringForce="SpringONSSRV"
      TPCamLookat=(X=0.000000,Z=0.000000)
      TPCamWorldOffset=(Z=100.000000)
-     DriverDamageMult=0.800000
+     DriverDamageMult=0.00000
      VehiclePositionString="in a Fanatic"
      VehicleNameString="Fanatic 1.0"
      RanOverDamageType=Class'Onslaught.DamTypeRVRoadkill'

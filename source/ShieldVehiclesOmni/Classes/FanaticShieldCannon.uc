@@ -233,7 +233,7 @@ simulated function ScaleShieldStrengthEffect()
     // ShockShield.ShockShieldEffect.LightHue =(CurrentShieldHealth/MaxShieldHealth)*192 + 64;
      //ShockShield.ShockShieldEffect.LightBrightness =(CurrentShieldHealth/MaxShieldHealth)*192 + 64;
      //ShockShield.ShockShieldEffect.AmbientGlow =(CurrentShieldHealth/MaxShieldHealth)*254;
-     ShockShield.ShockShieldEffect.Emitters[0].Opacity=FMax(0.3,(CurrentShieldHealth/MaxShieldHealth)*1);
+     if (ShockShield.ShockShieldEffect!=None) ShockShield.ShockShieldEffect.Emitters[0].Opacity=FMax(0.3,(CurrentShieldHealth/MaxShieldHealth)*1);
 }
 
 simulated function DeactivateShield()
@@ -265,7 +265,7 @@ function Timer()
     PlaySound(sound'ONSBPSounds.ShockTank.ShockBallExplosion', SLOT_None,1.0,,800);
     //Spawn(class'FanaticProximityExplosion', self,, Location + vect(0,0,-70));
     Spawn(class'FanaticProximityExplosion', self,, Location + vect(0,0,0));
-    HurtRadius(ComboDamage, ComboRadius, class'DamTypeShockTankProximityExplosion', ComboMomentum, Location);
+    HurtRadius(ComboDamage, ComboRadius, class'DamTypeFanaticProximityExplosion', ComboMomentum, Location);
 }
 
 simulated function PostNetReceive()
@@ -441,16 +441,17 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 
 defaultproperties
 {
-     MaxShieldHealth=2000.000000
+     MaxShieldHealth=1800.000000
      MaxDelayTime=0.750000
-     ShieldRechargeRate=150.000000
-     CurrentShieldHealth=2000.000000
+     ShieldRechargeRate=225.000000
+     ShieldRechargeRateActive=125.000
+     CurrentShieldHealth=1800.000000
     // YawBone="SIDEgunBASE"
     // PitchBone="SIDEgunBARREL"
      YawBone="8WheelerTop"
      PitchBone="TurretAttach"
      PitchUpLimit=18000
-     PitchDownLimit=61500 //58000
+     PitchDownLimit=62000 //58000
      WeaponFireAttachmentBone="Firepoint"
      WeaponFireOffset=80 
      // TODO Tweak offset, pitchdown for combo.
@@ -479,7 +480,7 @@ defaultproperties
      ComboMomentum=100000;
      
      
-     LinkMultiplier=0.6 // number of linkers +1 * shield Recharge rate.
+     LinkMultiplier=0.8 // number of linkers +1 * shield Recharge rate.
      SelfHealAmount=25
      HealTeamBaseAmount=50
      SelfHealMultiplier=0.20  //self heal from Shield Combo  pt heal for 1  pts damage

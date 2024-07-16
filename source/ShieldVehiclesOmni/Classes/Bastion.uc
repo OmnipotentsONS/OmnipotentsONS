@@ -170,7 +170,7 @@ event TakeDamage(int Damage, Pawn EventInstigator, vector HitLocation, vector Mo
         return;
 
     // Don't take self inflicated damage from proximity explosion
-    if (DamageType == class'DamTypeShockTankProximityExplosion' && EventInstigator != None && EventInstigator == self)
+    if (DamageType == class'DamTypeBastionProximityExplosion' && EventInstigator != None && EventInstigator == self)
         return;
 
     

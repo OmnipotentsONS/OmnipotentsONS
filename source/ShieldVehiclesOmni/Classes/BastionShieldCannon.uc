@@ -233,7 +233,7 @@ simulated function ScaleShieldStrengthEffect()
     // ShockShield.ShockShieldEffect.LightHue =(CurrentShieldHealth/MaxShieldHealth)*192 + 64;
      //ShockShield.ShockShieldEffect.LightBrightness =(CurrentShieldHealth/MaxShieldHealth)*192 + 64;
      //ShockShield.ShockShieldEffect.AmbientGlow =(CurrentShieldHealth/MaxShieldHealth)*254;
-     ShockShield.ShockShieldEffect.Emitters[0].Opacity=FMax(0.3,(CurrentShieldHealth/MaxShieldHealth)*1);
+     if (ShockShield.ShockShieldEffect!=None) ShockShield.ShockShieldEffect.Emitters[0].Opacity=FMax(0.3,(CurrentShieldHealth/MaxShieldHealth)*1);
 }
 
 
@@ -266,7 +266,7 @@ function Timer()
 {
     PlaySound(sound'ONSBPSounds.ShockTank.ShockBallExplosion', SLOT_None,1.0,,800);
     Spawn(class'BastionProximityExplosion', self,, Location + vect(0,0,-50)); // 0,0,-70
-    HurtRadius(ComboDamage, ComboRadius, class'DamTypeShockTankProximityExplosion', ComboMomentum, Location);
+    HurtRadius(ComboDamage, ComboRadius, class'DamTypeBastionProximityExplosion', ComboMomentum, Location);
 }
 
 simulated function PostNetReceive()
@@ -440,11 +440,11 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 
 defaultproperties
 {
-     MaxShieldHealth=3000.000000
+     MaxShieldHealth=2500.000000
      MaxDelayTime=0.330000
-     ShieldRechargeRate=300.000000
-     ShieldRechargeRateActive=100.000
-     CurrentShieldHealth=3000.000000
+     ShieldRechargeRate=325.000000
+     ShieldRechargeRateActive=150.000
+     CurrentShieldHealth=2000.000000
      YawBone="8WheelerTop"
      PitchBone="TurretAttach"
      PitchUpLimit=18000
@@ -467,12 +467,12 @@ defaultproperties
      bForceSkelUpdate=True
      bNetNotify=True
      
-     ComboDamage=333;  //damage scales down with distance.
+     ComboDamage=275;  //damage scales down with distance. 1.5 to vehicles.
      ComboRadius=1050;
      ComboMomentum=150000;
      
      
-     LinkMultiplier=0.6 // number of linkers +1 * shield Recharge rate.
+     LinkMultiplier=0.8 // number of linkers +1 * shield Recharge rate.
      SelfHealAmount=25  // this is health, HealDamage takes damage points (typically from Link) so divided it by (Engine.Vehicle).LinkHealthMult
      HealTeamBaseAmount=50  // this is real health
      SelfHealMultiplier=0.20  //self heal from Shield Combo  pt heal for 1  pts damage
