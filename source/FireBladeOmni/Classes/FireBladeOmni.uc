@@ -3,7 +3,7 @@
 //
 // ©2004
 //-----------------------------------------------------------
-class FireBladeOmni extends ONSAttackCraft
+class FireBladeOmni extends ONSChopperCraft
     placeable;
     //ONSChopperCraft
  
@@ -34,7 +34,7 @@ var float JetRotation;
 var float EngineRotation;
 
 
-/* Removed pooty, doesn't work and vehicles don't dodge
+
 function bool Dodge(eDoubleClickDir DoubleClickMove)
 {
 	if ( FRand() < 0.7 )
@@ -44,7 +44,7 @@ function bool Dodge(eDoubleClickDir DoubleClickMove)
 	}
 	return (Rise != 0);
 }
-*/
+
 
 function Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
 {
@@ -163,7 +163,7 @@ simulated function Tick(float DeltaTime)
 	local int sbanimate;
 
 //Added pooty, from Cicada, seems like good idea to call super.
-
+/*
     local actor     HitActor;
     local vector    HitLocation, HitNormal;
     local float GroundDist;
@@ -199,7 +199,7 @@ simulated function Tick(float DeltaTime)
         }
     }
 // from cicada
-
+*/
 
 	//ThrustAmount = FClamp(OutputThrust, -1.0, 1.0);
   ThrustAmount = FClamp(OutputThrust, 0.0, 1.0);
@@ -467,13 +467,13 @@ function bool PlaceExitingDriver()
 }
 
 
-
+/*
 function DriverLeft()
 {
     Super.DriverLeft();
     SVehicleUpdateParams();
 }
-
+*/
 
 // ..........................
 // Play TakeOff Animation

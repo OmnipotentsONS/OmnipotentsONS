@@ -64,7 +64,7 @@ defaultproperties
      ForceRadius=1024.000000
      ForceScale=5.000000
      Physics=PHYS_Falling
-     //TossZ=200.000000
+     TossZ=200.000000
      MyDamageType=Class'FireBladeOmni.DamTypeFBOFlakShell'
      StaticMesh=StaticMesh'WeaponStaticMesh.RedeemerMissile'
      DrawScale=1.000000

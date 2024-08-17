@@ -98,6 +98,7 @@ defaultproperties
      bInstantRotation=True
      bInstantFire=True
      bDoOffsetTrace=True
+     TraceRange=20000
      FireInterval=0.200000
      FireSoundClass=Sound'FireBladeAudioB001.TopCannon1'
      AltFireSoundClass=Sound'FireBladeAudioB001.TopCannon1'

@@ -47,11 +47,44 @@ function KDriverEnter(Pawn P)
 	super.KDriverEnter(P);
   // following allows flyers to hover even if there's no driver!
 	// pooty 02/2024
+	// Randomly kills turret owner?!  08/2024
 	if (!VehicleBase.bDriving)
 		VehicleBase.bDriving = true;
 }
 
 
+event bool KDriverLeave( bool bForceLeave )
+{
+    local bool b;
+    b  = super.KDriverLeave(bForceLeave);
+    if (b && VehicleBase.IsVehicleEmpty() )
+        VehicleBase.bDriving = false;
+
+    return b;
+
+}
+
+simulated function AttachDriver(Pawn P)
+{
+    local coords GunnerAttachmentBoneCoords;
+
+    if (Gun == None)
+        return;
+
+    ONSDualAttackCraft(VehicleBase).OutputThrust = 0;
+    ONSDualAttackCraft(VehicleBase).OutputStrafe = 0;
+    ONSDualAttackCraft(VehicleBase).OutputRise = 0;
+    P.bHardAttach = True;
+    GunnerAttachmentBoneCoords = Gun.GetBoneCoords(Gun.GunnerAttachmentBone);
+    P.SetLocation(VehicleBase.Location);
+    P.SetBase(VehicleBase);
+    P.SetPhysics(PHYS_None);
+    P.SetPhysics(PHYS_None);    // Do it twice to handle the bug.
+    Gun.AttachToBone(P, Gun.GunnerAttachmentBone);
+    P.SetRelativeLocation(DrivePos);
+    P.SetRelativeRotation( DriveRot );
+
+}
 
 defaultproperties
 {
