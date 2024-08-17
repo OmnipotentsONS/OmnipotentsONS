@@ -125,7 +125,7 @@ defaultproperties
      ChassisTorqueScale=0.400000
      MinBrakeFriction=4.000000
      MaxSteerAngleCurve=(Points=((OutVal=25.000000),(InVal=1500.000000,OutVal=11.000000),(InVal=1000000000.000000,OutVal=11.000000)))
-     TorqueCurve=(Points=((OutVal=16.000000),(InVal=200.000000,OutVal=22.000000),(InVal=1500.000000,OutVal=30.000000),(InVal=3000.000000))) //similar to hyena
+     TorqueCurve=(Points=((OutVal=16.000000),(InVal=200.000000,OutVal=22.000000),(InVal=1500.000000,OutVal=30.000000),(InVal=3300.000000))) //similar to hyena
 //     TorqueCurve=(Points=((OutVal=12.500000),(InVal=200.000000,OutVal=28.000000),(InVal=900.000000,OutVal=30.000000),(InVal=1500.000000,OutVal=47.000000),(InVal=3000.000000)))
 //     GearRatios(0)=-0.500000
 //     GearRatios(1)=0.400000
@@ -238,11 +238,14 @@ defaultproperties
      bDrawMeshInFP=True
      bHasHandbrake=True
      bSeparateTurretFocus=True
+     EntryRadius=50.000000
+     CollisionRadius=50.000000
+     CollisionHeight=40.000000
      DrivePos=(X=2.800000,Y=-22.360001,Z=45.000000)
-     ExitPositions(0)=(Y=-165.000000,Z=100.000000)
-     ExitPositions(1)=(Y=165.000000,Z=100.000000)
-     ExitPositions(2)=(Y=-165.000000,Z=-100.000000)
-     ExitPositions(3)=(Y=165.000000,Z=-100.000000)
+     ExitPositions(0)=(Y=-145.000000,Z=100.000000)
+     ExitPositions(1)=(Y=145.000000,Z=100.000000)
+     ExitPositions(2)=(Y=-145.000000,Z=-100.000000)
+     ExitPositions(3)=(Y=145.000000,Z=-100.000000)
      FPCamPos=(X=2.800000,Y=-22.360001,Z=45.000000)
      TPCamDistance=550.000000
      CenterSpringForce="SpringONSSRV"
@@ -250,7 +253,7 @@ defaultproperties
      TPCamWorldOffset=(Z=150.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a Omni FlakRat"
-     VehicleNameString="Omni FlakRat 1.01"
+     VehicleNameString="Omni FlakRat 1.03"
      RanOverDamageType=Class'FlakRatOmni.DamTypeFlakRatOmniRoadkill'
      CrushedDamageType=Class'FlakRatOmni.DamTypeFlakRatOmniPancake'
      MaxDesireability=0.400000
@@ -260,12 +263,11 @@ defaultproperties
      HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.Dixie_Horn'
      GroundSpeed=2800.000000
      HealthMax=575.000000
-     Health=575
+     Health=500
      bReplicateAnimations=True
      Mesh=SkeletalMesh'ONSFlakRat.FlakRat'
      SoundVolume=180
-     CollisionRadius=100.000000
-     CollisionHeight=40.000000
+    
      Begin Object Class=KarmaParamsRBFull Name=KParams0
          KInertiaTensor(0)=1.000000
          KInertiaTensor(3)=3.000000

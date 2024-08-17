@@ -213,7 +213,7 @@ defaultproperties
      ProjPerFire=7
      AltFireProjPerFire=1
      //ProjSpread=1000
-     ProjSpread=600  // same as wasp
+     ProjSpread=500  // same as wasp
      SpreadStyle=SS_Random
      bAltFireProjOffset=True
      AltFireProjSpawnOffset=(Pitch=1000)

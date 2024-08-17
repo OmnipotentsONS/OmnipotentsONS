@@ -10,5 +10,5 @@ defaultproperties
      bDelayedDamage=True
      bBulletHit=True
      VehicleMomentumScaling=0.75000  // flak gun is 0.5 this is better.
-     VehicleDamageScaling=1.3000
+     VehicleDamageScaling=1.0000
 }

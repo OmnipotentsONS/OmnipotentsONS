@@ -31,7 +31,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 
 defaultproperties
 {
-	   Damage=60  //vehicle *1.3 = 90
+	   Damage=80  //vehicle *1.25 = 100
 	   DamageRadius=220
 	   NumChunks=6
      Speed=4000.000000
@@ -39,6 +39,6 @@ defaultproperties
      MyDamageType=Class'FlakRatOmni.DamTypeFlakRatOmniShell'
      Physics=PHYS_Flying
      AmbientSound=Sound'VMVehicleSounds-S.HoverTank.IncomingShell'
-     LifeSpan=5.000000
+     LifeSpan=5.250000
      DrawScale=10.000000
 }

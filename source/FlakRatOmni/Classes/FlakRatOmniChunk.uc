@@ -131,16 +131,17 @@ defaultproperties
      ImpactSounds(5)=Sound'XEffects.Impact2'
      Speed=6000.000000
      MaxSpeed=7000.000000
-     Damage=14.000000  //regular flak chunk does 13
-     // Damage type will do 1.3 to vehicles eg. 18
+     Damage=28.000000  //regular flak chunk does 13, Wasp Chunks 35.  Wasp only shoots 5, this shoots 7.  Better than wasp up close.
+     // Damage type will do 1.0 to vehicles it was too weak on foot before.
      MomentumTransfer=10000.000000
      MyDamageType=Class'FlakRatOmni.DamTypeFlakRatOmniChunk'
      DrawType=DT_StaticMesh
      StaticMesh=StaticMesh'WeaponStaticMesh.FlakChunk'
      CullDistance=3000.000000
-     LifeSpan=2.500000
-     DrawScale=14.000000
+     LifeSpan=2.600000
+     DrawScale=15.000000
      AmbientGlow=254
      Style=STY_Alpha
      bBounce=True
+  
 }
