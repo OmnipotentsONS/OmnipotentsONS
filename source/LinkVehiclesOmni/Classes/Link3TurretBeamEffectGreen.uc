@@ -82,7 +82,7 @@ defaultproperties
          UseRotationFrom=PTRS_Actor
          SizeScale(0)=(RelativeSize=1.000000)
          SizeScale(1)=(RelativeTime=1.000000)
-         StartSizeRange=(X=(Min=150.000000,Max=150.000000),Y=(Min=30.000000,Max=30.000000))
+         StartSizeRange=(X=(Min=80.000000,Max=100.000000),Y=(Min=30.000000,Max=30.000000))
          InitialParticlesPerSecond=5000.000000
          Texture=Texture'EpicParticles.Flares.SoftFlare'
          LifetimeRange=(Min=0.500000,Max=0.500000)
@@ -133,13 +133,13 @@ defaultproperties
          StartLocationRange=(X=(Max=64.000000),Z=(Min=-8.000000,Max=8.000000))
          UseRotationFrom=PTRS_Actor
          SizeScale(0)=(RelativeSize=0.500000)
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.000000)
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=0.750000)
          StartSizeRange=(X=(Min=20.000000,Max=50.000000))
          InitialParticlesPerSecond=2000.000000
          Texture=Texture'AW-2004Particles.Weapons.SmokePanels1'
          TextureUSubdivisions=4
          TextureVSubdivisions=4
-         LifetimeRange=(Min=1.500000,Max=1.500000)
+         LifetimeRange=(Min=1.000000,Max=1.250000)
          StartVelocityRange=(Z=(Max=15.000000))
          WarmupTicksPerSecond=1.000000
          RelativeWarmupTime=0.200000
@@ -164,7 +164,7 @@ defaultproperties
          StartLocationRange=(X=(Max=20.000000))
          UseRotationFrom=PTRS_Actor
          SizeScale(0)=(RelativeSize=0.100000)
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.000000)
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=0.750000)
          StartSizeRange=(X=(Min=40.000000,Max=60.000000))
          InitialParticlesPerSecond=2000.000000
          Texture=Texture'AW-2004Particles.Weapons.SmokePanels1'
