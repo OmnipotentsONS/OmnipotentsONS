@@ -65,31 +65,30 @@ state Dying
 
 Begin:
     PlaySound(sound'WeaponSounds.redeemer_explosionsound');
-    Sleep(0.3);
     HurtRadius(Damage, DamageRadius*0.100, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.2);
     HurtRadius(Damage, DamageRadius*0.200, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.2);
     HurtRadius(Damage, DamageRadius*0.300, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.2);
     HurtRadius(Damage, DamageRadius*0.400, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.2);
     HurtRadius(Damage, DamageRadius*0.500, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.25);
     HurtRadius(Damage, DamageRadius*0.600, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.25);
     HurtRadius(Damage, DamageRadius*0.700, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.25);
     HurtRadius(Damage, DamageRadius*0.800, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.25);
     HurtRadius(Damage, DamageRadius*0.900, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.25);
     HurtRadius(Damage*0.66, DamageRadius*1.000, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.25);
     HurtRadius(Damage*0.40, DamageRadius*1.000, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.25);
     HurtRadius(Damage*0.20, DamageRadius*1.000, MyDamageType, MomentumTransfer, Location);
-    Sleep(0.3);
+    Sleep(0.25);
     HurtRadius(Damage*0.10, DamageRadius*1.000, MyDamageType, MomentumTransfer, Location);
     Destroy();
 }
@@ -104,9 +103,9 @@ defaultproperties
      ExplosionEffectClass=Class'OmniPainters.NuclearExplosionOmni'
      Speed=1200.000000
      MaxSpeed=1200.000000
-     Damage=500.000000
+     Damage=600.000000
      DamageRadius=6500.000000
-     MomentumTransfer=500000.000000
+     MomentumTransfer=600000.000000
      MyDamageType=Class'OmniPainters.DamTypeOmniNukeStrike'
      DrawScale=0.700000
      CollisionRadius=30.000000

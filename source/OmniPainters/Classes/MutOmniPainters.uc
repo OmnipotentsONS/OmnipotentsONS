@@ -35,6 +35,6 @@ function bool CheckReplacement( Actor Other, out byte bSuperRelevant )
 
 defaultproperties
 {
-     FriendlyName="Omni Painters 1.01"
+     FriendlyName="Omni Painters 1.02"
      Description="Replaces the Short Range Ion Painter, Nuke Strike Painters with Omni longer range versions"
 }
