@@ -394,7 +394,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 	foreach VisibleCollidingActors( class 'Actor', Victims, DamageRadius, HitLocation )
 	{
 		// don't let blast damage affect fluid - VisibleCollisingActors doesn't really work for them - jag
-		if( (Victims != self) && (Victims.Role == ROLE_Authority) && !Victims.IsA('FluidSurfaceInfo') )
+		if( (Victims != ONSWeaponPawn(Owner).VehicleBase) && (Victims.Role == ROLE_Authority) && !Victims.IsA('FluidSurfaceInfo') )
 		{
 			if (Pawn(Victims) != None && Pawn(Victims).GetTeamNum() == Instigator.Controller.GetTeamNum()) ActualMomentum=0;
 			else ActualMomentum=Momentum; //only use momentum on non-team mates
@@ -417,7 +417,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
          Pawn(Victims).SetOverlayMaterial( RegenerationMaterial, 0.25, false );
          If (Pawn(Victims).IsA('Vehicle')) 
             Pawn(Victims).GiveHealth((HealTeamBaseAmount*(NumLinks+2)),Pawn(Victims).HealthMax);
-            // vehicles get extra healing if there's linkers, and 2 times base amount with 0 linkers.
+              // vehicles get extra healing if there's linkers, and 2 times base amount with 0 linkers.
          else
              Pawn(Victims).GiveHealth(HealTeamBaseAmount,Pawn(Victims).HealthMax); // heal players Base Amount no increase for link
          // lets not downscale team healing based on Range
@@ -427,9 +427,10 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 	// self heal base amount
 	//log(self@":HurtRadius - SelfHealBaseAmount-CurrentHealth"@ONSWeaponPawn(Owner).VehicleBase.Health);
 	HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase).GiveHealth(SelfHealAmount, HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase).HealthMax);
-  //log(self@":HurtRadius - AFTER SelfHealBaseAmount-CurrentHealth"@ONSWeaponPawn(Owner).VehicleBase.Health);
+ // log(self@":HurtRadius - AFTER SelfHealBaseAmount-CurrentHealth"@ONSWeaponPawn(Owner).VehicleBase.Health);
 
 	//  self heal based on Damage
+	
 	HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase).GiveHealth(FMin(damageTotal * SelfHealMultiplier, MaxDamageHealthHeal), HospitalerV3Omni(ONSWeaponPawn(Owner).VehicleBase).HealthMax);
 }
 
@@ -439,7 +440,7 @@ defaultproperties
      MaxDelayTime=0.330000
      ShieldRechargeRate=325.000000
      ShieldRechargeRateActive=150.000
-     CurrentShieldHealth=3000.000000
+     CurrentShieldHealth=2000.000000
      YawBone="SIDEgunBASE"
      PitchBone="SIDEgunBARREL"
      PitchUpLimit=18000
@@ -470,9 +471,9 @@ defaultproperties
      
      
      LinkMultiplier=0.8 // number of linkers +1 * shield Recharge rate.
-     SelfHealAmount=120  // this is health, 
-     HealTeamBaseAmount=150  // this is real health
+     SelfHealAmount=125  // this is health, 
+     HealTeamBaseAmount=180  // this is real health
      SelfHealMultiplier=0.20  //self heal from Shield Combo  pt heal for 1  pts damage
-     MaxDamageHealthHeal= 400  // max self heal from Shield combo.
+     MaxDamageHealthHeal= 500  // max self heal from Shield combo.
      RegenerationMaterial=Shader'XGameShaders.PlayerShaders.PlayerShieldSh'
 }
