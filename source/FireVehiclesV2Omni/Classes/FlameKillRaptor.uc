@@ -19,4 +19,5 @@ static function class<Emitter> GetPawnDamageEmitter(vector HitLocation, float Da
 defaultproperties
 {
      VehicleClass=Class'FireVehiclesV2Omni.FireRaptor'
+     VehicleDamageScaling=1.2
 }

@@ -225,7 +225,7 @@ defaultproperties
      MaxSpeed=10000.000000
      Damage=80.000000
      DamageRadius=350.000000
-     NumFireBalls=5
+     NumFireBalls=6
      MomentumTransfer=20000.000000
      MyDamageType=Class'FireVehiclesV2Omni.FlameKillRaptor'
      ExplosionDecal=Class'XEffects.RocketMark'

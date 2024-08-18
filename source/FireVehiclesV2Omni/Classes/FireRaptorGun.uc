@@ -107,8 +107,8 @@ state ProjectileFireMode
 
 defaultproperties
 {
-     TeamProjectileClasses(0)=Class'FireVehiclesV2Omni.FireballIncendiarySmall'
-     TeamProjectileClasses(1)=Class'FireVehiclesV2Omni.FireballIncendiarySmall'
+     TeamProjectileClasses(0)=Class'FireVehiclesV2Omni.FireRaptorFireballIncendiarySmall'
+     TeamProjectileClasses(1)=Class'FireVehiclesV2Omni.FireRaptorFireballIncendiarySmall'
      MinAim=0.900000
      YawBone="PlasmaGunBarrel"
      PitchBone="PlasmaGunBarrel"
@@ -119,14 +119,14 @@ defaultproperties
      WeaponFireAttachmentBone="PlasmaGunBarrel"
      DualFireOffset=50.000000
      RotationsPerSecond=1.200000
-     FireInterval=1.6000
+     FireInterval=2.0000
      AltFireInterval=7.000000
      FireSoundClass=Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01'
      AltFireSoundClass=Sound'ONSVehicleSounds-S.Tank.TankFire01'
      FireForce="Laser01"
      AltFireForce="Laser01"
-     ProjectileClass=Class'FireVehiclesV2Omni.FireballIncendiarySmall'
-     AltFireProjectileClass=Class'FireVehiclesV2Omni.FireballIncendiary'
+     ProjectileClass=Class'FireVehiclesV2Omni.FireRaptorFireballIncendiarySmall'
+     AltFireProjectileClass=Class'FireVehiclesV2Omni.FireRaptorFireballIncendiary'
      AIInfo(0)=(bLeadTarget=True,RefireRate=0.950000)
      AIInfo(1)=(bLeadTarget=True,aimerror=400.000000,RefireRate=0.500000)
      Mesh=SkeletalMesh'ONSWeapons-A.PlasmaGun'

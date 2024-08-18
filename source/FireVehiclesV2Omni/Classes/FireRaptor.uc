@@ -503,7 +503,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in the Ifrit"
-     VehicleNameString="Ifrit 2.95"
+     VehicleNameString="Ifrit 2.96"
      RanOverDamageType=Class'FireVehiclesV2Omni.DamTypeFireRaptorRoadkill'
      CrushedDamageType=Class'FireVehiclesV2Omni.DamTypeFireRaptorPancake'
      MaxDesireability=0.600000
@@ -514,8 +514,8 @@ defaultproperties
     // HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.Horn03'
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.Horn07'
      GroundSpeed=2000.000000
-     HealthMax=350.000000
-     Health=350
+     HealthMax=325.000000
+     Health=325
      Mesh=SkeletalMesh'ONSVehicles-A.AttackCraft'
      SoundVolume=160
      CollisionRadius=150.000000

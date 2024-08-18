@@ -1,4 +1,4 @@
-class FireMantaProjectile extends Projectile;
+class FireRaptorFireballIncendiary extends Projectile;
 
 var bool		bHitWater, bWaterStart;
 var vector		Dir;
@@ -14,7 +14,6 @@ var xEmitter Flame;
 var() class<xEmitter> FlameClass;
 var() class<DamageType> DamageType, BurnDamageType;
 var bool bDoTouch;
-var int NumFireBlobs;
 
 
 replication
@@ -97,11 +96,9 @@ simulated function ProcessTouch (Actor Other, Vector HitLocation)
 //	}
 //}
 
-
 simulated function Explode(vector HitLocation, vector HitNormal)
 {
-    //local PlayerController PC;
-    local vector start;
+	  local vector start;
     local rotator rot;
     local int i;
     local FireTankFireSmall FireBLOB;
@@ -114,36 +111,36 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 		TrailEmitter = None;
 	}
 
-    if ( EffectIsRelevant(Location, false) )
+  if ( EffectIsRelevant(Location, false) )
     {
-	//Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*3, rotator(HitNormal));
-	//Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*20, rotator(HitNormal));
-	//Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*16, rotator(HitNormal));
-	//Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*1, rotator(HitNormal));
-    	//Spawn(class'FireballBlowup',,, HitLocation + HitNormal*16, rotator(HitNormal));
-	//Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*10, rotator(HitNormal));
-	//Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*13, rotator(HitNormal));
-	//Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*5, rotator(HitNormal));
-	//Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*9, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*3, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*20, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*16, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*1, rotator(HitNormal));
+    	Spawn(class'FireballBlowup',,, HitLocation + HitNormal*16, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*10, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*13, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*5, rotator(HitNormal));
+			Spawn(class'IncendiarySmokeRing',,, HitLocation + HitNormal*9, rotator(HitNormal));
 		if ( (ExplosionDecal != None) && (Level.NetMode != NM_DedicatedServer) )
 			Spawn(ExplosionDecal,self,,Location, rotator(-HitNormal));
     }
 	start = Location + 10 * HitNormal;
 	if ( Role == ROLE_Authority )
 	{
-		HurtRadius(Damage, DamageRadius, MyDamageType, MomentumTransfer, HitLocation);	
-		// this happesn in blow up.
+		//HurtRadius(Damage, DamageRadius, MyDamageType, MomentumTransfer, HitLocation);	
+		// Called in Blowup (Projectile Class)
 		
-		for (i=0; i<NumFireBlobs; i++)
+		for (i=0; i<3; i++)
 		{
 			rot = Rotation;
-				/*	rot.yaw += FRand()*32000-16000;
+			/*	rot.yaw += FRand()*32000-16000;
 			rot.pitch += FRand()*32000-16000;
 			rot.roll += FRand()*32000-16000;
 */
-			rot.yaw += FRand()*12000-6000;
-			rot.pitch += FRand()*12000-6000;
-			rot.roll += FRand()*12000-6000;
+			rot.yaw += FRand()*18000-7000;
+			rot.pitch += FRand()*18000-7000;
+			rot.roll += FRand()*18000-7000;
 			FireBLOB = Spawn( class 'FireTankFireSmall',, '', Start, rot);
 		}
 	}
@@ -169,23 +166,20 @@ simulated function PostBeginPlay()
 
 defaultproperties
 {
-     TrailClass=Class'OnslaughtBP.ONSDualMissileSmokeTrail'
-     AccelRate=1000.000000
+     TrailClass=Class'FireVehiclesV2Omni.IncendiaryRoundTrailEffect'
+     AccelRate=1500.000000
      BurnDamageType=Class'FireVehiclesV2Omni.Burned'
-     Speed=8500.000000
-     MaxSpeed=8500.000000
-     Damage=65.000000
-     DamageRadius=300.000000
-     NumFireBlobs=5
-     MomentumTransfer=10000.000000
-     MyDamageType=Class'FireVehiclesV2Omni.FlameKill'
-     ExplosionDecal=Class'Onslaught.ONSRocketScorch'
+     Speed=15000.000000
+     MaxSpeed=15000.000000
+     Damage=475.000000
+     DamageRadius=1001.000000
+     MomentumTransfer=15000.000000
+     MyDamageType=Class'FireVehiclesV2Omni.FireBall'
+     ExplosionDecal=Class'XEffects.RocketMark'
      DrawType=DT_StaticMesh
-     StaticMesh=StaticMesh'WeaponStaticMesh.RocketProj'
+     StaticMesh=StaticMesh'WeaponStaticMesh.FlakChunk'
      AmbientSound=Sound'WeaponSounds.RocketLauncher.RocketLauncherProjectile'
-     LifeSpan=7.000000
-     DrawScale=0.500000
-     DrawScale3D=(X=0.300000,Y=0.100000,Z=0.100000)
+     LifeSpan=5.500000
      AmbientGlow=32
      SoundVolume=255
      SoundRadius=200.000000
