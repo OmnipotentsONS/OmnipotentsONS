@@ -2,12 +2,24 @@ class MutOmniPainters extends Mutator;
 // this replaces stanard ONSPainter, or XWeapons.Painter with OmniIonPainter
 // also replaces Strike Painter (nuke) with StrikePainterOmni
 
+var() config bool bDebug;
+var bool bInitialized;
+
+function Initialize()
+{
+
+    bInitialized = true;
+	  Log("Mutator "@ FriendlyName@" Initialized",'OmniPainters');
+}
+
 function bool CheckReplacement( Actor Other, out byte bSuperRelevant )
 {
 	local int i;
 	local WeaponLocker L;
 
-	bSuperRelevant = 1;
+  if ( !bInitialized )  Initialize();
+	bSuperRelevant = 0;
+	
   if ( xWeaponBase(Other) != None )
   {
 		if ( xWeaponBase(Other).WeaponType.name == 'StrikePainter'  )
@@ -30,11 +42,15 @@ function bool CheckReplacement( Actor Other, out byte bSuperRelevant )
 	}
 	else
 		return true;
-	return false;
+		
+	
+	return true;
 }
 
 defaultproperties
 {
-     FriendlyName="Omni Painters 1.02"
+     FriendlyName="Omni Painters 1.03"
      Description="Replaces the Short Range Ion Painter, Nuke Strike Painters with Omni longer range versions"
+     bAddToServerPackages=True
+     bDebug=False
 }

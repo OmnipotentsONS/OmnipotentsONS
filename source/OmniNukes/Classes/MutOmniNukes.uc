@@ -1,29 +1,52 @@
-class MutOmniNukes extends Mutator;
+class MutOmniNukes extends Mutator config;
 // this replaces stanard Redeemer and the buggy WGSNuke Redeemer II with the Omni versions
+var() config bool bDebug;
+var bool bInitialized;
+
+function Initialize()
+{
+
+    bInitialized = true;
+	  Log("Mutator "@ FriendlyName@" Initialized",'OmniNukes');
+}
 
 function bool CheckReplacement( Actor Other, out byte bSuperRelevant )
 {
 	local int i;
 	local WeaponLocker L;
+	
 
-	bSuperRelevant = 1;
+  if ( !bInitialized )  Initialize();
+	bSuperRelevant = 0;
+	
+
   if ( xWeaponBase(Other) != None )
   {
-  	//log("Replacing Nukes in Weaponbases");
-		if ( xWeaponBase(Other).WeaponType.name == 'RedeemerII'  )
+  	if (bDebug) log("Replacing Nukes in Weaponbases",'OmniNukes');
+		if ( xWeaponBase(Other).WeaponType.name == 'RedeemerII' )
 		{
 			xWeaponBase(Other).WeaponType = class'OmniNukes.OmniRedeemerII';
-			//log(" replacing weaponbase name = RedeemerII");
+			if (bDebug) log(" replacing weaponbase name = RedeemerII",'MutOmniNukes');
 		}	
 		else if	( xWeaponBase(Other).WeaponType == class'Redeemer' )
 		{
 			xWeaponBase(Other).WeaponType = class'OmniNukes.OmniRedeemer';
-//			log(" replacing weaponbase class = Redeemer");
-//			log("  replaced with"@xWeaponBase(Other).WeaponType);
+			if (bDebug) log(" replacing weaponbase class = Redeemer",'MutOmniNukes');
+			if (bDebug) log("  replaced with"@xWeaponBase(Other).WeaponType,'MutOmniNukes');
 		}	
 	}
-
-	         
+  
+  else if ( (WeaponPickup(Other) != None) && (string(Other.Class) == "RedeemerPickup") )
+        {
+           ReplaceWith( Other, "OmniNukes.OmniRedeemerPickup");
+           if (bDebug) log(" replacing weaponpickup = Redeemer",'MutOmniNukes');
+        }
+  else if ( (WeaponPickup(Other) != None) && (string(Other.Class) == "RedeemerIIPickup") )
+        {
+            ReplaceWith( Other, "OmniNukes.OmniRedeemerIIPickup");        
+            if (bDebug)  log(" replacing weaponpickup = RedeemerII",'MutOmniNukes');
+	      }   
+	      
 	else if ( WeaponLocker(Other) != None ) //Who the hell puts the Nuke in a weapon locker?
 	{
 		L = WeaponLocker(Other);
@@ -31,11 +54,11 @@ function bool CheckReplacement( Actor Other, out byte bSuperRelevant )
 			if (L.Weapons[i].WeaponClass.Name == 'RedeemerII' )
 			{
 				L.Weapons[i].WeaponClass = class'OmniRedeemerII';	
-				//log(" replacing weaponlocker name = RedeemerII");
+				if (bDebug) log(" replacing weaponlocker name = RedeemerII",'MutOmniNukes');
 			}	
 			else if (L.Weapons[i].WeaponClass == class'Redeemer' )	 
 			{
-				//log(" replacing weaponlocker class = Redeemer");
+				if (bDebug) log(" replacing weaponlocker class = Redeemer",'MutOmniNukes');
 				L.Weapons[i].WeaponClass = class'OmniRedeemer';
 				
 			} 
@@ -45,12 +68,15 @@ function bool CheckReplacement( Actor Other, out byte bSuperRelevant )
 	}
 	else
 		return true;
-	return false;
+	
+	return true;
 }
 
 defaultproperties
 {
-     FriendlyName="Omni Nukes 1.00"
+     FriendlyName="Omni Nukes 1.01"
      Description="Replaces the regular Redeemer with Omni Version, buggy WGSNuke/RedeemerII with OmniRedeemerII"
      bAddToServerPackages=True
+     bDebug=False
+   
 }

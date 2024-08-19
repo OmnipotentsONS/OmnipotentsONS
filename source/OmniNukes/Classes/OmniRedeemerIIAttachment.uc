@@ -42,5 +42,5 @@ defaultproperties
      Mesh=SkeletalMesh'Weapons.Redeemer_3rd'
      RelativeLocation=(X=-35.000000)
      RelativeRotation=(Yaw=49152,Roll=32768)
-     DrawScale=0.600000
+     DrawScale=0.800000
 }

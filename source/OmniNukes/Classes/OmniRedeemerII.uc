@@ -39,7 +39,7 @@ defaultproperties
      IconCoords=(X1=4,Y1=350,X2=110,Y2=395)
      ItemName="Omni BF Redeemer"
      Mesh=SkeletalMesh'Weapons.Redeemer_1st'
-     DrawScale=1.200000
+     DrawScale=1.300000
      UV2Texture=Shader'XGameShaders.WeaponShaders.WeaponEnvShader'
      HighDetailOverlay=Combiner'UT2004Weapons.WeaponSpecMap2'
 }
