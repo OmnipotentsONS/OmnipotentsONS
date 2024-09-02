@@ -152,7 +152,7 @@ defaultproperties
 {
      Speed=19000.000000
      MaxSpeed=19000.000000
-     Damage=267.000000
+     Damage=335.000000
      DamageRadius=860.000000
      MomentumTransfer=600000.000000
      MyDamageType=Class'MinotaurClassic.MinotaurClassicKill'

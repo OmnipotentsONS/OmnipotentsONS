@@ -116,8 +116,8 @@ defaultproperties
      FireSoundClass=Sound'WeaponSounds.Misc.instagib_rifleshot'
      FireForce="Laser01"
      DamageType=Class'MinotaurClassic.DamTypeMinotaurClassicSecondaryTurret'
-     DamageMin=9
-     DamageMax=9
+     DamageMin=20
+     DamageMax=20
      TraceRange=30000.000000
      Momentum=10000.000000
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)

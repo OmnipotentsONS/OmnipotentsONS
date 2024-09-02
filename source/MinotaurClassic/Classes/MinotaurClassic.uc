@@ -108,7 +108,7 @@ defaultproperties
      BlueSkin=Texture'Minotaur_Tex.MinotaurBlue'
      IdleSound=Sound'Minotaur_Sound.Minotaurengine'
      VehiclePositionString="in a Classic Minotaur"
-     VehicleNameString="Classic Minotaur 1.1"
+     VehicleNameString="Classic Minotaur 1.2"
      HornSounds(0)=Sound'Minotaur_Sound.Minotaurhorn'
      HealthMax=2000.000000
      Health=2000

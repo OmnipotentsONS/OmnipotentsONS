@@ -7,3 +7,6 @@ Updated to ClassicMinotaur by pOOty for )o(
 Cleaned up Classes, added ReduceShake to avoid bio spin.
 Base Code unchanged.
 Switched Turrets to match Omnitaur
+
+9/2/2024
+Turrets have way too little damage need to match Omnitaur fixed it finally

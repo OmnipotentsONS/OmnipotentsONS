@@ -123,8 +123,8 @@ defaultproperties
      AmbientSoundScaling=1.300000
      FireForce="minifireb"
      DamageType=Class'MinotaurClassic.DamTypeMinotaurClassicTurret'
-     DamageMin=10
-     DamageMax=10
+     DamageMin=19
+     DamageMax=19
      TraceRange=15000.000000
      ShakeRotMag=(X=50.000000,Y=50.000000,Z=50.000000)
      ShakeRotRate=(X=10000.000000,Y=10000.000000,Z=10000.000000)
