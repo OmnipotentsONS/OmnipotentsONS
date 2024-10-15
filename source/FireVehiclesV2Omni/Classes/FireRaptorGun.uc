@@ -120,7 +120,7 @@ defaultproperties
      DualFireOffset=50.000000
      RotationsPerSecond=1.200000
      FireInterval=2.0000
-     AltFireInterval=7.000000
+     AltFireInterval=6.000000
      FireSoundClass=Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01'
      AltFireSoundClass=Sound'ONSVehicleSounds-S.Tank.TankFire01'
      FireForce="Laser01"

@@ -503,7 +503,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in the Ifrit"
-     VehicleNameString="Ifrit 2.96"
+     VehicleNameString="Ifrit 2.97"
      RanOverDamageType=Class'FireVehiclesV2Omni.DamTypeFireRaptorRoadkill'
      CrushedDamageType=Class'FireVehiclesV2Omni.DamTypeFireRaptorPancake'
      MaxDesireability=0.600000

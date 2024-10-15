@@ -27,8 +27,8 @@ defaultproperties
      TrailClass=Class'FireVehiclesV2Omni.FireBallTrail'
      AccelRate=1000.000000
      BurnDamageType=Class'FireVehiclesV2Omni.Burned'
-     Speed=15000.000000
-     MaxSpeed=15000.000000
+     Speed=17000.000000
+     MaxSpeed=17000.000000
      Damage=80.000000
      DamageRadius=250.000000
      NumFireBalls=6
@@ -38,7 +38,7 @@ defaultproperties
      DrawType=DT_StaticMesh
      StaticMesh=StaticMesh'VMWeaponsSM.PlayerWeaponsGroup.bomberBomb'
      AmbientSound=Sound'WeaponSounds.RocketLauncher.RocketLauncherProjectile'
-     LifeSpan=5.000000
+     LifeSpan=4.500000
      AmbientGlow=32
      SoundVolume=255
      SoundRadius=200.000000

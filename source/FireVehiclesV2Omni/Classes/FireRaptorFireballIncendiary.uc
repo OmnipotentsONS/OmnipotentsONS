@@ -131,7 +131,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 		//HurtRadius(Damage, DamageRadius, MyDamageType, MomentumTransfer, HitLocation);	
 		// Called in Blowup (Projectile Class)
 		
-		for (i=0; i<3; i++)
+		for (i=0; i<4; i++)
 		{
 			rot = Rotation;
 			/*	rot.yaw += FRand()*32000-16000;
