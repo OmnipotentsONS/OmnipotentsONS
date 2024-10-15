@@ -436,7 +436,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 
 defaultproperties
 {
-     MaxShieldHealth=2500.000000
+     MaxShieldHealth=2100.000000 // Reduced a bit but still want to take one mino hit.
      MaxDelayTime=0.330000
      ShieldRechargeRate=325.000000
      ShieldRechargeRateActive=150.000
@@ -471,9 +471,9 @@ defaultproperties
      
      
      LinkMultiplier=0.8 // number of linkers +1 * shield Recharge rate.
-     SelfHealAmount=125  // this is health, 
+     SelfHealAmount=66  // this is health, 
      HealTeamBaseAmount=180  // this is real health
-     SelfHealMultiplier=0.20  //self heal from Shield Combo  pt heal for 1  pts damage
+     SelfHealMultiplier=0.33  //self heal from Shield Combo  pt heal for 1  pts damage
      MaxDamageHealthHeal= 500  // max self heal from Shield combo.
      RegenerationMaterial=Shader'XGameShaders.PlayerShaders.PlayerShieldSh'
 }
