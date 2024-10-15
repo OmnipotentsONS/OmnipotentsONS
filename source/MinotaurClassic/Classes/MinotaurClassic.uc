@@ -33,7 +33,10 @@ simulated function ReduceShake()
 
 function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
 {
-
+	  if (class'BioHandler'.static.IsBioDamage(DamageType)) Damage *= 5.0;
+    if (DamageType.name == 'TurtleDamTypeProximityExplosion')  Damage *= 1.55;
+   
+    /* Remove Silly non sensical resistances
     if (DamageType == class'DamTypeBioGlob')
             Damage *= 3.0;
 
@@ -83,7 +86,7 @@ if (DamageType.name == 'MinotaurTurretkill')
 
 	if (DamageType.name == 'HeatRay')
 		Damage *= 0.40;
-
+*/
 	Momentum *= 0.00;
 
     Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
@@ -108,7 +111,7 @@ defaultproperties
      BlueSkin=Texture'Minotaur_Tex.MinotaurBlue'
      IdleSound=Sound'Minotaur_Sound.Minotaurengine'
      VehiclePositionString="in a Classic Minotaur"
-     VehicleNameString="Classic Minotaur 1.2"
+     VehicleNameString="Classic Minotaur 1.21"
      HornSounds(0)=Sound'Minotaur_Sound.Minotaurhorn'
      HealthMax=2000.000000
      Health=2000

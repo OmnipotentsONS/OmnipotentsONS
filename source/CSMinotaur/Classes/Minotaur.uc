@@ -32,10 +32,11 @@ simulated function ReduceShake()
 
 function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
 {
-
-    if (DamageType == class'DamTypeBioGlob')
-            Damage *= 5.0;
-
+   if (class'BioHandler'.static.IsBioDamage(DamageType)) Damage *= 5.0;
+   if (DamageType.name == 'TurtleDamTypeProximityExplosion')  Damage *= 1.55;
+   //if (DamageType == class'DamTypeBioGlob' || DamageType,name="DamTypeBioGlobVehicle") Damage *= 5.0;
+   
+ /* Remove Silly non sensical resistances
 	if (DamageType == class'DamTypeHoverBikePlasma')
 		Damage *= 0.70;
 
@@ -50,19 +51,16 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Mo
 		Damage *= 0.70;
 
 	//if (DamageType == class'FireKill')
-	if (DamageType.name == 'FireKill')
-		Damage *= 0.30;
+	//if (DamageType.name == 'FireKill')
+	//	Damage *= 0.30;
+	// Fire Res Nerf
 
-	//if (DamageType == class'AlligatorFlak')
-	if (DamageType.name == 'AlligatorFlak')
+		if (DamageType.name == 'AlligatorFlak')
 		Damage *= 0.75;
 
 	if (DamageType == class'DamTypeShockBeam')
 		Damage *= 0.75;
 
-    //if (DamageType == class'TurtleDamTypeProximityExplosion')
-    if (DamageType.name == 'TurtleDamTypeProximityExplosion')
-            Damage *= 1.55;
 
 	if (DamageType == class'MinotaurTurretkill')
 		Damage *= 0.30;
@@ -71,12 +69,12 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Mo
 		Damage *= 0.30;
 
 	//if (DamageType == class'HeatRay')
-	if (DamageType.name == 'HeatRay')
-		Damage *= 0.30;
-
+	//if (DamageType.name == 'HeatRay')
+	//	Damage *= 0.30;
+*/
 	Momentum *= 0.00;
 
-    Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
+  Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
 	ReduceShake();
 }
 
@@ -116,6 +114,7 @@ defaultproperties
      RedSkin=Texture'Omnitaur_Tex.OmnitaurRed'
      BlueSkin=Texture'Omnitaur_Tex.OmnitaurBlue'
      IdleSound=Sound'CuddlyArmor_Sound.Minotaur.Minotaurengine'
+     bKeyVehicle=True
      VehiclePositionString="in a Min)o(taur"
      VehicleNameString="Min)o(taur"
      RanOverDamageType=Class'CSMinotaur.MinotaurDamTypeRoadkill'
@@ -146,5 +145,4 @@ defaultproperties
      KParams=KarmaParamsRBFull'CSMinotaur.Minotaur.KarmaParamsRBFull8'
 
      bSelected=True
-     bKeyVehicle=True
 }
