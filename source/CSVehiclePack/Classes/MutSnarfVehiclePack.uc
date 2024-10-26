@@ -16,6 +16,9 @@ var() config bool bHammerhead;
 var() config bool bArmadillo;
 var() config bool bHurricane;
 var() config bool bLinkTank;
+var() config bool bFireTank;
+var() config bool bFlameTank;
+var() config bool bMirageRaptor;
 
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
@@ -36,7 +39,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
     
 	  if (factory != None && factory.VehicleClass != None)
     {
-        if(bBallista && factory.VehicleClass.Name == 'Ballista')
+        if(bBallista && (factory.VehicleClass.Name == 'Ballista' || factory.VehicleClass.Name == 'SniperTank'))
         {
             SVehicleFactory(Other).VehicleClass = class'CSBallista.Ballista';
         }
@@ -95,6 +98,18 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
         {
             SVehicleFactory(Other).VehicleClass = class'LinkVehiclesOmni.LinkTank3';
         }
+        if(bFlameTank && factory.VehicleClass.Name == 'FlameTank')
+        {
+            SVehicleFactory(Other).VehicleClass = class'FireVehiclesV2Omni.FlameTankV2Omni';
+        }
+        if(bFireTank && factory.VehicleClass.Name == 'FireTank')
+        {
+            SVehicleFactory(Other).VehicleClass = class'FireVehiclesV2Omni.FireTankV2Omni';
+        }
+        if(bMirageRaptor && factory.VehicleClass.Name == 'MirageRaptor')
+        {
+            SVehicleFactory(Other).VehicleClass = class'MirageRaptorOmni.MirageRaptorOmni';
+        }
         // Check for ONSForcedVehicleFactories
         //if (Other.IsA('ONSForcedVehicleFactory'))
         //{
@@ -106,7 +121,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
     {
         for(i = 0;i<randomizer.Vehicles.length;i++)
         {
-            if(bBallista && randomizer.Vehicles[i].VehicleClass.Name == 'Ballista')
+            if(bBallista && (randomizer.Vehicles[i].VehicleClass.Name == 'Ballista' || randomizer.Vehicles[i].VehicleClass.Name == 'SniperTank'))
             {
                 randomizer.Vehicles[i].VehicleClass = class'CSBallista.Ballista';
             }
@@ -154,6 +169,19 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
             {
                 randomizer.Vehicles[i].VehicleClass = class'LinkVehiclesOmni.LinkTank3';
             }
+            
+		        if(bFlameTank && randomizer.Vehicles[i].VehicleClass.Name == 'FlameTank')
+		        {
+		            randomizer.Vehicles[i].VehicleClass = class'FireVehiclesV2Omni.FlameTankV2Omni';
+		        }
+		        if(bFireTank && randomizer.Vehicles[i].VehicleClass.Name == 'FireTank')
+		        {
+		            randomizer.Vehicles[i].VehicleClass = class'FireVehiclesV2Omni.FireTankV2Omni';
+		        }
+		        if(bMirageRaptor && randomizer.Vehicles[i].VehicleClass.Name == 'MirageRaptor')
+		        {
+		            randomizer.Vehicles[i].VehicleClass = class'MirageRaptorOmni.MirageRaptorOmni';
+		        }
         }
     }
 	
@@ -163,8 +191,8 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 defaultproperties
 {
     bAddToServerPackages=True
-    FriendlyName="Snarf's Vehicle Pack"
-    Description="Replaces vehicles with Snarf's and Omni's bug fixed versions - Ballista, HellHound, KingHellHound, Alligator, Minotaur/Omnitaur, Leviathan, Kraken, Tiamat, Hammerhead, Troop Carrier, Hurricane and LinkTank"
+    FriendlyName="Snarf's Vehicle Pack 10-24-2024"
+    Description="Replaces vehicles with Snarf's and Omni's bug fixed versions - Ballista, HellHound, KingHellHound, Alligator, Minotaur/Omnitaur, Leviathan, Kraken, Tiamat, Hammerhead, Troop Carrier, Hurricane, LinkTank, FireTank, FlameTank and MirageRaptor"
     bBallista=true
     bHellHound=true
     bKingHellHound=true
@@ -177,4 +205,8 @@ defaultproperties
     bArmadillo=true
     bHurricane=true
     bLinkTank=true
+    bFireTank=true;
+    bFlameTank=true;
+    bMirageRaptor=true;
+
 }
