@@ -73,7 +73,7 @@ defaultproperties
      bInstantRotation=True
      bDualIndependantTargeting=True
      //FireInterval=0.140000
-     FireInterval=0.190000
+     FireInterval=0.210000
      AltFireInterval=1.500000
      FireSoundClass=SoundGroup'WeaponSounds.AssaultRifle.AssaultRifleFire'
      AltFireSoundClass=Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01'

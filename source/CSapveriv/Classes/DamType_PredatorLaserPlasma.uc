@@ -20,6 +20,6 @@ defaultproperties
      bDetonatesGoop=True
      bDelayedDamage=True
      FlashFog=(X=700.000000)
-     VehicleDamageScaling=1.35000
+     VehicleDamageScaling=1.33000
 
 }

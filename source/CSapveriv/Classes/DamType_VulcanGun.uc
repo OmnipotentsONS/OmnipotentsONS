@@ -4,5 +4,5 @@ class DamType_VulcanGun extends DamTypeONSChainGun
 defaultproperties
 {
      
-     VehicleDamageScaling=1.20000
+     VehicleDamageScaling=1.30000
 }
