@@ -106,19 +106,16 @@ function PreBeginPlay()
     CurrentGamePPH = spawn(class'GamePPH', self);
     replicationHack = 0;
    
-   
     if (bDebug) {
     for(i=0;i<KPCategories.KPC.length;i++)
     {
         log("CatNum: "$KPCategories.KPC[i].CatNum$" "$KPCategories.KPC[i].CatDesc, 'EvenMatch');
     }
-   
-    /*
+    
 		for(i=0;i<KnownPlayers.PPH.length;i++)
     {
         log("KnownPlayer: "$KnownPlayers.PPH[i].ID$" "$KnownPlayers.PPH[i].Multiplier$" "$KnownPlayers.PPH[i].CatNum, 'EvenMatch');
     }
-    */
     }
 
 
@@ -564,34 +561,31 @@ simulated function GamePPH ShuffleTeams(optional bool killPlayers)
 simulated function LogCatPRI(array<CatAndPRI> CatPRI) 
 { // reall for testing.
 	
-	local int Index, CatN;
-	local float PPH, iPPH, KPM, TotalPPH;
-	local PlayerReplicationInfo PRI;
+	local int Index;
+	local float PPH, iPPH, KPM, CatN;
 	
 	if (!bVerbose) return;
 	log ("Logging CatPRI having "$CatPRI.Length$" Players ------------------------------ ",'EvenMatchOmni');
  if (CatPRI.Length > 0) {
 		Index = CatPRI.Length - 1;
 		do {
-			PRI = CatPRI[Index].PRI;
-			if (!PRI.bOnlySpectator && PlayerController(PRI.Owner) != None && PlayerController(PRI.Owner).bIsPlayer) {
-			//if (True) {
+			//PRI = CatPRI[Index].PRI;
+			//if (!PRI.bOnlySpectator && PlayerController(PRI.Owner) != None && PlayerController(PRI.Owner).bIsPlayer) {
+			if (True) {
 				// Next block to uncomment, we set test data
-				
+				/*
 			  iPPH = FMin(GetPointsPerHour(PRI),EvenMatchMutator.MaxPPHScore); // binary search O(log m), subject to MaxPPHScore
 				KPM = GetKnownPlayerMultplier(PRI);
 				CatN = GetKnownPlayerCategory(PRI);
         PPH = iPPH * KPM;
 				TotalPPH += PPH;
-				// Test Block
-				/*
+				*/
 				iPPH = CatPRI[index].PPH;
 				KPM = 1.0;
 				PPH = iPPH;
 				CatN = CatPRI[index].CatNum;
-				*/
-				
-				log("Player:"$CatPRI[Index].PRI.PlayerName$" : "$ iPPH $ " Initial PPH, Mutlipler "$KPM$" applied ="$PPH$", CatNum="$CatN$","$ GetCategoryDesc(CatN) $", currently on "$PRI.Team.GetHumanReadableName(), 'EvenMatchOmni');
+				log("Player:"$CatPRI[Index].PN$" : "$ iPPH $ " Initial PPH, Mutlipler "$KPM$" applied ="$PPH$", CatNum="$CatN$","$ GetCategoryDesc(CatN) $", currently on  PRI.Team.GetHumanReadableName()", 'EvenMatchDebug');
+			//	log("Player:"$CatPRI[Index].PRI.PlayerName$" : "$ iPPH $ " Initial PPH, Mutlipler "$KPM$" applied ="$PPH$", CatNum="$CatN$","$ GetCategoryDesc(CatN) $", currently on  PRI.Team.GetHumanReadableName()", 'EvenMatchDebug');
 				}
 		} until (--Index < 0);
 		log ("End Logging CatPRI ------------------------------------------ ",'EvenMatchOmni');
@@ -613,7 +607,7 @@ simulated function array<int> GetUniquePlayerCatNums(array<CatAndPRI> CatPRI){
             	 CatNums.Insert(CatI,1);
             	 CatNums[CatI] = CatPRI[i].CatNum;
             	 OldCatNum = CatPRI[i].CatNum;
-            	 if (EvenMatchMutator.bDebug) log("UniqueCatNums, adding at index"$CatI$" CatNum="$OldCatNum,'EvenMatchDebug');
+            	 if (EvenMatchMutator.bDebug) log("UniqueCatNums, adding at index"$CatI$" CatNum="$OldCatNum,'EvenMatchOmni');
             	 CatI++;
             }
             // Add it 
@@ -627,27 +621,27 @@ simulated function GamePPH ShuffleTeamsByCategory(optional bool killPlayers)
 {
 	 
 	
-	local array<CatAndPRI> CatPRI;
-	//local array<CatAndPRI> CatPRITest;
+	local array<CatAndPRI> CatPRI, CatPRITest;
 	
 	local PlayerReplicationInfo PRI, PRI2;
 	
-	local array<PlayerReplicationInfo>  RedPRIs, BluePRIs;
+	local array<PlayerReplicationInfo> PRIs, RedPRIs, BluePRIs;
+	local array<float> PPHs;
 	local array<int> CatNums;
 	local int Index, i;
+	//local int Low, High, Middle;
 	local float PPH, PPH2, RedPPH, BluePPH, TotalPPH, iPPH, KPM, CatN;
   local Pawn P;
 
   local string PlayerName;
  
  
-	log("Shuffling Teams by Categories", 'EvenMatchOmni');
+	log("Shuffling Teams by Categories", 'EvenMatchDebug');
 	RemoveBots();
 	
 	// Generate Test Data
 	// CatPRI here is test data in place of real PRI
 	// We avoid using the PRI member during test because it spams log with None warnings.
-	/*
 	CatPRITest.Insert(0,13);
 	CatPRITest[0].CatNum = 10;
 	CatPRITest[0].PPH = 725;
@@ -701,76 +695,88 @@ simulated function GamePPH ShuffleTeamsByCategory(optional bool killPlayers)
 	CatPRITest[12].PPH = 35;
 	CatPRITest[12].PRI = None;
 	CatPRITest[12].PN = "Ankeedo";
-	*/
-	// Use CatPRI instead of actual players here when testing
-	// find PRIs of active players and sort ascending by CatNum
-	//if (CatPRITest.Length > 0) {
-	//	Index = CatPRITest.Length - 1;
 	
-		if (Level.GRI.PRIArray.Length > 0) {
-	     Index = Level.GRI.PRIArray.Length - 1;
-		   do {
-					PRI = Level.GRI.PRIArray[Index];
-			    if (!PRI.bOnlySpectator && PlayerController(PRI.Owner) != None && PlayerController(PRI.Owner).bIsPlayer) {
-			  //if (True) { // Testing 
-        //iPPH = CatPRITest[index].PPH; //FMin(GetPointsPerHour(PRI),EvenMatchMutator.MaxPPHScore); // binary search O(log m), subject to MaxPPHScore
-					//KPM = 1.0; //GetKnownPlayerMultplier(PRI);								
-					iPPH = FMin(GetPointsPerHour(PRI),EvenMatchMutator.MaxPPHScore); // binary search O(log m), subject to MaxPPHScore
-					KPM = GetKnownPlayerMultplier(PRI);
-					PPH = iPPH * KPM;
-					TotalPPH += PPH;
-					//CatN = CatPRITest[index].CatNum;// Test Remove GetKnownPlayerCategory(PRI);
-					//PlayerName = CatPRITest[index].PN; // Test RemoveCatPRI.PRI.PlayerName
-					CatN = GetKnownPlayerCategory(PRI);
-					PlayerName = PRI.PlayerName;
-					
-					if (EvenMatchMutator.bVerbose) log("Player:"$PlayerName$" : "$ iPPH $ " Initial PPH, Mutlipler "$KPM$" applied ="$PPH$", CatNum="$CatN$","$ GetCategoryDesc(CatN) $", currently on "$PRI.Team.GetHumanReadableName(), 'EvenMatchOmni');
-					
-					// Got players.
-				 // Update this to use CatPRI, an Array of structs instead of one array.
-					// Sort first by CatNum ASC, then PPH DESC within each CatNum
-					i = 0;
-					for(i=0;i<CatPRI.length;i++)
-				  {
-						if (CatPRI[i].CatNum > CatN ) break;
-					} 
-					// Found Category.
-					// Decide to advance based on PPH.  Current spot
-					while (i>0 && CatPRI[i-1].CatNum == CatN && CatPRI[i-1].PPH > PPH ) {
-						     //Log("Advancing because CatPRI[i-1].PPH "$CatPRI[i-1].PPH$" PPH "$PPH);
-								 i--;
-					}
-					// Insert can be considered O(1) here due to huge contant overhead and small actual n
-					//Log("Logging CatPRI Before Insert at I="$i);
-					//If (CatPRI.Length > 0) LogCatPRI(CatPRI);
-					//Log("--------------------------------------------");
-					CatPRI.Insert(i, 1);
-					CatPRI[i].PRI = PRI;  // avoid none warnings during testing
-					CatPRI[i].PPH = PPH;
-			    CatPRI[i].CatNum = CatN;
-			    //CatPRI[i].PN = PlayerName; // delete after testing.
+	// Use CatPRI instead of actual players here to test.
+	// find PRIs of active players and sort ascending by CatNum
+	//	if (Level.GRI.PRIArray.Length > 0) {
+	// Index = Level.GRI.PRIArray.Length - 1;
+	
+	if (CatPRITest.Length > 0) {
+		Index = CatPRITest.Length - 1;
+		do {
+			//PRI = CatPRI[Index].PRI;
+			//if (!PRI.bOnlySpectator && PlayerController(PRI.Owner) != None && PlayerController(PRI.Owner).bIsPlayer) {
+			if (True) {
+				// Next block to uncomment real code, we set test data
+				
+				iPPH = CatPRITest[index].PPH; //FMin(GetPointsPerHour(PRI),EvenMatchMutator.MaxPPHScore); // binary search O(log m), subject to MaxPPHScore
+				KPM = 1.0; //GetKnownPlayerMultplier(PRI);
+				PPH = iPPH * KPM;
+				TotalPPH += PPH;
+				CatN = CatPRITest[index].CatNum;//GetKnownPlayerCategory(PRI);
+				PlayerName = CatPRITest[index].PN; // Should be CatPRI.PRI.PlayerName
+	
+				
+				if (EvenMatchMutator.bVerbose)
+					log("Player:"$PlayerName$" : "$ iPPH $ " Initial PPH, Mutlipler "$KPM$" applied ="$PPH$", CatNum="$CatN$","$ GetCategoryDesc(CatN) $", currently on  PRI.Team.GetHumanReadableName()", 'EvenMatchDebug');
+				
+				// Got players.
+				
+				
+				// Update this to use CatPRI, an Array of structs instead of one array.
+				// Sort first by CatNum ASC, then PPH DESC within each CatNum
+				
+				
+				
+				i = 0;
+				//High = CatPRI.Length;
+				for(i=0;i<CatPRI.length;i++)
+			  {
+					if (CatPRI[i].CatNum > CatN ) break;
+				} 
+				// Found Category.
+				// Decide to advance based on PPH.  Current spot
+				while (i>0 && CatPRI[i-1].CatNum == CatN && CatPRI[i-1].PPH > PPH ) {
+					     //Log("Advancing because CatPRI[i-1].PPH "$CatPRI[i-1].PPH$" PPH "$PPH);
+							 i--;
+				}
+				// Insert can be considered O(1) here due to huge contant overhead and small actual n
+				//Log("Logging CatPRI Before Insert at I="$i);
+				If (CatPRI.Length > 0) LogCatPRI(CatPRI);
+				//Log("--------------------------------------------");
+				CatPRI.Insert(i, 1);
+				//CatPRI[Low].PRI = PRI;  // avoid none warnings during testing
+				CatPRI[i].PPH = PPH;
+		    CatPRI[i].CatNum = CatN;
+		    CatPRI[i].PN = PlayerName; // delete after testing.
 			}
 		
-		} until (--Index < 0); // Do
+		} until (--Index < 0);
 
-	} // entire if
+	} // entire if: O(n * (log n + log m))
 	
 	// should be sorted by CatNum Asc.
-	if (EvenMatchMutator.bVerbose)  {
-		log("Final Sorted Player List:",'EvenMatchOmni');
+	if (EvenMatchMutator.bDebug)  {
+		log("Final Sorted Player List:",'EvenMatchDebug');
 		LogCatPRI(CatPRI);	
 	}
 	
+		
 	// Get arrary (sorted) of unique CatNums, from actual players SORTED by CatNUM CatPRI)
   CatNums = GetUniquePlayerCatNums(CatPRI);
   // Not sure above is really needed.
 			
-	if (EvenMatchMutator.bVerbose) 		log(CatPRI.Length $ " players, combined PPH " $ TotalPPH $ ", balance target PPH per team " $ 0.5 * TotalPPH, 'EvenMatchOmni');
+	if (EvenMatchMutator.bVerbose)
+		log(PRIs.Length $ " players, combined PPH " $ TotalPPH $ ", balance target PPH per team " $ 0.5 * TotalPPH, 'EvenMatchOmni');
+	
+		
 	
 	// let the game re-add missing bots
 	ReAddBots();
 	
-  //  Sort Order works... 
+//  Sort Order works... 
+// There some issue with the the balancing, with Index. See logs.
+
 	// first balance team sizes
 	if (EvenMatchMutator.bVerbose) log("Balancing team sizes and PPH...", 'EvenMatchOmni');
 	
@@ -778,74 +784,77 @@ simulated function GamePPH ShuffleTeamsByCategory(optional bool killPlayers)
 		Index = CatPRI.Length;
 
 		while (Index > 1) {
-			
-			/* Testing code
+			/*PRI = PRIs[--Index];
+			PPH = PPHs[Index];
+			PRI2 = PRIs[--Index];
+			PPH2 = PPHs[Index];*/
 			//PRI = CatRPI[--Index].PRI;
 			PPH = CatPRI[--Index].PPH;
 			//PRI2 = CatPRI[Index].PRI;
 			PPH2 = CatPRI[--Index].PPH;
-			*/
+			// ascending sort, so PPH >= PPH2
 			
-			// Grab the top two players
-			PRI = CatPRI[--Index].PRI;
-			PPH = CatPRI[Index].PPH;
-			PRI2 = CatPRI[--Index].PRI;
-			PPH2 = CatPRI[Index].PPH;
 			
 			if (EvenMatchMutator.bDebug)
 			//log("Assigning " $ PRI.PlayerName $ " (" $ PPH $ " PPH) and " $ PRI2.PlayerName $ " (" $ PPH2 $ " PPH)", 'EvenMatchDebug');
 			log("Assigning " $ CatPRI[index+1].PN $ " (" $ PPH $ " PPH) and " $ CatPRI[index].PN $ " (" $ PPH2 $ " PPH)", 'EvenMatchOmni');
 			 
 			if (RedPPH > BluePPH) {
-				RedPRIs[RedPRIs.Length] = PRI2;
+				//RedPRIs[RedPRIs.Length] = PRI2;
 				RedPPH += PPH2;
-				BluePRIs[BluePRIs.Length] = PRI;
+			//	BluePRIs[BluePRIs.Length] = PRI;
 				BluePPH += PPH;
 				
 				if (EvenMatchMutator.bDebug)
 				 	//log(PRI.PlayerName $ " will be on blue (now " $ BluePPH $ " PPH), " $ PRI2.PlayerName $ " will be on red (now " $ RedPPH $ " PPH)", 'EvenMatchDebug');
-				 	log(CatPRI[index+1].PRI.PlayerName $ " will be on blue (now " $ BluePPH $ " PPH), " $ CatPRI[index].PRI.PlayerName $ " will be on red (now " $ RedPPH $ " PPH)", 'EvenMatchOmni');
+				 	log(CatPRI[index+1].PN $ " will be on blue (now " $ BluePPH $ " PPH), " $ CatPRI[index].PN $ " will be on red (now " $ RedPPH $ " PPH)", 'EvenMatchOmni');
 			}
 			else {
-				RedPRIs[RedPRIs.Length] = PRI;
+				//RedPRIs[RedPRIs.Length] = PRI;
 				RedPPH += PPH;
-				BluePRIs[BluePRIs.Length] = PRI2;
+				//BluePRIs[BluePRIs.Length] = PRI2;
 				BluePPH += PPH2;
 				
 				if (EvenMatchMutator.bDebug)
 					//log(PRI.PlayerName $ " will be on red (now " $ RedPPH $ " PPH), " $ PRI2.PlayerName $ " will be on blue (now " $ BluePPH $ " PPH)", 'EvenMatchDebug');
-					log(CatPRI[index+1].PRI.PlayerName $ " will be on red (now " $ BluePPH $ " PPH), " $ CatPRI[index].PRI.PlayerName $ " will be on blue (now " $ RedPPH $ " PPH)", 'EvenMatchDebug');
+					log(CatPRI[index+1].PN $ " will be on red (now " $ BluePPH $ " PPH), " $ CatPRI[index].PN $ " will be on blue (now " $ RedPPH $ " PPH)", 'EvenMatchDebug');
 			}
 		}
 
         // snarf do this at the end
 		if ((Index & 1) != 0) {
-			PRI = CatPRI[0].PRI;
+			//PRI = CatPRI[0].PRI;
 			PPH = CatPRI[0].PPH;
 			
 			if (BluePPH > RedPPH)
             {
-				//log("Odd player count, Blue has higher PPH, assigning " $ PRI.PlayerName $ " to red (" $ PPH $ " PPH)", 'EvenMatchDebug');
-				log("Odd player count, Blue has higher PPH, assigning " $ CatPRI[0].PRI.PlayerName $ " to red (" $ PPH $ " PPH)", 'EvenMatchOmni');
-  			RedPRIs[RedPRIs.Length] = PRI;
+				if (EvenMatchMutator.bDebug)
+					//log("Odd player count, Blue has higher PPH, assigning " $ PRI.PlayerName $ " to red (" $ PPH $ " PPH)", 'EvenMatchDebug');
+					log("Odd player count, Blue has higher PPH, assigning " $ CatPRI[0].PN $ " to red (" $ PPH $ " PPH)", 'EvenMatchDebug');
+				
+				//RedPRIs[RedPRIs.Length] = PRI;
 				RedPPH += PPH;
 			}
 			else {
-				//log("Odd player count, Red has higher PPH, assigning " $ PRI.PlayerName $ " to blue (" $ PPH $ " PPH)", 'EvenMatchDebug');
-				log("Odd player count, Blue has higher PPH, assigning " $ CatPRI[0].PRI.PlayerName $ " to blue (" $ PPH $ " PPH)", 'EvenMatchOmni');
-				BluePRIs[BluePRIs.Length] = PRI;
+				if (EvenMatchMutator.bDebug)
+					//log("Odd player count, Red has higher PPH, assigning " $ PRI.PlayerName $ " to blue (" $ PPH $ " PPH)", 'EvenMatchDebug');
+					log("Odd player count, Blue has higher PPH, assigning " $ CatPRI[0].PN $ " to blue (" $ PPH $ " PPH)", 'EvenMatchDebug');
+				
+				//BluePRIs[BluePRIs.Length] = PRI;
 				BluePPH += PPH;
 			}
 		}
+	
 	} // entire if: 
 	
-	//if (EvenMatchMutator.bVerbose) {
-		log("Red team size " $ RedPRIs.Length $ ", combined PPH " $ RedPPH, 'EvenMatchOmni');
-		log("Blue team size " $ BluePRIs.Length $ ", combined PPH " $ BluePPH, 'EvenMatchOmni');
-	//}
+	if (EvenMatchMutator.bVerbose) {
+		log("Red team size " $ RedPRIs.Length $ ", combined PPH " $ RedPPH, 'EvenMatchDebug');
+		log("Blue team size " $ BluePRIs.Length $ ", combined PPH " $ BluePPH, 'EvenMatchDebug');
+	}
 	
-	
-	// actually apply team changes
+		return CurrentGamePPH; // Testing Return.
+		
+	// apply team changes
 	// This shouldn't need any further changes for Categories...
 	if (EvenMatchMutator.bVerbose) log("Applying team changes...", 'EvenMatchDebug');
 
@@ -940,13 +949,13 @@ simulated function GamePPH ShuffleTeamsNoCategories(optional bool killPlayers)
 	} // entire if: O(n * (log n + log m))
 	
 	if (EvenMatchMutator.bVerbose)
-		log(PRIs.Length $ " players, combined PPH " $ TotalPPH $ ", balance target PPH per team " $ 0.5 * TotalPPH, 'EvenMatchOmni');
+		log(PRIs.Length $ " players, combined PPH " $ TotalPPH $ ", balance target PPH per team " $ 0.5 * TotalPPH, 'EvenMatchDebug');
 	
 	// let the game re-add missing bots
 	ReAddBots();
 	
 	// first balance team sizes
-	if (EvenMatchMutator.bVerbose) log("Balancing team sizes and PPH...", 'EvenMatchOmni');
+	if (EvenMatchMutator.bVerbose) log("Balancing team sizes and PPH...", 'EvenMatchDebug');
 	if (PPHs.Length > 0) {
 		Index = PPHs.Length;
 
@@ -958,21 +967,25 @@ simulated function GamePPH ShuffleTeamsNoCategories(optional bool killPlayers)
 			// ascending sort, so PPH >= PPH2
 			
 			if (EvenMatchMutator.bDebug)
-				log("Assigning " $ PRI.PlayerName $ " (" $ PPH $ " PPH) and " $ PRI2.PlayerName $ " (" $ PPH2 $ " PPH)", 'EvenMatchOmni');
+				log("Assigning " $ PRI.PlayerName $ " (" $ PPH $ " PPH) and " $ PRI2.PlayerName $ " (" $ PPH2 $ " PPH)", 'EvenMatchDebug');
 			 
 			if (RedPPH > BluePPH) {
 				RedPRIs[RedPRIs.Length] = PRI2;
 				RedPPH += PPH2;
 				BluePRIs[BluePRIs.Length] = PRI;
 				BluePPH += PPH;
-				log(PRI.PlayerName $ " will be on blue (now " $ BluePPH $ " PPH), " $ PRI2.PlayerName $ " will be on red (now " $ RedPPH $ " PPH)", 'EvenMatchOmni');
+				
+				if (EvenMatchMutator.bDebug)
+					log(PRI.PlayerName $ " will be on blue (now " $ BluePPH $ " PPH), " $ PRI2.PlayerName $ " will be on red (now " $ RedPPH $ " PPH)", 'EvenMatchDebug');
 			}
 			else {
 				RedPRIs[RedPRIs.Length] = PRI;
 				RedPPH += PPH;
 				BluePRIs[BluePRIs.Length] = PRI2;
 				BluePPH += PPH2;
-				log(PRI.PlayerName $ " will be on red (now " $ RedPPH $ " PPH), " $ PRI2.PlayerName $ " will be on blue (now " $ BluePPH $ " PPH)", 'EvenMatchOmni');
+				
+				if (EvenMatchMutator.bDebug)
+					log(PRI.PlayerName $ " will be on red (now " $ RedPPH $ " PPH), " $ PRI2.PlayerName $ " will be on blue (now " $ BluePPH $ " PPH)", 'EvenMatchDebug');
 			}
 		}
 
@@ -980,28 +993,36 @@ simulated function GamePPH ShuffleTeamsNoCategories(optional bool killPlayers)
 		if ((Index & 1) != 0) {
 			PRI = PRIs[0];
 			PPH = PPHs[0];
-			if (BluePPH > RedPPH)  {
-					log("Odd player count, Blue has higher PPH, assigning " $ PRI.PlayerName $ " to red (" $ PPH $ " PPH)", 'EvenMatchOmni');
-					RedPRIs[RedPRIs.Length] = PRI;
-					RedPPH += PPH;
+			if (BluePPH > RedPPH)
+            {
+				if (EvenMatchMutator.bDebug)
+					log("Odd player count, Blue has higher PPH, assigning " $ PRI.PlayerName $ " to red (" $ PPH $ " PPH)", 'EvenMatchDebug');
+				
+				RedPRIs[RedPRIs.Length] = PRI;
+				RedPPH += PPH;
 			}
 			else {
+				if (EvenMatchMutator.bDebug)
 					log("Odd player count, Red has higher PPH, assigning " $ PRI.PlayerName $ " to blue (" $ PPH $ " PPH)", 'EvenMatchDebug');
-  				BluePRIs[BluePRIs.Length] = PRI;
-					BluePPH += PPH;
+				
+				BluePRIs[BluePRIs.Length] = PRI;
+				BluePPH += PPH;
 			}
 		}
-	} // entire if: O(n)  Who cares about O(n) here... N will never be more than O(32) so all this optimization was pointless. -pooty
 	
-	log("Red team size " $ RedPRIs.Length $ ", combined PPH " $ RedPPH, 'EvenMatchDebug');
- 	log("Blue team size " $ BluePRIs.Length $ ", combined PPH " $ BluePPH, 'EvenMatchDebug');
+	} // entire if: O(n)
+	
+	if (EvenMatchMutator.bDebug) {
+		log("Red team size " $ RedPRIs.Length $ ", combined PPH " $ RedPPH, 'EvenMatchDebug');
+		log("Blue team size " $ BluePRIs.Length $ ", combined PPH " $ BluePPH, 'EvenMatchDebug');
+	}
 	
 	// apply team changes
-	if (EvenMatchMutator.bVerbose) log("Applying team changes...", 'EvenMatchOmni');
+	if (EvenMatchMutator.bVerbose) log("Applying team changes...", 'EvenMatchDebug');
 
 	for (Index = 0; Index < RedPRIs.Length; ++Index) {
 		if (RedPRIs[Index].Team.TeamIndex != 0) {
-		 log("Moving " $ RedPRIs[Index].PlayerName $ " to red", 'EvenMatchOmni');
+		 log("Moving " $ RedPRIs[Index].PlayerName $ " to red", 'EvenMatchDebug');
             if(killPlayers)
             {
                 P = PlayerController(RedPRIs[Index].Owner).Pawn;
@@ -1016,7 +1037,7 @@ simulated function GamePPH ShuffleTeamsNoCategories(optional bool killPlayers)
 	}
 	for (Index = 0; Index < BluePRIs.Length; ++Index) {
 		if (BluePRIs[Index].Team.TeamIndex != 1) {
-			 log("Moving " $ BluePRIs[Index].PlayerName $ " to blue", 'EvenMatchOmni');
+			 log("Moving " $ BluePRIs[Index].PlayerName $ " to blue", 'EvenMatchDebug');
             if(killPlayers)
             {
                 P = PlayerController(BluePRIs[Index].Owner).Pawn;
@@ -1029,7 +1050,7 @@ simulated function GamePPH ShuffleTeamsNoCategories(optional bool killPlayers)
 			ChangeTeam(PlayerController(BluePRIs[Index].Owner), 1);
 		}
 	}
-	log("Teams shuffled.", 'EvenMatchOmni');
+	log("Teams shuffled.", 'EvenMatchDebug');
 
     CurrentGamePPH.RedPPH = RedPPH;
     CurrentGamePPH.BluePPH = BluePPH;
@@ -1148,7 +1169,7 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 		else {
 			ID = CachedPlayerIDs[PC.PlayerReplicationInfo.PlayerID];
 		}
-		if (EvenMatchMutator.bDebug) log("Name="@PC.PlayerReplicationInfo.PlayerName@"ID="@ID,'EvenMatchDebug');
+		log("Name="@PC.PlayerReplicationInfo.PlayerName@"ID="@ID,'EvenMatchDebug');
 	}
 	// calculate current PPH
 	CurrentPPH = 3600 * FMax(PRI.Score, 0.1) / Max(Level.GRI.ElapsedTime - PRI.StartTime, 10);
@@ -1161,7 +1182,7 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 	Index = Recent.FindPPHSlot(ID);
 	IndexMap = RecentMap.FindPPHSlot(ID);
 	
-	//log("Index="@Index,'EvenMatchDebug');
+	log("Index="@Index,'EvenMatchDebug');
 	if (Level.GRI.bMatchHasBegun && PRI.Score > EvenMatchMutator.PlayerMinScoreBeforeStoringPPH && Level.GRI.ElapsedTime - PRI.StartTime > EvenMatchMutator.PlayerGameSecondsBeforeStoringPPH) 
 	{
 		PPH = CurrentPPH;
@@ -1216,13 +1237,13 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 		}
 	}
 	else {
-		//log("Match hasn't started yet", 'EvenMatchDebug');
+		log("Match hasn't started yet", 'EvenMatchDebug');
 		PPH = -1;
-		//log("Index="@Index@"Recent.PPH.Length="@Recent.PPH.Length@" ");
+		log("Index="@Index@"Recent.PPH.Length="@Recent.PPH.Length@" ");
 		if (Index < Recent.PPH.Length && Recent.PPH[Index].ID == ID) {
 			// No score yet, use PPH from earlier
 			PastPPH = FMin(Recent.PPH[Index].PastPPH,EvenMatchMutator.MaxPPHScore);
-			//log("Getting pastpph");
+			log("Getting pastpph");
 		}
 		if (IndexMap < RecentMap.PPH.Length && RecentMap.PPH[IndexMap].ID == ID) {
 			// No score yet, use PPH from earlier
@@ -1265,7 +1286,7 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 			
 		case 5: // only past generic PPH
 			retval = PastPPH;
-			//log("In Case5");
+			log("In Case5");
             break;
 			
 		case 6: // only current PPH (new player)

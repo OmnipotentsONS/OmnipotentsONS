@@ -13,8 +13,10 @@ or restricting anyone's human or civil rights.
 this source code only if you make the modified sources available as well. I'd
 prefer being mentioned in the credits for such binaries, but please do not make
 it seem like I endorse them in any way.
-*/
 
+ Added knownplayercategories, pooty 10/2024
+
+*/
 class MutTeamBalance extends Mutator config;
 
 
@@ -56,8 +58,10 @@ var config float TeamImbalancePPHThreshold;
 //var config int CustomOvertimePoints;
 var config bool bIgnoreMapSpecificPPH;
 var config float MaxPPHScore;
+var config bool bUseKnownPlayerCategories;
 
 var config bool bDebug;
+var config bool bVerbose;
 
 var localized string lblActivationDelay, descActivationDelay;
 var localized string lblMinDesiredFirstRoundDuration, descMinDesiredFirstRoundDuration;
@@ -86,7 +90,7 @@ var localized string lblTeamsCallString, descTeamsCallString;
 var localized string lblDeletePlayerPPHAfterDaysNotSeen, descDeletePlayerPPHAfterDaysNotSeen;
 var localized string lblPlayerGameSecondsBeforeStoringPPH, descPlayerGameSecondsBeforeStoringPPH;
 var localized string lblPlayerMinScoreBeforeStoringPPH, descPlayerMinScoreBeforeStoringPPH;
-
+var localized string lblUseKnownPlayerCategories, descUseKnownPlayerCategories;
 
 var ONSOnslaughtGame Game;
 var EvenMatchRules Rules;
@@ -179,6 +183,16 @@ function Mutate(string MutateString, PlayerController Sender)
 			HandleShuffleCall(Sender);
 			return;
 		}
+		
+		if (MutateString ~= "shufflecat") {
+			HandleShuffleWithCategoriesCall(Sender);
+			return;
+		}
+
+		if (MutateString ~= "shufflenocat") {
+			HandleShuffleNoCategoriesCall(Sender);
+			return;
+		}
 
 		if (MutateString ~= "resetmaps") {
 			HandleResetMapsCall(Sender);
@@ -236,6 +250,38 @@ function HandleShuffleCall(PlayerController Sender)
 		if (bisAdmin)
         {
             Rules.ShuffleTeams(true);
+            gamePPH = Rules.GetGamePPH();
+            BroadcastLocalizedMessage(class'UnevenMessage', 4,,,gamePPH);
+        }
+    }
+}
+
+function HandleShuffleWithCategoriesCall(PlayerController Sender)
+{
+    local bool bisAdmin;
+    local GamePPH gamePPH;
+	if (Sender != None && Sender.PlayerReplicationInfo != None) 
+    {
+		bisAdmin = Sender.PlayerReplicationInfo.bAdmin || Level.Game.AccessControl != None && Level.Game.AccessControl.IsAdmin(Sender);
+		if (bisAdmin)
+        {
+            Rules.ShuffleTeamsByCategory(true);
+            gamePPH = Rules.GetGamePPH();
+            BroadcastLocalizedMessage(class'UnevenMessage', 4,,,gamePPH);
+        }
+    }
+}
+
+function HandleShuffleNoCategoriesCall(PlayerController Sender)
+{
+    local bool bisAdmin;
+    local GamePPH gamePPH;
+	if (Sender != None && Sender.PlayerReplicationInfo != None) 
+    {
+		bisAdmin = Sender.PlayerReplicationInfo.bAdmin || Level.Game.AccessControl != None && Level.Game.AccessControl.IsAdmin(Sender);
+		if (bisAdmin)
+        {
+            Rules.ShuffleTeamsNoCategories(true);
             gamePPH = Rules.GetGamePPH();
             BroadcastLocalizedMessage(class'UnevenMessage', 4,,,gamePPH);
         }
@@ -1058,6 +1104,7 @@ static function FillPlayInfo(PlayInfo PlayInfo)
 	PlayInfo.AddSetting(default.FriendlyName, "DeletePlayerPPHAfterDaysNotSeen", default.lblDeletePlayerPPHAfterDaysNotSeen, 0, 0, "Text", "3;1:999");
 	PlayInfo.AddSetting(default.FriendlyName, "PlayerGameSecondsBeforeStoringPPH", default.lblPlayerGameSecondsBeforeStoringPPH, 0, 0, "Text", "3;10:999");
 	PlayInfo.AddSetting(default.FriendlyName, "PlayerMinScoreBeforeStoringPPH", default.lblPlayerMinScoreBeforeStoringPPH, 0, 0, "Text", "2;0:99");
+	PlayInfo.AddSetting(default.FriendlyName, "bUseKnownPlayerCategories", default.lblUseKnownPlayerCategories, 0, 0, "Check");
 
 	PlayInfo.PopClass();
 }
@@ -1133,6 +1180,8 @@ static event string GetDescriptionText(string PropName)
 		return default.descPlayerGameSecondsBeforeStoringPPH;
 	case "PlayerMinScoreBeforeStoringPPH":
 		return default.descPlayerMinScoreBeforeStoringPPH;
+	case "bUseKnownPlayerCategories":	
+		return default.descUseKnownPlayerCategories;
 	default:
 		return Super.GetDescriptionText(PropName);
 	}
@@ -1150,7 +1199,7 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
 defaultproperties
 {
-	Build = "3.66"
+	Build = "3.70"
 	FriendlyName = "Omnip)o(tents Team Balance (Onslaught-only)"
 	Description  = "Special team balancing rules for public Onslaught matches."
 	bAddToServerPackages = True
@@ -1183,14 +1232,17 @@ defaultproperties
 	DeletePlayerPPHAfterDaysNotSeen       = 30
 	PlayerGameSecondsBeforeStoringPPH     = 60
 	PlayerMinScoreBeforeStoringPPH        = 10
-    TeamImbalancePPHThreshold             = 500
+  TeamImbalancePPHThreshold             = 500
     //bCustomScoring                        = False
     //CustomRegulationPoints                = 1
     //CustomOvertimePoints                  = 1
-    bIgnoreMapSpecificPPH                 = True
-    MaxPPHScore = 800
+  bIgnoreMapSpecificPPH                 = False
+  MaxPPHScore = 800
+  bUseKnownPlayerCategories = False
+  // if this is true, you need KnownPlayerCategories.ini file to exist.
 	
-	bDebug = True
+	bDebug = True // debug type messages
+	bVerbose = True // Detail team balancing actions in log
 	
 	SoftRebalanceCountdown   = -1
 	ForcedRebalanceCountdown = -1
@@ -1275,4 +1327,7 @@ defaultproperties
 
 	lblPlayerMinScoreBeforeStoringPPH  = "Player minimum score before storing PPH"
 	descPlayerMinScoreBeforeStoringPPH = "A player must have scored at least this many points in the current match before his or her PPH will be considered meaningful enough to store in the database."
+	
+	lblUseKnownPlayerCategories  = "Use Known Player Categories during Shuffle"
+	descUseKnownPlayerCategories = "This allows the Shuffle routine to use player categories to make sure groups of players are evenly split first, then PPH"
 }
