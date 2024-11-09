@@ -50,7 +50,8 @@ struct CatAndPRI  {
 	};
 
 
-var int OldNumBots, OldMinPlayers;  // for removing / readding bots.
+//var int OldNumBots, OldMinPlayers;  // for removing / readding bots.
+// See code, none of it works right anyway.
 
 var bool bDebug;
 var bool bVerbose;
@@ -165,8 +166,9 @@ function PreBeginPlay()
 		AddToPackageMap();
 		MinDesiredFirstRoundDuration = class'MutTeamBalance'.default.MinDesiredFirstRoundDuration * 60;
 		Game.AddGameModifier(Self);
-		if (class'MutTeamBalance'.default.bRandomlyStartWithSidesSwapped && Rand(2) == 0)
-			SwapSides();
+		if (class'MutTeamBalance'.default.bRandomlyStartWithSidesSwapped && Rand(2) == 0) SwapSides();
+		if (EvenMatchMutator.bDebug) log("Added MutTeamBalance to Game", 'EvenMatchDebug');
+		//if (EvenMatchMutator.bDebug) log("PreBeginPlay Game.NumBots " $ Game.NumBots $ ", Game.RemainingBots " $ Game.RemainingBots $ " bots", 'EvenMatchDebug');
 	}
 	else {
 		Destroy();
@@ -245,8 +247,10 @@ function MatchStarting()
 {
 	//if (class'MutTeamBalance'.default.bShuffleTeamsAtMatchStart) {
 	// Change pooty 09/23 we don't want 'default' we want what ever is in the ini file!
+	if (EvenMatchMutator.bDebug) log("MatchStarting Game.NumBots " $ Game.NumBots $ ", Game.RemainingBots " $ Game.RemainingBots $ " bots", 'EvenMatchDebug');
 	if (EvenMatchMutator.bShuffleTeamsAtMatchStart) {
 		log("Match Starting Shuffling teams based on previous known PPH...bIgnoreMapSpecificPPH="@EvenMatchMutator.bIgnoreMapSpecificPPH@"PPHCap="@EvenMatchMutator.MaxPPHScore, 'EvenMatch');
+		
 		CurrentGamePPH = ShuffleTeams();
 		//BroadcastLocalizedMessage(class'UnevenMessage', -1,,,CurrentGamePPH);
         replicationHack = 1;
@@ -639,10 +643,21 @@ simulated function GamePPH ShuffleTeamsByCategory(optional bool killPlayers)
   local Pawn P;
 
   local string PlayerName;
+  //local int OldNumBots, OldMinPlayers;  // for removing / readding bots.
+  // bot code is fubar'd works fine without it.
+  
  
  
 	log("Shuffling Teams by Categories", 'EvenMatchOmni');
-	RemoveBots();
+	// RemoveBots(); //I think theres a variable scope thing at play this doesn't work right.
+	// Not needed, doesn't work anyway, whether inline or in the function.  Function actually does set NumBots but its always 0
+	/*if (EvenMatchMutator.bDebug) log("Start Re-Adding " $ OldNumBots $ " bots.. ", 'EvenMatchDebug');
+	if (EvenMatchMutator.bVerbose && OldNumBots > 0) log("Will re-add " $ OldNumBots $ " bots later", 'EvenMatchDebug');
+  if (OldNumBots >0) {	
+  	Game.RemainingBots = OldNumBots;
+  	Game.MinPlayers    = OldMinPlayers;
+	}
+	*/
 	
 	// Generate Test Data
 	// CatPRI here is test data in place of real PRI
@@ -768,7 +783,7 @@ simulated function GamePPH ShuffleTeamsByCategory(optional bool killPlayers)
 	if (EvenMatchMutator.bVerbose) 		log(CatPRI.Length $ " players, combined PPH " $ TotalPPH $ ", balance target PPH per team " $ 0.5 * TotalPPH, 'EvenMatchOmni');
 	
 	// let the game re-add missing bots
-	ReAddBots();
+	//ReAddBots();
 	
   //  Sort Order works... 
 	// first balance team sizes
@@ -903,7 +918,7 @@ simulated function GamePPH ShuffleTeamsNoCategories(optional bool killPlayers)
 	//retval = new class'GamePPH';
 	// complexity below documented in terms of n players and m stored PPH values
 	
-	RemoveBots();
+	//RemoveBots();  // not needed see above
 	
 	// find PRIs of active players and sort ascending by PPH
 	if (Level.GRI.PRIArray.Length > 0) {
@@ -943,7 +958,7 @@ simulated function GamePPH ShuffleTeamsNoCategories(optional bool killPlayers)
 		log(PRIs.Length $ " players, combined PPH " $ TotalPPH $ ", balance target PPH per team " $ 0.5 * TotalPPH, 'EvenMatchOmni');
 	
 	// let the game re-add missing bots
-	ReAddBots();
+//	ReAddBots();  // not needed.
 	
 	// first balance team sizes
 	if (EvenMatchMutator.bVerbose) log("Balancing team sizes and PPH...", 'EvenMatchOmni');
@@ -1039,25 +1054,30 @@ simulated function GamePPH ShuffleTeamsNoCategories(optional bool killPlayers)
 
 
 
-simulated function RemoveBots() {
+/*  These work on setting Game.MinPlayers and Game.RemainingBots, but the are all ZERO when this mutator runs
+// theory is the num bots don't get set until AFTER The shuffle code is called.
+function RemoveBots() {
+	 if (EvenMatchMutator.bDebug) log("Start RemoveBots Game.NumBots " $ Game.NumBots $ ", Game.RemainingBots " $ Game.RemainingBots $ " bots for shuffling", 'EvenMatchDebug');
    OldNumBots = Game.NumBots + Game.RemainingBots;
 	 OldMinPlayers = Game.MinPlayers;
 	 Game.RemainingBots = 0;
 	 Game.MinPlayers    = 0;
 	 if (Game.NumBots > 0) {
-	     if (EvenMatchMutator.bVerbose) log("Removing " $ Game.NumBots $ " bots for shuffling", 'EvenMatchDebug');
 	     Game.KillBots(Game.NumBots);
+	     if (EvenMatchMutator.bVerbose) log("Removing " $ Game.NumBots $ " bots for shuffling, will re-add "$OldNumBots$" bots later.", 'EvenMatchDebug');
 	 }
 	return;
 }
 
-simulated function ReAddBots() {
+function ReAddBots() {
+	if (EvenMatchMutator.bDebug) log("Start Re-Adding " $ OldNumBots $ " bots.. ", 'EvenMatchDebug');
 	if (EvenMatchMutator.bVerbose && OldNumBots > 0) log("Will re-add " $ OldNumBots $ " bots later", 'EvenMatchDebug');
   if (OldNumBots >0) {	
   	Game.RemainingBots = OldNumBots;
   	Game.MinPlayers    = OldMinPlayers;
   }
 }
+*/
 
 function ReceivedReplacementStatsId(PlayerController PC, string ReplacementID)
 {
@@ -1148,7 +1168,7 @@ function float GetPointsPerHour(PlayerReplicationInfo PRI)
 		else {
 			ID = CachedPlayerIDs[PC.PlayerReplicationInfo.PlayerID];
 		}
-		if (EvenMatchMutator.bDebug) log("Name="@PC.PlayerReplicationInfo.PlayerName@"ID="@ID,'EvenMatchDebug');
+		//if (EvenMatchMutator.bDebug) log("Name="@PC.PlayerReplicationInfo.PlayerName@"ID="@ID,'EvenMatchDebug');
 	}
 	// calculate current PPH
 	CurrentPPH = 3600 * FMax(PRI.Score, 0.1) / Max(Level.GRI.ElapsedTime - PRI.StartTime, 10);
