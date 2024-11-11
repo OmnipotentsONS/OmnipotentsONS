@@ -322,6 +322,7 @@ simulated function HandleBalanceCall(PlayerController Sender)
 	if (Sender != None && Sender.PlayerReplicationInfo != None) 
     {
         gamePPH = Rules.GetGamePPH();
+        log("Balance Called by "$Sender.PlayerReplicationInfo.PlayerName$" Red="$int(GamePPH.RedPPH)$" Blue="$int(GamePPH.BluePPH),'EvenMatchOmi');
         //Sender.ReceiveLocalizedMessage(class'UnevenChatMessage', -2,Sender.PlayerReplicationInfo,,gamePPH);
         BroadcastLocalizedMessage(class'UnevenChatMessage', -2,Sender.PlayerReplicationInfo,,gamePPH);
     }
@@ -422,8 +423,11 @@ function BalanceTeams()
 
 
 /**
-Ensure new players balance teams if configured and rebalance is needed.
 */
+//Ensure new players balance teams if configured and rebalance is needed.
+// ModifyLogin is wrong if they are already Specing.. not sure where to place it.
+// Specs going to players never hit this again.  They only hit it once when joining server spec or join!!
+// 
 function ModifyLogin(out string Portal, out string Options)
 {
 	local int RequestedTeam;
@@ -431,8 +435,21 @@ function ModifyLogin(out string Portal, out string Options)
 	local byte BiggerTeam, NewTeam;
     local GamePPH gamePPH;
     local string InName;
+   local bool bSpectator;
 
 	Super.ModifyLogin(Portal, Options);
+
+  bSpectator = ( Game.ParseOption( Options, "SpectatorOnly" ) ~= "1" );
+  // added spectator check pooty 11/2024
+  InName = Left(Game.ParseOption ( Options, "Name"), 20);
+
+	if (bSpectator) {
+		log("ModifyLogin:  "$InName$" Joined as Spectator.", 'EvenMatchOmni');
+		// Need to figure out how to add them when/if they join.
+		return;
+	}
+	else
+		log("ModifyLogin:  "$InName$" Joined as Player.", 'EvenMatchOmni');
 
 	if (!bAssignConnectingPlayerTeam && !bIgnoreConnectingPlayerTeamPreference)
 		return;
@@ -440,13 +457,12 @@ function ModifyLogin(out string Portal, out string Options)
 	RequestedTeam = Game.GetIntOption(Options, "team", 255);
 	if (bAssignConnectingPlayerTeam) {
 	
-        //populate biggerteam 
+    //populate biggerteam 
 		RebalanceNeeded(0, Progress, BiggerTeam);
 		
-        //if teams have even numbers, use PPH to pick the team
+    //if teams have even numbers, use PPH to pick the team
 		if (BiggerTeam == 255)
         {
-            InName = Left(Game.ParseOption ( Options, "Name"), 20);
             gamePPH = Rules.GetGamePPH();
             if(gamePPH.BluePPH > gamePPH.RedPPH)
             {
@@ -490,6 +506,7 @@ function ModifyPlayer(Pawn Other)
 
 	Super.ModifyPlayer(Other);
 	
+	
 	// send an optional object to delay team color announcement
 	if (Level.GRI.ElapsedTime < 2)
 		AnnouncementDelayIndicator = Level.GRI;
@@ -497,6 +514,7 @@ function ModifyPlayer(Pawn Other)
 	PC = PlayerController(Other.Controller);
 	if (PC != None) {
 		// update cached team number for this player and potentially send team reminder
+		
 		for (i = 0; i < RecentTeams.Length && RecentTeams[i].PC != PC; ++i);
 		if (i == RecentTeams.Length) {
 			// add new player
@@ -568,9 +586,9 @@ function NotifyLogout(Controller Exiting)
 	if (bBalanceTeamsWhilePlaying) {  // don't do anything if this is false 03/2023 pooty
 		if (PlayerController(Exiting) != None && Exiting.PlayerReplicationInfo != None ) {
 			if (!Exiting.PlayerReplicationInfo.bOnlySpectator) 
-			   if (bDebug) log("DEBUG: " $ Exiting.GetHumanReadableName() $ " disconnected", 'EvenMatchDebug_NotifyLogout');
-			else if (bDebug) log("DEBUG: " $ Exiting.GetHumanReadableName() $ " Became a Spectator", 'EvenMatchDebug_NotifyLogout'); 
-			// FYI I don't think NotifyLogout happens for specs  They aren't Logout, they just spec
+			   if (bDebug) log("MutTeamBalance:NotifyLogout: " $ Exiting.GetHumanReadableName() $ " disconnected", 'EvenMatchDebug');
+			else if (bDebug) log("MutTeamBalance:NotifyLogout: " $ Exiting.GetHumanReadableName() $ " Became a Spectator", 'EvenMatchDebug'); 
+			// FYI I don't think NotifyLogout happens for specs  They aren't Logout, they just spec CORRECT pooty 11/2024
 			Rules.SetTimer(0.0, false);
 			CheckBalance(PlayerController(Exiting), True);
 		}
@@ -1199,7 +1217,7 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
 defaultproperties
 {
-	Build = "3.71"
+	Build = "3.72"
 	FriendlyName = "Omnip)o(tents Team Balance (Onslaught-only)"
 	Description  = "Special team balancing rules for public Onslaught matches."
 	bAddToServerPackages = True
