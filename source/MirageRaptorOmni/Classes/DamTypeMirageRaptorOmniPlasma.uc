@@ -12,5 +12,5 @@ defaultproperties
      FemaleSuicide="%o turned the Mirage Raptor's super fast plasma on herself."
      MaleSuicide="%o turned the Mirage Raptor's super fast plasma on himself."
      bDetonatesGoop=True
-     VehicleDamageScaling=1.4000
+     VehicleDamageScaling=1.00000
 }

@@ -87,10 +87,9 @@ defaultproperties
      ImpactSounds(3)=Sound'WeaponSounds.BaseShieldReflections.BBulletReflect1'
      ImpactSounds(4)=Sound'WeaponSounds.BaseShieldReflections.BBulletReflect2'
      ImpactSounds(5)=Sound'WeaponSounds.BaseShieldReflections.BBulletReflect3'
-     Speed=30000.000000
-     AccelerationMagnitude=10000.000000
+     Speed=40000.000000
      MaxSpeed=40000.000000
-     Damage=25.000000
+     Damage=23.000000
      DamageRadius=64.000000
      MomentumTransfer=400.000000
      ExplosionDecal=Class'XEffects.BulletDecal'
