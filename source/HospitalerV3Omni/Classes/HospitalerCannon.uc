@@ -214,8 +214,8 @@ defaultproperties
      //DamageMin=1000
      //DamageMax=1000
      // tiamat/kraken is 2000/2000 levi is 1000/1000
-     DamageMin=1800
-     DamageMax=1800
+     DamageMin=1500
+     DamageMax=1500
      TraceRange=25000.000000
      //Momentum=2000000.000000
      Momentum=8000000.000000

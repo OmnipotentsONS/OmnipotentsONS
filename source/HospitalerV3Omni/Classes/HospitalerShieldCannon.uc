@@ -416,8 +416,8 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
       	//log(self@"Have Friendly to heal");
          Pawn(Victims).SetOverlayMaterial( RegenerationMaterial, 0.25, false );
          If (Pawn(Victims).IsA('Vehicle')) 
-            Pawn(Victims).GiveHealth((HealTeamBaseAmount*(NumLinks+2)),Pawn(Victims).HealthMax);
-              // vehicles get extra healing if there's linkers, and 2 times base amount with 0 linkers.
+            Pawn(Victims).GiveHealth((HealTeamBaseAmount*(NumLinks+3)),Pawn(Victims).HealthMax);
+              // vehicles get extra healing if there's linkers, and 3 times base amount with 0 linkers.  They have to be close. Snuggling even.
          else
              Pawn(Victims).GiveHealth(HealTeamBaseAmount,Pawn(Victims).HealthMax); // heal players Base Amount no increase for link
          // lets not downscale team healing based on Range
@@ -438,9 +438,9 @@ defaultproperties
 {
      MaxShieldHealth=2100.000000 // Reduced a bit but still want to take one mino hit.
      MaxDelayTime=0.330000
-     ShieldRechargeRate=325.000000
-     ShieldRechargeRateActive=150.000
-     CurrentShieldHealth=2000.000000
+     ShieldRechargeRate=300.000000
+     ShieldRechargeRateActive=175.000
+     CurrentShieldHealth=1800.000000
      YawBone="SIDEgunBASE"
      PitchBone="SIDEgunBARREL"
      PitchUpLimit=18000
@@ -471,8 +471,8 @@ defaultproperties
      
      
      LinkMultiplier=0.8 // number of linkers +1 * shield Recharge rate.
-     SelfHealAmount=66  // this is health, 
-     HealTeamBaseAmount=180  // this is real health
+     SelfHealAmount=50  // this is health, 
+     HealTeamBaseAmount=150  // this is real health
      SelfHealMultiplier=0.33  //self heal from Shield Combo  pt heal for 1  pts damage
      MaxDamageHealthHeal= 500  // max self heal from Shield combo.
      RegenerationMaterial=Shader'XGameShaders.PlayerShaders.PlayerShieldSh'

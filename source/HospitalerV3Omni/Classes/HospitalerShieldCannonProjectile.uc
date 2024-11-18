@@ -131,7 +131,7 @@ defaultproperties
           
      Speed=11000.000000
      MaxSpeed=11000.000000
-     Damage=175.000000
+     Damage=150.000000
      DamageRadius=275.000000
      DrawType=DT_None
      AmbientSound=Sound'ONSBPSounds.ShockTank.ShockBallAmbient'

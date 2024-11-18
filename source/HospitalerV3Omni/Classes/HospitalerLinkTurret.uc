@@ -793,7 +793,7 @@ defaultproperties
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
      VehicleDamageMult=1.0000
-     LinkMultiplier = 0.66000
+     LinkMultiplier = 0.75000
      LinkMultiplierCap = 4.0
      bInitAimError=True
      YawBone="Object02"
@@ -828,7 +828,7 @@ defaultproperties
      SoundPitch=112
      SoundRadius=512.000000
      TransientSoundRadius=1024.000000
-     SelfHealMultiplier = 1.1
+     SelfHealMultiplier = 1.0 // not used in hospitaler
      VehicleHealScore=250.0
      RangeExtPerLink=500
      bDoOffsetTrace=True
