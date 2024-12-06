@@ -31,6 +31,7 @@ var float SelfHealAmount; // Combo does some self heal always
 var float HealTeamBaseAmount;  // base amount to heal team
 var float SelfHealMultiplier; // Combo alos gains health based on total damage times this multiplier
 var float MaxDamageHealthHeal; // Max to self heal from combo
+var float NodeHealAmount; // amount to heal a node
 var Material RegenerationMaterial;
 
 replication
@@ -387,6 +388,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 	local vector dir;
   local float damageTotal;
   local float ActualMomentum;
+  local DestroyableObjective Node;
   
 
 //  log(self@":HurtRadius - Start");
@@ -412,19 +414,36 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 				
 
       //Friendlies gain Health!
-      if ( Pawn(Victims) != None && Victims != Instigator  && (Pawn(Victims).GetTeamNum() == Instigator.Controller.GetTeamNum()) )    //&& !Victims.IsA('EONSPaladin')
+      if ( Pawn(Victims) != None && Victims != Instigator )
       {
-      	//log(self@"Have Friendly to heal");
-         Pawn(Victims).SetOverlayMaterial( RegenerationMaterial, 0.25, false );
-         If (Pawn(Victims).IsA('Vehicle')) 
-            Pawn(Victims).GiveHealth((HealTeamBaseAmount*(NumLinks+1)),Pawn(Victims).HealthMax);
-            // vehicles get extra healing if there's linkers
-         else
-             Pawn(Victims).GiveHealth(HealTeamBaseAmount,Pawn(Victims).HealthMax); // heal players Base Amount no increase for link
-         // lets not downscale team healing based on Range
-      }
-		}
-	}
+        if (Pawn(Victims).GetTeamNum() == Instigator.Controller.GetTeamNum())    //&& !Victims.IsA('EONSPaladin')
+        {
+      	   //log(self@"Have Friendly to heal");
+	         Pawn(Victims).SetOverlayMaterial( RegenerationMaterial, 0.25, false );
+	         If (Pawn(Victims).IsA('Vehicle')) 
+	            Pawn(Victims).GiveHealth((HealTeamBaseAmount*(NumLinks+1)),Pawn(Victims).HealthMax);
+	            // vehicles get extra healing if there's linkers
+	         else
+	             Pawn(Victims).GiveHealth(HealTeamBaseAmount,Pawn(Victims).HealthMax); // heal players Base Amount no increase for link
+	         // lets not downscale team healing based on Range
+         }
+       }  // friends
+       
+       // heal nodes
+        Node = DestroyableObjective(Victims);				  		
+				if (Node != None) {
+				  	// While its constructing PoweredBy(TeamNum) doesn't get set right.  It only gets set when node fully powers up.
+              if (ONSPowerNode(Node) != None && (Node.DefenderTeamIndex == Instigator.Controller.GetTeamNum()) && Node.Health > 0 )
+						  //if (ONSPowerNode(Node) != None && ONSPowerNode(Node).PoweredBy(TeamNum) && Node.Health > 0 )
+				  		{ // Friendly Node
+				  			Node.HealDamage(NodeHealAmount*((LinkMultiplier*NumLinks)+1), Instigator.Controller, DamageType);
+				  			//log("Fanatic Healing Node for "@)
+				     	}
+        } // node
+		
+		} // victims
+	} // foreach
+		
 	// self heal base amount
 	//log(self@":HurtRadius - SelfHealmount="@SelfHealAmount);
 	// Note HealDamage amount is modified by LinkHealMult (from Engine.Vehicle) (from linkgun healing), default is 0.35
@@ -483,6 +502,7 @@ defaultproperties
      LinkMultiplier=0.8 // number of linkers +1 * shield Recharge rate.
      SelfHealAmount=25
      HealTeamBaseAmount=50
+     NodeHealAmount=115  // 100 every fire, link gun does ~112 pts second.
      SelfHealMultiplier=0.20  //self heal from Shield Combo  pt heal for 1  pts damage
      MaxDamageHealthHeal=250
      RegenerationMaterial=Shader'XGameShaders.PlayerShaders.PlayerShieldSh'

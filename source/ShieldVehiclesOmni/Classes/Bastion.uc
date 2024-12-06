@@ -301,7 +301,7 @@ defaultproperties
      ChassisTorqueScale=0.200000
      MinBrakeFriction=4.000000
      MaxSteerAngleCurve=(Points=((OutVal=35.000000),(InVal=450.000000,OutVal=35.000000),(InVal=550.000000,OutVal=11.000000),(InVal=1000000000.000000,OutVal=11.000000)))
-     TorqueCurve=(Points=((OutVal=27.000000),(InVal=200.000000,OutVal=30.000000),(InVal=1500.000000,OutVal=33.000000),(InVal=2800.000000)))
+     TorqueCurve=(Points=((OutVal=27.000000),(InVal=200.000000,OutVal=30.000000),(InVal=1500.000000,OutVal=33.000000),(InVal=2950.000000)))
     
      // modded
      GearRatios(0)=-0.950000
@@ -388,7 +388,7 @@ defaultproperties
      
      IdleSound=Sound'BioAegis_Sound.Aegis.AegisEngine'
      VehiclePositionString="in an Bastion"
-     VehicleNameString="Bastion 1.0"
+     VehicleNameString="Bastion 1.02"
      
           Begin Object Class=SVehicleWheel Name=RWheel1
          bPoweredWheel=True

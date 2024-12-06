@@ -453,7 +453,7 @@ defaultproperties
      TPCamWorldOffset=(Z=100.000000)
      DriverDamageMult=0.00000
      VehiclePositionString="in a Fanatic"
-     VehicleNameString="Fanatic 1.0"
+     VehicleNameString="Fanatic 1.01"
      RanOverDamageType=Class'Onslaught.DamTypeRVRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeRVPancake'
      MaxDesireability=0.400000
