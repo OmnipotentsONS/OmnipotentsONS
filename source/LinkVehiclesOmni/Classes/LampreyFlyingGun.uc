@@ -783,7 +783,7 @@ defaultproperties
 		 RangeExtPerLink=500; // how much range is extended per linker
 		 
      AltFireRadius=666.000000 // phoenix is 800 radius
-     AltFireDamage=200.000000 // phoenix is 300 always, lamprey does less damage farther away
+     AltFireDamage=80.000000 // phoenix is 300 always, lamprey does less damage farther away
      AltFireDamageVehicleMult=2.00000
      AltFireDamageEasterEggMult=7.000000
      AltFireMomentumVehicleMult=5.000000

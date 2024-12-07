@@ -69,7 +69,7 @@ defaultproperties
      
      DriverDamageMult=0.000000
      VehiclePositionString="in a Lamprey Manta"
-     VehicleNameString="Lamprey Manta 3.44"
+     VehicleNameString="Lamprey Manta 3.45"
      GroundSpeed=1450.000000
      // GroundSpeed=2000 //manta
      HealthMax=266.000000

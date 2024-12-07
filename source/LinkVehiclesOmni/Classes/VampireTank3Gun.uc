@@ -806,9 +806,9 @@ defaultproperties
      DrawScale=0.200000
      SoundVolume=150
     
-     LinkMultiplier = 0.51;  //smaller since it heals itself
+     LinkMultiplier = 0.0;  //Removed 12/2023 smaller since it heals itself
 		 SelfHealMultiplier = 1.0
-		 VehicleDamageMult = 1.20  // set here instead DamType
+		 VehicleDamageMult = 1.35  // set here instead DamType
 		 VehicleHealScore=350
 		 RangeExtPerLink=500 // how much range is extended per linker
 		 LinkMultiplierCap = 2.5

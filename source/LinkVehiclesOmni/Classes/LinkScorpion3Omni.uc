@@ -703,7 +703,7 @@ defaultproperties
 
      bScriptedRise=True
      VehiclePositionString="in a Link Scorpion"
-     VehicleNameString="Link Scorpion 3.4"
+     VehicleNameString="Link Scorpion 3.45"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkScorp3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkScorp3Pancake'
      Begin Object Class=KarmaParamsRBFull Name=KParams0
@@ -737,7 +737,7 @@ defaultproperties
 
 
      Health=400
-     HealthMax=425
+     HealthMax=450
      
         
      // boost properties

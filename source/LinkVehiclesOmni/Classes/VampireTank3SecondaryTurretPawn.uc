@@ -62,7 +62,8 @@ function ShouldTargetMissile(Projectile P)
 }
 
 // ============================================================================
-
+// Since no link stacking remove this pooty 12/2024
+/*
 simulated function DrawHUD(Canvas C)
 {
 	local PlayerController PC;
@@ -90,6 +91,7 @@ simulated function DrawHUD(Canvas C)
 		PlayerHud.totalLinks.value = VampireTank3(VehicleBase).Links;
 	}
 }
+*/
 
 
 

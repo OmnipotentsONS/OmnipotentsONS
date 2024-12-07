@@ -633,9 +633,9 @@ defaultproperties
      BlueSkin=Texture'LinkScorpion3Tex.LinkScorpGun'
      SoundVolume=150
      
-     LinkMultiplier = 0.8; // each linker adds 80%
+     LinkMultiplier = 1.0; // each linker adds 100%, used to be 80%, but since it lost self heal.
      VehicleDamageMult = 1.5 // more damage to vehicles.
-     SelfHealMultiplier = 1.1 // good heal multiplier, it has to get close.
+     SelfHealMultiplier = 0 // removed for consistency pooty
      VehicleHealScore = 250.0
      RangeExtPerLink=700; // how much range is extended per linker
      LinkMultiplierCap = 4.0

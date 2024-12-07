@@ -63,7 +63,7 @@ replication
 // ============================================================================
 simulated function UpdateLinkColor( LinkAttachment.ELinkColor Color )
 {
-	local int i;
+	//local int i;
 
 	// Don't waste cycles continually switching out for the same skin
 	if (Color != OldLinkColor)
@@ -388,6 +388,7 @@ Begin:
 }
 */
 
+/* Doesn't link stack so no need for HUD symbols
 simulated function DrawHUD(Canvas C)
 {
 	local PlayerController PC;
@@ -409,6 +410,7 @@ simulated function DrawHUD(Canvas C)
 		PlayerHud.totalLinks.value = Links;
 	}
 }
+*/
 
 static function StaticPrecache(LevelInfo L)
 {
@@ -473,29 +475,29 @@ if (DamageType.name == 'FireBall')
 		Damage *= 1.25;
 		
 if (DamageType.name == 'DamTypeFirebugFlame')
-		Damage *= 1.6;
+		Damage *= 1.4;
 		
 if (DamageType.name == 'DamTypeFirebugExplosion')
-		Damage *= 2.5;
+		Damage *= 2.0;
 
 if (DamageType.name == 'DamTypeDracoExplosion')
-		Damage *= 2.5;
+		Damage *= 2.0;
 
 if (DamageType.name == 'DamTypeTurretFlames')
-		Damage *= 2.5;
+		Damage *= 1.5;
 
 if (DamageType.name == 'FireHoundKill' || DamageType.name == 'FireHoundCombo')
-		Damage *= 2.1;
+		Damage *= 1.5;
 
 
 if (DamageType.name == 'FlameKillRaptor')
-		Damage *= 1.20;
+		Damage *= 1.10;
 
 	if (DamageType.name == 'HeatRay' || DamageType.name == 'FireHoundLaser')
 		Damage *= 1.20;
 
 if (DamageType.name == 'DamTypeDracoFlamethrower')
-		Damage *= 1.7;
+		Damage *= 1.3;
 
 if (DamageType.name == 'DamTypeDracoNapalmRocket')
 		Damage *= 1.5;
@@ -503,6 +505,11 @@ if (DamageType.name == 'DamTypeDracoNapalmRocket')
 if (DamageType.name == 'DamTypeDracoNapalmGlob')
 		Damage *= 1.5;
 		
+if (DamageType.name == 'DamTypePersesOmniNapalmGlob')
+		Damage *= 1.5;
+
+if (DamageType.name == 'DamTypePersesOmniNapalmRocket')
+		Damage *= 1.5;
 	  
 
     Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
@@ -538,7 +545,7 @@ defaultproperties
      TPCamWorldOffset=(Z=300.000000)
      
      VehiclePositionString="in a Vampire Tank"
-     VehicleNameString="Vampire Tank 3.41"
+     VehicleNameString="Vampire Tank 3.45"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Pancake'
      HealthMax=1366.000000

@@ -826,8 +826,8 @@ defaultproperties
      BeamSounds(1)=Sound'WeaponSounds.LinkGun.BLinkGunBeam2'
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
-     VehicleDamageMult=1.25000
-     LinkMultiplier = 0.66000
+     VehicleDamageMult=1.50000
+     LinkMultiplier = 0.00000 // No Link Stacking. 12/2024 pooty.
      LinkMultiplierCap = 3.0
      bInitAimError=True
      YawBone="rvGUNTurret"

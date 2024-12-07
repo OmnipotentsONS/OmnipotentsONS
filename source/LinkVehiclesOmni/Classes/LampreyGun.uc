@@ -756,7 +756,7 @@ defaultproperties
      bInstantRotation=True
      bDoOffsetTrace=True
      FireInterval=0.120000
-     AltFireInterval=3.25000
+     AltFireInterval=3.5000
      FireSoundVolume=255.000000
      DamageType=Class'DamTypeLampreyBeam'
      TraceRange=3300.000000  // 1100 is link gun's trace range
@@ -780,14 +780,14 @@ defaultproperties
    
     
      LinkMultiplier = 1.0; // not used here
-		 SelfHealMultiplier = 0.65;
-		 ComboSelfHealMultiplier = 0.35;
+		 SelfHealMultiplier = 0.67;
+		 ComboSelfHealMultiplier = 0.4;
 		 VehicleDamageMult = 1.35; // set here not in DamType
 		 VehicleHealScore = 250;
 		 RangeExtPerLink=500; // how much range is extended per linker
 		 
      AltFireRadius=666.000000 // phoenix is 800 radius
-     AltFireDamage=200.000000 // phoenix is 300 always, lamprey does less damage farther away
+     AltFireDamage=150.000000 // phoenix is 300 always, lamprey does less damage farther away
      AltFireDamageVehicleMult=2.00000
      AltFireDamageEasterEggMult=7.000000
      AltFireMomentumVehicleMult=5.000000
