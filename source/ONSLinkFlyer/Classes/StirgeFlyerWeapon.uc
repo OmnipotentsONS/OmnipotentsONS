@@ -1,8 +1,8 @@
 // ============================================================================
 // LinkFlyer                                                        ItsMeAgain
-// Weapon, Mostly copied from LinkTank
+// Weapon, Mostly copied from StirgeFlyerWeapon
 // ============================================================================
-class LinkFlyerWeapon extends ONSWeapon;
+class StirgeFlyerWeapon extends ONSWeapon;
 
 // ============================================================================
 // Properties
@@ -84,8 +84,8 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
     local Projectile SpawnedProjectile;
     local int NumLinks;
 
-    if (ONSLinkFlyer(Owner)!=None)
-        NumLinks=ONSLinkFlyer(Owner).GetLinks();
+    if (StirgeFlyer(Owner)!=None)
+        NumLinks=StirgeFlyer(Owner).GetLinks();
     else
         NumLinks=0;
 
@@ -113,8 +113,8 @@ function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector H
     local LinkBeamEffect ThisBeam;
     local LinkBeamEffect FoundBeam;
 
-    if (ONSLinkFlyer(Owner)!=None)
-        FoundBeam=ONSLinkFlyer(Owner).Beam;
+    if (StirgeFlyer(Owner)!=None)
+        FoundBeam=StirgeFlyer(Owner).Beam;
 
     if (FoundBeam==None||FoundBeam.bDeleteMe)
         {
@@ -126,8 +126,8 @@ function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector H
     if (FoundBeam==None)
         {
         FoundBeam=Spawn(BeamEffectClass, Owner, , WeaponFireLocation);
-        if (ONSLinkFlyer(Owner)!=None)
-            ONSLinkFlyer(Owner).Beam=FoundBeam;
+        if (StirgeFlyer(Owner)!=None)
+            StirgeFlyer(Owner).Beam=FoundBeam;
         }
 
     //if (LinkFlyerBeamEffect(Beam) != None)
@@ -160,18 +160,18 @@ function WeaponCeaseFire(Controller C, bool bWasAltFire)
     {
     local LinkBeamEffect Beam;
 
-    if (ONSLinkFlyer(Owner)!=None)
-        Beam=ONSLinkFlyer(Owner).Beam;
+    if (StirgeFlyer(Owner)!=None)
+        Beam=StirgeFlyer(Owner).Beam;
 
     //log(self@"ceasefire"@bWasAltFire,'KDebug');
     if (bWasAltFire && Beam!=None)
         {
         Beam.Destroy();
         Beam=None;
-        if (ONSLinkFlyer(Owner)!=None)
+        if (StirgeFlyer(Owner)!=None)
             {
-            ONSLinkFlyer(Owner).Beam=None;
-            ONSLinkFlyer(Owner).bBeaming=false;
+            StirgeFlyer(Owner).Beam=None;
+            StirgeFlyer(Owner).bBeaming=false;
             }
 
         //AmbientSound = None;
@@ -181,10 +181,10 @@ function WeaponCeaseFire(Controller C, bool bWasAltFire)
         SetLinkTo(None);
 
         // Can't link if there's no beam
-        if (ONSLinkFlyer(Owner)!=None)
+        if (StirgeFlyer(Owner)!=None)
             {
             //log(Level.TimeSeconds@Self@"Set LinkFlyer bLinking to FALSE in WeaponCeaseFire",'KDebug');
-            ONSLinkFlyer(Owner).bLinking=false;
+            StirgeFlyer(Owner).bLinking=false;
             }
         }
     }
@@ -199,7 +199,7 @@ simulated event Tick(float dt)
     local Vector HitLocation, HitNormal, EndEffect;
     local Actor Other;
     local Rotator Aim;
-    local ONSLinkFlyer LinkFlyer;
+    local StirgeFlyer LinkFlyer;
     local bool bIsHealingObjective;
     local int AdjustedDamage, NumLinks;
     local DestroyableObjective HealObjective;
@@ -210,11 +210,11 @@ simulated event Tick(float dt)
     // I don't think ONSWeapon has a tick by default but it's always a good idea to call super when in doubt
     Super.Tick(dt);
 
-    if (ONSLinkFlyer(Owner)!=None)
+    if (StirgeFlyer(Owner)!=None)
         {
-        LinkFlyer=ONSLinkFlyer(Owner);
+        LinkFlyer=StirgeFlyer(Owner);
         NumLinks=LinkFlyer.GetLinks();
-        Beam=ONSLinkFlyer(Owner).Beam;
+        Beam=StirgeFlyer(Owner).Beam;
         }
     else
         {
@@ -438,26 +438,26 @@ function SetLinkTo(Pawn Other, optional bool bHealing)
     // Sanity check
     if (LockedPawn!=Other)
         {
-        if (LockedPawn!=None && ONSLinkFlyer(Owner)!=None)
+        if (LockedPawn!=None && StirgeFlyer(Owner)!=None)
             {
-            RemoveLink(1+ONSLinkFlyer(Owner).GetLinks(), Instigator);
+            RemoveLink(1+StirgeFlyer(Owner).GetLinks(), Instigator);
 
             // Added flag so the vehihicle doesn't flash from green to teamcolor rapidly while linking a non-Wormbo node
             if (!bHealing)
-                ONSLinkFlyer(Owner).bLinking=false;
+                StirgeFlyer(Owner).bLinking=false;
             }
 
         LockedPawn=Other;
 
         if (LockedPawn!=None)
             {
-            if (ONSLinkFlyer(Owner)!=None)
+            if (StirgeFlyer(Owner)!=None)
                 {
-                if (!AddLink(1+ONSLinkFlyer(Owner).GetLinks(), Instigator))
+                if (!AddLink(1+StirgeFlyer(Owner).GetLinks(), Instigator))
                     {
                     bFeedbackDeath=true;
                     }
-                ONSLinkFlyer(Owner).bLinking=true;
+                StirgeFlyer(Owner).bLinking=true;
                 }
             LockedPawn.PlaySound(MakeLinkSound, SLOT_None);
             }
@@ -680,11 +680,11 @@ defaultproperties
      LinkSkin_Blue(1)=Shader'UT2004Weapons.Shaders.PowerPulseShaderBlue'
      LinkBeamSkin=2
      LinkedFireSound=Sound'WeaponSounds.LinkGun.BLinkedFire'
-     BeamEffectClass=Class'ONSLinkFlyer.LinkFlyerBeamEffect'
+     BeamEffectClass=Class'ONSLinkFlyer.StirgeFlyerBeamEffect'
      MakeLinkSound=Sound'WeaponSounds.LinkGun.LinkActivated'
      LinkBreakDelay=0.500000
      MomentumTransfer=2000.000000
-     AltDamageType=Class'ONSLinkFlyer.DamTypeLinkFlyerBeam'
+     AltDamageType=Class'ONSLinkFlyer.DamTypeStirgeFlyerBeam'
      AltDamage=13
      MakeLinkForce="LinkActivated"
      LinkFlexibility=0.550000
@@ -693,10 +693,10 @@ defaultproperties
      BeamSounds(1)=Sound'WeaponSounds.LinkGun.BLinkGunBeam2'
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam3'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam4'
-     VehicleDamageMult=1.350000
+     VehicleDamageMult=1.350000  // done here instead of damage type.
      bInitAimError=True
-     SelfHealMultiplier=0.000000 // no self healing pooty 12/2024
-     LinkMultiplier=0.9
+     SelfHealMultiplier=0.660000
+     LinkMultiplier=0.0 // no link stacking
      VehicleHealScore=600
      YawBone="PlasmaGunBarrel"
      PitchBone="PlasmaGunBarrel"
@@ -712,7 +712,7 @@ defaultproperties
      DamageMin=0
      DamageMax=0
      TraceRange=5000.000000
-     ProjectileClass=Class'ONSLinkFlyer.LinkFlyerProjectile'
+     ProjectileClass=Class'ONSLinkFlyer.StirgeFlyerProjectile'
      AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.990000,RefireRate=0.990000)
      AIInfo(1)=(bInstantHit=True,WarnTargetPct=0.990000,RefireRate=0.990000)
      Mesh=SkeletalMesh'ONSWeapons-A.PlasmaGun'
