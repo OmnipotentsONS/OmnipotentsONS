@@ -836,7 +836,7 @@ defaultproperties
      PitchDownLimit=59000
      WeaponFireAttachmentBone="RVfirePoint"
      RotationsPerSecond=0.500000
-     FireInterval=0.350000
+     FireInterval=0.250000
      AltFireInterval=0.120000
      FireSoundClass=SoundGroup'WeaponSounds.PulseRifle.PulseRifleFire'
      FireSoundVolume=256.000000

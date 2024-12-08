@@ -79,10 +79,18 @@ simulated function PostNetBeginPlay()
 
 simulated function Explode(vector HitLocation, vector HitNormal)
 {
+	
+		local FX_VampirePurplePlasmaImpact FX_Impact;
+	  // Give a little splash damage
+    if ( Role == Role_Authority )
+        HurtRadius(Damage,DamageRadius, MyDamageType, MomentumTransfer,HitLocation);
+        
     if ( EffectIsRelevant(Location,false) )
     {
         
      Spawn(class'VampireTank3ProjSparksPurple',,, HitLocation, rotator(HitNormal));
+     FX_Impact = Spawn(class'FX_VampirePurplePlasmaImpact',,, HitLocation + HitNormal * 2, rotator(HitNormal));   
+     FX_Impact.SetPurpleColor();
         
     }
     
@@ -186,11 +194,11 @@ simulated function ProcessTouch (Actor Other, vector HitLocation)
 
 defaultproperties
 {
-     VehicleDamageMult=3.000000
+     VehicleDamageMult=1.000000 // Set in DamType
      Speed=3000.000000
      MaxSpeed=5000.000000
-     Damage=40.000000
-     DamageRadius=120.000000
+     Damage=32.000000
+     DamageRadius=300.000000
      MomentumTransfer=5000.000000
      MyDamageType=Class'LinkVehiclesOmni.DamTypeLink3SecondaryPlasma'
      MaxEffectDistance=7000.000000
