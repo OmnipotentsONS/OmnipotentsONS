@@ -86,7 +86,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 	  local FX_StirgePurplePlasmaImpact FX_Impact;
 	  // Give a little splash damage
     if ( Role == Role_Authority )
-        HurtRadius(Damage*0.5,DamageRadius, MyDamageType, MomentumTransfer,HitLocation);
+        HurtRadius(Damage*0.67,DamageRadius, MyDamageType, MomentumTransfer,HitLocation);
         // for some reason this gets added when hitting nodes.  Not on vehicles or players?
         
     if ( EffectIsRelevant(Location,false) )
@@ -200,7 +200,7 @@ defaultproperties
      
      Speed=3000.000000
      MaxSpeed=5000.000000
-     Damage=32.000000
+     Damage=38.000000
      DamageRadius=275.000000
      MomentumTransfer=5000.000000
      MyDamageType=Class'ONSLinkFlyer.DamTypeStirgeFlyerPlasma'
