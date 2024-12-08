@@ -704,7 +704,7 @@ defaultproperties
      PitchDownLimit=49153
      WeaponFireAttachmentBone="PlasmaGunBarrel"
      RotationsPerSecond=0.500000
-     FireInterval=0.350000
+     FireInterval=0.25000
      AltFireInterval=0.120000
      FireSoundClass=SoundGroup'WeaponSounds.PulseRifle.PulseRifleFire'
      FireSoundVolume=256.000000

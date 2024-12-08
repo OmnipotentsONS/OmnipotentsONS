@@ -289,7 +289,7 @@ defaultproperties
      DisintegrationEffectClass=None
      DisintegrationHealth=0.000000
      VehiclePositionString="in a Chupacabra"
-     VehicleNameString="Chupacabra 1.5"
+     VehicleNameString="Chupacabra 1.51"
      GroundSpeed=2200.000000
      Health=325.00000
      HealthMax=350.000000

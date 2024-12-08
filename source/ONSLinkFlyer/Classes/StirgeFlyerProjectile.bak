@@ -8,15 +8,15 @@ class StirgeFlyerProjectile extends  Projectile;
 
 // ============================================================================
 var Stirge_PurplePlasma   Plasma;
-//var float                       VehicleDamageMult;
-//var float LinkMultiplier;
-//var int                         Links;
+var float                       VehicleDamageMult;
+var float LinkMultiplier;
+var int                         Links;
 
-//replication
-//{
-//    unreliable if (bNetInitial && Role == ROLE_Authority)
-//        Links;
-//}
+replication
+{
+    unreliable if (bNetInitial && Role == ROLE_Authority)
+        Links;
+}
 
 simulated function Destroyed()
 {
@@ -42,11 +42,9 @@ simulated function PostBeginPlay()
     Velocity         = Speed * Vector(Rotation);
 }
 
-/* Only needed for link stacking
 simulated function LinkAdjust()
 {
-	
-  //  local float ls;
+    local float ls;
 
     if ( Links > 0 )
     {
@@ -62,16 +60,14 @@ simulated function LinkAdjust()
         MaxSpeed    = default.MaxSpeed + 350*Links;
         LightHue = 40;
     }
- 
 }
-*/   
 
 simulated function PostNetBeginPlay()
 {
     Acceleration     = Velocity;
 
-    //if ( Role < ROLE_Authority )
-    //    LinkAdjust();
+    if ( Role < ROLE_Authority )
+        LinkAdjust();
 
     if ( (Level.NetMode != NM_DedicatedServer) && (Level.bDropDetail || (Level.DetailMode == DM_Low)) )
     {
@@ -83,17 +79,10 @@ simulated function PostNetBeginPlay()
 
 simulated function Explode(vector HitLocation, vector HitNormal)
 {
-	  local FX_StirgePurplePlasmaImpact FX_Impact;
-	  // Give a little splash damage
-    if ( Role == Role_Authority )
-        HurtRadius(Damage*0.5,DamageRadius, MyDamageType, MomentumTransfer,HitLocation);
-        // for some reason this gets added when hitting nodes.  Not on vehicles or players?
-        
     if ( EffectIsRelevant(Location,false) )
     {
+        
      Spawn(class'StirgeProjSparksPurple',,, HitLocation, rotator(HitNormal));
-     FX_Impact = Spawn(class'FX_StirgePurplePlasmaImpact',,, HitLocation + HitNormal * 2, rotator(HitNormal));   
-     FX_Impact.SetPurpleColor();
         
     }
     
@@ -125,8 +114,8 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
             dist = FMax(1,VSize(dir));
             dir = dir/dist;
             damageScale = 1 - FMax(0,(dist - Victims.CollisionRadius)/DamageRadius);
-            //if ( Victims.IsA('Vehicle') )
-            //    damageScale *= VehicleDamageMult;
+            if ( Victims.IsA('Vehicle') )
+                damageScale *= VehicleDamageMult;
 
             if ( DamageType.Default.bDelayedDamage && (Instigator == None || Instigator.Controller == None) )
                 Victims.SetDelayedDamageInstigatorController(InstigatorController);
@@ -180,10 +169,10 @@ simulated function ProcessTouch (Actor Other, vector HitLocation)
     {
         if ( Role == ROLE_Authority )
         {
-            AdjustedDamage = Damage;// * (LinkMultiplier + float(Links));
+            AdjustedDamage = Damage * (LinkMultiplier + float(Links));
 
- //           if ( Other.IsA('Vehicle') )
- //               AdjustedDamage *= VehicleDamageMult;
+            if ( Other.IsA('Vehicle') )
+                AdjustedDamage *= VehicleDamageMult;
 
             if ( Instigator == None || Instigator.Controller == None )
                 Other.SetDelayedDamageInstigatorController( InstigatorController );
@@ -197,11 +186,11 @@ simulated function ProcessTouch (Actor Other, vector HitLocation)
 
 defaultproperties
 {
-     
+     VehicleDamageMult=3.000000
      Speed=3000.000000
      MaxSpeed=5000.000000
-     Damage=32.000000
-     DamageRadius=275.000000
+     Damage=40.000000
+     DamageRadius=120.000000
      MomentumTransfer=5000.000000
      MyDamageType=Class'ONSLinkFlyer.DamTypeStirgeFlyerPlasma'
      MaxEffectDistance=7000.000000
@@ -222,7 +211,7 @@ defaultproperties
      ForceType=FT_Constant
      ForceRadius=30.000000
      ForceScale=5.000000
-     //LinkMultiplier = 1.000000
+     LinkMultiplier = 1.000000
      Skins(0)=FinalBlend'LinkTank3Tex.VampireTank.LinkProjPurpleFB'
     
 }
