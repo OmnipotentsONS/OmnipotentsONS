@@ -3,7 +3,7 @@ class AuroraBigGun extends ONSWeapon;
 #exec OBJ LOAD FILE=..\Animations\ONSWeapons-A.ukx
 
 var class<ShockBeamEffect> BeamEffectClass;
-var AuroraSkymine ComboTarget;
+var AuroraBigSkymine ComboTarget;
 var float MinAim;
 
 static function StaticPrecache(LevelInfo L)
@@ -70,7 +70,7 @@ function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector H
     Beam.AimAt(HitLocation, HitNormal);
 }
 
-function SetComboTarget(AuroraSkyMine S)
+function SetComboTarget(AuroraBigSkyMine S)
 {
 	if (Bot(Instigator.Controller) == None || Instigator.Controller.Enemy == None)
 		return;
@@ -143,9 +143,9 @@ state InstantFireMode
 
     function Fire(Controller C)
     {
-    	local AuroraSkyMine S;
+    	local AuroraBigSkyMine S;
 
-    	S = AuroraSkymine(SpawnProjectile(ProjectileClass, False));
+    	S = AuroraBigSkymine(SpawnProjectile(ProjectileClass, False));
     	if ( S != None && Bot(Instigator.Controller) != None )
         	SetComboTarget(S);
     }

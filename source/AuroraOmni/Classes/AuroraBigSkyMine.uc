@@ -74,7 +74,8 @@ function SuperExplosion()
 		if ( HitActor != None )
 			Spawn(class'ComboDecal',self,,HitLocation, rotator(vect(0,0,-1)));
 	}
-	PlaySound(ComboSound, SLOT_None,1.0,,800);
+	//PlaySound(ComboSound, SLOT_None,1.0,,800);
+	PlaySound(ComboSound, SLOT_None,0.5,,800,,true);
 	DestroyTrails();
 
 	if (bDoChainReaction)
