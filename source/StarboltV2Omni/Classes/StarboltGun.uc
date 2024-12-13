@@ -51,5 +51,7 @@ defaultproperties
      bSelected=True
      StarBeamEffectClass(0)=class'StarboltTurretBeamEffect'
      StarBeamEffectClass(1)=class'StarboltTurretBeamEffectBlue'
-
+     WeaponFireAttachmentBone="PlasmaGunBarrel"
+     WeaponFireOffset=-10
+     DualFireOffset=8
 }

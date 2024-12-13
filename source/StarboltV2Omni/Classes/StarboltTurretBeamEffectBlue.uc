@@ -51,7 +51,8 @@ defaultproperties
         UseRegularSizeScale=False
         SizeScale(0)=(RelativeSize=0.400000)
         SizeScale(1)=(RelativeTime=1.000000)
-        StartSizeRange=(X=(Min=100.000000,Max=100.000000),Y=(Min=20.000000,Max=20.000000))
+        //StartSizeRange=(X=(Min=100.000000,Max=100.000000),Y=(Min=20.000000,Max=20.000000))
+        StartSizeRange=(X=(Min=50.000000,Max=50.000000),Y=(Min=20.000000,Max=20.000000))
         InitialParticlesPerSecond=5000.000000
         AutomaticInitialSpawning=False
         Texture=Texture'EpicParticles.Flares.SoftFlare'
@@ -74,7 +75,8 @@ defaultproperties
         UseRegularSizeScale=False
         SizeScale(0)=(RelativeSize=0.200000)
         SizeScale(1)=(RelativeTime=1.000000)
-        StartSizeRange=(X=(Min=150.000000,Max=200.000000))
+        //StartSizeRange=(X=(Min=150.000000,Max=200.000000))
+        StartSizeRange=(X=(Min=60.000000,Max=120.000000))
         UniformSize=True
         InitialParticlesPerSecond=20.000000
         AutomaticInitialSpawning=False
@@ -97,7 +99,7 @@ defaultproperties
         UseRegularSizeScale=False
         SizeScale(0)=(RelativeSize=0.250000)
         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.000000)
-        StartSizeRange=(X=(Min=20.000000,Max=50.000000))
+        StartSizeRange=(X=(Min=10.000000,Max=20.000000))
         UniformSize=True
         UseRotationFrom=PTRS_Actor
         InitialParticlesPerSecond=900.000000
@@ -127,7 +129,8 @@ defaultproperties
         UseRegularSizeScale=False
         SizeScale(0)=(RelativeSize=0.100000)
         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.000000)
-        StartSizeRange=(X=(Min=40.000000,Max=60.000000))
+        //StartSizeRange=(X=(Min=40.000000,Max=60.000000))
+        StartSizeRange=(X=(Min=10.000000,Max=20.000000))
         UniformSize=True
         UseRotationFrom=PTRS_Actor
         InitialParticlesPerSecond=3000.000000

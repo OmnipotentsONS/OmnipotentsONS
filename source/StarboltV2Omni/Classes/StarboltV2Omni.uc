@@ -1,3 +1,4 @@
+
 class StarboltV2Omni extends ONSAttackCraft;
 
 
@@ -41,7 +42,7 @@ defaultproperties
      BlueSkin=Shader'Starbolt_Tex.Starbolt.ShieldBodyBlue'
      ImpactDamageMult=0.0010000
      VehiclePositionString="in a Starbolt"
-     VehicleNameString="Starbolt 2.53"
+     VehicleNameString="Starbolt 2.54"
      GroundSpeed=3550.000000
      HealthMax=225.000000
      Health=225
