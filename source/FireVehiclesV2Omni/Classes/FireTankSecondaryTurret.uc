@@ -147,7 +147,7 @@ defaultproperties
      FireInterval=0.20000
      AltFireInterval=0.100000
      FireSoundClass=Sound'CuddlyArmor_Sound.FireTank.FireTankBeam'
-     FireSoundVolume=500.000000
+     FireSoundVolume=300.000000
      AltFireSoundClass=Sound'GeneralAmbience.firefx11'
      AltFireSoundVolume=200.000000
      FireForce="Laser01"

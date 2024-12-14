@@ -113,7 +113,7 @@ defaultproperties
      bDoOffsetTrace=True
      FireInterval=0.180000
      FireSoundClass=Sound'WeaponSounds.Misc.instagib_rifleshot'
-     FireSoundVolume=500.000000
+     // TO LOUD! FireSoundVolume=500.000000
      FireForce="Laser01"
      DamageType=Class'CSGPolice.CSRhinoSecondaryTurretKill'
      DamageMin=20

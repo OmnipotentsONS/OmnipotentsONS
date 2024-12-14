@@ -116,7 +116,7 @@ defaultproperties
      IdleSound=Sound'CuddlyArmor_Sound.Minotaur.Minotaurengine'
      bKeyVehicle=True
      VehiclePositionString="in a Min)o(taur"
-     VehicleNameString="Min)o(taur 2.0"
+     VehicleNameString="Min)o(taur 2.01"
      RanOverDamageType=Class'CSMinotaur.MinotaurDamTypeRoadkill'
      CrushedDamageType=Class'CSMinotaur.MinotaurDamTypePancake'
      HornSounds(0)=Sound'CuddlyArmor_Sound.Horns.Bighorn'

@@ -114,7 +114,7 @@ defaultproperties
      BlueSkin=Texture'Omnitaur_Tex.OmnitaurBlue'
      FireInterval=0.180000
      FireSoundClass=Sound'WeaponSounds.Misc.instagib_rifleshot'
-     FireSoundVolume=500.000000
+     // Too Loud FireSoundVolume=500.000000
      FireForce="Laser01"
      DamageType=Class'CSMinotaur.MinotaurSecondaryTurretKill'
      DamageMin=20
