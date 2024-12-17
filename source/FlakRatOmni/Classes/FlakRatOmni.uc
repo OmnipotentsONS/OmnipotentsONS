@@ -96,13 +96,12 @@ simulated function UpdatePrecacheMaterials()
 
 simulated function Tick(float DT)
 {
-          Super.Tick(DT);
-
-          Weapons[Activeweapon].bActive = False;
-
-          ActiveWeapon = (Activeweapon + 1) % 2;
-
-          Weapons[Activeweapon].bActive = True;
+    Super.Tick(DT);
+		if (Role == ROLE_Authority) {
+		          Weapons[Activeweapon].bActive = False;
+		          ActiveWeapon = (Activeweapon + 1) % 2;
+		          Weapons[Activeweapon].bActive = True;
+		}          
 }
 
 defaultproperties
@@ -253,7 +252,7 @@ defaultproperties
      TPCamWorldOffset=(Z=150.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a Omni FlakRat"
-     VehicleNameString="Omni FlakRat 1.03"
+     VehicleNameString="Omni FlakRat 1.04"
      RanOverDamageType=Class'FlakRatOmni.DamTypeFlakRatOmniRoadkill'
      CrushedDamageType=Class'FlakRatOmni.DamTypeFlakRatOmniPancake'
      MaxDesireability=0.400000
