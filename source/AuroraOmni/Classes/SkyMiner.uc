@@ -394,7 +394,7 @@ defaultproperties
      RedSkin=Texture'SkyMiner_Tex.SkyMiner.SkyMinerRed'
      BlueSkin=Texture'SkyMiner_Tex.SkyMiner.SkyMinerBlue'
      VehiclePositionString="in an SkyMiner"
-     VehicleNameString="SkyMiner 2.1"
+     VehicleNameString="SkyMiner 2.12"
      RanOverDamageType=Class'AuroraOmni.AuroraDamTypeRoadkill'
      CrushedDamageType=Class'AuroraOmni.AuroraDamTypePancake'
      HealthMax=325.000000
@@ -420,6 +420,6 @@ defaultproperties
          KFriction=0.500000
          KImpactThreshold=300.000000
      End Object
-     KParams=KarmaParamsRBFull'AuroraOmni.Aurora.KParams0'
+     KParams=KarmaParamsRBFull'AuroraOmni.SkyMiner.KParams0'
 
 }

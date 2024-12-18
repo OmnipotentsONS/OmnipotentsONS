@@ -394,7 +394,7 @@ defaultproperties
      RedSkin=Texture'GorzBirds_Tex.Aurora.AuroraRed'
      BlueSkin=Texture'GorzBirds_Tex.Aurora.AuroraBlue'
      VehiclePositionString="in an Aurora"
-     VehicleNameString="Aurora 2.11"
+     VehicleNameString="Aurora 2.12"
      RanOverDamageType=Class'AuroraOmni.AuroraDamTypeRoadkill'
      CrushedDamageType=Class'AuroraOmni.AuroraDamTypePancake'
      HealthMax=350.000000
