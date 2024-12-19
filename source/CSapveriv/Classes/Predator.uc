@@ -809,7 +809,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a Predator"
-     VehicleNameString="Predator 1.91"
+     VehicleNameString="Predator 1.92"
      RanOverDamageType=Class'Onslaught.DamTypeAttackCraftRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
      FlagBone="PredatorGunTurret"

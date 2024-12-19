@@ -2,19 +2,51 @@
 // PROJ_Falcon_Laser
 //=============================================================================
 
-class PROJ_Falcon_Laser extends ONSPlasmaProjectile;
+class PROJ_Falcon_Laser extends Projectile;
+//class PROJ_Falcon_Laser extends ONSPlasmaProjectile;
+// they copied most of ONSPlasmaProj here, execpt ignored PlasmaEffect
+// this spammed client logs.
+
+var()   class<Emitter>  HitEffectClass;
+var()   float           AccelerationMagnitude;
 
 var		FX_Laser_Blue			Laser;
 var		class<FX_Laser_Blue>	LaserClass;		// Human
+
+
+
+simulated function PostBeginPlay()
+{ // from ONSPlasmaProjectile
+    Super.PostBeginPlay();
+
+    Velocity = Speed * Vector(Rotation);
+
+	  SetupProjectile();
+	  // below covered in SetupProjectile
+	  /*
+    if (Level.NetMode != NM_DedicatedServer)
+    {
+        Plasma = spawn(PlasmaEffectClass, self,, Location, Rotation);
+        Plasma.SetBase(self);
+    }
+    */
+}
+
 
 simulated function PostNetBeginPlay()
 {
 	super.PostNetBeginPlay();
 
-	Velocity		= Speed * Vector(Rotation);
+	//Velocity		= Speed * Vector(Rotation);
 	//Acceleration	= Velocity;
 	Acceleration = AccelerationMagnitude * Normal(Velocity);
-	SetupProjectile();
+	//SetupProjectile();
+}
+
+simulated function ProcessTouch( actor Other, vector HitLocation )
+{
+    if (Other != Instigator && (Vehicle(Instigator) == None || Vehicle(Instigator).Driver != Other))
+    Explode(HitLocation, Normal(HitLocation-Other.Location));
 }
 
 
@@ -72,6 +104,19 @@ simulated function SpawnExplodeFX(vector HitLocation, vector HitNormal)
 	}
 }
 
+simulated static function float GetRange()
+{
+    local float AccelTime;
+
+    if (default.LifeSpan == 0.0)
+        return 15000;
+    else if (default.AccelerationMagnitude == 0.0)
+        return (default.Speed * default.LifeSpan);
+
+
+    AccelTime = (default.MaxSpeed - default.Speed) / default.AccelerationMagnitude;
+    return ((0.5 * default.AccelerationMagnitude * AccelTime * AccelTime) + (default.Speed * AccelTime) + (default.MaxSpeed * (default.LifeSpan - AccelTime)));
+}
 
 //=============================================================================
 // defaultproperties
@@ -80,6 +125,7 @@ simulated function SpawnExplodeFX(vector HitLocation, vector HitNormal)
 defaultproperties
 {
      LaserClass=Class'UT2k4Assault.FX_Laser_Blue'
+  
      //Speed=30000.000
      //Speed=24000.00
      AccelerationMagnitude=24000.000000 // from Falcon
@@ -102,5 +148,10 @@ defaultproperties
      ForceType=FT_Constant
      ForceRadius=30.000000
      ForceScale=5.000000
+     
+     HitEffectClass=Class'Onslaught.ONSPlasmaHitGreen'
+     ExplosionDecal=Class'XEffects.LinkBoltScorch'
+     AmbientGlow=100
+     Style=STY_Additive
      
 }
