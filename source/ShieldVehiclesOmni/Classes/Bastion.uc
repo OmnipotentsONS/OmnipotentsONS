@@ -388,7 +388,7 @@ defaultproperties
      
      IdleSound=Sound'BioAegis_Sound.Aegis.AegisEngine'
      VehiclePositionString="in an Bastion"
-     VehicleNameString="Bastion 1.02"
+     VehicleNameString="Bastion 1.03"
      
           Begin Object Class=SVehicleWheel Name=RWheel1
          bPoweredWheel=True

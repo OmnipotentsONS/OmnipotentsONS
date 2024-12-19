@@ -286,7 +286,7 @@ simulated function PostNetReceive()
 
     if (ShockShield != None && ShieldHitCount != LastShieldHitCount)
     {
-        ShockShield.SpawnHitEffect(Instigator.Controller.GetTeamNum());
+        ShockShield.SpawnHitEffect(Team);
 
         LastShieldHitCount = ShieldHitCount;
     }
