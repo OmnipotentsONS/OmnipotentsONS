@@ -48,18 +48,17 @@ simulated function Tick(float deltatime)
 		wheels[6].SteerType = VST_Fixed;   
 		wheels[2].SteerType = VST_Fixed;
 	}
-	if (Role == ROLE_Authority 
-    && Weapons.Length > 0 
-    && TurtleCannon(Weapons[0]) != None 
-    && TurtleCannon(Weapons[0]).bShieldActive)
-		{
-		    NumForwardGears=3;
-		}
-		Else
-		{
-		    NumForwardGears=4;
-		}
-    Super.tick(deltatime);
+	if (Role == ROLE_Authority) 
+	   if (Weapons.Length > 0)
+	       if (TurtleCannon(Weapons[0]) != None  && TurtleCannon(Weapons[0]).bShieldActive)
+							{
+							    NumForwardGears=3;
+							}
+							Else
+							{
+							    NumForwardGears=4;
+							}
+   Super.tick(deltatime);
 }
 
 
@@ -308,7 +307,7 @@ defaultproperties
      TPCamDistance=100.000000
      DriverDamageMult=0.000000
      VehiclePositionString="in an Turtle"
-     VehicleNameString="Turtle 1.0"
+     VehicleNameString="Turtle 1.01"
      RanOverDamageType=Class'TurtleOmni.TurtleDamTypeRoadkill'
      CrushedDamageType=Class'TurtleOmni.TurtleDamTypePancake'
      HornSounds(0)=Sound'CuddlyArmor_Sound.Horns.Horn6'
