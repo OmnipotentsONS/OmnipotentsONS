@@ -481,7 +481,7 @@ defaultproperties
      TPCamWorldOffset=(Z=300.000000)
      
      VehiclePositionString="in a Link Tank"
-     VehicleNameString=" Link Tank 3.41"
+     VehicleNameString=" Link Tank 3.42"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Pancake'
      HealthMax=1150.00000

@@ -101,7 +101,7 @@ simulated event Tick(float DT)
 {
 	Super.Tick( DT );
 	 // this doesn't get called unless Tank has owner (its in tick), only need this in turrets so if no driver link count updates.
-  if (VehicleBase.Owner == None && Role == ROLE_Authority)  LinkTank3Heavy(VehicleBase).ResetLinks(); 
+	if (Role == ROLE_Authority && VehicleBase != None && VehicleBase.Owner == None)  LinkTank3Heavy(VehicleBase).ResetLinks(); 
 }
 
 defaultproperties
@@ -114,8 +114,8 @@ defaultproperties
      ExitPositions(0)=(Y=-200.000000,Z=100.000000)
      ExitPositions(1)=(Y=200.000000,Z=100.000000)
      EntryRadius=130.000000
-     FPCamPos=(Z=60.000000)
-     TPCamDistance=200.000000
+     FPCamPos=(Z=70.000000)
+     TPCamDistance=220.000000
      TPCamLookat=(X=0.000000)
      TPCamDistRange=(Max=600.000000)
      DriverDamageMult=0.000000

@@ -100,7 +100,7 @@ simulated event Tick(float DT)
 {
 	Super.Tick( DT );
 	 // this doesn't get called unless Tank has owner (its in tick), only need this in turrets so if no driver link count updates.
-  if (VehicleBase.Owner == None && Role == ROLE_Authority)  LinkTank3Heavy(VehicleBase).ResetLinks(); 
+	if (Role == ROLE_Authority && VehicleBase != None && VehicleBase.Owner == None)  LinkTank3Heavy(VehicleBase).ResetLinks(); 
 }
 
 defaultproperties

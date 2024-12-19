@@ -481,11 +481,11 @@ defaultproperties
      TPCamWorldOffset=(Z=300.000000)
      
      VehiclePositionString="in a Mini Link Tank"
-     VehicleNameString="Mini Link Tank 3.41"
+     VehicleNameString="Mini Link Tank 3.42"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Pancake'
-     HealthMax=700.00000
-     Health=600
+     HealthMax=750.00000
+     Health=650
      DrawScale=0.75
      Mesh=SkeletalMesh'ONSToys1Mesh.LinkTankChassis'
      Skins(0)=Combiner'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-Idle'

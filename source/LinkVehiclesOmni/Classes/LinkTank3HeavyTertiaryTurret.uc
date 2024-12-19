@@ -215,15 +215,16 @@ state InstantFireMode
 				CalcWeaponFire();
 				DualFireOffset *= -1;
 			}
-
-            if (!Level.bDropDetail && Level.DetailMode != DM_Low)
+/* Not needed  Just spams client
+// not used on other lasers. only on turrets.
+      if (!Level.bDropDetail && Level.DetailMode != DM_Low)
             {
     			if (DualFireOffset < 0)
     				PlayAnim('RightFire');
     			else
     				PlayAnim('LeftFire');
     		}
-
+*/
 			Beam = Spawn(BeamEffectClass[BeamColor],,, WeaponFireLocation, rotator(HitLocation - WeaponFireLocation));
 			BeamEmitter(Beam.Emitters[0]).BeamDistanceRange.Min = VSize(WeaponFireLocation - HitLocation);
 			BeamEmitter(Beam.Emitters[0]).BeamDistanceRange.Max = VSize(WeaponFireLocation - HitLocation);
