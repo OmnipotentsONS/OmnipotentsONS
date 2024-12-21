@@ -20,7 +20,7 @@ simulated function ModeTick(float dt)
 	local bool bShouldStop, bIsHealingObjective;
 	local int AdjustedDamage;
 	local LinkBeamEffect LB;
-	local DestroyableObjective HealObjective;
+	//local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
 
     if ( !bIsFiring )
@@ -349,8 +349,8 @@ defaultproperties
      DamageType=None
      Damage=0
      MomentumTransfer=0.000000
-     TraceRange=2700.000000
-     LinkFlexibility=0.400000
+     TraceRange=3000.000000
+     LinkFlexibility=0.5500000
      BeamSounds(1)=Sound'WeaponSounds.LinkGun.BLinkGunBeam1'
      BeamSounds(2)=Sound'WeaponSounds.LinkGun.BLinkGunBeam1'
      BeamSounds(3)=Sound'WeaponSounds.LinkGun.BLinkGunBeam1'

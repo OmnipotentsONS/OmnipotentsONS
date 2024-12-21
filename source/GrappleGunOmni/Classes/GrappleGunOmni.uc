@@ -49,9 +49,44 @@ defaultproperties
      AIRating=0.000000
      CurrentRating=0.000000
      Description="Hitch a ride by linking to a friendly vehicle!"
-     Priority=1
+     Priority=16
      PickupClass=Class'GrappleGunOmni.GrappleGunOmniPickup'
-     ItemName="Grapple Gun Omni 1.0"
+     ItemName="Grapple Gun Omni 1.01"
      Skins(0)=Shader'GrappleGunOmni_Tex.GrappleGunOmni.GrappleGunShader'
-     InventoryGroup=2
+     InventoryGroup=3 // wanted this in 2, but prev/next doesn't work in 2 which makes no sense -- nothing in next/prev makes 2 any different, it works fine in ANY other slot
+     GroupOffset=16
+
+// From LinkGun Defaults..
+     PutDownAnim="PutDown"
+     IdleAnimRate=0.030000
+     SelectSound=Sound'NewWeaponSounds.NewLinkSelect'
+     SelectForce="SwitchToLinkGun"
+     OldMesh=SkeletalMesh'Weapons.LinkGun_1st'
+     OldPickup="WeaponStaticMesh.LinkGunPickup"
+     OldCenteredOffsetY=-12.000000
+     OldPlayerViewOffset=(X=-2.000000,Y=-2.000000,Z=-3.000000)
+     OldSmallViewOffset=(X=10.000000,Y=4.000000,Z=-9.000000)
+     OldPlayerViewPivot=(Yaw=500)
+     OldCenteredRoll=3000
+     OldCenteredYaw=-300
+     EffectOffset=(X=100.000000,Y=25.000000,Z=-3.000000)
+     DisplayFOV=60.000000
+     HudColor=(B=128,R=128)
+     SmallViewOffset=(X=2.000000,Z=-1.500000)
+     CenteredOffsetY=-5.000000
+     CenteredRoll=3000
+     CenteredYaw=-1000
+     CustomCrosshair=10
+     CustomCrossHairColor=(B=128,R=128)
+     CustomCrossHairTextureName="Crosshairs.Hud.Crosshair_Bracket1"
+     PlayerViewOffset=(X=-5.000000,Y=-3.000000)
+     PlayerViewPivot=(Yaw=500)
+     BobDamping=1.575000
+     AttachmentClass=Class'XWeapons.LinkAttachment'
+     //IconMaterial=Texture'HUDContent.Generic.HUD'
+     IconMaterial=Texture'GrappleGunOmni_Tex.HUD.GrappleHUD'
+     //IconCoords=(X1=169,Y1=78,X2=244,Y2=124)
+     IconCoords=(X1=6,Y1=5,X2=81,Y2=51)
+     Mesh=SkeletalMesh'NewWeapons2004.FatLinkGun'
+
 }
