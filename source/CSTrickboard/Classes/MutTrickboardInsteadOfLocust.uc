@@ -1,4 +1,4 @@
-class MutTrickboardInsteadOfManta extends Mutator;
+class MutTrickboardInsteadOfLocust extends Mutator;
 
 
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)

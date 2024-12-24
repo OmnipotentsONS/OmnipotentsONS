@@ -1,90 +1,92 @@
-// ============================================================================
-// Link Tank beam effect.
-// ============================================================================
-class CSTrickboardBeamEffect extends LinkBeamEffect
-	notplaceable;
+class CSTrickboardBeamEffect extends xEmitter;
 
-/*
-	// replication hacks ftl
-var Vector	RepStartEffect, RepEndEffect;
+var Vector	StartEffect, EndEffect;
+var byte	Links, OldLinks;
+var byte	LinkColor, OldLinkColor;
+var bool	bLockedOn, bHitSomething;
+var Pawn	LinkedPawn;
+var Vector	EffectOffset;
+var Vector	PrevLoc;
+var Rotator PrevRot;
+var float	scorchtime;
+
+var CSTrickboardBeamSparks			Sparks;
+var CSTrickboardMuzFlash MuzFlash, OldMuzFlash;
 
 replication
 {
-	// Beam shows up fine on client owner, so let's only replicate this beam stuff to others
-	reliable if (Role == ROLE_Authority && !bNetOwner && bNetRelevant)
-		RepStartEffect, RepEndEffect;
+    unreliable if (Role == ROLE_Authority)
+        Links, LinkColor, LinkedPawn, bLockedOn, bHitSomething;
+
+    unreliable if ( (Role == ROLE_Authority) && (!bNetOwner || bDemoRecording || bRepClientDemo)  )
+        StartEffect, EndEffect;
 }
-*/
 
-// hack
-//var ONSWeapon WeaponOwner;
-
-//replication
-//{
-//	unreliable if (Role == ROLE_Authority)
-//		WeaponOwner;
-//}
-
-/*
 simulated function Destroyed()
 {
-	log(Level.TimeSeconds@self@"getting destroyed",'KDebug');
-	Super.Destroyed();
+    if ( Sparks != None )
+    {
+        Sparks.SetTimer(0, false);
+        Sparks.mRegen = false;
+        Sparks.LightType = LT_None;
+    }
+
+    if ( MuzFlash != None )
+        MuzFlash.mRegen = false;
+
+    Super.Destroyed();
 }
-*/
 
 simulated function SetBeamLocation()
 {
-	if ( (Instigator == None) || (ONSVehicle(Instigator) == None) || (ONSVehicle(Instigator).Weapons.Length <= 0) )
+	if ( Level.NetMode == NM_DedicatedServer )
     {
-        //super.SetBeamLocation();
-        //StartEffect = Location;
-		return;
+        StartEffect = Instigator.Location + Instigator.EyeHeight*Vect(0,0,1);
+        SetLocation( StartEffect );
+        return;
     }
 
-    StartEffect = ONSVehicle(Instigator).Weapons[0].WeaponFireLocation;
-//    if (Role == ROLE_Authority)
-//    	RepStartEffect = StartEffect;
-
-	SetLocation( StartEffect );
+    if ( Instigator == None )
+    {
+        SetLocation( StartEffect );
+    }
+    else
+    {
+		if ( Instigator.IsFirstPerson() )
+        {
+            if ( (Instigator.Weapon == None) || Instigator.Weapon.WeaponCentered() || (Instigator.Weapon.Instigator == None) )
+ 		        SetLocation( Instigator.Location );
+            else
+				SetLocation(Instigator.Weapon.GetEffectStart() - 60 * vector(Instigator.Controller.Rotation));
+        }
+        else
+        {
+            SetLocation( Instigator.Location + Normal(EndEffect - Instigator.Location) * 25.0 );
+        }
+        if ( Role == ROLE_Authority ) // what clients will use if their instigator is not relevant yet
+            StartEffect = Location;
+    }
 }
 
-simulated function vector SetBeamRotation()
+simulated function Vector SetBeamRotation()
 {
-	SetRotation( Rotator(EndEffect - StartEffect) );
+    if ( (Instigator != None) && PlayerController(Instigator.Controller) != None )
+        SetRotation( Instigator.Controller.GetViewRotation() );
+    else
+        SetRotation( Rotator(EndEffect - Location) );
 
-	return Normal( Vector(Rotation) );
+	return Normal(EndEffect - Location);
 }
-/*
-simulated function Tick(float dt)
+
+simulated function bool CheckMaxEffectDistance(PlayerController P, vector SpawnLocation)
 {
-	if (Role < ROLE_Authority)
-	{
-		StartEffect = RepStartEffect;
-		EndEffect = RepEndEffect;
-	}
-
-	Super.Tick(dt);
-
-	if (Role == ROLE_Authority)
-		RepEndEffect = EndEffect;
+	return !P.BeyondViewDistance(SpawnLocation,1000);
 }
-*/
-/*
-simulated function Tick(float d)
-{
-	if (Role < ROLE_Authority)
-		log(Level.TimeSeconds@self@"IN TICK -- Role"@Role@"StartEffect"@StartEffect@"EndEffect"@EndEffect,'KDebug');
 
-	Super.Tick(d);
-}
-*/
 
-/*
 simulated function Tick(float dt)
 {
     local float LocDiff, RotDiff, WiggleMe,ls;
-    local int c, n;
     local Vector BeamDir, HitLocation, HitNormal;
     local actor HitActor;
 	local PlayerController P;
@@ -104,7 +106,7 @@ simulated function Tick(float dt)
 		if ( (Instigator != None) && !Instigator.IsFirstPerson() )
 		{
 			if ( MuzFlash == None )
-				MuzFlash = Spawn(class'LinkMuzFlashBeam3rd', self);
+				MuzFlash = Spawn(class'CSTrickboardMuzFlash', self);
 		}
 		else if ( MuzFlash != None )
 			MuzFlash.Destroy();
@@ -113,7 +115,7 @@ simulated function Tick(float dt)
 		{
 			P = Level.GetLocalPlayerController();
 			if ( (P == Instigator.Controller) || CheckMaxEffectDistance(P, Location) )
-				Sparks = Spawn(class'LinkSparks', self);
+				Sparks = Spawn(class'CSTrickboardBeamSparks', self);
 		}
 	}
     ls = class'LinkFire'.default.LinkScale[Min(Links,5)];
@@ -125,54 +127,17 @@ simulated function Tick(float dt)
 
         mWaveShift = default.mWaveShift * (ls*0.6 + 1);
 
-        // create/destroy children
-        NumChildren = Min(Links+1, MAX_CHILDREN);
-		if ( Level.NetMode != NM_DedicatedServer )
-		{
-			for (c=0; c<MAX_CHILDREN; c++)
-			{
-				if ( c < NumChildren && !Level.bDropDetail && Level.DetailMode != DM_Low )
-				{
-					if ( Child[c] == None )
-						Child[c] = Spawn(class'LinkBeamChild', self);
-
-					Child[c].mSizeRange[0] = 2.0 + 4.0 * (NumChildren - c);
-				}
-				else if ( Child[c] != None )
-					Child[c].Destroy();
-			}
-		}
-
         if ( LinkColor == 0 )
         {
-            if ( Links > 0 )
-            {
-                Skins[0] = FinalBlend'XEffectMat.LinkBeamYellowFB';
-                if ( MuzFlash != None )
-					MuzFlash.Skins[0] = Texture'XEffectMat.link_muz_yellow';
-                LightHue = 40;
-            }
-            else
-            {
-                Skins[0] = FinalBlend'XEffectMat.LinkBeamGreenFB';
-                if ( MuzFlash != None )
-	                MuzFlash.Skins[0] = Texture'XEffectMat.link_muz_green';
-                LightHue = 100;
-            }
+            Skins[0] = FinalBlend'XEffectMat.ShockCoilFB';
         }
         else if ( LinkColor == 1 )
         {
-            Skins[0] = FinalBlend'XEffectMat.LinkBeamRedFB';
-            if ( MuzFlash != None )
-				MuzFlash.Skins[0] = Texture'XEffectMat.link_muz_red';
-            LightHue = 0;
+            Skins[0] = FinalBlend'CSTrickboard.BeamFB';
         }
         else
         {
-            Skins[0] = FinalBlend'XEffectMat.LinkBeamBlueFB';
-            if ( MuzFlash != None )
-	            MuzFlash.Skins[0] = Texture'XEffectMat.link_muz_blue';
-            LightHue = 160;
+            Skins[0] = FinalBlend'CSTrickboard.BeamFB';
         }
 
 		if ( MuzFlash != None )
@@ -191,16 +156,6 @@ simulated function Tick(float dt)
             Sparks.LightHue = LightHue;
             Sparks.LightBrightness = LightBrightness;
             Sparks.LightRadius = LightRadius - 3;
-        }
-
-        if ( LinkColor > 0 && LinkedPawn != None )
-        {
-            if ( (ProtSphere == None) && (Level.NetMode != NM_DedicatedServer) )
-            {
-                ProtSphere = Spawn(class'LinkProtSphere');
-                if (LinkColor == 2)
-                    ProtSphere.Skins[0] = Texture'XEffectMat.link_muz_blue';
-            }
         }
 
         OldLinks		= Links;
@@ -242,21 +197,6 @@ simulated function Tick(float dt)
     PrevLoc = Location;
     PrevRot = Rotation;
 
-    for (c=0; c<NumChildren; c++)
-    {
-        if ( Child[c] != None )
-        {
-            n = c+1;
-            Child[c].SetLocation( Location );
-            Child[c].SetRotation( Rotation );
-            Child[c].mSpawnVecA		= mSpawnVecA;
-            Child[c].mWaveShift		= mWaveShift*0.6;
-            Child[c].mWaveAmplitude = n*4.0 + mWaveAmplitude*((16.0-n*4.0)/16.0);
-            Child[c].mWaveLockEnd	= (LinkColor > 0); //mWaveLockEnd;
-            Child[c].Skins[0]		= Skins[0];
-        }
-    }
-
     if ( Sparks != None )
     {
         Sparks.SetLocation( EndEffect - BeamDir*10.0 );
@@ -269,43 +209,42 @@ simulated function Tick(float dt)
         Sparks.bDynamicLight = true;
     }
 
-    if ( LinkColor > 0 && LinkedPawn != None )
-    {
-        if ( ProtSphere != None )
-        {
-            ProtSphere.SetLocation( EndEffect );
-            ProtSphere.SetRotation( Rotation );
-            ProtSphere.bHidden = false;
-            if ( LinkedPawn.IsFirstPerson() )
-                ProtSphere.mSizeRange[0] = 20.0;
-            else
-                ProtSphere.mSizeRange[0] = 35.0;
-            ProtSphere.mSizeRange[1] = ProtSphere.mSizeRange[0];
-        }
-    }
-    else
-    {
-        if ( ProtSphere != None )
-			ProtSphere.bHidden = true;
-    }
     if ( bHitSomething && (Level.NetMode != NM_DedicatedServer) && (Level.TimeSeconds - ScorchTime > 0.07) )
     {
 		ScorchTime = Level.TimeSeconds;
 		HitActor = Trace(HitLocation, HitNormal, EndEffect + 100*BeamDir, EndEffect - 100*BeamDir, true);
 		if ( (HitActor != None) && HitActor.bWorldGeometry )
-			spawn(class'LinkScorch',,,HitLocation,rotator(-HitNormal));
+			spawn(class'ShockImpactScorch',,,HitLocation,rotator(-HitNormal));
 	}
 }
-*/
 
 defaultproperties
 {
-     mSizeRange(0)=30.000000
-     bAlwaysRelevant=True
-     mColorRange(0)=(B=240,G=40,R=40)
-     mColorRange(1)=(B=240,G=40,R=40)
-     mWaveFrequency=0.060000
-     mWaveAmplitude=6.000000
-     mWaveShift=50000.000000
-     mBendStrength=3.000000
+    EffectOffset=(X=22.000000,Y=11.000000,Z=1.400000)
+    mParticleType=PT_Beam
+    mMaxParticles=8
+    mRegenDist=35.000000
+    mSpinRange(0)=0.000000
+    mSizeRange(0)=4.000000
+    mColorRange(0)=(B=240,G=240,R=240)
+    mColorRange(1)=(B=240,G=240,R=240)
+    mAttenuate=False
+    mAttenKa=0.000000
+    mWaveFrequency=0.060000
+    mWaveAmplitude=8.000000
+    mWaveShift=100000.000000
+    mBendStrength=6.000000
+    mWaveLockEnd=True
+    LightType=LT_Steady
+    LightHue=195
+    LightSaturation=100
+    LightBrightness=255.000000
+    LightRadius=4.000000
+    bDynamicLight=True
+    bNetTemporary=False
+    bReplicateInstigator=True
+    RemoteRole=ROLE_SimulatedProxy
+    Skins(0)=FinalBlend'XEffectMat.ShockCoilFB'
+
+    Style=STY_Additive
 }

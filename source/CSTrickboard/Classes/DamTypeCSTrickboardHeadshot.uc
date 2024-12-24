@@ -1,10 +1,9 @@
-class DamTypeCSTrickboardHeadshot extends DamTypeRoadKill
-	abstract;
+class DamTypeCSTrickboardHeadshot extends DamTypeRoadKill;
 
 defaultproperties
 {
      VehicleClass=Class'CSTrickboard.CSTrickboard'
-     DeathString="%k did a 720 boardspin kickflip on %o's head"
+     DeathString="%k did an axle grind on %o's head"
      bLocationalHit=True
      bAlwaysSevers=True
      bSpecial=True

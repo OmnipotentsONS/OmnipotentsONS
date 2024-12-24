@@ -9,23 +9,10 @@ static function string GetString(
 	optional Object OptionalObject
 	)
 {
-    /* 
-	switch (Switch)
-	{
-		case 0:
-			return Default.DeployMessageString;
-            break;
-        default:
-            return Default.DeployMessageString;
-            break;
-    }
-
-    return "";
-    */
-        return Default.DeployMessageString;
+    return Default.DeployMessageString;
 }
 
 defaultproperties
 {
-     DeployMessageString="Fire for Grapple Beam (its not Link!)"
+     DeployMessageString="Fire for Grapple Beam"
 }
