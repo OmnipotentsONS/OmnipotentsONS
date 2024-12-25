@@ -28,6 +28,8 @@ var     Sound                           WeaponChangeSound;
 var     Texture                           PGCrosshairTexture, NormalCrossTexture;
 var     Color                               PGCrosshairColor, NormalCrossColor;
 
+var Controller FirstDriver;
+
 
 replication
 {
@@ -53,7 +55,11 @@ function bool Dodge(eDoubleClickDir DoubleClickMove)
 function KDriverEnter(Pawn P)
 {
 	bHeadingInitialized = False;
-  P.ReceiveLocalizedMessage(class'CSMarvin.CSMarvinEnterMessage', 0);
+    P.ReceiveLocalizedMessage(class'CSMarvin.CSMarvinEnterMessage', 0);
+
+    // don't delete vehicle if it's parked
+    bNeverReset=true;
+
 	Super.KDriverEnter(P);
 }
 
@@ -413,7 +419,6 @@ simulated function SwitchWeapon(byte F)
     {
         CrosshairTexture=NormalCrossTexture;
         CrosshairColor = NormalCrossColor;
-         
     }
     else if(F==2)
     {
@@ -421,21 +426,59 @@ simulated function SwitchWeapon(byte F)
         CrosshairColor = PGCrosshairColor;
     }
 
-    PlayerController(Controller).ReceiveLocalizedMessage(class'CSMarvin.CSMarvinEnterMessage', int(F));
     SetActiveWeapon(F-1);
     ServerChangeWeapon(F);
 }
 
 function ServerChangeWeapon(byte F)
 {
-   If (Weapons.Length > 0) SetActiveWeapon(F-1);
-   // shouldn't need this check but somehow this is getting called
-   // generating this in the log
-   // CSMarvin (Function Onslaught.ONSVehicle.SetActiveWeapon:000F) Accessed array 'Weapons' out of bounds (0/0)
-  // CSMarvin (Function Onslaught.ONSVehicle.SetActiveWeapon:000F) Accessed None 'Weapons'
+    If (Weapons.Length > 0)
+        SetActiveWeapon(F-1);
 }
 
+function bool TryToDrive(Pawn P)
+{
+    local bool StartedDriving;
+    local Controller PawnController;
 
+    // if super.TryToDrive is successful, the pawn's controller is set to none
+    // when assigned to the vehicle, so keep a copy here
+    PawnController = P.Controller;
+
+    // in case there was a pilot, but they switched teams
+    // relinquish pilot status
+    if(FirstDriver != None && FirstDriver.GetTeamNum() != Team)
+        FirstDriver=None;
+
+    if(FirstDriver == None)
+    {
+        StartedDriving = super.TryToDrive(P);
+        if(StartedDriving)
+        {
+            FirstDriver = PawnController;
+            // need to use PawnController.Pawn, not Pawn since calling 
+            // super.TryToDrive disconnects it.  We need to send message to the vehicle
+            // which is the new pawn of pawncontroller
+            PawnController.Pawn.ReceiveLocalizedMessage(class'CSMarvinMessage', 0);
+            return StartedDriving;
+        }
+    }
+    else if(FirstDriver == PawnController)
+    {
+        StartedDriving = super.TryToDrive(P);
+        if(StartedDriving)
+        {
+            PawnController.Pawn.ReceiveLocalizedMessage(class'CSMarvinMessage', 0);
+            return StartedDriving;
+        }
+    }
+    else
+    {
+        P.ReceiveLocalizedMessage(class'CSMarvinMessage', 1);
+    }
+
+    return false;
+}
 
 defaultproperties
 {
@@ -469,7 +512,7 @@ defaultproperties
      FPCamPos=(Z=50.000000)
      TPCamWorldOffset=(Z=130.000000)
      VehiclePositionString="in a Q-36 Space Modulator"
-     VehicleNameString="Q-36 Space Modulator 2.5"
+     VehicleNameString="Q-36 Space Modulator 2.6"
      AirSpeed=800.000000
      AccelRate=2800.000000
      AirControl=0.300000
@@ -592,5 +635,4 @@ defaultproperties
     PGCrosshairColor=(B=255,G=255,R=255,A=255)
     NormalCrossTexture=Texture'ONSInterface-TX.tankBarrelAligned'
 	NormalCrossColor=(R=0,G=255,B=0,A=255)
-
 }

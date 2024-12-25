@@ -70,7 +70,10 @@ state InstantFireMode
 {
 	function Fire(Controller C)
 	{
-        SpawnProjectile(ProjectileClass, False);
+        if(Team == 0)
+            SpawnProjectile(class'CSMarvinMissileProjectileRed', False);
+        else
+            SpawnProjectile(class'CSMarvinMissileProjectileBlue', False);
 	}
 
     function AltFire(Controller C)
@@ -427,7 +430,7 @@ defaultproperties
     AltFireSoundClass=sound'CSMarvin.Transporter'
     FireForce="Laser01"
     AltFireForce="Laser01"
-    ProjectileClass=Class'CSMarvin.CSMarvinMissileProjectile'
+    ProjectileClass=Class'CSMarvin.CSMarvinMissileProjectileRed'
 
     FireInterval=0.22
     AltFireInterval=0.1

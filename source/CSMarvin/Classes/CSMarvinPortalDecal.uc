@@ -1037,10 +1037,12 @@ static final function Coords Transpose(Coords A)
 
 defaultproperties
 {
-     FramerateDivider=4
+     //FramerateDivider=4
+     FramerateDivider=3
      GrowthTime=0.500000
      MaxShrinkage=0.250000
-     MaxGrowth=5.000000
+     // MaxGrowth=5.000000
+     MaxGrowth=7.000000
      DefaultDrawscale=1.000000
      DrawType=DT_StaticMesh
      StaticMesh=StaticMesh'CSMarvin.MeshPortal'
@@ -1049,4 +1051,6 @@ defaultproperties
      bUnlit=True
      TransientSoundVolume=1.000000
      bCollideActors=True
+
+
 }
