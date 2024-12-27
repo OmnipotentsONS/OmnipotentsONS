@@ -57,9 +57,6 @@ function KDriverEnter(Pawn P)
 	bHeadingInitialized = False;
     P.ReceiveLocalizedMessage(class'CSMarvin.CSMarvinEnterMessage', 0);
 
-    // don't delete vehicle if it's parked
-    bNeverReset=true;
-
 	Super.KDriverEnter(P);
 }
 
@@ -480,6 +477,11 @@ function bool TryToDrive(Pawn P)
     return false;
 }
 
+event CheckReset()
+{
+    // do nothing, never reset
+}
+
 defaultproperties
 {
      TrailEffectClass=class'Onslaught.ONSAttackCraftExhaust'
@@ -512,7 +514,7 @@ defaultproperties
      FPCamPos=(Z=50.000000)
      TPCamWorldOffset=(Z=130.000000)
      VehiclePositionString="in a Q-36 Space Modulator"
-     VehicleNameString="Q-36 Space Modulator 2.6"
+     VehicleNameString="Q-36 Space Modulator 2.7"
      AirSpeed=800.000000
      AccelRate=2800.000000
      AirControl=0.300000

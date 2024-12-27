@@ -74,7 +74,7 @@ simulated function Timer()
 {
     local float dist;
 
-    dist = VSize(Owner.Location - Location);
+    dist = VSize(Instigator.Location - Location);
     if(dist > 1000)
     {
         RotationRate.Roll += (3000 - dist / 3000) * 40;

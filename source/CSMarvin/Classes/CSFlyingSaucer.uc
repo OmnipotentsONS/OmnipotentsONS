@@ -44,7 +44,7 @@ defaultproperties
      FPCamPos=(Z=50.000000)
      TPCamWorldOffset=(Z=130.000000)
      VehiclePositionString="in a Flying Saucer"
-     VehicleNameString="Flying Saucer 2.6"
+     VehicleNameString="Flying Saucer 2.7"
      AirSpeed=800.000000
      AccelRate=2800.000000
      AirControl=0.300000
