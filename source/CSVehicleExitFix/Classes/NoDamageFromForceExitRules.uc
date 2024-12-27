@@ -2,12 +2,13 @@ class NoDamageFromForceExitRules extends GameRules;
 
 function int NetDamage( int OriginalDamage, int Damage, pawn injured, pawn instigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType )
 {
+    local bool inSpawnProtection;
+
+    inSpawnProtection = Level.TimeSeconds - injured.SpawnTime < DeathMatch(Level.Game).SpawnProtectionTime;
     // if we are in spawn protection and crushed ourselves, no damage
-    log("NetDamage: injured="$injured$" instigatedBy="$instigatedBy$" damagetype="$DamageType);
-    if(((Level.TimeSeconds - injured.SpawnTime < DeathMatch(Level.Game).SpawnProtectionTime)) &&
-        ((instigatedBy == None) || (Vehicle(instigatedBy) != None)))
+    if(inSpawnProtection &&
+        ((instigatedBy == None) || (Vehicle(instigatedBy) != None && Vehicle(instigatedBy).Driver == None)))
     {
-        log("NO DMG SpawnTime="$injured.SpawnTime$" Level.TimeSeconds="$Level.TimeSeconds$" spawnprotection="$DeathMatch(Level.Game).SpawnProtectionTime);
         return 0;
     }
 
