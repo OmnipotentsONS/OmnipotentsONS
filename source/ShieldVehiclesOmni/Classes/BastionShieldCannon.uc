@@ -463,18 +463,18 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 
 defaultproperties
 {
-     MaxShieldHealth=3600.000000
+     MaxShieldHealth=3400.000000
      MaxDelayTime=0.330000
      ShieldRechargeRate=325.000000
      ShieldRechargeRateActive=150.000
-     CurrentShieldHealth=3000.000000
+     CurrentShieldHealth=2800.000000
      YawBone="8WheelerTop"
      PitchBone="TurretAttach"
      PitchUpLimit=18000
      PitchDownLimit=58000
      WeaponFireAttachmentBone="Firepoint"
-     WeaponFireOffset=100
-     RotationsPerSecond=0.500000
+     WeaponFireOffset=90
+     RotationsPerSecond=0.250000
      bShowChargingBar=True
      RedSkin=Texture'Bastion_Tex.Bastion.RedBastion'
      BlueSkin=Texture'Bastion_Tex.Bastion.BlueBastion'
@@ -496,10 +496,10 @@ defaultproperties
      
      
      LinkMultiplier=0.8 // number of linkers +1 * shield Recharge rate.
-     SelfHealAmount=75  // this is health, HealDamage takes damage points (typically from Link) so divided it by (Engine.Vehicle).LinkHealthMult
+     SelfHealAmount=40  // this is health, HealDamage takes damage points (typically from Link) so divided it by (Engine.Vehicle).LinkHealthMult
      HealTeamBaseAmount=150  // this is real health
-     SelfHealMultiplier=0.33  //self heal from Shield Combo  pt heal for 1  pts damage
-     MaxDamageHealthHeal= 350  // max self heal from Shield combo.
+     SelfHealMultiplier=0.45  //self heal from Shield Combo  pt heal for 1  pts damage
+     MaxDamageHealthHeal= 225  // max self heal from Shield combo.
      NodeHealAmount=130 // every 1.5s, link gun is 112 every 1.5s
      RegenerationMaterial=Shader'XGameShaders.PlayerShaders.PlayerShieldSh'
 }
