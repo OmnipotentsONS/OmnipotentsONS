@@ -344,7 +344,9 @@ state InstantFireMode
 							else {
 								Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, Momentum*X, DamageType);
 								// heal itself
-								 if (MyLinkScorpion!=None&&MyLinkScorpion.Health<MyLinkScorpion.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
+								 if (MyLinkScorpion!=None&&MyLinkScorpion.Health<MyLinkScorpion.HealthMax&&
+								    //(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
+								    (ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!ONSPowerCore(HealObjective).IsInState('NeutralCore')))
                      MyLinkScorpion.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
               }       
 							if ( Beam != None )

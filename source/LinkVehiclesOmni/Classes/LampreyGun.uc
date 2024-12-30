@@ -287,7 +287,7 @@ simulated function tick(float dt)
 												Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, Momentum*X, DamageType);
 												// heal itself
 												// Error here? Warning: LampreyGun ONS-Dria-Randomizer-V22.LampreyGun (Function LinkVehiclesOmni.LampreyGun.InstantFireMode.Tick:0672) Accessed None 'LockedPawn'
-												 if (MyLamprey!=None&&MyLamprey.Health<MyLamprey.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
+												 if (MyLamprey!=None&&MyLamprey.Health<MyLamprey.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!ONSPowerCore(HealObjective).IsInState('NeutralCore')))
 				                     MyLamprey.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
 											}
 

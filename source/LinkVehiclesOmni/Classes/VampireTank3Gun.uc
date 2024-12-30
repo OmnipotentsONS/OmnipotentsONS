@@ -346,7 +346,7 @@ state InstantFireMode
 							else {
 								Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, Momentum*X, DamageType);
 								// heal itself
-								 if (MyVampireTank!=None&&MyVampireTank.Health<MyVampireTank.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
+								 if (MyVampireTank!=None&&MyVampireTank.Health<MyVampireTank.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!ONSPowerCore(HealObjective).IsInState('NeutralCore')))
                      MyVampireTank.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
 							}
 
@@ -807,7 +807,7 @@ defaultproperties
      SoundVolume=150
     
      LinkMultiplier = 0.0;  //Removed 12/2023 smaller since it heals itself
-		 SelfHealMultiplier = 1.0
+		 SelfHealMultiplier = 1.20  //this is healing DAMAGE, not purely health
 		 VehicleDamageMult = 1.35  // set here instead DamType
 		 VehicleHealScore=350
 		 RangeExtPerLink=500 // how much range is extended per linker

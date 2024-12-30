@@ -386,7 +386,7 @@ simulated function ClientStartFire(Controller C, bool bWasAltFire)
 													else {
 															Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, Momentum*X, DamageType);
 															// heal itself
-								 							if (MyTickScorpion!=None&&MyTickScorpion.Health<MyTickScorpion.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!LockedPawn.IsInState('NeutralCore')))
+								 							if (MyTickScorpion!=None&&MyTickScorpion.Health<MyTickScorpion.HealthMax&&(ONSPowerCore(HealObjective)==None||ONSPowerCore(HealObjective).PoweredBy(Team)&&!ONSPowerCore(HealObjective).IsInState('NeutralCore')))
                      								MyTickScorpion.HealDamage(Round(AdjustedDamage * SelfHealMultiplier), Instigator.Controller, DamageType);
 													}
 

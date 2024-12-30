@@ -545,7 +545,7 @@ defaultproperties
      TPCamWorldOffset=(Z=300.000000)
      
      VehiclePositionString="in a Vampire Tank"
-     VehicleNameString="Vampire Tank 3.47"
+     VehicleNameString="Vampire Tank 3.48"
      RanOverDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Roadkill'
      CrushedDamageType=Class'LinkVehiclesOmni.DamTypeLinkTank3Pancake'
      HealthMax=1366.000000
