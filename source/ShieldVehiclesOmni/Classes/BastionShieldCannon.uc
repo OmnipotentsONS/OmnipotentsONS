@@ -474,7 +474,7 @@ defaultproperties
      PitchDownLimit=58000
      WeaponFireAttachmentBone="Firepoint"
      WeaponFireOffset=90
-     RotationsPerSecond=0.250000
+     RotationsPerSecond=0.180000
      bShowChargingBar=True
      RedSkin=Texture'Bastion_Tex.Bastion.RedBastion'
      BlueSkin=Texture'Bastion_Tex.Bastion.BlueBastion'
