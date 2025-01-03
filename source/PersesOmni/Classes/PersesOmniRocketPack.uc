@@ -278,7 +278,7 @@ defaultproperties
      PitchBone="RocketPacks"
      PitchUpLimit=16300
      WeaponFireAttachmentBone="RocketPackFirePoint"
-     DualFireOffset=50.000000
+     DualFireOffset=45.000000
      Spread=0.001000
      FireInterval=0.400000
      FireSoundClass=Sound'PersesOmni.MercIgnite'

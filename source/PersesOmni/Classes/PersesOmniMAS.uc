@@ -26,7 +26,36 @@ var array<name> HiddenBones;
 var array<Material> DestroyedSkins;
 var float ThrottleFixTime, FixedThrottle, FixedSteering, BotEnterTime;
 
-/* Bio Shake fix
+
+// Not sure we need Reduce Shake
+/*replication
+{
+	reliable if (Role == ROLE_Authority)
+		ReduceShake;
+}
+
+
+simulated function ReduceShake()
+{
+	local float ShakeScaling;
+	local PlayerController Player;
+
+	if (Controller == None || PlayerController(Controller) == None)
+		return;
+
+	Player = PlayerController(Controller);
+	ShakeScaling = VSize(Player.ShakeRotMax) / 7500;
+
+	if (ShakeScaling > 1)
+	{
+		Player.ShakeRotMax /= ShakeScaling;
+		Player.ShakeRotTime /= ShakeScaling;
+		Player.ShakeOffsetMax /= ShakeScaling;
+	}
+}
+*/
+
+// Bio Shake fix
 simulated function SpecialCalcBehindView(PlayerController PC, out actor ViewActor, out vector CameraLocation, out rotator CameraRotation )
 {
     // no stupid roll
@@ -40,7 +69,9 @@ simulated function SpecialCalcBehindView(PlayerController PC, out actor ViewActo
 
     super.SpecialCalcBehindView(PC, ViewActor, CameraLocation, CameraRotation);
 }
-*/
+
+
+
 
 simulated function String GetDebugName()
 {
@@ -91,20 +122,23 @@ function bool ImportantVehicle()
 	return true;
 }
 
-/*
+
 function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
 {
 
     //buffs
-    if (InStr (DamageType.name, "BioGlob") > -1)  Damage *= 3.0;
+//   if (class'BioHandler'.static.IsBioDamage(DamageType)) Damage *= 3.0;
+// just do gobs not lasers.
+
+   if (DamageType == class'DamTypeBioGlob')  Damage *= 3.00;
     
     // nerfs
     // None it has 7500 health.
     
     Super.TakeDamage(Damage, instigatedBy, Hitlocation, Momentum, damageType);
-
+   // ReduceShake();
 }
-*/
+
 
 function bool NeedToTurn(vector targ)
 {
@@ -520,8 +554,8 @@ defaultproperties
      MomentumMult=0.010000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Perses"
-     VehicleNameString="Perses Omni 2.00"
-     Build="2024-11-16 00:00"
+     VehicleNameString="Perses Omni 2.01"
+     Build="2025-01-03 00:00"
      VehicleDescription="Perses, the ancient Greek Titan god of destruction. And destruction is what the Perses Mobile Assault Station is all about."
      RanOverDamageType=Class'PersesOmni.DamTypePersesOmniRoadkill'
      CrushedDamageType=Class'PersesOmni.DamTypePersesOmniPancake'
