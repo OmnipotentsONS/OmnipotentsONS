@@ -1,13 +1,6 @@
 class OmniMantaHealthNerf extends Mutator config;
-var() config bool bDebug;
-var() config int MaxMantaHealth;
-
-function Initialize()
-{
-
-	  Log("Mutator "@ FriendlyName@" Initialized",'OmniMantas');
-	  
-}
+var config bool bDebug;
+var config int MaxMantaHealth;
 
 
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
@@ -22,16 +15,31 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
               manta.default.Health = MaxMantaHealth;
               manta.HealthMax = MaxMantaHealth;
               manta.Health = MaxMantaHealth;
+              if (bDebug) log("Health on"@manta@" now "@manta.default.Health@" and max "@manta.default.HealthMax,'OmniMantas');
           }    
      }
      
      return true;
 }
 
+static function FillPlayInfo (PlayInfo PlayInfo)
+{
+	PlayInfo.AddClass(Default.Class);
+	PlayInfo.AddSetting("Omni Manta Health Nerf", "MaxMantaHealth", "Maximum health for any Manta", 0, 0, "Text","4;1:5000");
+	PlayInfo.AddSetting("Omni Manta Health Nerf", "bDebug", "Enable Debug Logging", 0, 1, "Check");
+  
+    
+  PlayInfo.PopClass();
+  super.FillPlayInfo(PlayInfo);
+}
+
+
+
 defaultproperties
 {
      bAddToServerPackages=True
+     bDebug=False
      FriendlyName="Omni Manta Health Nerf"
-     Description="Nerf the health of any Manta to 325 or less..."
+     Description="Nerf the health of any Manta to 325 (default) or less..."
      MaxMantaHealth=325
 }

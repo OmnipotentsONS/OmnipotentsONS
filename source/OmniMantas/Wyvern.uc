@@ -15,7 +15,7 @@ defaultproperties
      ShutDownSound=Sound'CicadaSnds.Flight.CicadaShutdown'
      CrossHairColor=(B=192,G=192,R=192)
      VehiclePositionString="in a Wyvern"
-     VehicleNameString="Wyvern 1.1"
+     VehicleNameString="Wyvern 1.01"
      RanOverDamageType=Class'OmniMantas.WyvernDamTypeRoadkill'
      CrushedDamageType=Class'OmniMantas.WyvernDamTypePancake'
      HealthMax=150.000000
