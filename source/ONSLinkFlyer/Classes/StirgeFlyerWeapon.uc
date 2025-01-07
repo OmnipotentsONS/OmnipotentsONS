@@ -1,6 +1,6 @@
 // ============================================================================
-// LinkFlyer                                                        ItsMeAgain
-// Weapon, Mostly copied from StirgeFlyerWeapon
+// SitrgeFlyer                                                        pooty
+// Weapon, Mostly copied from LinkFlyerWeapon
 // ============================================================================
 class StirgeFlyerWeapon extends ONSWeapon;
 
@@ -711,7 +711,7 @@ defaultproperties
      FireForce="Explosion05"
      DamageMin=0
      DamageMax=0
-     TraceRange=5000.000000
+     TraceRange=5500.000000
      ProjectileClass=Class'ONSLinkFlyer.StirgeFlyerProjectile'
      AIInfo(0)=(bLeadTarget=True,WarnTargetPct=0.990000,RefireRate=0.990000)
      AIInfo(1)=(bInstantHit=True,WarnTargetPct=0.990000,RefireRate=0.990000)

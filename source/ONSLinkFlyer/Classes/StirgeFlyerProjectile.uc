@@ -200,7 +200,7 @@ defaultproperties
      
      Speed=3000.000000
      MaxSpeed=5000.000000
-     Damage=38.000000
+     Damage=41.000000
      DamageRadius=275.000000
      MomentumTransfer=5000.000000
      MyDamageType=Class'ONSLinkFlyer.DamTypeStirgeFlyerPlasma'

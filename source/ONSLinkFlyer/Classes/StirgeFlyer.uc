@@ -22,7 +22,7 @@ defaultproperties
     RedSkin=Combiner'StirgeFlyer_Tex.Stirge.StirgeCombinerRed'
     BlueSkin=Combiner'StirgeFlyer_Tex.Stirge.StirgeCombinerBlue'
     VehiclePositionString="in a Stirge"
-    VehicleNameString="Stirge 1.01"
+    VehicleNameString="Stirge 1.02"
     Mesh=SkeletalMesh'StirgeFlyer_Mesh.Stirge.StirgeFinal'
     Health=300
     HealthMax=325
