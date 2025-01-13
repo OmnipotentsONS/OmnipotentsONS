@@ -169,7 +169,7 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Heavy Goliath"
-     VehicleNameString="Heavy Goliath 2.4"
+     VehicleNameString="Heavy Goliath 2.41"
      RanOverDamageType=Class'HeavyTankV2Omni.DamTypeTankRoadkill'
      CrushedDamageType=Class'HeavyTankV2Omni.DamTypeTankPancake'
      MaxDesireability=0.800000
@@ -205,6 +205,6 @@ defaultproperties
          bDoSafetime=True
          KFriction=0.500000
      End Object
-     KParams=KarmaParamsRBFull'Onslaught.ONSHoverTank.KParams0'
+     KParams=KarmaParamsRBFull'HeavyTankV2Omni.HeavyTankV2Omni.KParams0'
 
 }

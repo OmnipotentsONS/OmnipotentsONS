@@ -12,5 +12,6 @@ defaultproperties
      bRagdollBullet=True
      bBulletHit=True
      FlashFog=(X=600.000000)
-     KDamageImpulse=2000.000000
+     KDamageImpulse=1500.000000
+     VehicleDamageScaling=1.4
 }

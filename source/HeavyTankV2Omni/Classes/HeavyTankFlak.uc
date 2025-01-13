@@ -99,7 +99,7 @@ defaultproperties
      ImpactSounds(5)=Sound'XEffects.Impact2'
      Speed=17500.000000
      MaxSpeed=20000.000000
-     Damage=18.000000
+     Damage=19.000000
      MomentumTransfer=10000.000000
      MyDamageType=Class'HeavyTankV2Omni.DamTypeHeavyTankFlak'
      DrawType=DT_StaticMesh

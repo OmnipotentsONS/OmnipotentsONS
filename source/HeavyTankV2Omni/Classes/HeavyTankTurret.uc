@@ -108,7 +108,7 @@ defaultproperties
      bDoOffsetTrace=True
      RedSkin=Shader'VMVehicles-TX.NEWprvGroup.newPRVredSHAD'
      BlueSkin=Shader'VMVehicles-TX.NEWprvGroup.newPRVshad'
-     FireInterval=0.5
+     FireInterval=0.67  //SR is .7
      //AltFireInterval=2.000000
      FlashEmitterClass=Class'Onslaught.ONSPRVSideGunMuzzleFlash'
      FireSoundClass=Sound'ONSVehicleSounds-S.PRV.PRVFire02'
@@ -117,9 +117,9 @@ defaultproperties
      FireForce="PRVSideFire"
      //AltFireForce="Explosion05"
      DamageType=Class'HeavyTankV2Omni.DamTypeHeavyShockCannon'
-     DamageMin=55
-     DamageMax=55
-     Momentum=50000.000000
+     DamageMin=50 // SR is 45
+     DamageMax=50
+     Momentum=40000.000000  //SR is 60000
     // AltFireProjectileClass=Class'HeavyTankV2Omni.HeavyTankMissle'
      ShakeRotMag=(X=60.000000,Y=20.000000)
      ShakeRotRate=(X=1000.000000,Y=1000.000000)

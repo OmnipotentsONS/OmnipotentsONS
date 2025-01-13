@@ -4,6 +4,7 @@ class HeavyTankMissle extends Projectile;
 
 var Actor HomingTarget;
 var vector InitialDir;
+var float AccelRate;
 
 var Emitter SmokeTrailEffect;
 var Effects Corona;
@@ -11,7 +12,6 @@ var Effects Corona;
 var Emitter		TrailEmitter;
 var class<Emitter>	TrailClass;
 
-var float AccelRate;
 var() float NextFire;
 
 replication
@@ -53,6 +53,22 @@ simulated function PostNetBeginPlay()
 
 	Acceleration = Normal(Velocity) * AccelRate;
 }
+
+function SetHomingTarget()
+{
+	if (HomingTarget != None)
+	    {
+	     if(HomingTarget.IsA('Vehicle'))
+		  Vehicle(HomingTarget).NotifyEnemyLostLock();
+        }
+	//HomingTarget = NewTarget;
+	if (HomingTarget != None)
+	    {
+	     if(HomingTarget.IsA('Vehicle'))
+		     Vehicle(HomingTarget).NotifyEnemyLockedOn();
+	    }
+}
+
 
 simulated function Timer()
 {
@@ -148,7 +164,7 @@ defaultproperties
      MaxSpeed=10000.000000
      //Damage=60.000000
      Damage=175
-     DamageRadius=450.000000
+     DamageRadius=550.000000
      MomentumTransfer=10000.000000
      MyDamageType=Class'HeavyTankV2Omni.DamTypeHeavyTankDrone'
      ExplosionDecal=Class'Onslaught.ONSRocketScorch'

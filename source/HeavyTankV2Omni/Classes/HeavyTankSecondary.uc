@@ -93,11 +93,15 @@ state InstantFireMode
 		if (S != None)
 		{
 			if (AIController(C) != None)
+			{
 				S.HomingTarget = C.Enemy;
+				S.SetHomingTarget();
+			}	
 			else
 			{
 				BestAim = LockAim;
 				S.HomingTarget = C.PickTarget(BestAim, BestDist, vector(WeaponFireRotation), WeaponFireLocation, MaxLockRange);
+				S.SetHomingTarget();
 			}
 		}
 	}
