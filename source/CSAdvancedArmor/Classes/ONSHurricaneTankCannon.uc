@@ -232,7 +232,7 @@ defaultproperties
      TeamProjectileClasses(0)=Class'CSAdvancedArmor.Proj_TankShellRed'
      TeamProjectileClasses(1)=Class'CSAdvancedArmor.Proj_TankShellBlue'
      MinAim=0.900000
-     MaxLockRange=30000.000000
+     MaxLockRange=15000 //30000.000000
      LockAim=0.975000
      YawBone="Object01"
      PitchBone="Object02"

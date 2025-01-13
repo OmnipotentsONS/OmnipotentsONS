@@ -348,7 +348,7 @@ defaultproperties
      MomentumMult=0.300000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Hurricane"
-     VehicleNameString="Hurricane 2.0"
+     VehicleNameString="Hurricane 2.01"
      RanOverDamageType=Class'CSAdvancedArmor.DamType_HurTankRoadkill'
      CrushedDamageType=Class'CSAdvancedArmor.DamType_HTankPancake'
      MaxDesireability=0.800000
