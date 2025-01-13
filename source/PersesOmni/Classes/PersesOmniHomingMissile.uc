@@ -358,19 +358,19 @@ defaultproperties
 {
      HomingExtrapolationMaxTime=1.000000
      HomingExtrapolationMaxError=10.000000
-     HomingAnglePerSecond=6.000000
+     HomingAnglePerSecond=8.00 //6.000000
      HomingPredictionTimeFactor=0.500000
      HomingPredictionMaxTime=1.000000
      HomingCheckInterval=0.100000
      HomingMaxAimAngle=0.100000
      bAutoHoming=True
-     AutoHomingViewRange=3500.000000
+     AutoHomingViewRange=3000
      AutoHomingViewAngle=0.500000
      InitialHomingViewRange=10000.000000
      InitialHomingViewAngle=0.850000
      LateralDampenFactor=0.500000
      bNoHomingTarget=True
-     AccelRate=5000.000000
+
      FlightParticleSystem=Class'PersesOmni.PersesOmniHomingMissileFlightEffects'
      ExplosionParticleSystem=Class'XEffects.NewExplosionA'
      ExplosionSound=Sound'WeaponSounds.BaseImpactAndExplosions.BExplosion3'
@@ -379,11 +379,12 @@ defaultproperties
      SplashMomentum=50000.000000
      bAutoInit=True
      ProjectileName="Homing Missile"
-     Speed=2450.000000
-     MaxSpeed=3700.000000
-     Damage=75.000000  // 1.0 multiplier
-     DamageRadius=150.000000
-     MomentumTransfer=4.5000
+     Speed=4500.000000
+     MaxSpeed=7000.000000
+     AccelRate=5000.000000
+     Damage=175.000000  // 1.0 multiplier, but does a bit extra Kdamage
+     DamageRadius=200.000000
+     MomentumTransfer=4.7500
      MyDamageType=Class'PersesOmni.DamTypePersesOmniHomingHit'
      ExplosionDecal=Class'XEffects.RocketMark'
      bNetTemporary=False

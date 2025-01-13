@@ -58,4 +58,10 @@ defaultproperties
      Spread=0.007500  // GII is 0, normal G is 0.015
      FireInterval=2.20000 // little faster than goliath.
      DrawScale=0.900000
+     
+     //PitchUpLimit=6000
+//     PitchDownLimit=61500
+          
+     PitchUpLimit=16300
+     PitchDownLimit=59500
 }
