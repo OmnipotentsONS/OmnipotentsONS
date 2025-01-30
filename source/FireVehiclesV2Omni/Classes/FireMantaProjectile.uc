@@ -176,7 +176,7 @@ defaultproperties
      MaxSpeed=8500.000000
      Damage=65.000000
      DamageRadius=300.000000
-     NumFireBlobs=5
+     NumFireBlobs=4
      MomentumTransfer=10000.000000
      MyDamageType=Class'FireVehiclesV2Omni.FlameKill'
      ExplosionDecal=Class'Onslaught.ONSRocketScorch'

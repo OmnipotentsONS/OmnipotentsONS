@@ -471,7 +471,7 @@ defaultproperties
      DriverDamageMult=0.000000
      MomentumMult=2.500000 // reduce knockaround default is 4.000
      VehiclePositionString="in a FireHound"
-     VehicleNameString="FireHound 2.95"
+     VehicleNameString="FireHound 2.96"
      RanOverDamageType=Class'FireVehiclesV2Omni.FireHoundRoadkill'
      HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.DixieHorn'
      HornSounds(1)=Sound'GorzWheels_Sounds.FireHound.FireHoundHorn'

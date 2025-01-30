@@ -23,7 +23,7 @@ defaultproperties
          UseRotationFrom=PTRS_Offset
          StartSpinRange=(Z=(Max=1.000000))
          SizeScale(0)=(RelativeSize=1.000000)
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=5.000000)
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.500000)
          StartSizeRange=(X=(Min=-0.500000,Max=-0.500000))
          InitialParticlesPerSecond=500.000000
          LifetimeRange=(Min=0.200000,Max=0.200000)
@@ -43,9 +43,9 @@ defaultproperties
          MaxParticles=3
          UseRotationFrom=PTRS_Actor
          StartSpinRange=(X=(Max=1.000000))
-         SizeScale(0)=(RelativeSize=1.000000)
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=3.000000)
-         StartSizeRange=(X=(Min=30.000000,Max=40.000000))
+         SizeScale(0)=(RelativeSize=0.3500000)
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.0000)
+         StartSizeRange=(X=(Min=12.000000,Max=24.000000))
          InitialParticlesPerSecond=5000.000000
          Texture=Texture'AW-2004Explosions.Fire.Fireball3'
          LifetimeRange=(Min=0.100000,Max=0.200000)
@@ -69,8 +69,8 @@ defaultproperties
          UseRotationFrom=PTRS_Actor
          StartSpinRange=(X=(Max=1.000000))
          SizeScale(0)=(RelativeSize=1.000000)
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=2.000000)
-         StartSizeRange=(X=(Min=20.000000,Max=20.000000))
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.60000)
+         StartSizeRange=(X=(Min=12.000000,Max=12.000000))
          InitialParticlesPerSecond=5000.000000
          Texture=Texture'AW-2004Explosions.Fire.Fireball3'
          LifetimeRange=(Min=0.200000,Max=0.200000)
@@ -94,8 +94,8 @@ defaultproperties
          UseRotationFrom=PTRS_Actor
          StartSpinRange=(X=(Max=1.000000))
          SizeScale(0)=(RelativeSize=1.000000)
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=2.000000)
-         StartSizeRange=(X=(Min=10.000000,Max=10.000000))
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.660000)
+         StartSizeRange=(X=(Min=4.000000,Max=8.000000))
          InitialParticlesPerSecond=5000.000000
          Texture=Texture'AW-2004Explosions.Fire.Fireball3'
          LifetimeRange=(Min=0.100000,Max=0.200000)
@@ -120,7 +120,7 @@ defaultproperties
          StartSpinRange=(X=(Max=1.000000))
          SizeScale(0)=(RelativeSize=1.000000)
          SizeScale(1)=(RelativeTime=1.000000,RelativeSize=2.000000)
-         StartSizeRange=(X=(Min=5.000000,Max=5.000000))
+         StartSizeRange=(X=(Min=2.000000,Max=3.000000))
          InitialParticlesPerSecond=5000.000000
          Texture=Texture'AW-2004Explosions.Fire.Fireball3'
          LifetimeRange=(Min=0.100000,Max=0.200000)

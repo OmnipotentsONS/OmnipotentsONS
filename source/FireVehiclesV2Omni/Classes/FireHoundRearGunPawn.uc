@@ -49,8 +49,9 @@ function ShouldTargetMissile(Projectile P)
 
 defaultproperties
 {
-     GunClass=Class'FireHoundRearGun'
-     CameraBone="Object02"
+     GunClass=Class'FireVehiclesV2Omni.FireHoundRearGun'
+     //CameraBone="Object02"
+     CameraBone="REARgunTURRET"
      bHasAltFire=False
      bDrawDriverInTP=False
      //DrivePos=(Z=130.000000)

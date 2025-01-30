@@ -171,7 +171,7 @@ defaultproperties
      BurnDamageType=Class'FireVehiclesV2Omni.Burned'
      Speed=17000.000000
      MaxSpeed=17000.000000
-     Damage=320.000000
+     Damage=340.000000
      DamageRadius=1001.000000
      MomentumTransfer=15000.000000
      MyDamageType=Class'FireVehiclesV2Omni.FireBall'

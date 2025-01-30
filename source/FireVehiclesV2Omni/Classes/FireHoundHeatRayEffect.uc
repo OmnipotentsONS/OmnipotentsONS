@@ -107,7 +107,7 @@ defaultproperties
          StartSpinRange=(X=(Max=1.000000))
          SizeScale(0)=(RelativeSize=0.300000)
          SizeScale(1)=(RelativeTime=1.000000)
-         StartSizeRange=(X=(Min=75.000000,Max=125.000000))
+         StartSizeRange=(X=(Min=16.000000,Max=30.000000))
          InitialParticlesPerSecond=20.000000
          Texture=Texture'AW-2004Particles.Weapons.PlasmaStar2'
          LifetimeRange=(Min=0.200000,Max=0.200000)
@@ -133,8 +133,8 @@ defaultproperties
          UseRotationFrom=PTRS_Actor
          StartSpinRange=(X=(Max=0.025000))
          SizeScale(0)=(RelativeSize=0.250000)
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.000000)
-         StartSizeRange=(X=(Min=8.000000,Max=30.000000))
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=0.650000)
+         StartSizeRange=(X=(Min=8.000000,Max=18.000000))
          InitialParticlesPerSecond=900.000000
          Texture=Texture'AW-2004Particles.Weapons.SmokePanels1'
          TextureUSubdivisions=4
@@ -164,8 +164,8 @@ defaultproperties
          StartLocationRange=(X=(Max=20.000000))
          UseRotationFrom=PTRS_Actor
          SizeScale(0)=(RelativeSize=0.100000)
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=0.500000)
-         StartSizeRange=(X=(Min=20.000000,Max=30.000000))
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=0.4500000)
+         StartSizeRange=(X=(Min=12.000000,Max=18.000000))
          InitialParticlesPerSecond=3000.000000
          Texture=Texture'AW-2004Particles.Weapons.SmokePanels1'
          TextureUSubdivisions=4

@@ -478,10 +478,10 @@ simulated function UpdatePrecacheMaterials()
 defaultproperties
 {
      MaxPitchSpeed=1000.000000
-     JumpDuration=0.262000
-     JumpForceMag=115.000000
+     JumpDuration=0.242000
+     JumpForceMag=105.000000
      JumpDelay=3.000000
-     DuckForceMag=165.000000
+     DuckForceMag=155.000000
      BikeDustOffset(0)=(X=25.000000,Y=80.000000,Z=10.000000)
      BikeDustOffset(1)=(X=25.000000,Y=-80.000000,Z=10.000000)
      BikeDustTraceDistance=200.000000
@@ -496,9 +496,9 @@ defaultproperties
      HoverCheckDist=150.000000
      UprightStiffness=500.000000
      UprightDamping=300.000000
-     MaxThrustForce=36.000000
+     MaxThrustForce=32.000000
      LongDamping=0.020000
-     MaxStrafeForce=26.660000
+     MaxStrafeForce=23.660000
      LatDamping=0.100000
      TurnTorqueFactor=1000.000000
      TurnTorqueMax=125.000000
@@ -568,8 +568,8 @@ defaultproperties
      bCanStrafe=True
      MeleeRange=-100.000000
      GroundSpeed=2250.000000
-     HealthMax=300.000000
-     Health=300
+     HealthMax=250.000000
+     Health=250
      Mesh=SkeletalMesh'ONSVehicles-A.HoverBike'
      SoundRadius=900.000000
      Begin Object Class=KarmaParamsRBFull Name=KParams0
