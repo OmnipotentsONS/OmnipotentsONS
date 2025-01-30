@@ -80,9 +80,11 @@ defaultproperties
          Opacity=0.800000
          MaxParticles=1
          UseRotationFrom=PTRS_Actor
-         SizeScale(0)=(RelativeSize=1.000000)
+         //SizeScale(0)=(RelativeSize=1.000000)
+         SizeScale(0)=(RelativeSize=0.50000)
          SizeScale(1)=(RelativeTime=1.000000)
-         StartSizeRange=(X=(Min=10.000000,Max=40.000000),Y=(Min=10.000000,Max=20.000000))
+         //StartSizeRange=(X=(Min=10.000000,Max=40.000000),Y=(Min=10.000000,Max=20.000000))
+         StartSizeRange=(X=(Min=5.000000,Max=10.000000),Y=(Min=5.000000,Max=10.000000))
          InitialParticlesPerSecond=5000.000000
          Texture=Texture'EpicParticles.Flares.SoftFlare'
          LifetimeRange=(Min=0.500000,Max=0.500000)
@@ -108,7 +110,8 @@ defaultproperties
          StartSpinRange=(X=(Max=1.000000))
          SizeScale(0)=(RelativeSize=0.330000)
          SizeScale(1)=(RelativeTime=0.700000)
-         StartSizeRange=(X=(Min=40.000000,Max=80.000000))
+         //StartSizeRange=(X=(Min=40.000000,Max=80.000000))
+         StartSizeRange=(X=(Min=20.000000,Max=40.000000))
          InitialParticlesPerSecond=2000.000000
          Texture=Texture'AW-2004Particles.Weapons.PlasmaMuzzleBlue'
          LifetimeRange=(Min=0.200000,Max=0.200000)
@@ -134,7 +137,7 @@ defaultproperties
          UseRotationFrom=PTRS_Actor
          SizeScale(0)=(RelativeSize=0.500000)
          SizeScale(1)=(RelativeTime=1.000000,RelativeSize=0.750000)
-         StartSizeRange=(X=(Min=20.000000,Max=40.000000))
+         StartSizeRange=(X=(Min=8.000000,Max=30.000000))
          InitialParticlesPerSecond=2000.000000
          Texture=Texture'AW-2004Particles.Weapons.SmokePanels1'
          TextureUSubdivisions=4
@@ -165,7 +168,7 @@ defaultproperties
          UseRotationFrom=PTRS_Actor
          SizeScale(0)=(RelativeSize=0.100000)
          SizeScale(1)=(RelativeTime=1.000000,RelativeSize=0.750000)
-         StartSizeRange=(X=(Min=30.000000,Max=50.000000))
+         StartSizeRange=(X=(Min=20.000000,Max=30.000000))
          InitialParticlesPerSecond=2000.000000
          Texture=Texture'AW-2004Particles.Weapons.SmokePanels1'
          TextureUSubdivisions=4
