@@ -196,8 +196,8 @@ defaultproperties
      FireSoundClass=Sound'ONSVehicleSounds-S.PRV.PRVFire04'
      FireForce="PRVRearFire"
      DamageType=Class'Onslaught.DamTypeChargingBeam'
-     DamageMin=225
-     DamageMax=225
+     DamageMin=230
+     DamageMax=230
      TraceRange=20000.000000
      Momentum=250000.000000
      AIInfo(0)=(bInstantHit=True,bFireOnRelease=True,RefireRate=0.850000)

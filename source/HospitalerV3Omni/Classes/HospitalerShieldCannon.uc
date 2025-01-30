@@ -438,9 +438,9 @@ defaultproperties
 {
      MaxShieldHealth=2100.000000 // Reduced a bit but still want to take one mino hit.
      MaxDelayTime=0.330000
-     ShieldRechargeRate=300.000000
-     ShieldRechargeRateActive=175.000
-     CurrentShieldHealth=1800.000000
+     ShieldRechargeRate=320.000000
+     ShieldRechargeRateActive=180.000
+     CurrentShieldHealth=2100.000000
      YawBone="SIDEgunBASE"
      PitchBone="SIDEgunBARREL"
      PitchUpLimit=18000
@@ -471,9 +471,9 @@ defaultproperties
      
      
      LinkMultiplier=0.8 // number of linkers +1 * shield Recharge rate.
-     SelfHealAmount=50  // this is health, 
-     HealTeamBaseAmount=150  // this is real health
+     SelfHealAmount=60  // this is health, 
+     HealTeamBaseAmount=175  // this is real health
      SelfHealMultiplier=0.33  //self heal from Shield Combo  pt heal for 1  pts damage
-     MaxDamageHealthHeal= 500  // max self heal from Shield combo.
+     MaxDamageHealthHeal=600  // max self heal from Shield combo.
      RegenerationMaterial=Shader'XGameShaders.PlayerShaders.PlayerShieldSh'
 }
