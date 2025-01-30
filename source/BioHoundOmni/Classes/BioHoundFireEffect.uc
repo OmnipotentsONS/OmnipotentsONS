@@ -4,6 +4,7 @@ class BioHoundFireEffect extends Emitter;
 
 defaultproperties
 {
+	/*
      Begin Object Class=MeshEmitter Name=MeshEmitter0
          StaticMesh=StaticMesh'AW-2004Particles.Weapons.TurretFlash'
          UseMeshBlendMode=False
@@ -23,13 +24,13 @@ defaultproperties
          UseRotationFrom=PTRS_Offset
          StartSpinRange=(Z=(Max=1.000000))
          SizeScale(0)=(RelativeSize=1.000000)
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=5.000000)
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=2.000000) //5
          StartSizeRange=(X=(Min=-0.500000,Max=-0.500000))
          InitialParticlesPerSecond=500.000000
          LifetimeRange=(Min=0.200000,Max=0.200000)
      End Object
      Emitters(1)=MeshEmitter'BioHoundOmni.BioHoundFireEffect.MeshEmitter0'
-
+*/
      Begin Object Class=SpriteEmitter Name=SpriteEmitter0
          UseColorScale=True
          RespawnDeadParticles=False

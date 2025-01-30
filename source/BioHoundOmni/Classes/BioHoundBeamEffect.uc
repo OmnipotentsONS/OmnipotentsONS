@@ -49,7 +49,7 @@ defaultproperties
          ColorScale(1)=(RelativeTime=0.800000,Color=(G=155,R=55))
          ColorScale(2)=(RelativeTime=1.000000)
          MaxParticles=1
-         StartLocationOffset=(Y=12.000000)
+         // StartLocationOffset=(Y=12.000000)
          UseRotationFrom=PTRS_Actor
          SizeScale(0)=(RelativeSize=1.000000)
          SizeScale(1)=(RelativeTime=1.000000,RelativeSize=0.500000)
@@ -105,12 +105,12 @@ defaultproperties
          ColorScale(0)=(Color=(B=128,G=255,R=255))
          ColorScale(1)=(RelativeTime=1.000000,Color=(G=205,R=25))
          MaxParticles=2
-         StartLocationOffset=(Y=12.000000)
+         //StartLocationOffset=(Y=12.000000)
          UseRotationFrom=PTRS_Actor
          StartSpinRange=(X=(Max=1.000000))
          SizeScale(0)=(RelativeSize=1.000000)
          SizeScale(1)=(RelativeTime=1.000000)
-         StartSizeRange=(X=(Min=150.000000,Max=200.000000))
+         StartSizeRange=(X=(Min=30.000000,Max=50.000000))
          InitialParticlesPerSecond=20.000000
          Texture=Texture'AW-2004Particles.Weapons.PlasmaStar2'
          LifetimeRange=(Min=0.200000,Max=0.200000)
@@ -136,8 +136,8 @@ defaultproperties
          UseRotationFrom=PTRS_Actor
          StartSpinRange=(X=(Max=0.025000))
          SizeScale(0)=(RelativeSize=0.250000)
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.000000)
-         StartSizeRange=(X=(Min=8.000000,Max=30.000000))
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=0.75000)
+         StartSizeRange=(X=(Min=2.000000,Max=12.000000))
          InitialParticlesPerSecond=900.000000
          Texture=Texture'AW-2004Particles.Weapons.SmokePanels1'
          TextureUSubdivisions=4
@@ -163,12 +163,12 @@ defaultproperties
          ColorScale(2)=(RelativeTime=0.800000,Color=(B=100,G=205,R=64))
          ColorScale(3)=(RelativeTime=1.000000)
          MaxParticles=3
-         StartLocationOffset=(X=10.000000)
-         StartLocationRange=(X=(Max=20.000000))
+         //StartLocationOffset=(X=10.000000)
+         //StartLocationRange=(X=(Max=20.000000))
          UseRotationFrom=PTRS_Actor
          SizeScale(0)=(RelativeSize=0.100000)
-         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.000000)
-         StartSizeRange=(X=(Min=20.000000,Max=30.000000))
+         SizeScale(1)=(RelativeTime=1.000000,RelativeSize=0.750000)
+         StartSizeRange=(X=(Min=5.000000,Max=12.000000))
          InitialParticlesPerSecond=3000.000000
          Texture=Texture'AW-2004Particles.Weapons.SmokePanels1'
          TextureUSubdivisions=4

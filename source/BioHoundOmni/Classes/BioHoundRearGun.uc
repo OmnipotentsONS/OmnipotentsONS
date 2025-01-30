@@ -197,7 +197,7 @@ defaultproperties
      PitchDownLimit=57500
      WeaponFireAttachmentBone="Dummy02"
      GunnerAttachmentBone="REARgunBASE"
-     DualFireOffset=-15.000000
+     DualFireOffset=13.000000
      bInstantRotation=True
      bInstantFire=True
      bDoOffsetTrace=True
@@ -206,8 +206,9 @@ defaultproperties
      FireInterval=0.380000
      AltFireInterval=3.0000
      bShowChargingBar=True
-     FlashEmitterClass=Class'BioHoundOmni.BioHoundMuzzleFlash'
-     EffectEmitterClass=Class'BioHoundOmni.BioHoundFireEffect'
+     //FlashEmitterClass=Class'BioHoundOmni.BioHoundMuzzleFlash'
+     // below is the awful flash 
+     //EffectEmitterClass=Class'BioHoundOmni.BioHoundFireEffect'
      FireSoundClass=ProceduralSound'WeaponSounds.ShieldGun.ShieldReflection'
      AltFireSoundClass=SoundGroup'WeaponSounds.FlakCannon.FlakCannonAltFire'
      FireForce="Laser01"
