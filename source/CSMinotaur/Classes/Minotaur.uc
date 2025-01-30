@@ -33,6 +33,7 @@ simulated function ReduceShake()
 function TakeDamage(int Damage, Pawn instigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType)
 {
    if (class'BioHandler'.static.IsBioDamage(DamageType)) Damage *= 5.0;
+   
    if (DamageType.name == 'TurtleDamTypeProximityExplosion')  Damage *= 1.55;
    //if (DamageType == class'DamTypeBioGlob' || DamageType,name="DamTypeBioGlobVehicle") Damage *= 5.0;
    
@@ -116,7 +117,7 @@ defaultproperties
      IdleSound=Sound'CuddlyArmor_Sound.Minotaur.Minotaurengine'
      bKeyVehicle=True
      VehiclePositionString="in a Min)o(taur"
-     VehicleNameString="Min)o(taur 2.01"
+     VehicleNameString="Min)o(taur 2.02"
      RanOverDamageType=Class'CSMinotaur.MinotaurDamTypeRoadkill'
      CrushedDamageType=Class'CSMinotaur.MinotaurDamTypePancake'
      HornSounds(0)=Sound'CuddlyArmor_Sound.Horns.Bighorn'

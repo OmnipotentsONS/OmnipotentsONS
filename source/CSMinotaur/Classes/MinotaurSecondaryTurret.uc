@@ -3,7 +3,7 @@ class MinotaurSecondaryTurret extends ONSWeapon;
 #exec OBJ LOAD FILE=..\Animations\ONSWeapons-A.ukx
 #exec OBJ LOAD FILE=..\Textures\TurretParticles.utx
 
-var class<ONSTurretBeamEffect> BeamEffectClass[2];
+var class<MinotaurTurretBeamEffect> BeamEffectClass[2];
 
 static function StaticPrecache(LevelInfo L)
 {
@@ -76,7 +76,7 @@ state InstantFireMode
 {
 	simulated function SpawnHitEffects(actor HitActor, vector HitLocation, vector HitNormal)
 	{
-		local ONSTurretBeamEffect Beam;
+		local MinotaurTurretBeamEffect Beam;
 
 		if (Level.NetMode != NM_DedicatedServer)
 		{
@@ -98,8 +98,8 @@ state InstantFireMode
 
 defaultproperties
 {
-     BeamEffectClass(0)=Class'Onslaught.ONSTurretBeamEffect'
-     BeamEffectClass(1)=Class'Onslaught.ONSTurretBeamEffectBlue'
+     BeamEffectClass(0)=Class'CSMinotaur.MinotaurTurretBeamEffect'
+     BeamEffectClass(1)=Class'CSMinotaur.MinotaurTurretBeamEffectBlue'
      YawBone="Object01"
      PitchBone="Object02"
      PitchUpLimit=14500
