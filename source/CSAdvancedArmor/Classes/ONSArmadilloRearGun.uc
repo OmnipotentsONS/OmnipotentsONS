@@ -4,7 +4,7 @@
 class ONSArmadilloRearGun extends ONSWeapon;
 
 #exec OBJ LOAD FILE=..\Animations\ONSWeapons-A.ukx
-var class<ONSTurretBeamEffect> BeamEffectClass[2];
+var class<CSAATurretBeamEffect> BeamEffectClass[2];
 
 
 static function StaticPrecache(LevelInfo L)
@@ -82,7 +82,7 @@ state InstantFireMode
 {
 	simulated function SpawnHitEffects(actor HitActor, vector HitLocation, vector HitNormal)
 	{
-		local ONSTurretBeamEffect Beam;
+		local CSAATurretBeamEffect Beam;
 
 		if (Level.NetMode != NM_DedicatedServer)
 		{
@@ -108,8 +108,10 @@ state InstantFireMode
 
 defaultproperties
 {
-     BeamEffectClass(0)=Class'Onslaught.ONSTurretBeamEffect'
-     BeamEffectClass(1)=Class'Onslaught.ONSTurretBeamEffectBlue'
+     //BeamEffectClass(0)=Class'Onslaught.ONSTurretBeamEffect'
+     //BeamEffectClass(1)=Class'Onslaught.ONSTurretBeamEffectBlue'
+     BeamEffectClass(0)=Class'CSAdvancedArmor.CSAATurretBeamEffect'
+     BeamEffectClass(1)=Class'CSAdvancedArmor.CSAATurretBeamEffectBlue'
      YawBone="Object01"
      PitchBone="Object02"
      PitchUpLimit=15000
