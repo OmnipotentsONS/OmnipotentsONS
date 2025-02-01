@@ -654,9 +654,9 @@ defaultproperties
      PassengerWeapons(0)=(WeaponPawnClass=Class'FireBladeOmni.FireBladeOmniTopTurretPawn',WeaponBone="root")
      RedSkin=Texture'FireBladeOmniTex.GunShipTextureRed'
      BlueSkin=Texture'FireBladeOmniTex.GunShipTextureBlue'
-     IdleSound=Sound'FireBladeAudioB001.EngineIdle'
-     StartUpSound=Sound'FireBladeAudioB001.EngineStartUp'
-     ShutDownSound=Sound'FireBladeAudioB001.EngineShutDown'
+     IdleSound=Sound'FireBladeAudioOmni.EngineIdle'
+     StartUpSound=Sound'FireBladeAudioOmni.EngineStartUp'
+     ShutDownSound=Sound'FireBladeAudioOmni.EngineShutDown'
      StartUpForce="AttackCraftStartUp"
      ShutDownForce="AttackCraftShutDown"
      DestroyedVehicleMesh=StaticMesh'ONSDeadVehicles-SM.AttackCraftDead'
@@ -684,7 +684,7 @@ defaultproperties
      TPCamWorldOffset=(Z=200.000000)
      DriverDamageMult=0.000000
      VehiclePositionString="in a FireBlade"
-     VehicleNameString="FireBlade 2.1"
+     VehicleNameString="FireBlade 2.11"
      RanOverDamageType=Class'Onslaught.DamTypeAttackCraftRoadkill'
      CrushedDamageType=Class'Onslaught.DamTypeAttackCraftPancake'
      FlagBone="LeftGun"
@@ -693,8 +693,8 @@ defaultproperties
      HornSounds(0)=Sound'ONSVehicleSounds-S.Horns.Horn03'
      HornSounds(1)=Sound'ONSVehicleSounds-S.Horns.Horn07'
      GroundSpeed=1200.000000
-     HealthMax=600.000000
-     Health=600
+     HealthMax=500.000000
+     Health=500
      Mesh=SkeletalMesh'FireBladeOmni.GunShip'
      //Mesh=SkeletalMesh'ONSVehicles-A.AttackCraft'
      CollisionRadius=150.000000

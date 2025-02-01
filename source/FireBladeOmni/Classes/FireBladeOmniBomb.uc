@@ -64,12 +64,14 @@ defaultproperties
      ForceRadius=1024.000000
      ForceScale=5.000000
      Physics=PHYS_Falling
-     TossZ=200.000000
+     TossZ=100.000000  // same as dragon
+     CollisionRadius=10.000000
+     CollisionHeight=10.000000
      MyDamageType=Class'FireBladeOmni.DamTypeFBOFlakShell'
      StaticMesh=StaticMesh'WeaponStaticMesh.RedeemerMissile'
      DrawScale=1.000000
      CullDistance=12000
-     DamageRadius=850
-     Damage=150 // close in flak chunkss/shrapnel do more
+     DamageRadius=1024
+     Damage=225 // close in flak chunkss/shrapnel do more
      NumBomblets=4
 }

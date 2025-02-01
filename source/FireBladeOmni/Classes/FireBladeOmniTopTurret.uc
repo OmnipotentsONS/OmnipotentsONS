@@ -6,7 +6,7 @@ class FireBladeOmniTopTurret extends ONSWeapon;
 #exec OBJ LOAD FILE=..\Animations\FireBladeOmni.ukx
 
 var class<ShockBeamEffect> BeamEffectClass;
-var ONSSkyMine ComboTarget;
+//var ONSSkyMine ComboTarget;
 var float MinAim;
 
 static function StaticPrecache(LevelInfo L)
@@ -100,14 +100,17 @@ defaultproperties
      bDoOffsetTrace=True
      TraceRange=20000
      FireInterval=0.200000
-     FireSoundClass=Sound'FireBladeAudioB001.TopCannon1'
-     AltFireSoundClass=Sound'FireBladeAudioB001.TopCannon1'
+     //FireSoundClass=Sound'FireBladeAudioB001.TopCannon1'
+     FireSoundClass=Sound'FireBladeAudioOmni.TopCannon1'
+     AltFireSoundClass=Sound'FireBladeAudioOmni.TopCannon1'
+     // Alt is zoom.
      FireForce="PRVSideFire"
      AltFireForce="PRVSideAltFire"
      DamageType=Class'FireBladeOmni.DamTypeFireBladeLaser'
      DamageMin=15
      DamageMax=20
-     ProjectileClass=Class'Onslaught.ONSSkyMine'
+     Momentum=30000.000000
+     //ProjectileClass=Class'Onslaught.ONSSkyMine'
      ShakeRotMag=(X=60.000000,Y=20.000000)
      ShakeRotRate=(X=1000.000000,Y=1000.000000)
      ShakeRotTime=2.000000

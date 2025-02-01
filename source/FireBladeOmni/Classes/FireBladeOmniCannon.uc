@@ -7,13 +7,14 @@ class FireBladeOmniCannon extends ONSWeapon;
 
 
 var float MinAim;
-var class<Emitter>      mTracerClass;
-var() editinline Emitter mTracer;
-var() float				mTracerInterval;
-var() float				mTracerPullback;
-var() float				mTracerMinDistance;
-var() float				mTracerSpeed;
-var float               mLastTracerTime;
+//var class<Emitter>      mTracerClass;
+//var() editinline Emitter mTracer;
+//var() float				mTracerInterval;
+//var() float				mTracerPullback;
+//var() float				mTracerMinDistance;
+//var() float				mTracerSpeed;
+//var float               mLastTracerTime;
+// no tracers it isn't hit scan. pooty 1/2025
 
 static function StaticPrecache(LevelInfo L)
 {
@@ -46,11 +47,11 @@ simulated function UpdatePrecacheMaterials()
 
     Super.UpdatePrecacheMaterials();
 }
-
+/*
 simulated function Destroyed()
 {
-	if (mTracer != None)
-		mTracer.Destroy();
+//	if (mTracer != None)
+//		mTracer.Destroy();
 
 	Super.Destroyed();
 }
@@ -115,6 +116,7 @@ simulated function FlashMuzzleFlash()
 
 	UpdateTracer();
 }
+*/
 
 function byte BestMode()
 {
@@ -166,10 +168,10 @@ state ProjectileFireMode
 defaultproperties
 {
      MinAim=0.900000
-     mTracerClass=Class'FireBladeOmni.FireBladeOmniTracer'
-     mTracerInterval=0.050000
-     mTracerPullback=150.000000
-     mTracerSpeed=15000.000000
+//     mTracerClass=Class'FireBladeOmni.FireBladeOmniTracer'
+//     mTracerInterval=0.050000
+//     mTracerPullback=150.000000
+//     mTracerSpeed=15000.000000
      YawBone="PlasmaGunBarrel"
      PitchBone="PlasmaGunBarrel"
      PitchUpLimit=18000
@@ -183,18 +185,19 @@ defaultproperties
      bAmbientFireSound=True
      bIsRepeatingFF=True
      Spread=0.005000
-     FireInterval=0.33333
+     FireInterval=0.4
      AltFireInterval=4.000000
      AmbientEffectEmitterClass=Class'Onslaught.ONSRVChainGunFireEffect'
-     FireSoundClass=Sound'FireBladeAudioB001.CannonFire2'
+     FireSoundClass=Sound'FireBladeAudioOmni.CannonFire2'
      AltFireSoundClass=Sound'ONSVehicleSounds-S.AVRiL.AvrilFire01'
      AmbientSoundScaling=1.300000
      FireForce="minifireb"
      AltFireForce="Laser01"
      DamageType=Class'FireBladeOmni.DamTypeFireBladeOmniCannon'
-     DamageMin=30
-     DamageMax=36
-     TraceRange=17000.000000
+//     DamageMin=30
+//     DamageMax=36
+//     TraceRange=17000.000000
+//   Its not hitscan those don't matter!
      ProjectileClass=Class'FireBladeOmni.FireBladeOmniRocketProj'
      AltFireProjectileClass=Class'FireBladeOmni.FireBladeOmniBomb'
      AIInfo(0)=(bInstantHit=True,aimerror=750.000000)
