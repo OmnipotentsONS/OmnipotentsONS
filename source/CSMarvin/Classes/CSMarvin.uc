@@ -514,7 +514,7 @@ defaultproperties
      FPCamPos=(Z=50.000000)
      TPCamWorldOffset=(Z=130.000000)
      VehiclePositionString="in a Q-36 Space Modulator"
-     VehicleNameString="Q-36 Space Modulator 2.7"
+     VehicleNameString="Q-36 Space Modulator 2.8"
      AirSpeed=800.000000
      AccelRate=2800.000000
      AirControl=0.300000

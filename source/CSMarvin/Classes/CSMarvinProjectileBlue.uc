@@ -16,6 +16,7 @@ simulated function HitWall(vector HitNormal, Actor Wall)
 
 		//pd = Spawn(Class'CSMarvinPortalDecal', InstigatorController,, Location + (HitNormal * PortalDistance), Rotator(HitNormal));
 		pd = Spawn(Class'CSMarvinPortalDecal', Owner,, Location + (HitNormal * PortalDistance), Rotator(HitNormal));
+        pd.Instigator = Instigator;
 
 
 		// further hacking to trick netcode

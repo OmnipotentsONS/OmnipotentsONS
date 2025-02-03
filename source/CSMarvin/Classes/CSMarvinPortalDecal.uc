@@ -18,6 +18,8 @@ Class CSMarvinPortalDecal extends Actor;
 //#exec AUDIO IMPORT File="Sounds\PortalGrow.wav" Name="PortalGrow"
 //#exec AUDIO IMPORT File="Sounds\PortalShrink.wav" Name="PortalShrink"
 #exec OBJ LOAD File="Data\PortalGun.u" Package=CSMarvin
+#exec AUDIO IMPORT File="Sounds\PortalDestroyed.wav" Name="PortalDestroyed"
+#exec AUDIO IMPORT File="Sounds\PortalGrow2.wav" Name="PortalGrow2"
 ////#exec AUDIO IMPORT File="Sounds\PortalAmbientSound.wav" Name="PortalAmbientSound"
 
 
@@ -48,6 +50,8 @@ var int FireMode;
 var bool bDischarging; // The portal is dissapating after being hit by a discharge projectile
 var RenderDevice rDev;
 
+var bool bPoisoned;
+
 
 replication
 {
@@ -69,6 +73,7 @@ simulated function PostNetBeginPlay()
 	local float ResX, ResY;
 
 
+    PlaySound(Sound'PortalGrow2');
 	// Setup the initial growth-spurt (might be overriden below if linking to another portal)
 	SetGrowth(StartingGrowthEnergy);
 
@@ -82,6 +87,7 @@ simulated function PostNetBeginPlay()
 			{
 				if (pd.OtherSide != none)
 				{
+                    bPoisoned = pd.bPoisoned;
 					OtherSide = pd.OtherSide;
 					pd.OtherSide.OtherSide = Self;
 				}
@@ -91,6 +97,7 @@ simulated function PostNetBeginPlay()
 			else
 			{
 				OtherSide = pd;
+                OtherSide.bPoisoned = pd.bPoisoned;
 				pd.OtherSide = self;
 			}
 
@@ -508,12 +515,35 @@ simulated function Touch(actor Other)
     */
 
 	// Allow warp projectile to destroy other portals
-	if (CSMarvinProjectile(Other) != none && Other.Instigator != none && Other.Instigator.GetTeamNum() != CSMarvinPortalWeapon(Owner).Team)
+	//if (CSMarvinProjectile(Other) != none && Other.Instigator != none && Other.Instigator.GetTeamNum() != CSMarvinPortalWeapon(Owner).Team)
+	if (CSMarvinProjectile(Other) != none && Other.Instigator != none)
 	{
-        PlaySound(Sound'PortalShrink');
-        Projectile(Other).Explode(Location,vector(Rotation));
-        //Destroy();
-        Explode(Location,vector(Rotation));
+        if(CSMarvinProjectileRed(Other) != None)
+        {
+            Projectile(Other).Explode(Location,vector(Rotation));
+            Explode(Location,vector(Rotation));
+        }
+        else if(CSMarvinProjectileBlue(Other) != None)
+        {
+            // update instigator to be the new instigator
+            Instigator = Other.Instigator;
+
+            // blue projectile poisons/unpoisons portal
+            if(!bPoisoned)
+                Instigator.ReceiveLocalizedMessage(class'CSMarvinPoisonMessage',0);
+            else
+                Instigator.ReceiveLocalizedMessage(class'CSMarvinPoisonMessage',1);
+
+            bPoisoned=!bPoisoned;
+            if(OtherSide != None)
+            {
+                OtherSide.bPoisoned = bPoisoned;
+                OtherSide.Instigator = Other.Instigator;
+            }
+
+            // this is also the projectile explode sound
+            Projectile(Other).Explode(Location,vector(Rotation));
+        }
 
 		return;
 	}
@@ -530,7 +560,12 @@ simulated function Touch(actor Other)
 		//Log("Other BS is:"@Other.GetRenderBoundingSphere().W@"portals is"@TempPlane.W);
 
 		if (Other.GetRenderBoundingSphere().W < TempPlane.W)
+        {
+            if(bPoisoned)
+                PoisonActor(Other);
+
 			WarpActor(Other);
+        }
 	}
 }
 
@@ -547,7 +582,7 @@ simulated function Bump(Actor Other)
 
 simulated function Explode(vector HitLocation, vector HitNormal)
 {
-	PlaySound(sound'WeaponSounds.BExplosion3',,5.5*TransientSoundVolume);
+	PlaySound(sound'PortalDestroyed',,5.5*TransientSoundVolume);
     if ( EffectIsRelevant(Location,false) )
     {
         if(FireMode == 0)
@@ -938,6 +973,34 @@ simulated singular function WarpActor(actor Other)
 			Other.Acceleration = (X * DispVect.x) + (Y * DispVect.y) + (Z * DispVect.z);
 		}
 	}
+}
+
+simulated function PoisonActor(Actor other)
+{
+    local Pawn P;
+    local CSMarvinPoison PoisonActor;
+
+    P=Pawn(other);
+    if(P == None)
+        return;
+
+    // we only poison actual player pawns or vehicles
+    if(xPawn(other) == None && ONSVehicle(other) == None)
+        return;
+
+    // don't poison teammates
+    if(Instigator.GetTeamNum() == P.GetTeamNum())
+        return;
+
+    // check if we are already poisoned
+    foreach DynamicActors(class'CSMarvinPoison', PoisonActor)
+    {
+        if(PoisonActor.Victim == other)
+            return;
+    }
+
+    PoisonActor = spawn(class'CSMarvinPoison');
+    PoisonActor.Poison(P, instigator);
 }
 
 // Unfinished test code for a new warping system which gets rid of quaternion functions
