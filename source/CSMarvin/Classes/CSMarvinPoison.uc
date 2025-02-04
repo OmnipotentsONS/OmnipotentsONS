@@ -7,36 +7,48 @@ var float MaxDamage;
 var float DamageInterval;
 var CSMarvinPoisonEffect effect;
 
-replication
+simulated function PostNetBeginPlay()
 {
-    reliable if(ROLE == ROLE_Authority)
-        Victim, VictimDamage;
-}
+    super.PostNetBeginPlay();
+    Victim = Pawn(Owner);
+    if(Role < ROLE_Authority)
+    {
+        effect = spawn(class'CSMarvinPoisonEffect',Victim,,Victim.Location, Victim.Rotation);
+        effect.SetBase(Victim);
+    }
 
-simulated function Poison(Pawn Poisoned, Pawn PoisonInstigator)
-{
-    Victim = Poisoned;
-    Instigator = PoisonInstigator;
     VictimDamage = 0; 
     MaxDamage = Victim.default.Health * 0.75;
     DamageInterval = MaxDamage / 10;
-    effect = spawn(class'CSMarvinPoisonEffect', Victim,,Victim.Location, Victim.Rotation);
     Victim.ReceiveLocalizedMessage(class'CSMarvinPoisonedMessage');
-
     SetTimer(0.5, true);
 }
 
-simulated function Timer()
+simulated function Poison(Pawn PoisonInstigator)
+{
+    Victim = Pawn(Owner);
+    if(Victim != None)
+    {
+        Instigator = PoisonInstigator;
+        VictimDamage = 0; 
+        MaxDamage = Victim.default.Health * 0.75;
+        DamageInterval = MaxDamage / 10;
+        Victim.ReceiveLocalizedMessage(class'CSMarvinPoisonedMessage');
+        SetTimer(0.5, true);
+    }
+}
+
+function Timer()
 {
     local vector m;
-    if(VictimDamage >= MaxDamage)
+    if(VictimDamage > MaxDamage)
     {
         SetTimer(0.0,false);
         Destroy();
         return;
     }
 
-    if(Role == ROLE_Authority)
+    if(Victim != None && Instigator != none)
     {
         m.x = frand() * 70000;
         m.y = frand() * 70000;
@@ -47,7 +59,7 @@ simulated function Timer()
     }
 }
 
-function Destroyed()
+simulated function Destroyed()
 {
     if(effect != none)
         effect.Destroy();
@@ -56,5 +68,5 @@ function Destroyed()
 defaultproperties
 {
     bHidden=true;
-    RemoteRole=ROLE_SimulatedProxy;
+    bReplicateInstigator=true;
 }

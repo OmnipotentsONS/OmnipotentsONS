@@ -541,7 +541,6 @@ simulated function Touch(actor Other)
                 OtherSide.Instigator = Other.Instigator;
             }
 
-            // this is also the projectile explode sound
             Projectile(Other).Explode(Location,vector(Rotation));
         }
 
@@ -980,13 +979,11 @@ simulated function PoisonActor(Actor other)
     local Pawn P;
     local CSMarvinPoison PoisonActor;
 
-    P=Pawn(other);
-    if(P == None)
-        return;
-
     // we only poison actual player pawns or vehicles
     if(xPawn(other) == None && ONSVehicle(other) == None)
         return;
+
+    P = Pawn(other);
 
     // don't poison teammates
     if(Instigator.GetTeamNum() == P.GetTeamNum())
@@ -999,8 +996,8 @@ simulated function PoisonActor(Actor other)
             return;
     }
 
-    PoisonActor = spawn(class'CSMarvinPoison');
-    PoisonActor.Poison(P, instigator);
+    PoisonActor = spawn(class'CSMarvinPoison',P);
+    PoisonActor.Instigator = Instigator;
 }
 
 // Unfinished test code for a new warping system which gets rid of quaternion functions

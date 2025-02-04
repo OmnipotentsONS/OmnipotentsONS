@@ -4,6 +4,7 @@ simulated function HitWall(vector HitNormal, Actor Wall)
 {
 	local CSMarvinPortalDecal pd;
 
+	Super.HitWall(HitNormal, Wall);
 	// Spawn the 'portal decal'
 	//if (Role == ROLE_Authority)
 	if (Level.Netmode != NM_Client && Pawn(Wall) == None)
@@ -16,8 +17,6 @@ simulated function HitWall(vector HitNormal, Actor Wall)
 
 		//pd = Spawn(Class'CSMarvinPortalDecal', InstigatorController,, Location + (HitNormal * PortalDistance), Rotator(HitNormal));
 		pd = Spawn(Class'CSMarvinPortalDecal', Owner,, Location + (HitNormal * PortalDistance), Rotator(HitNormal));
-        pd.Instigator = Instigator;
-
 
 		// further hacking to trick netcode
 		Class'CSMarvinPortalDecal'.default.FireMode = -1;
@@ -25,11 +24,14 @@ simulated function HitWall(vector HitNormal, Actor Wall)
 		//Class'CSMarvinPortalDecal'.default.StartingDrawScale = -1;
 		Class'CSMarvinPortalDecal'.default.StartingGrowthEnergy = -1;
 
-		pd.bForceMinimumGrowth = bForceMinimumGrowth;
-		pd.SetBase(Wall);
+        if(pd != None)
+        {
+            pd.Instigator = Instigator;
+            pd.bForceMinimumGrowth = bForceMinimumGrowth;
+            pd.SetBase(Wall);
+        }
 	}
 
-	Super.HitWall(HitNormal, Wall);
 }
 defaultproperties
 {
