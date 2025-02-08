@@ -525,20 +525,24 @@ simulated function Touch(actor Other)
         }
         else if(CSMarvinProjectileBlue(Other) != None)
         {
-            // update instigator to be the new instigator
-            Instigator = Other.Instigator;
-
-            // blue projectile poisons/unpoisons portal
-            if(!bPoisoned)
-                Instigator.ReceiveLocalizedMessage(class'CSMarvinPoisonMessage',0);
-            else
-                Instigator.ReceiveLocalizedMessage(class'CSMarvinPoisonMessage',1);
-
-            bPoisoned=!bPoisoned;
-            if(OtherSide != None)
+            // only allow poisoning enemy team portal
+            if(Other.Instigator.GetTeamNum() != CSMarvinPortalWeapon(Owner).Team)
             {
-                OtherSide.bPoisoned = bPoisoned;
-                OtherSide.Instigator = Other.Instigator;
+                // update instigator to be the new instigator
+                Instigator = Other.Instigator;
+
+                // blue projectile poisons/unpoisons portal
+                if(!bPoisoned)
+                    Instigator.ReceiveLocalizedMessage(class'CSMarvinPoisonMessage',0);
+                else
+                    Instigator.ReceiveLocalizedMessage(class'CSMarvinPoisonMessage',1);
+
+                bPoisoned=!bPoisoned;
+                if(OtherSide != None)
+                {
+                    OtherSide.bPoisoned = bPoisoned;
+                    OtherSide.Instigator = Other.Instigator;
+                }
             }
 
             Projectile(Other).Explode(Location,vector(Rotation));
