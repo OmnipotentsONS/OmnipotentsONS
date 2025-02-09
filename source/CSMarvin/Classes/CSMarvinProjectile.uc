@@ -1,5 +1,7 @@
 class CSMarvinProjectile extends Projectile;
 
+#exec AUDIO IMPORT File="Sounds\PortalProjectileDestroyed.wav" Name="PortalProjectileDestroyed"
+
 var bool bForceMinimumGrowth;
 var float DefaultPortalSize;
 var float StartingPortalSize;
@@ -36,7 +38,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 		ImpactEffect = Spawn(ProjectileImpactEffectClass,,,HitLocation + (HitNormal * (PortalDistance + 10.0)));
 	}
 
-	PlaySound(Sound'WeaponSounds.BioRifle.BioRifleGoo2');
+	PlaySound(Sound'PortalProjectileDestroyed');
 	Destroy();
 }
 
