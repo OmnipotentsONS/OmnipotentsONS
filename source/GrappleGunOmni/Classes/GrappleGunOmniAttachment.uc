@@ -95,7 +95,7 @@ defaultproperties
 {
      bRapidFire=True
      bAltRapidFire=True
-     bMatchWeapons=True
+//     bMatchWeapons=True  for link guns only.
      Mesh=SkeletalMesh'NewWeapons2004.NewLinkGun_3rd'
      RelativeLocation=(X=15.000000,Y=-5.000000,Z=-7.000000)
      RelativeRotation=(Pitch=32768)

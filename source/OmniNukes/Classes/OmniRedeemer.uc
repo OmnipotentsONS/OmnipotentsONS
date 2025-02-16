@@ -9,5 +9,6 @@ defaultproperties
      ItemName="Omni Redeemer"
      Mesh=SkeletalMesh'Weapons.Redeemer_1st'
      PickupClass=Class'OmniNukes.OmniRedeemerPickup'
+     GroupOffset=110
 }
 

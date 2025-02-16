@@ -20,7 +20,7 @@ defaultproperties
 {
      FireModeClass(0)=Class'StormCasterV3.StormCasterFire'
      Description="This weapon is basically identical to the standard Ion Painter. But instead of activating the VAPOR Ion Cannon satellite, it is linked to the orbital 'Storm Caster', a modified ion cannon satellite that causes a thunderstorm to form above the target area."
-     GroupOffset=48
      PickupClass=Class'StormCasterV3.StormCasterPickup'
      ItemName="Storm Caster 3.1"
+     GroupOffset=164
 }

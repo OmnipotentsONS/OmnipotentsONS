@@ -1,4 +1,5 @@
-class GrappleGunOmni extends Weapon;
+class GrappleGunOmni extends Weapon
+ config(user);
 
 //#exec TEXTURE IMPORT name=GrappleGunTex file=Textures/GrappleGunTex.dds
 
@@ -116,11 +117,12 @@ defaultproperties
      ItemName="GrappleGun Omni 1.03 (NOT LINK!)"
      Skins(0)=Shader'GrappleGunOmni_Tex.GrappleGunOmni.GrappleGunShader'
      InventoryGroup=6 // wanted this in 2, but prev/next doesn't work in 2 which makes no sense -- nothing in next/prev makes 2 any different, it works fine in ANY other slot
-     GroupOffset=2
+     GroupOffset=117
      Mesh=SkeletalMesh'NewWeapons2004.FatLinkGun'
      AttachmentClass=Class'GrappleGunOmni.GrappleGunOmniAttachment'
      SelectSound=Sound'WeaponSounds.Misc.translocator_change'
      SelectForce="Translocator_change"
+     bCanThrow=True
 
 
 // From LinkGun Defaults..
@@ -129,7 +131,7 @@ defaultproperties
 //     SelectSound=Sound'NewWeaponSounds.NewLinkSelect'
 //     SelectForce="SwitchToLinkGun"
 
-     OldMesh=SkeletalMesh'Weapons.LinkGun_1st'
+/*    OldMesh=SkeletalMesh'Weapons.LinkGun_1st'
      OldPickup="WeaponStaticMesh.LinkGunPickup"
      OldCenteredOffsetY=-12.000000
      OldPlayerViewOffset=(X=-2.000000,Y=-2.000000,Z=-3.000000)
@@ -137,6 +139,7 @@ defaultproperties
      OldPlayerViewPivot=(Yaw=500)
      OldCenteredRoll=3000
      OldCenteredYaw=-300
+*/     
      EffectOffset=(X=100.000000,Y=25.000000,Z=-3.000000)
      DisplayFOV=60.000000
      HudColor=(B=128,R=128)

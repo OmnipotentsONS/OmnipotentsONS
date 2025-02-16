@@ -17,4 +17,6 @@ defaultproperties
      PickupMessage="OH YEAAAHHHHHHHHHH"
      PickupSound=Sound'CSLinkNuke.ohyeah2'
      StaticMesh=StaticMesh'CSLinkNuke.RedeemerPickup'
+     Skins(0)=Texture'CSLinkNuke.LinkNukeTex0'
+     Skins(1)=Texture'CSLinkNuke.LinkNukeProjectile2'
 }

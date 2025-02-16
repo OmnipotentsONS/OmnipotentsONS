@@ -4,6 +4,8 @@ class CSLinkNuke extends Weapon
 
 #exec OBJ LOAD FILE="Animations\CSLinkNukeAnimations.ukx" PACKAGE=CSLinkNuke
 #exec OBJ LOAD FILE="StaticMeshes\CSLinkNukeMeshes.usx" PACKAGE=CSLinkNuke
+#exec TEXTURE IMPORT FILE=Textures\LinkNukeHud.dds
+#exec TEXTURE IMPORT FILE=Textures\LinkNukeTex0.dds
 
 var() bool bHealNodes;
 var() int NodeHealRate;
@@ -77,7 +79,7 @@ defaultproperties
      SelectForce="SwitchToFlakCannon"
      AIRating=1.500000
      CurrentRating=1.500000
-     Description="YEAAAHHHHHHHHHHH Nuke 2.2"
+     Description="YEAAAHHHHHHHHHHH Nuke 2.21"
      DisplayFOV=60.000000
      Priority=16
      SmallViewOffset=(X=26.000000,Y=6.000000,Z=-34.000000)
@@ -86,16 +88,19 @@ defaultproperties
      CustomCrossHairScale=2.000000
      CustomCrossHairTextureName="Crosshairs.Hud.Crosshair_Circle2"
      InventoryGroup=0
-     GroupOffset=1
+     GroupOffset=130
      PickupClass=Class'CSLinkNuke.CSLinkNukePickup'
      PlayerViewOffset=(X=14.000000,Z=-28.000000)
      PlayerViewPivot=(Pitch=1000,Yaw=-400)
      BobDamping=1.400000
      AttachmentClass=Class'CSLinkNuke.CSLinkNukeAttachment'
-     IconMaterial=Texture'HUDContent.Generic.HUD'
-     IconCoords=(X1=4,Y1=350,X2=110,Y2=395)
+     //IconMaterial=Texture'HUDContent.Generic.HUD'
+     //IconCoords=(X1=4,Y1=350,X2=110,Y2=395)
+     IconMaterial=Texture'CSLinkNuke.LinkNukeHud'
+     IconCoords=(X1=0,Y1=0,X2=90,Y2=45)
      ItemName="YEAAAHHHHHHHHHH Nuke 2.2"
      Mesh=SkeletalMesh'CSLinkNuke.Redeemer_1st'
+     Skins(0)=Texture'CSLinkNuke.LinkNukeTex0'
      DrawScale=1.200000
 
 	bHealNodes=True

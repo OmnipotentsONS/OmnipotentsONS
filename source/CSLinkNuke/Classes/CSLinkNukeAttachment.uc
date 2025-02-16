@@ -5,4 +5,6 @@ class CSLinkNukeAttachment extends RedeemerAttachment;
 defaultproperties
 {
      Mesh=SkeletalMesh'CSLinkNuke.Redeemer_3rd'
+     Skins(1)=Texture'CSLinkNuke.LinkNukeTex0'
+     Skins(0)=Texture'CSLinkNuke.LinkNukeProjectile2'
 }
