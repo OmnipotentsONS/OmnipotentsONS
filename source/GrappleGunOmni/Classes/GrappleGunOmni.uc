@@ -111,12 +111,12 @@ defaultproperties
      AIRating=0.000000
      CurrentRating=0.000000
      Description="Hitch a ride by linking to a vehicle!"
-     Priority=5
+     Priority=20
      PickupClass=Class'GrappleGunOmni.GrappleGunOmniPickup'
-     ItemName="GrappleGun Omni 1.02 (NOT LINK!)"
+     ItemName="GrappleGun Omni 1.03 (NOT LINK!)"
      Skins(0)=Shader'GrappleGunOmni_Tex.GrappleGunOmni.GrappleGunShader'
-     InventoryGroup=3 // wanted this in 2, but prev/next doesn't work in 2 which makes no sense -- nothing in next/prev makes 2 any different, it works fine in ANY other slot
-     GroupOffset=16
+     InventoryGroup=6 // wanted this in 2, but prev/next doesn't work in 2 which makes no sense -- nothing in next/prev makes 2 any different, it works fine in ANY other slot
+     GroupOffset=2
      Mesh=SkeletalMesh'NewWeapons2004.FatLinkGun'
      AttachmentClass=Class'GrappleGunOmni.GrappleGunOmniAttachment'
      SelectSound=Sound'WeaponSounds.Misc.translocator_change'
@@ -154,9 +154,8 @@ defaultproperties
      //IconMaterial=Texture'HUDContent.Generic.HUD'
      IconMaterial=Texture'GrappleGunOmni_Tex.HUD.GrappleHUD'
      //IconCoords=(X1=169,Y1=78,X2=244,Y2=124)
-     IconCoords=(X1=6,Y1=5,X2=81,Y2=51)
-//     IconMaterial=Texture'rWeaponSkins.Interface.HUDIcons'
-//     IconCoords=(X1=169,Y1=78,X2=244,Y2=124)
+     //IconCoords=(X1=6,Y1=1,X2=69,Y2=45)
+     IconCoords=(X1=16,Y1=10,X2=79,Y2=35)
      //IconCoords=(X1=6,Y1=5,X2=81,Y2=51)
      //Mesh=SkeletalMesh'NewWeapons2004.FatLinkGun'
      
