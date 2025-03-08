@@ -47,10 +47,10 @@ defaultproperties
     // RollTorqueMax=12.500000
     // RollDamping=30.000000
      
-     MaxPitchSpeed=550.000000
+     MaxPitchSpeed=800.000000
      JumpDuration=0.230000
-     JumpForceMag=80.000000
-     JumpDelay=3.5000
+     JumpForceMag=100.000000
+     JumpDelay=3.1000
      DuckForceMag=150.000000
      RollTorqueStrafeFactor=50.000000
      RollTorqueMax=14.000000
@@ -70,7 +70,7 @@ defaultproperties
      DriverDamageMult=0.000000
      VehiclePositionString="in a Lamprey Manta"
      VehicleNameString="Lamprey Manta 3.47"
-     GroundSpeed=1050.000000
+     GroundSpeed=1450.000000
      // GroundSpeed=2000 //manta
      HealthMax=266.000000
      Health=200
