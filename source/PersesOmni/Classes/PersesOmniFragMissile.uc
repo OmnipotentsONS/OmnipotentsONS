@@ -22,7 +22,7 @@ defaultproperties
      FlightParticleSystem=Class'PersesOmni.PersesOmniFragMissileFlightEffects'
      ExplosionParticleSystem=Class'XEffects.NewExplosionA'
      ExplosionSound=Sound'PersesOmni.FragMissileExplode'
-     TransferDamageAmount=0.004000
+     TransferDamageAmount=0.004500
      SplashDamageType=Class'PersesOmni.DamTypePersesOmniFragMissile'
      SplashMomentum=50000.000000
      bAutoInit=True

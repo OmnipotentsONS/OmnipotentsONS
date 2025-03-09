@@ -554,8 +554,8 @@ defaultproperties
      MomentumMult=0.010000
      DriverDamageMult=0.000000
      VehiclePositionString="in a Perses"
-     VehicleNameString="Perses Omni 2.03"
-     Build="2025-01-13 00:00"
+     VehicleNameString="Perses Omni 2.04"
+     Build="2025-03-09 00:00"
      VehicleDescription="Perses, the ancient Greek Titan god of destruction. And destruction is what the Perses Mobile Assault Station is all about."
      RanOverDamageType=Class'PersesOmni.DamTypePersesOmniRoadkill'
      CrushedDamageType=Class'PersesOmni.DamTypePersesOmniPancake'

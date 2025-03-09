@@ -357,14 +357,14 @@ function PickNewHomingTarget()
 defaultproperties
 {
      HomingExtrapolationMaxTime=1.000000
-     HomingExtrapolationMaxError=10.000000
-     HomingAnglePerSecond=8.00 //6.000000
-     HomingPredictionTimeFactor=0.500000
-     HomingPredictionMaxTime=1.000000
+     HomingExtrapolationMaxError=5.0 //10.000000
+     HomingAnglePerSecond=9.00 //6.000000
+     HomingPredictionTimeFactor=0.25 //0.500000
+     HomingPredictionMaxTime=1.25 //1.000000
      HomingCheckInterval=0.100000
      HomingMaxAimAngle=0.100000
      bAutoHoming=True
-     AutoHomingViewRange=3000
+     AutoHomingViewRange=3750 //3000
      AutoHomingViewAngle=0.500000
      InitialHomingViewRange=10000.000000
      InitialHomingViewAngle=0.850000
@@ -380,9 +380,9 @@ defaultproperties
      bAutoInit=True
      ProjectileName="Homing Missile"
      Speed=4500.000000
-     MaxSpeed=7000.000000
+     MaxSpeed=7500.000000
      AccelRate=5000.000000
-     Damage=175.000000  // 1.0 multiplier, but does a bit extra Kdamage
+     Damage=150.000000  // 1.0 multiplier, but does a bit extra Kdamage
      DamageRadius=200.000000
      MomentumTransfer=4.7500
      MyDamageType=Class'PersesOmni.DamTypePersesOmniHomingHit'
