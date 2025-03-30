@@ -223,7 +223,7 @@ defaultproperties
      TPCamLookat=(Z=200.000000)
      TPCamWorldOffset=(Z=200.000000)
      VehiclePositionString="in a Megabadger"
-     VehicleNameString="Megabadger 2.45"
+     VehicleNameString="Megabadger 2.46"
      HornSounds(0)=Sound'Minotaur_Sound.Minotaurhorn'
      HealthMax=2000.000000
      Health=2000
@@ -249,7 +249,7 @@ defaultproperties
     
     // Added by Pooty to the orig mega
          bKStayUpright=True
-         bKAllowRotate=False
+         bKAllowRotate=True
          StayUprightStiffness=100.000000
          StayUprightDamping=100.000000
                  
