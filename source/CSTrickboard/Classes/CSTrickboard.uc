@@ -529,6 +529,7 @@ function KDriverEnter (Pawn P)
     P.ReceiveLocalizedMessage(class'CSTrickboard.CSTrickboardEnterMessage', 0);
     Super.KDriverEnter(P); 
     SetDriverPositionBoarding(P); 
+    P.CullDistance = 0;
     ServerLastDriver = None;
     spinAttack = 0;
     BoostRechargeCounter = 0;
