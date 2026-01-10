@@ -129,4 +129,8 @@ defaultproperties
      ForceType=FT_Constant
      ForceRadius=100.000000
      ForceScale=5.000000
+     
+     bNetTemporary=false
+     bReplicateInstigator=true
+     bUpdateSimulatedPosition=true     
 }
