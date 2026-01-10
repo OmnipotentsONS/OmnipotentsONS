@@ -37,6 +37,7 @@ var()float VehicleAttachTraceDistance;
 var bool bAttached, bOldAttached;
 var ONSVehicle NewAttachVehicle;
 var bool bNewAttachVehicleNeverReset;
+var bool bNewAttachVehicleKeyVehicle;
 //var ONSVehicle ClientVehicle;
 var array<FX_RunningLight> RunningLights;
 var()array<vector>				RunningLightOffsets;
@@ -457,6 +458,7 @@ simulated function EjectVehicle()
         spawnVehicle.Health = oldhealth;
         spawnVehicle.bTeamLocked = false;
         spawnVehicle.bNeverReset = bNewAttachVehicleNeverReset;
+        spawnVehicle.bKeyVehicle = bNewAttachVehicleKeyVehicle;
         spawnVehicle.ParentFactory = parentFactory;
         parentFactory.LastSpawned = spawnVehicle;
         spawnVehicle.Event = Tag;
@@ -543,6 +545,8 @@ simulated function AttachVehicle()
         SpawnDistance.z= -1;
         bNewAttachVehicleNeverReset = NewAttachVehicle.bNeverReset;
         NewAttachVehicle.bNeverReset = true; 
+        bNewAttachVehicleKeyVehicle = NewAttachVehicle.bKeyVehicle;
+        NewAttachVehicle.bKeyVehicle = false;
         NewAttachVehicle.SetPhysics(Phys_none);
         NewAttachVehicle.SetCollision(false,false,false);
         AttachToBone(NewAttachVehicle,'VehicleAttach_Bone');
