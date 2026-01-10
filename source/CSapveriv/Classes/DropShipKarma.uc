@@ -547,6 +547,7 @@ simulated function AttachVehicle()
         NewAttachVehicle.bNeverReset = true; 
         bNewAttachVehicleKeyVehicle = NewAttachVehicle.bKeyVehicle;
         NewAttachVehicle.bKeyVehicle = false;
+        NewAttachVehicle.ResetTime = Level.TimeSeconds + 1000;
         NewAttachVehicle.SetPhysics(Phys_none);
         NewAttachVehicle.SetCollision(false,false,false);
         AttachToBone(NewAttachVehicle,'VehicleAttach_Bone');
