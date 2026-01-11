@@ -720,7 +720,7 @@ defaultproperties
          KLinearDamping=0.050000
          KAngularDamping=0.050000
          bKStayUpright=True
-         bKAllowRotate=False
+         bKAllowRotate=True
          StayUprightStiffness=50
          StayUprightDamping=2
          KStartEnabled=True
