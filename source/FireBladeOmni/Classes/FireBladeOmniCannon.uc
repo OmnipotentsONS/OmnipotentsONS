@@ -182,7 +182,8 @@ defaultproperties
      RotationsPerSecond=1.000000
      bInstantRotation=True
      bDoOffsetTrace=True
-     bAmbientFireSound=True
+//     bAmbientFireSound=True
+//     Do not continuously loop the firing sound
      bIsRepeatingFF=True
      Spread=0.005000
      FireInterval=0.4
