@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aircraft - OmnipotentsONS Documentation</title>
+    <style>
+        :root {
+            --primary: #ff6b35;
+            --secondary: #004e89;
+            --dark: #1a1a2e;
+            --darker: #16162a;
+            --light: #eaeaea;
+            --card-bg: #252540;
+            --card-border: #3a3a5c;
+            --stat-bg: #1e1e35;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--dark); color: var(--light); line-height: 1.6; }
+        header { background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%); border-bottom: 3px solid var(--primary); padding: 1.5rem 2rem; position: sticky; top: 0; z-index: 100; }
+        .header-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: bold; color: var(--primary); text-decoration: none; }
+        .logo span { color: var(--light); }
+        nav ul { display: flex; list-style: none; gap: 0.5rem; }
+        nav a { color: var(--light); text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; transition: all 0.2s; }
+        nav a:hover, nav a.active { background: var(--primary); color: white; }
+        .page-header { background: linear-gradient(135deg, #0284c7 0%, var(--darker) 100%); padding: 3rem 2rem; }
+        .page-header-content { max-width: 1400px; margin: 0 auto; }
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-header p { opacity: 0.9; max-width: 600px; }
+        main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .section-title { font-size: 1.5rem; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary); }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1.5rem; }
+        .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); }
+        .card-header { background: linear-gradient(135deg, #0284c7 0%, var(--darker) 100%); padding: 1rem 1.25rem; border-bottom: 2px solid var(--primary); }
+        .card-header.chopper { background: linear-gradient(135deg, #7c3aed 0%, var(--darker) 100%); }
+        .card-header.bomber { background: linear-gradient(135deg, #dc2626 0%, var(--darker) 100%); }
+        .card-header.transport { background: linear-gradient(135deg, #059669 0%, var(--darker) 100%); }
+        .card-header h3 { font-size: 1.2rem; margin-bottom: 0.25rem; }
+        .card-header .subtitle { opacity: 0.7; font-size: 0.85rem; }
+        .card-body { padding: 1.25rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+        .stat-item { background: var(--stat-bg); padding: 0.6rem; border-radius: 6px; border-left: 3px solid var(--primary); }
+        .stat-item .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; margin-bottom: 0.15rem; }
+        .stat-item .stat-value { font-size: 1rem; font-weight: 600; color: var(--primary); }
+        .stat-item.full-width { grid-column: 1 / -1; }
+        .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background: #0284c7; }
+        .badge-chopper { background: #7c3aed; }
+        .badge-bomber { background: #dc2626; }
+        .badge-transport { background: #059669; }
+        .badge-special { background: #d97706; }
+        .weapons-section { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--card-border); }
+        .weapons-section h4 { font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem; text-transform: uppercase; }
+        .weapon-item { background: var(--stat-bg); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.4rem; font-size: 0.85rem; }
+        .info-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        .info-box h3 { color: var(--primary); margin-bottom: 0.75rem; }
+        footer { background: var(--darker); border-top: 1px solid var(--card-border); padding: 2rem; text-align: center; margin-top: 3rem; }
+        footer p { opacity: 0.7; }
+        @media (max-width: 768px) { .header-content { flex-direction: column; gap: 1rem; } nav ul { flex-wrap: wrap; justify-content: center; } .card-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">Omnipotents<span>ONS</span></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="mechs.html">Mechs</a></li>
+                    <li><a href="tanks.html">Tanks</a></li>
+                    <li><a href="aircraft.html" class="active">Aircraft</a></li>
+                    <li><a href="wheeled.html">Wheeled</a></li>
+                    <li><a href="weapons.html">Weapons</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="page-header-content">
+            <h1>Aircraft</h1>
+            <p>Helicopters, attack craft, bombers, and transport aircraft for air superiority and ground support</p>
+        </div>
+    </section>
+
+    <main>
+        <h2 class="section-title">Attack Helicopters (ONSChopperCraft)</h2>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header chopper">
+                    <span class="badge badge-chopper">Helicopter</span>
+                    <h3>Predator 1.92</h3>
+                    <div class="subtitle">CSapveriv - 2-Man Attack Helicopter</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">350</div></div>
+                        <div class="stat-item"><div class="stat-label">Ground Speed</div><div class="stat-value">2000</div></div>
+                        <div class="stat-item"><div class="stat-label">Crew</div><div class="stat-value">2 (Pilot + Gunner)</div></div>
+                        <div class="stat-item"><div class="stat-label">Base Class</div><div class="stat-value">ONSChopperCraft</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>Weapons</h4>
+                        <div class="weapon-item">Weapon_PredatorWeapon - Fire: 0.21s | Alt: 1.5s</div>
+                        <div class="weapon-item">Weapon_PredatorVulcanGun - Fire: 0.1s | Dmg: 12-16</div>
+                        <div class="weapon-item">Weapon_PredatorMissileWeapon - Fire: 2.0s</div>
+                        <div class="weapon-item">Weapon_PredatorHellFireRockets - Fire: 1.5s</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header chopper">
+                    <span class="badge badge-chopper">Stealth Heli</span>
+                    <h3>Reaper 1.9</h3>
+                    <div class="subtitle">CSapveriv - Stealth Attack Helicopter</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">300</div></div>
+                        <div class="stat-item"><div class="stat-label">Ground Speed</div><div class="stat-value">2000</div></div>
+                        <div class="stat-item"><div class="stat-label">Crew</div><div class="stat-value">2</div></div>
+                        <div class="stat-item"><div class="stat-label">Special</div><div class="stat-value">Cloaking</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>Weapons</h4>
+                        <div class="weapon-item">Weapon_ReaperCannon - Fire: 0.25s | Dmg: 55</div>
+                        <div class="weapon-item">Weapon_ReaperMissileWeapon - Fire: 1.5s</div>
+                        <div class="weapon-item">Weapon_ReaperStealthActivation - Cooldown: 60s</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header chopper">
+                    <span class="badge badge-chopper">Helicopter</span>
+                    <h3>Q-36 Space Modulator 2.9</h3>
+                    <div class="subtitle">CSMarvin</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">300</div></div>
+                        <div class="stat-item"><div class="stat-label">Ground Speed</div><div class="stat-value">2000</div></div>
+                        <div class="stat-item"><div class="stat-label">Air Speed</div><div class="stat-value">800</div></div>
+                        <div class="stat-item"><div class="stat-label">Special</div><div class="stat-value">Portal Gun</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>Weapons</h4>
+                        <div class="weapon-item">CSMarvinPortalWeapon - Fire: 0.5s (Teleport)</div>
+                        <div class="weapon-item">CSMarvinBeamWeapon - Fire: 0.22s | Dmg: 5</div>
+                        <div class="weapon-item">CSMarvinLaserProjectile - Spd: 8000-13000 | Dmg: 32</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header chopper">
+                    <span class="badge badge-chopper">Helicopter</span>
+                    <h3>CSBomber</h3>
+                    <div class="subtitle">CSBomber - Bomber Helicopter</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Base Class</div><div class="stat-value">ONSChopperCraft with Boost</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>Weapons</h4>
+                        <div class="weapon-item">CSBomberWeapon - Fire: 0.3s | Alt: 4.0s | Dmg: 18</div>
+                        <div class="weapon-item">CSBioBomberWeapon - Fire: 0.35s | Dmg: 20</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Attack Craft (ONSAttackCraft)</h2>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Attack Craft</span>
+                    <h3>Falcon 3.0</h3>
+                    <div class="subtitle">FalconV3Omni</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Max Pitch Speed</div><div class="stat-value">3000</div></div>
+                        <div class="stat-item"><div class="stat-label">Thrust Force</div><div class="stat-value">200</div></div>
+                        <div class="stat-item"><div class="stat-label">Strafe Force</div><div class="stat-value">150</div></div>
+                        <div class="stat-item"><div class="stat-label">Rise Force</div><div class="stat-value">175</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>FalconGun</h4>
+                        <div class="weapon-item">Primary - Fire: 0.15s | Proj: FalconPlasmaProjectileShot</div>
+                        <div class="weapon-item">Alt Fire - Fire: 1.3s | 11 projectiles | 1800° spread</div>
+                        <div class="weapon-item">Projectile - Spd: 9009-29000 | Dmg: 30 | Radius: 200</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Attack Craft</span>
+                    <h3>Aurora 2.12</h3>
+                    <div class="subtitle">AuroraOmni</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">350</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Pitch Speed</div><div class="stat-value">2000</div></div>
+                        <div class="stat-item"><div class="stat-label">Gravity Scale</div><div class="stat-value">0.0</div></div>
+                        <div class="stat-item"><div class="stat-label">Stay Upright</div><div class="stat-value">Yes</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>Weapons</h4>
+                        <div class="weapon-item">AuroraBigGun - Fire: 0.4s | Alt: 0.7s | Dmg: 45-55</div>
+                        <div class="weapon-item">AuroraGun - Fire: 0.4s | Alt: 0.75s | Dmg: 40</div>
+                        <div class="weapon-item">AuroraLaser - Beam Weapon</div>
+                        <div class="weapon-item">AuroraSkyMine - Deployable Mines</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Fighter</span>
+                    <h3>Omni Hornet 1.0</h3>
+                    <div class="subtitle">HornetOmni</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Ground Speed</div><div class="stat-value">1800</div></div>
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">325</div></div>
+                        <div class="stat-item"><div class="stat-label">Pitch Speed</div><div class="stat-value">1800</div></div>
+                        <div class="stat-item"><div class="stat-label">Driver Dmg Mult</div><div class="stat-value">0.35x</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>HornetOmniGun</h4>
+                        <div class="weapon-item">Plasma-based weapon | DamTypeHornetOmniGun</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Attack Craft</span>
+                    <h3>FireBlade</h3>
+                    <div class="subtitle">FireBladeOmni</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Theme</div><div class="stat-value">Fire-based Attack Craft</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>Weapons</h4>
+                        <div class="weapon-item">FireBladeOmniCannon - Fire: 0.4s | Alt: 4.0s | Spread: 0.005</div>
+                        <div class="weapon-item">FireBladeOmniTopTurret - Fire: 0.2s | Dmg: 15-20 | Range: 20000</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header chopper">
+                    <span class="badge badge-chopper">Helicopter</span>
+                    <h3>Ifrit 2.97</h3>
+                    <div class="subtitle">FireRaptor - Fire Themed Chopper</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">325</div></div>
+                        <div class="stat-item"><div class="stat-label">Ground Speed</div><div class="stat-value">2000</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Pitch Speed</div><div class="stat-value">1900</div></div>
+                        <div class="stat-item"><div class="stat-label">Base Class</div><div class="stat-value">ONSChopperCraft</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>FireRaptorGun</h4>
+                        <div class="weapon-item">Primary - Fire: 2.0s | Incendiary Fireball</div>
+                        <div class="weapon-item">Alt Fire - Fire: 6.0s | Large Homing Fireball</div>
+                        <div class="weapon-item">Resistant to fire damage (25-70%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header chopper">
+                    <span class="badge badge-chopper">Helicopter</span>
+                    <h3>Mirage Raptor 1.01</h3>
+                    <div class="subtitle">MirageRaptorOmni - Stealth Attack Chopper</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">350</div></div>
+                        <div class="stat-item"><div class="stat-label">Ground Speed</div><div class="stat-value">2200</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Pitch Speed</div><div class="stat-value">2000</div></div>
+                        <div class="stat-item"><div class="stat-label">Base Class</div><div class="stat-value">ONSChopperCraft</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>MirageRaptorOmniGun</h4>
+                        <div class="weapon-item">Primary - Fire: 0.08s | Rapid Plasma</div>
+                        <div class="weapon-item">Alt Fire - Fire: 2.0s | Homing Missile</div>
+                        <div class="weapon-item">Projectile - Spd: 40000 | Dmg: 23 | Radius: 64</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header chopper">
+                    <span class="badge badge-chopper">Helicopter</span>
+                    <h3>Omega 2.5</h3>
+                    <div class="subtitle">OmegaV2Omni - Ion Cannon Raptor</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">275</div></div>
+                        <div class="stat-item"><div class="stat-label">Ground Speed</div><div class="stat-value">1800</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Pitch Speed</div><div class="stat-value">2000</div></div>
+                        <div class="stat-item"><div class="stat-label">Base Class</div><div class="stat-value">ONSChopperCraft</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>Omega_Gun (Ion Cannon)</h4>
+                        <div class="weapon-item">Primary - Charge: 2.0s | Fire: 1.5s | Ion Beam</div>
+                        <div class="weapon-item">Ion Beam - Dmg: 100 | Radius: 1750 | Mom: 80000</div>
+                        <div class="weapon-item">Alt Fire - Fire: 3.0s | Shockwave</div>
+                        <div class="weapon-item">Shockwave - Dmg: 200 | Radius: 1000 | Mom: 300000</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Attack Craft</span>
+                    <h3>Starbolt 2.54</h3>
+                    <div class="subtitle">StarboltV2Omni - Fast Laser Fighter</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">225</div></div>
+                        <div class="stat-item"><div class="stat-label">Ground Speed</div><div class="stat-value">3550</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Pitch Speed</div><div class="stat-value">5000</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Thrust</div><div class="stat-value">230</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>StarboltGun (Dual Laser)</h4>
+                        <div class="weapon-item">Primary - Fire: 0.15s | Instant Hitscan | Range: 20000</div>
+                        <div class="weapon-item">Damage: 18-20 per hit | 120-133 DPS</div>
+                        <div class="weapon-item">Alt Fire - Fire: 3.0s | Flare Bomb</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Attack Craft</span>
+                    <h3>Wasp (Series II)</h3>
+                    <div class="subtitle">Wasp_SeriesII - Nerfed Flak Fighter</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Max Pitch Speed</div><div class="stat-value">2200</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Thrust</div><div class="stat-value">170</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Strafe</div><div class="stat-value">110</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Rise</div><div class="stat-value">150</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>WaspFlakGun</h4>
+                        <div class="weapon-item">Primary - Fire: 0.8s | 5 flak chunks | Random spread</div>
+                        <div class="weapon-item">Alt Fire - Fire: 1.0s | 9 flak chunks | Wide spread</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Attack Craft</span>
+                    <h3>Yellow Jacket Wasp 1.01</h3>
+                    <div class="subtitle">WaspYellowJacket - More Powerful Wasp</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Max Pitch Speed</div><div class="stat-value">2200</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Thrust</div><div class="stat-value">180</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Strafe</div><div class="stat-value">210</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Rise</div><div class="stat-value">150</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>WaspYJFlakGun</h4>
+                        <div class="weapon-item">Primary - Fire: 0.5s | 5 flak chunks | Random spread</div>
+                        <div class="weapon-item">Alt Fire - Fire: 0.8s | 10 flak chunks | Wide spread</div>
+                        <div class="weapon-item">Faster fire rate than Series II</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Bombers &amp; Heavy Aircraft</h2>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header bomber">
+                    <span class="badge badge-bomber">Bomber</span>
+                    <h3>Plasma Fighter</h3>
+                    <div class="subtitle">CSBomber/CSPlasmaFighter</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Role</div><div class="stat-value">Heavy Plasma Attack</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>CSPlasmaFighterWeapon</h4>
+                        <div class="weapon-item">Primary - Fire: 1.0s | Dmg: 113-115 | Momentum: 50000</div>
+                        <div class="weapon-item">Alt Fire - Fire: 2.75s</div>
+                        <div class="weapon-item">Projectile - Spd: 2800-4000 | Dmg: 30 | Radius: 150</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bomber">
+                    <span class="badge badge-bomber">Bomber</span>
+                    <h3>Spank Bomber</h3>
+                    <div class="subtitle">CSBomber</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Role</div><div class="stat-value">Area Bombardment</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>CSSpankBomberWeapon</h4>
+                        <div class="weapon-item">Primary - Fire: 0.75s | Dmg: 45 | Momentum: 60000</div>
+                        <div class="weapon-item">Alt Fire - Fire: 2.0s</div>
+                        <div class="weapon-item">Projectile - Spd: 15000 | Dmg: 55 | Radius: 280</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bomber">
+                    <span class="badge badge-bomber">Artillery</span>
+                    <h3>Pallas V2</h3>
+                    <div class="subtitle">CSPallasV2</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Role</div><div class="stat-value">Flying Artillery / Area Denial</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>Special Weapons</h4>
+                        <div class="weapon-item">CSPallasMainCannonProjectile - Spd: 1300-2600 | Dmg: 20 | Homing</div>
+                        <div class="weapon-item">CSPallasMortarShell - Spd: 8850 | Dmg: 1000 | Radius: 1800</div>
+                        <div class="weapon-item">CSPallasVortex - Vortex Area Effect</div>
+                        <div class="weapon-item">CSPallasShockBall - Shock + Stun</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bomber">
+                    <span class="badge badge-bomber">Siege</span>
+                    <h3>Ballista</h3>
+                    <div class="subtitle">CSBallista</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Role</div><div class="stat-value">Siege Aircraft - Redeemer Platform</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>Weapons</h4>
+                        <div class="weapon-item">BallistaCannon - Fire: 5.0s | Proj: Redeemer</div>
+                        <div class="weapon-item">BallistaChargeGun - Charge: 3.0s | Dmg: 325 | Range: 25000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Transport Aircraft</h2>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header transport">
+                    <span class="badge badge-transport">Transport</span>
+                    <h3>Dropship</h3>
+                    <div class="subtitle">CSapveriv - DropShipKarma</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Role</div><div class="stat-value">Troop/Vehicle Transport</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>Weapons</h4>
+                        <div class="weapon-item">Weapon_DropShipWeapon - Fire: 0.75s | Rockets</div>
+                        <div class="weapon-item">Weapon_DropShipPassenger - Passenger Defense</div>
+                        <div class="weapon-item">Weapon_PhantomBombDropper - Alt: 30s | Heavy Bombs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Specialized Aircraft</h2>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge badge-special">Special</span>
+                    <h3>Kraken</h3>
+                    <div class="subtitle">CSKraken</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Type</div><div class="stat-value">Multi-Role Heavy Aircraft</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>KrakenMainCannon</h4>
+                        <div class="weapon-item">Fire: 6.0s | Dmg: 2000 | Momentum: 8000000 | Range: 25000</div>
+                        <div class="weapon-item">Multiple turrets: Beam, Laser, FlakGun, MissileGun</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge badge-special">Special</span>
+                    <h3>Dark Nephthys 1.1</h3>
+                    <div class="subtitle">CSNephthys - Flying Vortex Platform</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Ground Speed</div><div class="stat-value">1350</div></div>
+                        <div class="stat-item"><div class="stat-label">Air Speed</div><div class="stat-value">4500</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Thrust</div><div class="stat-value">300</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Strafe</div><div class="stat-value">225</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>CSNephthysTurret</h4>
+                        <div class="weapon-item">Gravity Vortex weapon system</div>
+                        <div class="weapon-item">Spawn kill protection: max 7 kills</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge badge-special">Special</span>
+                    <h3>Hammerhead</h3>
+                    <div class="subtitle">CSHammerhead - Tau Railgun Tank (WH40k)</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">800</div></div>
+                        <div class="stat-item"><div class="stat-label">Base Class</div><div class="stat-value">ONSAttackCraft</div></div>
+                        <div class="stat-item"><div class="stat-label">Vehicle Mass</div><div class="stat-value">3.0</div></div>
+                        <div class="stat-item"><div class="stat-label">Entry Radius</div><div class="stat-value">375</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>Switchable Weapons (Alt-Fire)</h4>
+                        <div class="weapon-item">HammerCannon - Primary railgun</div>
+                        <div class="weapon-item">HammerMinigunMaster - Left minigun</div>
+                        <div class="weapon-item">HammerMinigun - Right minigun</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge badge-special">Special</span>
+                    <h3>Flying Saucer 2.7</h3>
+                    <div class="subtitle">CSFlyingSaucer - Exotic UFO</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Max Thrust</div><div class="stat-value">300</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Strafe</div><div class="stat-value">300</div></div>
+                        <div class="stat-item"><div class="stat-label">Max Rise</div><div class="stat-value">200</div></div>
+                        <div class="stat-item"><div class="stat-label">Air Speed</div><div class="stat-value">800</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>SaucerGun</h4>
+                        <div class="weapon-item">Primary weapon system</div>
+                        <div class="weapon-item">Horn: Close Encounters / Dr. Who</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge badge-special">Special</span>
+                    <h3>ONS Link Flyer</h3>
+                    <div class="subtitle">ONSLinkFlyer</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Type</div><div class="stat-value">Link-based Support Flyer</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>LinkFlyerWeapon</h4>
+                        <div class="weapon-item">Primary - Fire: 0.35s | Alt: 0.12s | Link Beam</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge badge-special">Special</span>
+                    <h3>Skaarj Viper</h3>
+                    <div class="subtitle">KopholusV2Omni</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Type</div><div class="stat-value">Skaarj-themed Viper</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>SkaarjViperProjectile</h4>
+                        <div class="weapon-item">MaxSpeed: 5000 | Dmg: 75 | Momentum: 40000</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge badge-special">Special</span>
+                    <h3>Sky Miner</h3>
+                    <div class="subtitle">AuroraOmni</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Type</div><div class="stat-value">Mining/Utility Aircraft</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Hover Bikes &amp; Light Craft</h2>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Hover Bike</span>
+                    <h3>Wyvern 1.01</h3>
+                    <div class="subtitle">OmniMantas</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">150</div></div>
+                        <div class="stat-item"><div class="stat-label">Base Class</div><div class="stat-value">ONSHoverBike</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Hover Bike</span>
+                    <h3>Stingray</h3>
+                    <div class="subtitle">OmniMantas</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Type</div><div class="stat-value">Manta Bike Variant</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Hover Craft</span>
+                    <h3>Cherufe 2.96</h3>
+                    <div class="subtitle">FireVehiclesV2Omni - FireManta</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-label">Health</div><div class="stat-value">250</div></div>
+                        <div class="stat-item"><div class="stat-label">Ground Speed</div><div class="stat-value">2250</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Hover Craft</span>
+                    <h3>Lamprey Manta</h3>
+                    <div class="subtitle">LinkVehiclesOmni</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Type</div><div class="stat-value">Link-based Manta</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Hover Craft</span>
+                    <h3>Lamprey Flying Manta</h3>
+                    <div class="subtitle">LinkVehiclesOmni</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Type</div><div class="stat-value">Flying Manta Variant</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge">Special</span>
+                    <h3>Trickboard</h3>
+                    <div class="subtitle">CSTrickboard</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item full-width"><div class="stat-label">Type</div><div class="stat-value">Hoverboard Vehicle</div></div>
+                    </div>
+                    <div class="weapons-section">
+                        <h4>CSTrickboardWeapon</h4>
+                        <div class="weapon-item">Fire: 0.12s | Link-based</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>OmnipotentsONS Mods Documentation - Unreal Tournament 2004</p>
+    </footer>
+</body>
+</html>

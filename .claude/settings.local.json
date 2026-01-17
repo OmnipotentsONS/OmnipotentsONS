@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(done)",
+      "Bash(cd:*)",
+      "Bash(dir:*)",
+      "Bash(dir /s /b source*.uc)"
+    ]
+  }
+}
