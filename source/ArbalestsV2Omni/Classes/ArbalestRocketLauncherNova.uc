@@ -3,19 +3,29 @@
 //-----------------------------------------------------------
 class ArbalestRocketLauncherNova extends ONSMASRocketPack;
 
+var bool bAltFireHeld;
 var int firemode;
 var int maxfiremode;
 var Array<String> FireModeNames;
 
 var bool canFireMEGADeemer;
 var float MEGADeemerReload;
+var int MEGADeemerSecondsLeft;
 
 replication
 {
   reliable if(Role == Role_Authority) 
            canFireMEGADeemer, firemode, MEGADeemerReload;
+  unreliable if (bNetDirty && Role == ROLE_Authority)
+           MEGADeemerSecondsLeft;
 }
 
+simulated function ClientStopFire(Controller C, bool bWasAltFire)
+{
+    Super.ClientStopFire(C, bWasAltFire);
+    if ( bWasAltFire )
+        bAltFireHeld = false;
+}
 
 function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 {
@@ -110,6 +120,12 @@ state ProjectileFireMode
 			if (M != None)
 			{
 				M.OldPawn = Instigator;
+				if (ArbalestNova(Instigator) != None)
+				{
+					ArbalestNova(Instigator).SavedCameraRotation = C.Rotation;
+					ArbalestNova(Instigator).CameraRestoreCount++;
+				}
+				Possessor = PlayerController(Instigator.Controller);
 				//M.PlaySound(FireSound);
 				Possessor = PlayerController(Instigator.Controller);
 				Possessor.bAltFire = 0;
@@ -136,6 +152,11 @@ state ProjectileFireMode
 			if (M != None)
 			{
 				M.OldPawn = Instigator;
+				if (ArbalestNova(Instigator) != None)
+				{
+					ArbalestNova(Instigator).SavedCameraRotation = C.Rotation;
+					ArbalestNova(Instigator).CameraRestoreCount++;
+				}
 				//M.PlaySound(FireSound);
 				Possessor = PlayerController(Instigator.Controller);
 				Possessor.bAltFire = 0;
@@ -153,7 +174,8 @@ state ProjectileFireMode
 				M.MyTeam = Possessor.PlayerReplicationInfo.Team;
 			}
 			canFireMEGADeemer=false;
-			SetTimer(MEGADeemerReload, false);
+			MEGADeemerSecondsLeft = int(MEGADeemerReload);
+			SetTimer(1.0, true);
 		}
 	}
 
@@ -166,7 +188,13 @@ state ProjectileFireMode
 	
 	simulated function timer()
 	{
-		canFireMEGADeemer=true;
+		MEGADeemerSecondsLeft--;
+		if (MEGADeemerSecondsLeft <= 0)
+		{
+			MEGADeemerSecondsLeft = 0;
+			canFireMEGADeemer = true;
+			SetTimer(0, false);
+		}
 	}
 }
 
@@ -198,12 +226,15 @@ event bool AttemptFire(Controller C, bool bAltFire)
 		return True;
 	}
 
+	/* Disabled because we fire alt-fire once per click
 	if (bAltFire && FireCountdown <= 0)
 	{
-		FireCountdown = FireInterval;
+		FireCountdown = 0.25;
 		AltFire(C);
-		Return True;
+		return True;
 	}
+	*/
+
 	return false;
 }
 

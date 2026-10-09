@@ -451,6 +451,7 @@ simulated function EjectVehicle()
         NewAttachVehicle.Destroy();
         NewAttachVehicle=none;
         spawnVehicle = spawn(vehicleClass,,,LOC);
+		spawnVehicle.Instigator = Instigator; // Prevent team/self damage
         spawnVehicle.SetTeamNum(Team);
         spawnVehicle.TeamChanged();
         spawnVehicle.Team = Team;

@@ -43,6 +43,19 @@ var LinkAttachment.ELinkColor OldLinkColor;
 
 var LinkBeamEffect Beam;
 
+// Last button pressed wins vars
+enum EFirePriority
+{
+    FP_None,
+    FP_Primary,
+    FP_Alt
+};
+var EFirePriority FirePriority;
+var bool bPrimaryWasDown;
+var bool bAltWasDown;
+
+var int ExportLinks; // Links advertised to the vehicle we are healing
+
 replication
 {
     unreliable if (Role == ROLE_Authority && bNetDirty)
@@ -85,6 +98,7 @@ simulated function UpdateLinkColor( LinkAttachment.ELinkColor Color )
 // When someone links the tank, record it and add it to the Linkers
 // After a certain time period passes, remove that linker if they aren't linking anymore
 // ============================================================================
+/*
 function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
 {
 	local int i;
@@ -124,6 +138,79 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 
 	return super.HealDamage(Amount, Healer, DamageType);
 }
+*/
+
+// Vehicle chain linking support by Anon
+function int GetHealerLinks(Controller Healer)
+{
+    local Pawn P;
+    local string LinkStr;
+    local Vehicle V;
+
+    if (Healer == None || Healer.Pawn == None)
+        return 0;
+
+    P = Healer.Pawn;
+
+    // Passenger turrets live on an ONSWeaponPawn; Links is on VehicleBase
+    V = Vehicle(P);
+    if (ONSWeaponPawn(V) != None)
+        V = ONSWeaponPawn(V).VehicleBase;
+
+    if (V != None)
+    {
+        LinkStr = V.GetPropertyText("ExportLinks");
+        if (LinkStr != "")
+            return Max(0, int(LinkStr));
+
+        LinkStr = V.GetPropertyText("Links");
+        if (LinkStr != "")
+            return Max(0, int(LinkStr));
+
+        return 0;
+    }
+
+    if (P.Weapon != None && LinkGun(P.Weapon) != None)
+        return LinkGun(P.Weapon).Links;
+
+    return 0;
+}
+
+function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
+{
+    local int i;
+    local bool bFound;
+    local int InboundLinks;
+
+    if (Healer == None || Healer.bDeleteMe)
+        return false;
+
+    if (TeamLink(Healer.GetTeamNum()) && Healer != Controller)
+    {
+        InboundLinks = GetHealerLinks(Healer);
+
+        for (i = 0; i < Linkers.Length; i++)
+        {
+            if (Linkers[i].LinkingController != None && Linkers[i].LinkingController == Healer)
+            {
+                bFound = true;
+                Linkers[i].LastLinkTime = Level.TimeSeconds;
+                Linkers[i].NumLinks = InboundLinks;
+                break;
+            }
+        }
+
+        if (!bFound)
+        {
+            Linkers.Insert(0, 1);
+            Linkers[0].LinkingController = Healer;
+            Linkers[0].LastLinkTime = Level.TimeSeconds;
+            Linkers[0].NumLinks = InboundLinks;
+        }
+    }
+
+    return super.HealDamage(Amount, Healer, DamageType);
+}
 
 // ============================================================================
 // GetLinks
@@ -140,26 +227,37 @@ function int GetLinks()
 // ============================================================================
 function ResetLinks()
 {
-	local int i;
-	local int NewLinks;
+    local int i, NewLinks, Deduct;
+    local Controller TargetCtrl;
 
-	i = 0;
-	NewLinks = 0;
-	while (i < Linkers.Length)
-	{
-		// Remove linkers when their controllers are deleted
-		// Or remove if LINK_DECAY_TIME seconds pass since they last linked the tank
-		if (Linkers[i].LinkingController == None || Level.TimeSeconds - Linkers[i].LastLinkTime > LINK_DECAY_TIME)
-			Linkers.Remove(i,1);
-		else
-		{
-			NewLinks += 1 + Linkers[i].NumLinks;
-			i++;
-		}
-	}
+    if (Beam != None && Beam.LinkedPawn != None)
+        TargetCtrl = Beam.LinkedPawn.Controller;
 
-	if (Links != NewLinks)
-		Links = NewLinks;
+    i = 0;
+    NewLinks = 0;
+    Deduct = 0;
+
+    while (i < Linkers.Length)
+    {
+        if (Linkers[i].LinkingController == None
+            || Level.TimeSeconds - Linkers[i].LastLinkTime > LINK_DECAY_TIME)
+        {
+            Linkers.Remove(i, 1);
+        }
+        else
+        {
+            NewLinks += 1 + Linkers[i].NumLinks;
+
+            // If we are healing our own linker, drop that entry from what we advertise
+            if (TargetCtrl != None && Linkers[i].LinkingController == TargetCtrl)
+                Deduct = 1 + Linkers[i].NumLinks;
+
+            i++;
+        }
+    }
+
+    Links = NewLinks;
+    ExportLinks = Max(0, NewLinks - Deduct);
 }
 
 
@@ -193,13 +291,98 @@ simulated event Tick(float DT)
 	// Show regular green link panels
 	else
 		UpdateLinkColor(LC_Green);
+
+	if (Controller == None)
+	{
+		bPrimaryWasDown = false;
+		bAltWasDown = false;
+		FirePriority = FP_None;
+	}
+	else
+	{
+		if (Controller.bFire == 0)
+			bPrimaryWasDown = false;
+
+		if (Controller.bAltFire == 0)
+			bAltWasDown = false;
+
+		// If one button was released, transfer priority to whichever button is still held
+		if (Controller.bFire == 0 && Controller.bAltFire == 0)
+			FirePriority = FP_None;
+		else if (Controller.bFire != 0 && Controller.bAltFire == 0)
+			FirePriority = FP_Primary;
+		else if (Controller.bFire == 0 && Controller.bAltFire != 0)
+			FirePriority = FP_Alt;
+	}
 }
 
-// Don't allow primary fire if beaming
 function Fire(optional float F)
 {
-	if (!bBeaming)
-		Super.Fire(F);
+    if (!bPrimaryWasDown)
+    {
+        bPrimaryWasDown = true;
+        SetFirePriority(FP_Primary);
+    }
+
+    if (FirePriority == FP_Primary)
+        Super.Fire(F);
+}
+
+function AltFire(optional float F)
+{
+    if (!bAltWasDown)
+    {
+        bAltWasDown = true;
+        SetFirePriority(FP_Alt);
+    }
+
+    if (FirePriority == FP_Alt)
+        Super(ONSVehicle).AltFire(F);
+}
+
+simulated function SetFirePriority(EFirePriority NewPriority)
+{
+    if (FirePriority == NewPriority)
+        return;
+
+    FirePriority = NewPriority;
+
+    if (FirePriority == FP_Primary)
+    {
+        if (bWeaponIsAltFiring)
+        {
+            if (Role == ROLE_Authority)
+                VehicleCeaseFire(true);
+            if (Level.NetMode != NM_DedicatedServer)
+                ClientVehicleCeaseFire(true);
+        }
+    }
+    else if (FirePriority == FP_Alt)
+    {
+        if (bWeaponIsFiring)
+        {
+            if (Role == ROLE_Authority)
+                VehicleCeaseFire(false);
+            if (Level.NetMode != NM_DedicatedServer)
+                ClientVehicleCeaseFire(false);
+        }
+    }
+}
+
+function VehicleCeaseFire(bool bWasAltFire)
+{
+    Super(ONSVehicle).VehicleCeaseFire(bWasAltFire);
+
+    if (bWasAltFire && Weapons.Length > 0 && Weapons[0] != None)
+        Weapons[0].WeaponCeaseFire(Controller, true);
+}
+
+simulated function ClientVehicleCeaseFire(bool bWasAltFire)
+{
+    Super(ONSVehicle).ClientVehicleCeaseFire(bWasAltFire);
+
+    if (bWasAltFire && Weapons.Length > 0 && Weapons[0] != None)
+        Weapons[0].WeaponCeaseFire(Controller, true);
 }
 
 static function StaticPrecache(LevelInfo L)

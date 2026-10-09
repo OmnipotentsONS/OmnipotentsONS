@@ -53,6 +53,8 @@ var LinkAttachment.ELinkColor OldLinkColor;
 
 var VampireTank3BeamEffect Beam;
 
+var int ExportLinks; // Links advertised to the vehicle we are healing
+
 replication
 {
     unreliable if (Role == ROLE_Authority && bNetDirty)
@@ -89,6 +91,7 @@ simulated function UpdateLinkColor( LinkAttachment.ELinkColor Color )
 // When someone links the tank, record it and add it to the Linkers
 // After a certain time period passes, remove that linker if they aren't linking anymore
 // ============================================================================
+/*
 function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
 {
 	local int i;
@@ -119,7 +122,7 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 			Linkers[0].LinkingController = Healer;
 			Linkers[0].LastLinkTime = Level.TimeSeconds;
 			// If other players are linking that pawn, record it
-			if ( (Linkers[i].LinkingController.Pawn != None) && (Linkers[i].LinkingController.Pawn.Weapon != None) && (LinkGun(Linkers[i].LinkingController.Pawn.Weapon) != None) )
+			if ( (Linkers[i].LinkingController.Pawn != None) && (Linkers[0].LinkingController.Pawn.Weapon != None) && (LinkGun(Linkers[0].LinkingController.Pawn.Weapon) != None) )
 				Linkers[0].NumLinks = LinkGun(Linkers[0].LinkingController.Pawn.Weapon).Links;
 			else
 				Linkers[0].NumLinks = 0;
@@ -127,6 +130,79 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 	}
 
 	return super.HealDamage(Amount, Healer, DamageType);
+}
+*/
+
+// Vehicle chain linking support by Anon
+function int GetHealerLinks(Controller Healer)
+{
+    local Pawn P;
+    local string LinkStr;
+    local Vehicle V;
+
+    if (Healer == None || Healer.Pawn == None)
+        return 0;
+
+    P = Healer.Pawn;
+
+    // Passenger turrets live on an ONSWeaponPawn; Links is on VehicleBase
+    V = Vehicle(P);
+    if (ONSWeaponPawn(V) != None)
+        V = ONSWeaponPawn(V).VehicleBase;
+
+    if (V != None)
+    {
+        LinkStr = V.GetPropertyText("ExportLinks");
+        if (LinkStr != "")
+            return Max(0, int(LinkStr));
+
+        LinkStr = V.GetPropertyText("Links");
+        if (LinkStr != "")
+            return Max(0, int(LinkStr));
+
+        return 0;
+    }
+
+    if (P.Weapon != None && LinkGun(P.Weapon) != None)
+        return LinkGun(P.Weapon).Links;
+
+    return 0;
+}
+
+function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
+{
+    local int i;
+    local bool bFound;
+    local int InboundLinks;
+
+    if (Healer == None || Healer.bDeleteMe)
+        return false;
+
+    if (TeamLink(Healer.GetTeamNum()) && Healer != Controller)
+    {
+        InboundLinks = GetHealerLinks(Healer);
+
+        for (i = 0; i < Linkers.Length; i++)
+        {
+            if (Linkers[i].LinkingController != None && Linkers[i].LinkingController == Healer)
+            {
+                bFound = true;
+                Linkers[i].LastLinkTime = Level.TimeSeconds;
+                Linkers[i].NumLinks = InboundLinks;
+                break;
+            }
+        }
+
+        if (!bFound)
+        {
+            Linkers.Insert(0, 1);
+            Linkers[0].LinkingController = Healer;
+            Linkers[0].LastLinkTime = Level.TimeSeconds;
+            Linkers[0].NumLinks = InboundLinks;
+        }
+    }
+
+    return super.HealDamage(Amount, Healer, DamageType);
 }
 
 // ============================================================================
@@ -144,26 +220,37 @@ function int GetLinks()
 // ============================================================================
 function ResetLinks()
 {
-	local int i;
-	local int NewLinks;
+    local int i, NewLinks, Deduct;
+    local Controller TargetCtrl;
 
-	i = 0;
-	NewLinks = 0;
-	while (i < Linkers.Length)
-	{
-		// Remove linkers when their controllers are deleted
-		// Or remove if LINK_DECAY_TIME seconds pass since they last linked the tank
-		if (Linkers[i].LinkingController == None || Level.TimeSeconds - Linkers[i].LastLinkTime > LINK_DECAY_TIME)
-			Linkers.Remove(i,1);
-		else
-		{
-			NewLinks += 1 + Linkers[i].NumLinks;
-			i++;
-		}
-	}
+    if (Beam != None && Beam.LinkedPawn != None)
+        TargetCtrl = Beam.LinkedPawn.Controller;
 
-	if (Links != NewLinks)
-		Links = NewLinks;
+    i = 0;
+    NewLinks = 0;
+    Deduct = 0;
+
+    while (i < Linkers.Length)
+    {
+        if (Linkers[i].LinkingController == None
+            || Level.TimeSeconds - Linkers[i].LastLinkTime > LINK_DECAY_TIME)
+        {
+            Linkers.Remove(i, 1);
+        }
+        else
+        {
+            NewLinks += 1 + Linkers[i].NumLinks;
+
+            // If we are healing our own linker, drop that entry from what we advertise
+            if (TargetCtrl != None && Linkers[i].LinkingController == TargetCtrl)
+                Deduct = 1 + Linkers[i].NumLinks;
+
+            i++;
+        }
+    }
+
+    Links = NewLinks;
+    ExportLinks = Max(0, NewLinks - Deduct);
 }
 
 
@@ -388,7 +475,7 @@ Begin:
 }
 */
 
-/* Doesn't link stack so no need for HUD symbols
+///* Doesn't link stack so no need for HUD symbols
 simulated function DrawHUD(Canvas C)
 {
 	local PlayerController PC;
@@ -410,7 +497,7 @@ simulated function DrawHUD(Canvas C)
 		PlayerHud.totalLinks.value = Links;
 	}
 }
-*/
+//*/
 
 static function StaticPrecache(LevelInfo L)
 {
@@ -537,7 +624,7 @@ defaultproperties
      DestructionEffectClass=Class'UT2k4Assault.FX_SpaceFighter_Explosion_Directional'
      DisintegrationEffectClass=None
      DisintegrationHealth=0.000000
-     FPCamPos=(X=-80.000000,Z=250.000000)
+     FPCamPos=(X=-80.000000,Z=200.000000) //-80, 250
      FPCamViewOffset=(X=25.000000)
      //TPCamLookat=(X=-50.000000,Z=0.000000)
      //TPCamWorldOffset=(Z=250.000000)
@@ -558,7 +645,7 @@ defaultproperties
     GroundSpeed=2300
     MaxGroundSpeed=2800
     MaxAirSpeed=8500
-    HoverCheckDist=67 // raise it just bit to avoid snags
+    HoverCheckDist=72 // raise it just bit to avoid snags
     Begin Object Class=KarmaParamsRBFull Name=KParams0
 			KStartEnabled=True
 			KFriction=0.4

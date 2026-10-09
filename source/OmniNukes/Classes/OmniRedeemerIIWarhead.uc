@@ -449,7 +449,8 @@ simulated function DmgRadius(vector flash, float dmgPctHard, float dmgPctThru, f
 		if( (Victims != self) && (Victims.Role == ROLE_Authority) && !Victims.IsA('FluidSurfaceInfo') )
 		{
 			if ( CachedTeamNum == 255 || Pawn(Victims) == None ||
-				 Pawn(Victims).GetTeamNum() != CachedTeamNum )
+				 Pawn(Victims).GetTeamNum() != CachedTeamNum ||
+				 (SavedInstigatorController != None && Pawn(Victims).Controller == SavedInstigatorController) )
 			{
 				dir = Victims.Location - HitLocation;
 				dist = FMax(1,VSize(dir));
@@ -548,7 +549,8 @@ ignores Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling, 
     }
 
 Begin:
-	//Instigator = self;
+	RelinquishController();
+
     if ( Instigator == None && SavedInstigatorController != None )
         Instigator = SavedInstigatorController.Pawn;
 
@@ -561,17 +563,17 @@ Begin:
     PlaySound(sound'OmniNukesSounds.OmniNukes.TFNKDistantBoom',SLOT_None,3*TransientSoundVolume,false,TransientSoundRadius*4);
 
     //Deemer Code
-    HurtRadius(Damage, DamageRadius*0.125, MyDamageType, MomentumTransfer, Location);
+    DmgRadius(vect(0,0,0), 1, 1, Damage, DamageRadius*0.125, MyDamageType, MomentumTransfer, Location);
     Sleep(0.3);
-    HurtRadius(Damage, DamageRadius*0.300, MyDamageType, MomentumTransfer, Location);
+    DmgRadius(vect(0,0,0), 1, 1, Damage, DamageRadius*0.300, MyDamageType, MomentumTransfer, Location);
     Sleep(0.15);
-    HurtRadius(Damage, DamageRadius*0.475, MyDamageType, MomentumTransfer, Location);
+    DmgRadius(vect(0,0,0), 1, 1, Damage, DamageRadius*0.475, MyDamageType, MomentumTransfer, Location);
     Sleep(0.15);
-    HurtRadius(Damage, DamageRadius*0.650, MyDamageType, MomentumTransfer, Location);
+    DmgRadius(vect(0,0,0), 1, 1, Damage, DamageRadius*0.650, MyDamageType, MomentumTransfer, Location);
     Sleep(0.15);
-    HurtRadius(Damage, DamageRadius*0.825, MyDamageType, MomentumTransfer, Location);
+    DmgRadius(vect(0,0,0), 1, 1, Damage, DamageRadius*0.825, MyDamageType, MomentumTransfer, Location);
     Sleep(0.15);
-    HurtRadius(Damage, DamageRadius*1.000, MyDamageType, MomentumTransfer, Location);
+    DmgRadius(vect(0,0,0), 1, 1, Damage, DamageRadius*1.000, MyDamageType, MomentumTransfer, Location);
 
     //Shockwave+Heat
     DmgRadius(vect(0,0,0), 1, 0.20, Damage, DamageRadius*0.125, MyDamageType, MomentumTransfer, Location);
@@ -602,8 +604,6 @@ Begin:
 //	Sleep(0.2);
 //	DmgRadius(vect(500,400,100), 0.25, 0.50, (Damage/2)*(1-((level.TimeSeconds-expstart)/10)), 0.35*DamageRadius, class'WGS_wep_paky.DamTypeNKHeat', MomentumTransfer*-0.2, Location);
 	DmgRadius(vect(0,0,0), 1, 0.10, Damage*0.05, DamageRadius*1.000, MyDamageType, MomentumTransfer*0.05, Location);
-
-	RelinquishController();
 
     //Heat only
     while(level.TimeSeconds<expstart+10)

@@ -2,13 +2,14 @@ class ArbalestClusterGuidedWarhead extends ArbalestGuidedWarhead;
 
 function BlowUp(vector HitLocation)
 {
-
-	local PlayerController PC;
     local vector start;
     local rotator rot;
     local int i;
     local ArbalestClusterBomb Bomb;
-	
+
+	if ( bDeleteMe || Level.bLevelChange )
+		return;
+
 	if ( Role == ROLE_Authority )
 	{
 		bHidden = true;
@@ -18,7 +19,7 @@ function BlowUp(vector HitLocation)
 	start = Location;
 	if ( Role == ROLE_Authority )
 	{
-		HurtRadius(Damage, 220, MyDamageType, MomentumTransfer, HitLocation);	
+		HurtRadius(Damage, 220, MyDamageType, MomentumTransfer, HitLocation);
 		for (i=0; i<10; i++)
 		{
 			rot = Rotation;

@@ -27,11 +27,13 @@ var actor HurtNode;
 
 simulated function Destroyed()
 {
-	if ( SmokeTrail != None )
-		SmokeTrail.mRegen = False;
-	if ( Corona != None )
-		Corona.Destroy();
-	Super.Destroyed();
+    if (SmokeTrail != None)
+        SmokeTrail.Destroy();
+
+    if (Corona != None)
+        Corona.Destroy();
+
+    Super.Destroyed();
 }
 
 simulated function PostBeginPlay()
@@ -80,19 +82,26 @@ function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 			BlowUp(Location);
 		else
 		{
-            if ( Instigator != None && PlayerController(Instigator.Controller) != None )
-            {
-				PlayerController(Instigator.Controller).PlayRewardAnnouncement('Denied',1, true);
-                teamNum = Instigator.Controller.GetTeamNum();
+			if (Instigator != None && PlayerController(Instigator.Controller) != None)
+			{
+				PlayerController(Instigator.Controller).PlayRewardAnnouncement
+				(
+					'Denied', 1, true
+				);
+			}
 
-            }
-			if ( instigatedBy != None && PlayerController(InstigatedBy.Controller) != None )
-            {
-				PlayerController(InstigatedBy.Controller).PlayRewardAnnouncement('Denied',1, true);
-                teamNum = instigatedBy.Controller.GetTeamNum();
-            }
-            SpawnDeniedEffects(hitlocation, Normal(velocity));
-            GotoState('Dying');
+			if (InstigatedBy != None
+				&& PlayerController(InstigatedBy.Controller) != None)
+			{
+				PlayerController(InstigatedBy.Controller).PlayRewardAnnouncement
+				(
+					'Denied', 1, true
+				);
+			}
+
+			SpawnDeniedEffects(HitLocation, Normal(Velocity));
+			SetCollision(false, false, false);
+			Destroy();
 		}
 	}
 }
@@ -143,12 +152,10 @@ simulated function SpawnEffects(vector HitLocation, vector HitNormal)
     }
 }
 
-simulated function SpawnDeniedEffects(vector HitLocation, vector HitNormal)
+function SpawnDeniedEffects(vector HitLocation, vector HitNormal)
 {
-    if(EffectIsRelevant(HitLocation, false))
-    {
-        Spawn(class'RocketExplosion',,, HitLocation, rotator(vect(0,0,1)));
-    }
+    Spawn(class'SmallRedeemerExplosion',,, HitLocation,
+        rotator(vect(0,0,1)));
 }
 
 function bool IsSameTeam(Actor Victim)

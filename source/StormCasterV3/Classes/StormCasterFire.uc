@@ -18,6 +18,7 @@ class StormCasterFire extends PainterFire;
 var() float MinTraceHeight;
 var() float MinOtherStormDistance;
 
+var bool bMarkDenied;
 
 /**
 Check for valid ion cannon target location.
@@ -50,6 +51,36 @@ state Paint
 		return false;
 	}
 
+	function bool PowerCoreNearby(vector TestLocation)
+	{
+		local ONSPowerCore Core;
+
+		foreach Weapon.AllActors(class'ONSPowerCore', Core)
+		{
+			// ONSPowerNode extends ONSPowerCore, but casting near a regular
+			// Power Node should still be allowed; only the true Core is off-limits.
+			if (Core.IsA('ONSPowerNode'))
+				continue;
+
+			if (VSize((Core.Location - TestLocation) * vect(1,1,0)) < 5120.0)
+				return true;
+		}
+
+		return false;
+	}
+
+	function DenyCast(string Reason)
+	{
+		local PlayerController PC;
+
+		PC = PlayerController(Instigator.Controller);
+		if (PC != None)
+		{
+			PC.ClientPlaySound(Sound'MenuSounds.denied1');
+			PC.ClientMessage(Reason);
+		}
+	}
+
 	function ModeTick(float DeltaTime)
 	{
 		local Vector StartTrace, EndTrace, X,Y,Z;
@@ -78,38 +109,46 @@ state Paint
 			{
 				bValidMark = false;
 
-				if (Other.bWorldGeometry && HitNormal dot vect(0,0,1) > 0.7 && Weapon.FastTrace(HitLocation + MinTraceHeight * vect(0,0,1), HitLocation) && !StormNearby(HitLocation))
+				if (Other.bWorldGeometry && HitNormal dot vect(0,0,1) > 0.7 && Weapon.FastTrace(HitLocation + MinTraceHeight * vect(0,0,1), HitLocation))
 				{
 					if (VSize(HitLocation - MarkLocation) < 50.0)
 					{
-						Instigator.MakeNoise(3.0);
-						if (Level.TimeSeconds - MarkTime > 0.3)
+						if (bMarkDenied)
 						{
-							bEngageCannon = Level.TimeSeconds - MarkTime > PaintDuration;
-							if (bEngageCannon)
+							// Already told the player this spot is off-limits;
+							// stay silent until they move to a new location.
+						}
+						else
+						{
+							Instigator.MakeNoise(3.0);
+							if (Level.TimeSeconds - MarkTime > 0.3)
 							{
-								Instigator.PendingWeapon = None;
-								Painter(Weapon).ReallyConsumeAmmo(ThisModeNum, 1);
-								Instigator.Controller.ClientSwitchToBestWeapon();
-
-								Spawn(class'StormCasterBlast', Instigator,, MarkLocation + vect(0,0,10));
-
-								if (Beam != None)
-									Beam.SetTargetState(PTS_Aquired);
-
-								StopForceFeedback(TAGMarkForce);
-								ClientPlayForceFeedback(TAGAquiredForce);
-
-								StopFiring();
-							}
-							else
-							{
-								bValidMark = true;
-
-								if (!bMarkStarted)
+								bEngageCannon = Level.TimeSeconds - MarkTime > PaintDuration;
+								if (bEngageCannon)
 								{
-									bMarkStarted = true;
-									ClientPlayForceFeedback(TAGMarkForce);
+									Instigator.PendingWeapon = None;
+									Painter(Weapon).ReallyConsumeAmmo(ThisModeNum, 1);
+									Instigator.Controller.ClientSwitchToBestWeapon();
+
+									Spawn(class'StormCasterBlast', Instigator,, MarkLocation + vect(0,0,10));
+
+									if (Beam != None)
+										Beam.SetTargetState(PTS_Aquired);
+
+									StopForceFeedback(TAGMarkForce);
+									ClientPlayForceFeedback(TAGAquiredForce);
+
+									StopFiring();
+								}
+								else
+								{
+									bValidMark = true;
+
+									if (!bMarkStarted)
+									{
+										bMarkStarted = true;
+										ClientPlayForceFeedback(TAGMarkForce);
+									}
 								}
 							}
 						}
@@ -121,6 +160,21 @@ state Paint
 						MarkLocation = HitLocation;
 						bValidMark = false;
 						bMarkStarted = false;
+
+						if (PowerCoreNearby(MarkLocation))
+						{
+							bMarkDenied = true;
+							DenyCast("Cannot cast near a power core!");
+						}
+						else if (StormNearby(MarkLocation))
+						{
+							bMarkDenied = true;
+							DenyCast("Cannot cast near another storm!");
+						}
+						else
+						{
+							bMarkDenied = false;
+						}
 					}
 				}
 				else
@@ -128,6 +182,7 @@ state Paint
 					MarkTime = Level.TimeSeconds;
 					bValidMark = false;
 					bMarkStarted = false;
+					bMarkDenied = false;
 				}
 				bDoHit = false;
 			}

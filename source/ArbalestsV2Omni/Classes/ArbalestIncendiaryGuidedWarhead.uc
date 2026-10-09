@@ -2,13 +2,14 @@ class ArbalestIncendiaryGuidedWarhead extends ArbalestGuidedWarhead;
 
 function BlowUp(vector HitLocation)
 {
-
-//	local PlayerController PC;
     local vector start;
     local rotator rot;
     local int i;
     local ArbalestFire FireBLOB;
-	
+
+	if ( bDeleteMe || Level.bLevelChange )
+		return;
+
 	if ( Role == ROLE_Authority )
 	{
 		bHidden = true;

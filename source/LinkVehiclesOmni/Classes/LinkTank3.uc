@@ -51,6 +51,19 @@ var LinkAttachment.ELinkColor OldLinkColor;
 
 var LinkBeamEffect Beam;
 
+// Last button pressed wins vars
+enum EFirePriority
+{
+    FP_None,
+    FP_Primary,
+    FP_Alt
+};
+var EFirePriority FirePriority;
+var bool bPrimaryWasDown;
+var bool bAltWasDown;
+
+var int ExportLinks; // Links advertised to the vehicle we are healing
+
 replication
 {
     unreliable if (Role == ROLE_Authority && bNetDirty)
@@ -87,6 +100,7 @@ simulated function UpdateLinkColor( LinkAttachment.ELinkColor Color )
 // When someone links the tank, record it and add it to the Linkers
 // After a certain time period passes, remove that linker if they aren't linking anymore
 // ============================================================================
+/*
 function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
 {
 	local int i;
@@ -117,7 +131,7 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 			Linkers[0].LinkingController = Healer;
 			Linkers[0].LastLinkTime = Level.TimeSeconds;
 			// If other players are linking that pawn, record it
-			if ( (Linkers[i].LinkingController.Pawn != None) && (Linkers[i].LinkingController.Pawn.Weapon != None) && (LinkGun(Linkers[i].LinkingController.Pawn.Weapon) != None) )
+			if ( (Linkers[0].LinkingController.Pawn != None) && (Linkers[0].LinkingController.Pawn.Weapon != None) && (LinkGun(Linkers[0].LinkingController.Pawn.Weapon) != None) )
 				Linkers[0].NumLinks = LinkGun(Linkers[0].LinkingController.Pawn.Weapon).Links;
 			else
 				Linkers[0].NumLinks = 0;
@@ -125,6 +139,150 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 	}
 
 	return super.HealDamage(Amount, Healer, DamageType);
+}
+*/
+
+// Vehicle chain linking support by Anon
+function Pawn GetOutboundLinkTarget()
+{
+    local LinkBeamEffect B;
+
+    if (Beam != None && Beam.LinkedPawn != None)
+        return Beam.LinkedPawn;
+
+    foreach DynamicActors(class'LinkBeamEffect', B)
+    {
+        if (B != None && !B.bDeleteMe && B.LinkedPawn != None
+            && (B.Owner == self || B.Instigator == self))
+            return B.LinkedPawn;
+    }
+
+    return None;
+}
+
+function Pawn GetActorLinkTarget(Pawn P)
+{
+    local LinkBeamEffect B;
+    local LinkGun LG;
+    local Vehicle V;
+
+    if (P == None)
+        return None;
+
+    if (LinkTank3(P) != None)
+        return LinkTank3(P).GetOutboundLinkTarget();
+
+    if (P.Weapon != None)
+    {
+        LG = LinkGun(P.Weapon);
+        if (LG != None && LinkFire(LG.GetFireMode(1)) != None)
+            return LinkFire(LG.GetFireMode(1)).LockedPawn;
+    }
+
+    V = Vehicle(P);
+    foreach DynamicActors(class'LinkBeamEffect', B)
+    {
+        if (B == None || B.bDeleteMe || B.LinkedPawn == None)
+            continue;
+        if (B.Owner == P || B.Instigator == P)
+            return B.LinkedPawn;
+        if (V != None && (B.Instigator == V || B.Instigator == V.Driver))
+            return B.LinkedPawn;
+    }
+
+    return None;
+}
+
+function bool OutboundReaches(Pawn Goal)
+{
+    local Pawn Walk, Next;
+    local int Sanity;
+
+    if (Goal == None)
+        return false;
+
+    Walk = GetOutboundLinkTarget();
+    while (Walk != None && Sanity < 32)
+    {
+        if (Walk == Goal)
+            return true;
+        Next = GetActorLinkTarget(Walk);
+        if (Next == None || Next == Walk)
+            return false;
+        Walk = Next;
+        Sanity++;
+    }
+
+    return false;
+}
+
+function int GetHealerLinks(Controller Healer)
+{
+    local Pawn P;
+    local Vehicle V;
+    local string LinkStr;
+
+    if (Healer == None || Healer.Pawn == None)
+        return 0;
+
+    P = Healer.Pawn;
+    V = Vehicle(P);
+    if (ONSWeaponPawn(V) != None)
+        V = ONSWeaponPawn(V).VehicleBase;
+
+    if (V != None)
+    {
+        // A -> B -> C -> A: do not copy C.Links into A
+        if (OutboundReaches(V) || OutboundReaches(P))
+            return 0;
+
+        LinkStr = V.GetPropertyText("ExportLinks");
+        if (LinkStr != "")
+            return Max(0, int(LinkStr));
+
+        return 0; // never fall back to Links
+    }
+
+    if (P.Weapon != None && LinkGun(P.Weapon) != None)
+        return LinkGun(P.Weapon).Links;
+
+    return 0;
+}
+
+function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
+{
+    local int i;
+    local bool bFound;
+    local int InboundLinks;
+
+    if (Healer == None || Healer.bDeleteMe)
+        return false;
+
+    if (TeamLink(Healer.GetTeamNum()) && Healer != Controller)
+    {
+        InboundLinks = GetHealerLinks(Healer);
+
+        for (i = 0; i < Linkers.Length; i++)
+        {
+            if (Linkers[i].LinkingController != None && Linkers[i].LinkingController == Healer)
+            {
+                bFound = true;
+                Linkers[i].LastLinkTime = Level.TimeSeconds;
+                Linkers[i].NumLinks = InboundLinks;
+                break;
+            }
+        }
+
+        if (!bFound)
+        {
+            Linkers.Insert(0, 1);
+            Linkers[0].LinkingController = Healer;
+            Linkers[0].LastLinkTime = Level.TimeSeconds;
+            Linkers[0].NumLinks = InboundLinks;
+        }
+    }
+
+    return super.HealDamage(Amount, Healer, DamageType);
 }
 
 // ============================================================================
@@ -142,26 +300,41 @@ function int GetLinks()
 // ============================================================================
 function ResetLinks()
 {
-	local int i;
-	local int NewLinks;
+    local int i, NewLinks, Deduct;
+    local Pawn TargetPawn, LinkerPawn;
 
-	i = 0;
-	NewLinks = 0;
-	while (i < Linkers.Length)
-	{
-		// Remove linkers when their controllers are deleted
-		// Or remove if LINK_DECAY_TIME seconds pass since they last linked the tank
-		if (Linkers[i].LinkingController == None || Level.TimeSeconds - Linkers[i].LastLinkTime > LINK_DECAY_TIME)
-			Linkers.Remove(i,1);
-		else
-		{
-			NewLinks += 1 + Linkers[i].NumLinks;
-			i++;
-		}
-	}
+    TargetPawn = GetOutboundLinkTarget();
 
-	if (Links != NewLinks)
-		Links = NewLinks;
+    i = 0;
+    NewLinks = 0;
+    Deduct = 0;
+
+    while (i < Linkers.Length)
+    {
+        if (Linkers[i].LinkingController == None
+            || Level.TimeSeconds - Linkers[i].LastLinkTime > LINK_DECAY_TIME)
+        {
+            Linkers.Remove(i, 1);
+        }
+        else
+        {
+            NewLinks += 1 + Linkers[i].NumLinks;
+
+            LinkerPawn = Linkers[i].LinkingController.Pawn;
+            if (ONSWeaponPawn(LinkerPawn) != None)
+                LinkerPawn = ONSWeaponPawn(LinkerPawn).VehicleBase;
+
+            // Current target, or anyone already on our outbound chain
+            if ((TargetPawn != None && LinkerPawn == TargetPawn)
+                || OutboundReaches(LinkerPawn))
+                Deduct += 1 + Linkers[i].NumLinks;
+
+            i++;
+        }
+    }
+
+    Links = NewLinks;
+    ExportLinks = Max(0, NewLinks - Deduct);
 }
 
 
@@ -253,6 +426,29 @@ simulated event Tick(float DT)
 	// Show regular green link panels
 	else
 		UpdateLinkColor(LC_Green);
+
+	if (Controller == None)
+	{
+		bPrimaryWasDown = false;
+		bAltWasDown = false;
+		FirePriority = FP_None;
+	}
+	else
+	{
+		if (Controller.bFire == 0)
+			bPrimaryWasDown = false;
+
+		if (Controller.bAltFire == 0)
+			bAltWasDown = false;
+
+		// If one button was released, transfer priority to whichever button is still held
+		if (Controller.bFire == 0 && Controller.bAltFire == 0)
+			FirePriority = FP_None;
+		else if (Controller.bFire != 0 && Controller.bAltFire == 0)
+			FirePriority = FP_Primary;
+		else if (Controller.bFire == 0 && Controller.bAltFire != 0)
+			FirePriority = FP_Alt;
+	}
 }
 
 // ============================================================================
@@ -334,25 +530,78 @@ event Timer()
 }
 */
 
-// Don't allow primary fire if beaming
 function Fire(optional float F)
 {
-	if (!bBeaming)
-		Super.Fire(F);
+    if (!bPrimaryWasDown)
+    {
+        bPrimaryWasDown = true;
+        SetFirePriority(FP_Primary);
+    }
+
+    if (FirePriority == FP_Primary)
+        Super.Fire(F);
+}
+
+function AltFire(optional float F)
+{
+    if (!bAltWasDown)
+    {
+        bAltWasDown = true;
+        SetFirePriority(FP_Alt);
+    }
+
+    if (FirePriority == FP_Alt)
+        Super(ONSVehicle).AltFire(F);
+}
+
+simulated function SetFirePriority(EFirePriority NewPriority)
+{
+    if (FirePriority == NewPriority)
+        return;
+
+    FirePriority = NewPriority;
+
+    if (FirePriority == FP_Primary)
+    {
+        if (bWeaponIsAltFiring)
+        {
+            if (Role == ROLE_Authority)
+                VehicleCeaseFire(true);
+            if (Level.NetMode != NM_DedicatedServer)
+                ClientVehicleCeaseFire(true);
+        }
+    }
+    else if (FirePriority == FP_Alt)
+    {
+        if (bWeaponIsFiring)
+        {
+            if (Role == ROLE_Authority)
+                VehicleCeaseFire(false);
+            if (Level.NetMode != NM_DedicatedServer)
+                ClientVehicleCeaseFire(false);
+        }
+    }
+}
+
+function VehicleCeaseFire(bool bWasAltFire)
+{
+    Super(ONSVehicle).VehicleCeaseFire(bWasAltFire);
+
+    if (bWasAltFire && Weapons.Length > 0 && Weapons[0] != None)
+        Weapons[0].WeaponCeaseFire(Controller, true);
+}
+
+simulated function ClientVehicleCeaseFire(bool bWasAltFire)
+{
+    Super(ONSVehicle).ClientVehicleCeaseFire(bWasAltFire);
+
+    if (bWasAltFire && Weapons.Length > 0 && Weapons[0] != None)
+        Weapons[0].WeaponCeaseFire(Controller, true);
 }
 
 // ============================================================================
 // C/P'd Ion Tank stuff
 // ============================================================================
-function AltFire(optional float F)
-{
-	super(ONSVehicle).AltFire( F );
-}
-
-function ClientVehicleCeaseFire(bool bWasAltFire)
-{
-	super(ONSVehicle).ClientVehicleCeaseFire( bWasAltFire );
-}
 
 simulated function SetupTreads()
 {
@@ -503,7 +752,7 @@ defaultproperties
      Skins(1)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
      Skins(2)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
      MaxGroundSpeed=875.000000
-		HoverCheckDist=67 // raise it just bit to avoid snags      
+		HoverCheckDist=72 // 67 raise it just bit to avoid snags      
 		Begin Object Class=KarmaParamsRBFull Name=KParams0
          KInertiaTensor(0)=1.300000
          KInertiaTensor(3)=4.000000

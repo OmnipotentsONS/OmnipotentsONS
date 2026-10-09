@@ -469,8 +469,8 @@ defaultproperties
     // PitchBone="SIDEgunBARREL"
      YawBone="8WheelerTop"
      PitchBone="TurretAttach"
-     PitchUpLimit=18000
-     PitchDownLimit=65000 //58000
+     PitchUpLimit=16384
+     PitchDownLimit=58000 //58000
      WeaponFireAttachmentBone="Firepoint"
      WeaponFireOffset=80 
      // TODO Tweak offset, pitchdown for combo.

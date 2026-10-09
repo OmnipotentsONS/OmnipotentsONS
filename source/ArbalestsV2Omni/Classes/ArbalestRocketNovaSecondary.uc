@@ -18,7 +18,7 @@ defaultproperties
 {
      VehicleClass=Class'ArbalestsV2Omni.ArbalestNova'
 // not sure why I need vehicle class here?
-     DeathString="%o was blown up."
+     DeathString="%o was blown up by %k."
      FemaleSuicide="%o blew herself up."
      MaleSuicide="%o blew himself up."
      bArmorStops=False

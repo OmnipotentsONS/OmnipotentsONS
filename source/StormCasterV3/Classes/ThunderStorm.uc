@@ -39,6 +39,17 @@ var() bool bAvoidTargetingTeammates;
 var Controller InstigatorController;
 var int NumShadows;
 var Emitter ThunderStormEffects;
+var Emitter StormRainEffects;
+
+// TeamNum is inherited and is used for authoritative damage filtering.
+// Keep a replicated copy solely so every client chooses the same rain color.
+var byte StormTeamNum;
+
+replication
+{
+    reliable if (Role == ROLE_Authority)
+        StormTeamNum;
+}
 
 
 function BeginPlay()
@@ -46,15 +57,35 @@ function BeginPlay()
 	StartleBots();
 }
 
+simulated function class<Emitter> GetStormEffectsClass()
+{
+    // Standard UT2004 team indices:
+    // 0 = Red, 1 = Blue, 255 = no team / neutral.
+    switch (StormTeamNum)
+    {
+        case 0:
+            return class'ThunderStormEmitterRed';
+
+        case 1:
+            return class'ThunderStormEmitterBlue';
+
+        default:
+            // Preserve the original grey storm cloud in FFA and non-team modes.
+            return class'ThunderStormEmitter';
+    }
+}
+
 simulated function PostNetBeginPlay()
 {
-	if (Level.NetMode != NM_DedicatedServer)
-	{
-		ThunderStormEffects = Spawn(class'ThunderStormEmitter');
-		PlaySound(Sound'StormStart', SLOT_Interact, 1.0, True, 4000.0);
-		Spawn(class'StormShadowProjector',,, Location, rot(-15000,0,0));
-	}
-	SetTimer(1.0, False);
+    if (Level.NetMode != NM_DedicatedServer)
+    {
+        //ThunderStormEffects = Spawn(class'ThunderStormEmitter', Self,, Location);
+		ThunderStormEffects = Spawn(GetStormEffectsClass(), Self,, Location);
+
+        PlaySound(Sound'StormStart', SLOT_Interact, 1.0, True, 4000.0);
+        Spawn(class'StormShadowProjector',,, Location, rot(-15000,0,0));
+    }
+    SetTimer(1.0, False);
 }
 
 function Reset()
@@ -267,4 +298,5 @@ defaultproperties
      CollisionRadius=4000.000000
      CollisionHeight=2000.000000
      bTraceWater=True
+	 StormTeamNum=255
 }

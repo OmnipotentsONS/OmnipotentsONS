@@ -58,6 +58,8 @@ var float   StartHoldTime;
 var bool    bHoldingFire;
 var sound   ChargeUpSound, ChargeLoop;
 
+// Relay linkers
+var int LastLinksSent;
 
 
 replication
@@ -116,22 +118,28 @@ simulated function DestroyEffects()
     }
 }
 
-function float AdjustLinkDamage( int NumLinks, Actor Other, float Damage )
+function float AdjustLinkDamage(int NumLinks, Actor Other, float Damage)
 {
-	local float AdjDamage;
-	
-	
-	AdjDamage =Min( DamageMin,Damage * (LinkMultiplier*NumLinks+1)*CurrDrawScale);
-	
+    local float AdjDamage;
 
-	if ( Other.IsA('Vehicle') ) 
-		if 	(Other.IsA('Omnitaur')|| Other.IsA('Minotaur')|| Other.IsA('MinotaurClassic') || Other.Isa('ONSMobileAssaultStation'))
-				AdjDamage *= EasterEggVehicleDamageMultiplier;
-		else 		
-		   AdjDamage *= VehicleDamageMultiplier;
-  if (Instigator.HasUDamage()) 	AdjDamage *= 2;
-	
-	return AdjDamage;
+    // Fixed base damage scaled only by vehicle size drawscale, ignoring link count
+    // AdjDamage = Damage * CurrDrawScale;
+
+    // Completely flat base damage (13)
+    AdjDamage = Damage;
+
+    if (Other != None && Vehicle(Other) != None)
+    {
+        if (Other.IsA('Omnitaur') || Other.IsA('Minotaur') || Other.IsA('MinotaurClassic') || Other.IsA('ONSMobileAssaultStation'))
+            AdjDamage *= EasterEggVehicleDamageMultiplier;
+        else
+            AdjDamage *= VehicleDamageMultiplier;
+    }
+
+    if (Instigator.HasUDamage())
+        AdjDamage *= 2;
+
+    return AdjDamage;
 }
 
 // STATE INSTANT FIRE ===============================================================
@@ -351,7 +359,20 @@ simulated function ClientStartFire(Controller C, bool bWasAltFire)
 				*/
 				return;
 			}
-	        if ( Other != None && Other != Instigator )   {
+
+			// Relay link changes down the chain while locked on
+			if (LockedPawn != None && MyTickScorpion.Links != LastLinksSent)
+			{
+				RemoveLink(1 + LastLinksSent, Instigator);
+				LastLinksSent = MyTickScorpion.Links;
+				if (!AddLink(1 + LastLinksSent, Instigator))
+				{
+					bFeedbackDeath = true;
+					return;
+				}
+			}
+
+			if ( Other != None && Other != Instigator )   {
 	            // target can be linked to
 	            if ( IsLinkable(Other) )    {
 	                if ( Other != lockedpawn )  SetLinkTo( Pawn(Other) );
@@ -653,19 +674,26 @@ function SetLinkTo(Pawn Other)
 {
     if (LockedPawn != None && MyTickScorpion != None)
     {
-        RemoveLink(1 + MyTickScorpion.Links, Instigator);
-        MyTickScorpion.Linking = false;
+        RemoveLink(1 + LastLinksSent, Instigator);
+        MyTickScorpion.bLinking = false;
     }
 
     LockedPawn = Other;
+    LastLinksSent = 0;
 
     if (LockedPawn != None)
     {
-        if (!AddLink(1 + MyTickScorpion.Links, Instigator))
+        if (MyTickScorpion != None)
+        {
+            LastLinksSent = MyTickScorpion.Links;
+            MyTickScorpion.bLinking = true;
+        }
+
+        if (!AddLink(1 + LastLinksSent, Instigator))
         {
             bFeedbackDeath = true;
         }
-        MyTickScorpion.Linking = true;
+
         LockedPawn.PlaySound(MakeLinkSound, SLOT_None);
     }
 }

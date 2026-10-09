@@ -204,8 +204,9 @@ simulated function DmgRadius(vector flash, float dmgPctHard, float dmgPctThru, f
     {
         if( (Victims != self) && (Hurtwall != Victims) && (Victims.Role == ROLE_Authority) && !Victims.IsA('FluidSurfaceInfo') )
         {
-            if ( Team == 255 || Pawn(Victims) == None ||
-                 Pawn(Victims).GetTeamNum() != Team )
+			if ( Team == 255 || Pawn(Victims) == None ||
+				 Pawn(Victims).GetTeamNum() != Team ||
+				 (SavedIC != None && Pawn(Victims).Controller == SavedIC) )
             {
                 dir = Victims.Location - HitLocation;
                 dist = FMax(1,VSize(dir));

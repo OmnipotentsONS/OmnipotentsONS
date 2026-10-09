@@ -174,11 +174,13 @@ function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector H
 	if (FoundBeam == None)
 	{
 		FoundBeam = Spawn(BeamEffectClass, Owner,,WeaponFireLocation);
-		if (LinkTank3Mini(Owner) != None) LinkTank3Mini(Owner).Beam = FoundBeam;
+
+		if (LinkTank3Mini(Owner) != None)
+			LinkTank3Mini(Owner).Beam = FoundBeam;
 	}
 
-	//if (LinkBeamEffect(Beam) != None)
-	//	LinkBeamEffect(Beam).WeaponOwner = self;
+	if (LinkTank3BeamEffect(FoundBeam) != None)
+		LinkTank3BeamEffect(FoundBeam).WeaponOwner = self;
 
 	bDoHit = true;
 	UpTime = AltFireInterval + 0.1;
@@ -200,12 +202,16 @@ simulated function ClientStartFire(Controller C, bool bAltFire)
 // ============================================================================
 // Cease fire, destroy link beam
 // ============================================================================
-function WeaponCeaseFire(Controller C, bool bWasAltFire)
+simulated function WeaponCeaseFire(Controller C, bool bWasAltFire)
 {
 	local LinkBeamEffect Beam;
 
 	if (LinkTank3Mini(Owner) != None)
 		Beam = LinkTank3Mini(Owner).Beam;
+
+    // Always clear this when alt-fire ends, even if Beam is already None.
+	if (bWasAltFire && LinkTank3Mini(Owner) != None)
+		LinkTank3Mini(Owner).bBeaming = false;
 
 //	log(self@"ceasefire"@bWasAltFire,'KDebug');
 	if (bWasAltFire && Beam != None)
@@ -215,7 +221,7 @@ function WeaponCeaseFire(Controller C, bool bWasAltFire)
 		if (LinkTank3Mini(Owner) != None)
 		{
 			LinkTank3Mini(Owner).Beam = None;
-			LinkTank3Mini(Owner).bBeaming = false;
+			//LinkTank3Mini(Owner).bBeaming = false;
 		}
 		//AmbientSound = None;
 		Owner.AmbientSound = OldAmbientSound;
@@ -930,9 +936,9 @@ defaultproperties
      bInitAimError=True
      YawBone="Object02"
      PitchBone="Object02"
-     PitchUpLimit=9000
+     PitchUpLimit=12000 // 9000 - help with antiair as it has no laser turret
      WeaponFireAttachmentBone="Muzzle"
-     RotationsPerSecond=0.500000
+     RotationsPerSecond=1.2500 // 0.5 - snappier aim
      FireInterval=0.350000
      AltFireInterval=0.120000
      FireSoundClass=SoundGroup'WeaponSounds.PulseRifle.PulseRifleFire'

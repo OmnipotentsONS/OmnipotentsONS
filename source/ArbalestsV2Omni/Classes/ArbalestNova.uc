@@ -17,6 +17,56 @@ var float MaxGroundSpeed, MaxAirSpeed;
 var localized string CoPilotLabel;
 var float LastHudRenderTime;
 
+var rotator SavedCameraRotation;
+var int CameraRestoreCount;
+var int LastAppliedCameraRestoreCount;
+
+replication
+{
+    reliable if (bNetOwner && Role == ROLE_Authority)
+        SavedCameraRotation, CameraRestoreCount;
+}
+
+simulated function ClientKDriverEnter(PlayerController PC)
+{
+    Super.ClientKDriverEnter(PC);
+
+    if ( CameraRestoreCount != LastAppliedCameraRestoreCount )
+    {
+        PC.SetRotation(SavedCameraRotation);
+        LastAppliedCameraRestoreCount = CameraRestoreCount;
+    }
+}
+
+
+// Fire alt-fire once per click
+function AltFire(optional float F)
+{
+    if (bWeaponIsAltFiring)
+        return;
+
+    VehicleFire(True);
+}
+
+function VehicleFire(bool bWasAltFire)
+{
+    local ArbalestRocketLauncherNova W;
+
+    if (!bWasAltFire)
+    {
+        Super.VehicleFire(bWasAltFire);
+        return;
+    }
+
+    if (Weapons.Length > 0)
+    {
+        W = ArbalestRocketLauncherNova(Weapons[0]);
+        if (W != None)
+            W.AltFire(Controller);
+    }
+}
+
+
 simulated function DrawHUD(Canvas Canvas)
 {
 	local float xl,yl,posy;
@@ -52,18 +102,35 @@ simulated function DrawHUD(Canvas Canvas)
 	
 		// Works. MegaDeemerCount =ArbalestRocketLauncherNova(weapons[0]).MEGADeemerReload; 
 		MegaDeemerCount =ArbalestRocketLauncherNova(weapons[0]).TimerCounter;
-		
+
+	/*
 		if (ArbalestRocketLauncherNova(weapons[0]).canFireMEGADeemer)
 			CoPilotLabel="Nova Missile Loaded";
 		else
-			CoPilotLabel="Nova Missile Loading Countdown " $ (ArbalestRocketLauncherNova(weapons[0]).MEGADeemerReload - MegaDeemerCount);
+			CoPilotLabel="Nova Missile Loading Countdown " $ ArbalestRocketLauncherNova(weapons[0]).MEGADeemerSecondsLeft;
 			
 		Canvas.Font = H.GetConsoleFont(Canvas);
-        	Canvas.StrLen(CoPilotLabel,xl,yl);
-        	Canvas.SetPos(Canvas.ClipX-xl-5,posy-5-yl);
+       	Canvas.StrLen(CoPilotLabel,xl,yl);
+       	Canvas.SetPos(Canvas.ClipX-xl-5,posy-5-yl);
 		Canvas.SetDrawColor(160,160,160,255);
 		Canvas.DrawText(CoPilotLabel);
+	*/
 
+		if (ArbalestRocketLauncherNova(weapons[0]).canFireMEGADeemer)
+			CoPilotLabel="Nova Missile Loaded";
+		else
+			CoPilotLabel="Nova Missile Loading Countdown " $ ArbalestRocketLauncherNova(weapons[0]).MEGADeemerSecondsLeft;
+
+		Canvas.Font = H.GetConsoleFont(Canvas);
+		Canvas.StrLen(CoPilotLabel,xl,yl);
+		Canvas.SetPos(Canvas.ClipX-xl-5,posy-5-yl);
+
+		if (ArbalestRocketLauncherNova(weapons[0]).canFireMEGADeemer)
+			Canvas.SetDrawColor(0,255,0,255);
+		else
+			Canvas.SetDrawColor(160,160,160,255);
+
+		Canvas.DrawText(CoPilotLabel);
 	}
 
 }

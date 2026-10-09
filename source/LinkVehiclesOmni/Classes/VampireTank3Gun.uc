@@ -16,6 +16,7 @@ var float	LinkBreakTime;
 var() float LinkBreakDelay;
 var float	LinkScale[6];
 
+var int LastLinksSent;  // link count last relayed to LockedPawn's link chain
 
 var String MakeLinkForce;
 
@@ -109,6 +110,7 @@ simulated function DestroyEffects()
     }
 }
 
+/*
 function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage )
 {
 	local float AdjDamage;
@@ -120,7 +122,23 @@ AdjDamage = Damage * FMin(LinkMultiplier*NumLinks+1,LinkMultiplierCap);
   if (Instigator.HasUDamage()) 	AdjDamage *= 2;
 	
 	return AdjDamage;
-	
+}
+*/
+
+function float AdjustLinkDamage( int NumLinks, Actor Target, float Damage )
+{
+	local float AdjDamage;
+
+	// Vampire Tank counts as a linker for link chains, but its own
+	// damage/healing output is NOT multiplied by link count.
+	AdjDamage = Damage;
+
+	if (Target != None && Target.IsA('Vehicle') )
+		AdjDamage *= VehicleDamageMult;
+	if (Instigator.HasUDamage())
+		AdjDamage *= 2;
+
+	return AdjDamage;
 }
 
 
@@ -294,6 +312,23 @@ state InstantFireMode
 							LinkAttachment(LinkGun.ThirdPersonActor).SetLinkColor( LC_Green );
 					}
 				*/
+				
+				// ----------------------------------------------------------------
+				// Relay link changes down the chain while locked on.
+				// Makes the tank count as a linker even when linkers join or leave
+				// AFTER the beam has already locked on (stock player chains get this
+				// for free via LinkFire.AddLink recursion; the tank's inbound linkers
+				// only arrive via VampireTank3.HealDamage, which never notifies the
+				// gun, so we refresh here instead).
+				// ----------------------------------------------------------------
+				if (LockedPawn != None && MyVampireTank.Links != LastLinksSent)
+				{
+					RemoveLink(1 + LastLinksSent, Instigator);
+					LastLinksSent = MyVampireTank.Links;
+					if (!AddLink(1 + LastLinksSent, Instigator))
+						bFeedbackDeath = true;
+				}
+				
 				return;
 			}
 	        if ( Other != None && Other != Instigator )
@@ -574,7 +609,7 @@ function Fire(Controller C)
 
 
 
-
+/*
 function SetLinkTo(Pawn Other)
 {
     if (LockedPawn != None && MyVampireTank != None)
@@ -588,6 +623,30 @@ function SetLinkTo(Pawn Other)
     if (LockedPawn != None)
     {
         if (!AddLink(1 + MyVampireTank.Links, Instigator))
+        {
+            bFeedbackDeath = true;
+        }
+        MyVampireTank.bLinking = true;
+        LockedPawn.PlaySound(MakeLinkSound, SLOT_None);
+    }
+}
+*/
+
+function SetLinkTo(Pawn Other)
+{
+    if (LockedPawn != None && MyVampireTank != None)
+    {
+        RemoveLink(1 + LastLinksSent, Instigator);
+        MyVampireTank.bLinking = false;
+    }
+
+    LockedPawn = Other;
+    LastLinksSent = 0;
+
+    if (LockedPawn != None)
+    {
+        LastLinksSent = MyVampireTank.Links;
+        if (!AddLink(1 + LastLinksSent, Instigator))
         {
             bFeedbackDeath = true;
         }

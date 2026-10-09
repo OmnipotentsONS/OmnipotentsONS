@@ -174,11 +174,13 @@ function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector H
 	if (FoundBeam == None)
 	{
 		FoundBeam = Spawn(BeamEffectClass, Owner,,WeaponFireLocation);
-		if (LinkTank3(Owner) != None) LinkTank3(Owner).Beam = FoundBeam;
+
+		if (LinkTank3(Owner) != None)
+			LinkTank3(Owner).Beam = FoundBeam;
 	}
 
-	//if (LinkBeamEffect(Beam) != None)
-	//	LinkBeamEffect(Beam).WeaponOwner = self;
+	if (LinkTank3BeamEffect(FoundBeam) != None)
+		LinkTank3BeamEffect(FoundBeam).WeaponOwner = self;
 
 	bDoHit = true;
 	UpTime = AltFireInterval + 0.1;
@@ -200,12 +202,16 @@ simulated function ClientStartFire(Controller C, bool bAltFire)
 // ============================================================================
 // Cease fire, destroy link beam
 // ============================================================================
-function WeaponCeaseFire(Controller C, bool bWasAltFire)
+simulated function WeaponCeaseFire(Controller C, bool bWasAltFire)
 {
 	local LinkBeamEffect Beam;
 
 	if (LinkTank3(Owner) != None)
 		Beam = LinkTank3(Owner).Beam;
+
+    // Always clear this when alt-fire ends, even if Beam is already None.
+    if (bWasAltFire && LinkTank3(Owner) != None)
+        LinkTank3(Owner).bBeaming = false;
 
 //	log(self@"ceasefire"@bWasAltFire,'KDebug');
 	if (bWasAltFire && Beam != None)
@@ -215,7 +221,7 @@ function WeaponCeaseFire(Controller C, bool bWasAltFire)
 		if (LinkTank3(Owner) != None)
 		{
 			LinkTank3(Owner).Beam = None;
-			LinkTank3(Owner).bBeaming = false;
+			//LinkTank3(Owner).bBeaming = false;
 		}
 		//AmbientSound = None;
 		Owner.AmbientSound = OldAmbientSound;
@@ -251,6 +257,7 @@ simulated event Tick(float dt)
 	local DestroyableObjective HealObjective;
 	local Vehicle LinkedVehicle;
 	local LinkBeamEffect Beam;
+	local Pawn P;
 
 
 	//log(self@"tick beam"@Beam@"uptime"@UpTime@"role"@Role,'KDebug');
@@ -430,70 +437,51 @@ simulated event Tick(float dt)
 			return;
 		}
 
-        if ( Other != None && Other != Instigator )
-        {
-            // target can be linked to
-            if ( IsLinkable(Other) )
-            {
-                if ( Other != lockedpawn )
-                    SetLinkTo( Pawn(Other) );
+		if (Other != None && Other != Instigator)
+		{
+			P = ResolveLinkTarget(Other);
 
-                if ( lockedpawn != None )
-                    LinkBreakTime = LinkBreakDelay;
-            }
-            else
-            {
-                // stop linking
-                if ( lockedpawn != None )
-                {
-                    if ( LinkBreakTime <= 0.0 )
-                        SetLinkTo( None );
-                    else
-                        LinkBreakTime -= dt;
-                }
+			if (P != None && IsLinkable(P))
+			{
+				if (P != LockedPawn)
+					SetLinkTo(P);
 
-                // beam is updated every frame, but damage is only done based on the firing rate
-                if ( bDoHit )
-                {
-                    if ( Beam != None )  Beam.bLockedOn = false;
+				if (LockedPawn != None)
+					LinkBreakTime = LinkBreakDelay;
+			}
+			else if (IsSameLinkTarget(Other, LockedPawn))
+			{
+				LinkBreakTime = LinkBreakDelay;
+			}
+			else
+			{
+				if (LockedPawn != None)
+				{
+					if (LinkBreakTime <= 0.0)
+						SetLinkTo(None);
+					else
+						LinkBreakTime -= dt;
+				}
 
-                    Instigator.MakeNoise(1.0);
+				if (bDoHit && !Other.bWorldGeometry && LockedPawn == None)
+				{
+					// node heal / TakeDamage only when not locked
+					HealObjective = DestroyableObjective(Other);
+					if (HealObjective == None)
+						HealObjective = DestroyableObjective(Other.Owner);
 
-                   ;
-
-                    if ( !Other.bWorldGeometry )
-                    {
-                        if ( Level.Game.bTeamGame && Pawn(Other) != None && Pawn(Other).PlayerReplicationInfo != None
-							           && Pawn(Other).PlayerReplicationInfo.Team == Instigator.PlayerReplicationInfo.Team) // so even if friendly fire is on you can't hurt teammates
-                            AdjustedDamage = 0;
-
-						HealObjective = DestroyableObjective(Other);
-						if ( HealObjective == None )
-							HealObjective = DestroyableObjective(Other.Owner);
-						if ( HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()) )
-						{
-							SetLinkTo(None,true);
-							//log(Level.TimeSeconds@Self@"Set Link Tank bLinking to TRUE in Tick",'KDebug');
-							LinkTank.bLinking = true;
-							bIsHealingObjective = true;
-							 AdjustedDamage = AdjustLinkDamage( NumLinks, None, AltDamage ); // no vehicle damage mutli on healing
-							HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
-							//if (!HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
-							//	LinkGun.ConsumeAmmo(ThisModeNum, -AmmoPerFire);
-						}
-						else
-						{
-							if (LockedPawn != None)
-								warn(self@"called takedamage with a linked pawn!!!");
-							else {
-								 AdjustedDamage = AdjustLinkDamage( NumLinks, Other, AltDamage);
-								Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, MomentumTransfer*X, AltDamageType);
-								
-							}	
-						}
-
-						if ( Beam != None )
-							Beam.bLockedOn = true;
+					if (HealObjective != None && HealObjective.TeamLink(Instigator.GetTeamNum()))
+					{
+						SetLinkTo(None, true);
+						LinkTank.bLinking = true;
+						bIsHealingObjective = true;
+						AdjustedDamage = AdjustLinkDamage(NumLinks, None, AltDamage);
+						HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType);
+					}
+					else
+					{
+						AdjustedDamage = AdjustLinkDamage(NumLinks, Other, AltDamage);
+						Other.TakeDamage(AdjustedDamage, Instigator, HitLocation, MomentumTransfer * X, AltDamageType);
 					}
 				}
 			}
@@ -726,44 +714,149 @@ function RemoveLink(int Size, Pawn Starter)
 // IsLinkable
 // More c/p action
 // ============================================================================
+// Next pawn this actor is currently beaming, if any.
+// Players: LinkFire.LockedPawn
+// Vehicles: stock LinkBeamEffect.LinkedPawn (Owner or Instigator)
+function Pawn ResolveLinkTarget(Actor Other)
+{
+    local Pawn P;
+    local ONSWeaponPawn WP;
+
+    if (Other == None)
+        return None;
+
+    P = Pawn(Other);
+    if (P == None)
+    {
+        if (Vehicle(Other.Base) != None)
+            return Vehicle(Other.Base);
+        if (Vehicle(Other.Owner) != None)
+            return Vehicle(Other.Owner);
+        return None;
+    }
+
+    WP = ONSWeaponPawn(P);
+    if (WP != None && WP.VehicleBase != None)
+        return WP.VehicleBase;
+
+    if (P.DrivenVehicle != None)
+        return P.DrivenVehicle;
+
+    return P;
+}
+
+function bool IsSameLinkTarget(Actor Other, Pawn LinkTarget)
+{
+    local Pawn P;
+
+    if (Other == None || LinkTarget == None)
+        return false;
+    if (Other == LinkTarget || Other.Base == LinkTarget || Other.Owner == LinkTarget)
+        return true;
+
+    P = ResolveLinkTarget(Other);
+    return (P == LinkTarget);
+}
+
+function Pawn GetPawnLinkTarget(Pawn P)
+{
+    local LinkBeamEffect B;
+    local LinkGun LG;
+    local Inventory Inv;
+    local Vehicle V;
+
+    if (P == None)
+        return None;
+
+    if (P.Weapon != None)
+    {
+        LG = LinkGun(P.Weapon);
+        if (LG != None && LinkFire(LG.GetFireMode(1)) != None)
+            return LinkFire(LG.GetFireMode(1)).LockedPawn;
+    }
+
+    Inv = P.FindInventoryType(class'LinkGun');
+    if (Inv != None && LinkFire(LinkGun(Inv).GetFireMode(1)) != None)
+        return LinkFire(LinkGun(Inv).GetFireMode(1)).LockedPawn;
+
+    V = Vehicle(P);
+
+    foreach DynamicActors(class'LinkBeamEffect', B)
+    {
+        if (B == None || B.bDeleteMe || B.LinkedPawn == None)
+            continue;
+
+        if (B.Owner == P || B.Instigator == P)
+            return B.LinkedPawn;
+
+        if (V != None && (B.Owner == V || B.Instigator == V || B.Instigator == V.Driver))
+            return B.LinkedPawn;
+    }
+
+    return None;
+}
+
+// True if locking Start would close a 3+ cycle back to this vehicle.
+function bool WouldCreateLinkCycle(Pawn Start)
+{
+    local Pawn Walk, Next, SelfPawn;
+    local int Sanity;
+
+    SelfPawn = Pawn(Owner);
+    if (SelfPawn == None)
+        SelfPawn = Instigator;
+
+    Walk = Start;
+    while (Walk != None && Sanity < 32)
+    {
+        Next = GetPawnLinkTarget(Walk);
+        if (Next == None)
+            return false;
+
+        if (Next == Walk)
+            return true;
+
+        if (Next == SelfPawn || Next == Instigator)
+        {
+            // sanity 0 = they are beaming us directly (2-cycle). Allow it.
+            // sanity > 0 = A -> B -> C -> A. Refuse.
+            return (Sanity > 0);
+        }
+
+        Walk = Next;
+        Sanity++;
+    }
+
+    return (Sanity >= 32);
+}
+
 function bool IsLinkable(Actor Other)
 {
     local Pawn P;
-    local LinkGun LG;
-    local LinkFire LF;
-    local int sanity;
-    //local ONSVehicle OwnerVehicle;
+    local ONSWeaponPawn WP;
 
-    if ( Other.IsA('Pawn') && Other.bProjTarget )
-    {
-        P = Pawn(Other);
-        if ( P.Weapon == None || !P.Weapon.IsA('LinkGun') )
-		{
-			if ( Vehicle(P) != None )
-				return P.TeamLink( Instigator.GetTeamNum() );
+    if (!Other.IsA('Pawn') || !Other.bProjTarget)
+        return false;
 
-            return false;
-		}
+    P = Pawn(Other);
 
-        // pro-actively prevent link cycles from happening
-        LG = LinkGun(P.Weapon);
-        LF = LinkFire(LG.GetFireMode(1));
-        while ( LF != None && LF.LockedPawn != None && LF.LockedPawn != P && sanity < 32 )
-        {
-            if ( LF.LockedPawn == Pawn(Owner) )
-                return false;
+    WP = ONSWeaponPawn(P);
+    if (WP != None && WP.VehicleBase != None)
+        P = WP.VehicleBase;
 
-            LG = LinkGun(LF.LockedPawn.Weapon);
-            if ( LG == None )
-                break;
-            LF = LinkFire(LG.GetFireMode(1));
-            sanity++;
-        }
+    if (P == None)
+        P = ResolveLinkTarget(Other);
 
-        return ( Level.Game.bTeamGame && P.GetTeamNum() == ONSVehicle(Owner).Team );
-    }
+    if (Vehicle(P) != None)
+        return P.TeamLink(Instigator.GetTeamNum());
 
-    return false;
+    if (P.Weapon == None || !P.Weapon.IsA('LinkGun'))
+        return false;
+
+    if (WouldCreateLinkCycle(P))
+        return false;
+
+    return (Level.Game.bTeamGame && P.GetTeamNum() == ONSVehicle(Owner).Team);
 }
 
 
@@ -895,7 +988,7 @@ state ProjectileFireMode
         //else
         //   PlayOwnedSound(AltFireSoundClass, SLOT_None, FireSoundVolume/255.0,, FireSoundRadius, FireSoundPitch, False);
 
-       TraceFire(WeaponFireLocation, WeaponFireRotation);
+        TraceFire(WeaponFireLocation, WeaponFireRotation);
     }
 }
 

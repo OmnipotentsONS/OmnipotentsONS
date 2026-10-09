@@ -10,7 +10,6 @@ replication
            firemode;
 }
 
-
 function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 {
     local Projectile P;
@@ -103,6 +102,11 @@ state ProjectileFireMode
 			if (M != None)
 			{
 				M.OldPawn = Instigator;
+				if (ArbalestBomb(Instigator) != None)
+				{
+					ArbalestBomb(Instigator).SavedCameraRotation = C.Rotation;
+					ArbalestBomb(Instigator).CameraRestoreCount++;
+				}
 				Possessor = PlayerController(Instigator.Controller);
 				Possessor.bAltFire = 0;
 				if ( Possessor != None )
@@ -128,6 +132,11 @@ state ProjectileFireMode
 			if (M != None)
 			{
 				M.OldPawn = Instigator;
+				if (ArbalestBomb(Instigator) != None)
+				{
+					ArbalestBomb(Instigator).SavedCameraRotation = C.Rotation;
+					ArbalestBomb(Instigator).CameraRestoreCount++;
+				}
 				Possessor = PlayerController(Instigator.Controller);
 				Possessor.bAltFire = 0;
 				if ( Possessor != None )
@@ -152,6 +161,11 @@ state ProjectileFireMode
 			if (M != None)
 			{
 				M.OldPawn = Instigator;
+				if (ArbalestBomb(Instigator) != None)
+				{
+					ArbalestBomb(Instigator).SavedCameraRotation = C.Rotation;
+					ArbalestBomb(Instigator).CameraRestoreCount++;
+				}
 				Possessor = PlayerController(Instigator.Controller);
 				Possessor.bAltFire = 0;
 				if ( Possessor != None )
@@ -202,12 +216,14 @@ event bool AttemptFire(Controller C, bool bAltFire)
 		return True;
 	}
 
+	/* Disabled because we fire alt-fire once per click
 	if (bAltFire && FireCountdown <= 0)
 	{
-		FireCountdown = FireInterval;
+		FireCountdown = 0.25;
 		AltFire(C);
-		Return True;
+		return True;
 	}
+	*/
 
 	return false;
 }

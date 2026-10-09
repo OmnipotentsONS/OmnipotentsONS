@@ -14,6 +14,56 @@ var float MaxGroundSpeed, MaxAirSpeed;
 var localized string CoPilotLabel;
 var float LastHudRenderTime;
 
+var rotator SavedCameraRotation;
+var int CameraRestoreCount;
+var int LastAppliedCameraRestoreCount;
+
+replication
+{
+    reliable if (bNetOwner && Role == ROLE_Authority)
+        SavedCameraRotation, CameraRestoreCount;
+}
+
+simulated function ClientKDriverEnter(PlayerController PC)
+{
+    Super.ClientKDriverEnter(PC);
+
+    if ( CameraRestoreCount != LastAppliedCameraRestoreCount )
+    {
+        PC.SetRotation(SavedCameraRotation);
+        LastAppliedCameraRestoreCount = CameraRestoreCount;
+    }
+}
+
+
+// Fire alt-fire once per click
+function AltFire(optional float F)
+{
+    if (bWeaponIsAltFiring)
+        return;
+
+    VehicleFire(True);
+}
+
+function VehicleFire(bool bWasAltFire)
+{
+    local ArbalestRocketLauncherBomb W;
+
+    if (!bWasAltFire)
+    {
+        Super.VehicleFire(bWasAltFire);
+        return;
+    }
+
+    if (Weapons.Length > 0)
+    {
+        W = ArbalestRocketLauncherBomb(Weapons[0]);
+        if (W != None)
+            W.AltFire(Controller);
+    }
+}
+
+
 simulated function DrawHUD(Canvas Canvas)
 {
 	local float xl,yl,posy;

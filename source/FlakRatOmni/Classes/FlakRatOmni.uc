@@ -104,6 +104,16 @@ simulated function Tick(float DT)
 		}          
 }
 
+// Fix EntryRadius not being respected
+function bool TryToDrive(Pawn P)
+{
+    if ( AIController(P.Controller) == None
+      && VSize(P.Location - (Location + (EntryPosition >> Rotation))) > EntryRadius )
+        return false;
+
+    return Super.TryToDrive(P);
+}
+
 defaultproperties
 {
      WheelSoftness=0.015000
@@ -237,7 +247,7 @@ defaultproperties
      bDrawMeshInFP=True
      bHasHandbrake=True
      bSeparateTurretFocus=True
-     EntryRadius=50.000000
+     EntryRadius=175.000000
      CollisionRadius=50.000000
      CollisionHeight=40.000000
      DrivePos=(X=2.800000,Y=-22.360001,Z=45.000000)
@@ -251,7 +261,7 @@ defaultproperties
      TPCamLookat=(X=0.000000,Z=0.000000)
      TPCamWorldOffset=(Z=150.000000)
      DriverDamageMult=0.000000
-     VehiclePositionString="in a Omni FlakRat"
+     VehiclePositionString="in an Omni FlakRat"
      VehicleNameString="Omni FlakRat 1.04"
      RanOverDamageType=Class'FlakRatOmni.DamTypeFlakRatOmniRoadkill'
      CrushedDamageType=Class'FlakRatOmni.DamTypeFlakRatOmniPancake'

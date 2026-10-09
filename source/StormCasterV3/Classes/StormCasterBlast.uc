@@ -100,11 +100,12 @@ auto state IncomingBlast
 			return;
 
 		Storm = Spawn(class'ThunderStorm',,, StormSpawnLocation - vect(0,0,500));
-		if (Storm != None)
-		{
-			Storm.TeamNum = TeamNum;
-			Storm.InstigatorController = InstigatorController;
-		}
+        if (Storm != None)
+        {
+            Storm.TeamNum = TeamNum;
+            Storm.StormTeamNum = TeamNum;
+            Storm.InstigatorController = InstigatorController;
+        }
 		bStormSpawned = True;
 	}
 

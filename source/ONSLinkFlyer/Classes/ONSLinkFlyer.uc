@@ -41,6 +41,17 @@ var bool bLinking;                      // True if we're linking a vehicle/node/
 var bool bBeaming;                      // True if utilizing alt-fire
 var LinkBeamEffect Beam;
 
+// Last button pressed wins vars
+enum EFirePriority
+{
+    FP_None,
+    FP_Primary,
+    FP_Alt
+};
+var EFirePriority FirePriority;
+var bool bPrimaryWasDown;
+var bool bAltWasDown;
+
 //var bool bBotHealing;
 //var LinkAttachment.ELinkColor OldLinkColor;
 
@@ -58,7 +69,8 @@ replication
     // When someone links the Flyer, record it and add it to the Linkers
     // After a certain time period passes, remove that linker if they aren't linking anymore
     // ============================================================================
-    function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
+    /*
+	function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
         {
         local int i;
         local bool bFound;
@@ -100,6 +112,67 @@ replication
 
         return super.HealDamage(Amount, Healer, DamageType);
         }
+		*/
+
+// Vehicle chain linking support by Anon
+function int GetHealerLinks(Controller Healer)
+{
+    local string LinkStr;
+
+    if (Healer == None || Healer.Pawn == None)
+        return 0;
+
+    // 1. If healer is in a vehicle (LinkTank, TickScorpion, LinkBadger, etc.)
+    if (Vehicle(Healer.Pawn) != None)
+    {
+        LinkStr = Healer.Pawn.GetPropertyText("Links");
+        if (LinkStr != "")
+            return int(LinkStr);
+    }
+    // 2. If healer is a player holding a LinkGun
+    else if (Healer.Pawn.Weapon != None && LinkGun(Healer.Pawn.Weapon) != None)
+    {
+        return LinkGun(Healer.Pawn.Weapon).Links;
+    }
+
+    return 0;
+}
+
+function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
+{
+    local int i;
+    local bool bFound;
+    local int InboundLinks;
+
+    if (Healer == None || Healer.bDeleteMe)
+        return false;
+
+    if (TeamLink(Healer.GetTeamNum()) && Healer != Controller)
+    {
+        InboundLinks = GetHealerLinks(Healer);
+
+        for (i = 0; i < Linkers.Length; i++)
+        {
+            if (Linkers[i].LinkingController != None && Linkers[i].LinkingController == Healer)
+            {
+                bFound = true;
+                Linkers[i].LastLinkTime = Level.TimeSeconds;
+                Linkers[i].NumLinks = InboundLinks;
+                break;
+            }
+        }
+
+        if (!bFound)
+        {
+            Linkers.Insert(0, 1);
+            Linkers[0].LinkingController = Healer;
+            Linkers[0].LastLinkTime = Level.TimeSeconds;
+            Linkers[0].NumLinks = InboundLinks;
+        }
+    }
+
+    return super.HealDamage(Amount, Healer, DamageType);
+}
 
     // ============================================================================
     // GetLinks
@@ -137,61 +210,134 @@ replication
             Links=NewLinks;
         }
 
-    // ============================================================================
-    // Tick
-    // Remove linkers from the linker list after they stop linking
-    // ============================================================================
-    simulated event Tick(float DT)
+// ============================================================================
+// Tick
+// Remove linkers from the linker list after they stop linking
+// ============================================================================
+simulated event Tick(float DT)
+{
+    //local float EnginePitch;
+    //local KRigidBodyState BodyState;
+    //local KarmaParams KP;
+    //local bool bOnGround;
+    //local int i;
+
+    //Super.Tick(DT);
+
+    // cp from HoverTank -- all we care about is not wildly varying the ambientsound of the beam
+    //KGetRigidBodyState(BodyState);
+
+    //if (Level.NetMode!=NM_DedicatedServer)
+    //    {
+    //    if (!bBeaming)
+    //        {
+    //        EnginePitch=64.0+VSize(Velocity)/MaxPitchSpeed * 64.0;
+    //        SoundPitch=FClamp(EnginePitch, 64, 128);
+    //        }
+    //    else
+    //        SoundPitch=64.0;
+    //    }
+
+    Super(ONSAttackCraft).Tick(DT);
+
+    //if (bBotHealing)
+    //    AltFire();
+
+    if (Role==ROLE_Authority)
+        ResetLinks();
+
+	if (Controller == None)
+	{
+		bPrimaryWasDown = false;
+		bAltWasDown = false;
+		FirePriority = FP_None;
+	}
+	else
+	{
+		if (Controller.bFire == 0)
+			bPrimaryWasDown = false;
+
+		if (Controller.bAltFire == 0)
+			bAltWasDown = false;
+
+		// If one button was released, transfer priority to whichever button is still held
+		if (Controller.bFire == 0 && Controller.bAltFire == 0)
+			FirePriority = FP_None;
+		else if (Controller.bFire != 0 && Controller.bAltFire == 0)
+			FirePriority = FP_Primary;
+		else if (Controller.bFire == 0 && Controller.bAltFire != 0)
+			FirePriority = FP_Alt;
+	}
+}
+
+function Fire(optional float F)
+{
+    if (!bPrimaryWasDown)
+    {
+        bPrimaryWasDown = true;
+        SetFirePriority(FP_Primary);
+    }
+
+    if (FirePriority == FP_Primary)
+        Super.Fire(F);
+}
+
+function AltFire(optional float F)
+{
+    if (!bAltWasDown)
+    {
+        bAltWasDown = true;
+        SetFirePriority(FP_Alt);
+    }
+
+    if (FirePriority == FP_Alt)
+        Super(ONSVehicle).AltFire(F);
+}
+
+simulated function SetFirePriority(EFirePriority NewPriority)
+{
+    if (FirePriority == NewPriority)
+        return;
+
+    FirePriority = NewPriority;
+
+    if (FirePriority == FP_Primary)
+    {
+        if (bWeaponIsAltFiring)
         {
-        //local float EnginePitch;
-        //local KRigidBodyState BodyState;
-        //local KarmaParams KP;
-        //local bool bOnGround;
-        //local int i;
-
-        //Super.Tick(DT);
-
-        // cp from HoverTank -- all we care about is not wildly varying the ambientsound of the beam
-        //KGetRigidBodyState(BodyState);
-
-        //if (Level.NetMode!=NM_DedicatedServer)
-        //    {
-        //    if (!bBeaming)
-        //        {
-        //        EnginePitch=64.0+VSize(Velocity)/MaxPitchSpeed * 64.0;
-        //        SoundPitch=FClamp(EnginePitch, 64, 128);
-        //        }
-        //    else
-        //        SoundPitch=64.0;
-        //    }
-
-        Super(ONSAttackCraft).Tick(DT);
-
-        //if (bBotHealing)
-        //    AltFire();
-
-        if (Role==ROLE_Authority)
-            ResetLinks();
+            if (Role == ROLE_Authority)
+                VehicleCeaseFire(true);
+            if (Level.NetMode != NM_DedicatedServer)
+                ClientVehicleCeaseFire(true);
         }
-
-    // ============================================================================
-    function Fire(optional float F)
+    }
+    else if (FirePriority == FP_Alt)
+    {
+        if (bWeaponIsFiring)
         {
-        if (!bBeaming) // Don't allow primary fire if beaming
-            Super.Fire(F);
+            if (Role == ROLE_Authority)
+                VehicleCeaseFire(false);
+            if (Level.NetMode != NM_DedicatedServer)
+                ClientVehicleCeaseFire(false);
         }
+    }
+}
 
-    // ============================================================================
-    function AltFire(optional float F)
-        {
-        super(ONSVehicle).AltFire(F);
-        }
+function VehicleCeaseFire(bool bWasAltFire)
+{
+    Super(ONSVehicle).VehicleCeaseFire(bWasAltFire);
 
-    // ============================================================================
-    function ClientVehicleCeaseFire(bool bWasAltFire)
-        {
-        super(ONSVehicle).ClientVehicleCeaseFire(bWasAltFire);
-        }
+    if (bWasAltFire && Weapons.Length > 0 && Weapons[0] != None)
+        Weapons[0].WeaponCeaseFire(Controller, true);
+}
+
+simulated function ClientVehicleCeaseFire(bool bWasAltFire)
+{
+    Super(ONSVehicle).ClientVehicleCeaseFire(bWasAltFire);
+
+    if (bWasAltFire && Weapons.Length > 0 && Weapons[0] != None)
+        Weapons[0].WeaponCeaseFire(Controller, true);
+}
 
     // ============================================================================
     //simulated function ClientKDriverLeave(PlayerController PC)

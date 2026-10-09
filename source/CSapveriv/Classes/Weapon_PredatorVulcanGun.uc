@@ -245,7 +245,7 @@ defaultproperties
      //YawBone="GunBaseAttach"
      YawBone="BarrelAttach"
      PitchBone="BarrelAttach"
-     PitchUpLimit=800
+     PitchUpLimit=8192 //800
      PitchDownLimit=49153
      WeaponFireAttachmentBone="Firepoint"
      WeaponFireOffset=0.0

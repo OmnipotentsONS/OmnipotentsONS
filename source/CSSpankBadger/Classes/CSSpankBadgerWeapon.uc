@@ -1,4 +1,3 @@
-
 class CSSpankBadgerWeapon extends ONSWeapon;
 
 #exec OBJ LOAD FILE=Textures\SpankBadgerTex.utx PACKAGE=CSSpankBadger
@@ -86,8 +85,6 @@ event bool AttemptFire(Controller C, bool bAltFire)
 	return False;
 }
 
-
-
 //override this so we can use electrogun for altfire
 simulated function CalcWeaponFire()
 {
@@ -123,6 +120,25 @@ function SpawnBeamEffect(Vector Start, Rotator Dir, Vector HitLocation, Vector H
 
 }
 
+// Returns true if Other is a Pawn/Vehicle on the same (valid) team as our Instigator,
+// but NOT the Instigator itself -- self-impulse should still apply.
+simulated function bool IsTeammate(Actor Other)
+{
+    local Pawn OtherPawn;
+
+    if (Other == Instigator)
+        return false;
+
+    OtherPawn = Pawn(Other);
+    if (OtherPawn == None || Instigator == None)
+        return false;
+
+    if (Instigator.GetTeamNum() == 255 || OtherPawn.GetTeamNum() == 255)
+        return false;
+
+    return (Instigator.GetTeamNum() == OtherPawn.GetTeamNum());
+}
+
 function TraceFire(Vector Start, Rotator Dir)
 {
     local Vector X, End, HitLocation, HitNormal, RefNormal;
@@ -132,6 +148,7 @@ function TraceFire(Vector Start, Rotator Dir)
     local int Damage;
     local bool bDoReflect;
     local int ReflectNum;
+    local vector AppliedMomentum;
 
     MaxRange();
 
@@ -141,7 +158,7 @@ function TraceFire(Vector Start, Rotator Dir)
 	    if ( WeaponPawn != None && WeaponPawn.VehicleBase != None )
     	{
     		if ( !WeaponPawn.VehicleBase.TraceThisActor(HitLocation, HitNormal, Start, Start + vector(Dir) * (WeaponPawn.VehicleBase.CollisionRadius * 1.5)))
-				Start = HitLocation;
+			Start = HitLocation;
 		}
 		else
 			if ( !Owner.TraceThisActor(HitLocation, HitNormal, Start, Start + vector(Dir) * (Owner.CollisionRadius * 1.5)))
@@ -184,7 +201,13 @@ function TraceFire(Vector Start, Rotator Dir)
 					SpawnHitEffects(Other, HitLocation, HitNormal);
 				}
                	//Other.TakeDamage(Damage, Instigator, HitLocation, Momentum*X, DamageType);
-               	Other.TakeDamage(0, Instigator, HitLocation, Momentum*X, DamageType);
+
+               	// Don't impart impulse on teammates from a direct beam hit (self still gets it).
+               	AppliedMomentum = Momentum*X;
+               	if ( IsTeammate(Other) )
+               		AppliedMomentum = vect(0,0,0);
+
+               	Other.TakeDamage(0, Instigator, HitLocation, AppliedMomentum, DamageType);
 				HitNormal = vect(0,0,0);
             }
             else
@@ -225,6 +248,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 	local actor Victims;
 	local float dist, damageScale;
 	local vector dir;
+	local bool bFriendly;
 
 	if ( bHurtEntry )
 		return;
@@ -258,17 +282,23 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 				//Vehicle(Victims).DriverRadiusDamage(DamageAmount, DamageRadius, InstigatorController, DamageType, 0, HitLocation);                
 				Vehicle(Victims).DriverRadiusDamage(DamageAmount, DamageRadius, Instigator.Controller, DamageType, 0, HitLocation);                
 
-            dir.Z = Abs(dir.Z);
-            if(XPawn(Victims) != None)
-            {
-                XPawn(Victims).SetPhysics(PHYS_Falling);
-                XPawn(Victims).AddVelocity(Normal(dir)*PawnMomentumTransfer);
-            }
-            else
-            {
-                //Victims.KAddImpulse(Normal(dir)*MomentumTransfer, HitLocation);
-                Victims.KAddImpulse(Normal(dir)*Momentum, HitLocation);
-            }
+			// Skip impulse for teammates, except self.
+			bFriendly = IsTeammate(Victims);
+
+			if ( !bFriendly )
+			{
+	            dir.Z = Abs(dir.Z);
+	            if(XPawn(Victims) != None)
+	            {
+	                XPawn(Victims).SetPhysics(PHYS_Falling);
+	                XPawn(Victims).AddVelocity(Normal(dir)*PawnMomentumTransfer);
+	            }
+	            else
+	            {
+	                //Victims.KAddImpulse(Normal(dir)*MomentumTransfer, HitLocation);
+	                Victims.KAddImpulse(Normal(dir)*Momentum, HitLocation);
+	            }
+	        }
 		}
 	}
     /*
@@ -307,7 +337,6 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 
 	bHurtEntry = false;
 }
-
 
 state ProjectileFireMode
 {

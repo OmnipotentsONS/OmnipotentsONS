@@ -82,11 +82,31 @@ simulated function SuperExplosion()
     Destroy();
 }
 
+// Returns true if Victim is a Pawn/Vehicle on the same (valid) team as our Instigator,
+// but not the Instigator itself - self-impulse should still apply.
+simulated function bool IsTeammate(Actor Victim)
+{
+    local Pawn VictimPawn;
+
+    if (Victim == Instigator)
+        return false;
+
+    VictimPawn = Pawn(Victim);
+    if (VictimPawn == None || Instigator == None)
+        return false;
+
+    if (Instigator.GetTeamNum() == 255 || VictimPawn.GetTeamNum() == 255)
+        return false;
+
+    return (Instigator.GetTeamNum() == VictimPawn.GetTeamNum());
+}
+
 simulated function HurtRadius( float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation )
 {
 	local actor Victims;
 	local float dist, damageScale;
 	local vector dir;
+	local bool bFriendly;
 
 	if ( bHurtEntry )
 		return;
@@ -117,16 +137,22 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 			if (Vehicle(Victims) != None && Vehicle(Victims).Health > 0)
 				Vehicle(Victims).DriverRadiusDamage(DamageAmount, DamageRadius, InstigatorController, DamageType, 0, HitLocation);                
 
-            dir.Z = Abs(dir.Z);
-            if(XPawn(Victims) != None)
-            {
-                XPawn(Victims).SetPhysics(PHYS_Falling);
-                XPawn(Victims).AddVelocity(Normal(dir)*PawnMomentumTransfer);
-            }
-            else
-            {
-                Victims.KAddImpulse(Normal(dir)*MomentumTransfer, HitLocation);
-            }
+			// Skip impulse for teammates, except self.
+			bFriendly = IsTeammate(Victims);
+
+			if ( !bFriendly )
+			{
+	            dir.Z = Abs(dir.Z);
+	            if(XPawn(Victims) != None)
+	            {
+	                XPawn(Victims).SetPhysics(PHYS_Falling);
+	                XPawn(Victims).AddVelocity(Normal(dir)*PawnMomentumTransfer);
+	            }
+	            else
+	            {
+	                Victims.KAddImpulse(Normal(dir)*MomentumTransfer, HitLocation);
+	            }
+	        }
 		}
 	}
 	if ( (LastTouched != None) && (LastTouched != self) && (LastTouched.Role == ROLE_Authority) && !LastTouched.IsA('FluidSurfaceInfo') )
@@ -148,16 +174,22 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 		if (Vehicle(Victims) != None && Vehicle(Victims).Health > 0)
 			Vehicle(Victims).DriverRadiusDamage(DamageAmount, DamageRadius, InstigatorController, DamageType, 0, HitLocation);
 
-        dir.Z = Abs(dir.Z);
-        if(XPawn(Victims) != None)
-        {
-            XPawn(Victims).SetPhysics(PHYS_Falling);
-            XPawn(Victims).AddVelocity(Normal(dir)*PawnMomentumTransfer);
-        }
-        else
-        {
-            Victims.KAddImpulse(Normal(dir)*MomentumTransfer, HitLocation);
-        }
+		// Skip impulse for teammates, except self.
+		bFriendly = IsTeammate(Victims);
+
+		if ( !bFriendly )
+		{
+	        dir.Z = Abs(dir.Z);
+	        if(XPawn(Victims) != None)
+	        {
+	            XPawn(Victims).SetPhysics(PHYS_Falling);
+	            XPawn(Victims).AddVelocity(Normal(dir)*PawnMomentumTransfer);
+	        }
+	        else
+	        {
+	            Victims.KAddImpulse(Normal(dir)*MomentumTransfer, HitLocation);
+	        }
+	    }
 	}
 
 	bHurtEntry = false;

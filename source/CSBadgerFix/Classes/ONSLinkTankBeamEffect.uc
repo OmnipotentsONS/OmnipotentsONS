@@ -16,14 +16,13 @@ replication
 }
 */
 
-// hack
-//var ONSWeapon WeaponOwner;
+var ONSWeapon WeaponOwner;
 
-//replication
-//{
-//	unreliable if (Role == ROLE_Authority)
-//		WeaponOwner;
-//}
+replication
+{
+	unreliable if (Role == ROLE_Authority)
+		WeaponOwner;
+}
 
 /*
 simulated function Destroyed()
@@ -33,6 +32,7 @@ simulated function Destroyed()
 }
 */
 
+/*
 simulated function SetBeamLocation()
 {
 	if ( (Instigator == None) || (ONSVehicle(Instigator) == None) || (ONSVehicle(Instigator).Weapons.Length <= 0) )
@@ -47,6 +47,25 @@ simulated function SetBeamLocation()
 //    	RepStartEffect = StartEffect;
 
 	SetLocation( StartEffect );
+}
+*/
+
+// This version fixes the link beam origination point not properly updating online
+simulated function SetBeamLocation()
+{
+    local ONSVehicle V;
+    local Coords C;
+
+    // Primary path: direct replicated weapon reference.
+    if (WeaponOwner != None && !WeaponOwner.bDeleteMe)
+    {
+        WeaponOwner.CalcWeaponFire();
+
+        StartEffect = WeaponOwner.WeaponFireLocation;
+        SetLocation(StartEffect);
+
+        return;
+    }
 }
 
 simulated function vector SetBeamRotation()

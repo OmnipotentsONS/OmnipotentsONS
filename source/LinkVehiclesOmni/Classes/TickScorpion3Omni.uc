@@ -28,14 +28,24 @@ var int intCurrDrawScale;
 var() array<Material> TickSkin_Red, TickSkin_Blue;
 var int NewSkin, OldSkin;
 
+// Linker passthrough vars
+struct LinkerStruct
+{
+    var Controller LinkingController;
+    var int NumLinks;
+    var float LastLinkTime;
+};
+const LINKDECAYTIME = 0.250000;
+var array<LinkerStruct> Linkers;
+var bool bLinking;
 
 replication
 {
     unreliable if (Role == ROLE_Authority)
-        Linking, Links, CurrDrawScale, intCurrDrawScale, NewSkin, OldSkin;
+        Links, bLinking, CurrDrawScale, intCurrDrawScale, NewSkin, OldSkin;
 }
 
-//link scorp needs to tell link gun when it's links change'
+//link scorp needs to tell link gun when its links change'
 
 simulated function PostNetBeginPlay()
 {
@@ -187,7 +197,7 @@ simulated function Timer()
 }
 */
 
-
+/*
 function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
 {
 
@@ -247,7 +257,100 @@ function bool HealDamage(int Amount, Controller Healer, class<DamageType> Damage
 	   ScaleTickScorp(true, Amount);
 	   return super.HealDamage(Amount, Healer, DamageType);
 }
+*/
 
+// Vehicle chain linking support by Anon
+function int GetHealerLinks(Controller Healer)
+{
+    local string LinkStr;
+
+    if (Healer == None || Healer.Pawn == None)
+        return 0;
+
+    // 1. If healer is in a vehicle (LinkTank, TickScorpion, LinkBadger, etc.)
+    if (Vehicle(Healer.Pawn) != None)
+    {
+        LinkStr = Healer.Pawn.GetPropertyText("Links");
+        if (LinkStr != "")
+            return int(LinkStr);
+    }
+    // 2. If healer is a player holding a LinkGun
+    else if (Healer.Pawn.Weapon != None && LinkGun(Healer.Pawn.Weapon) != None)
+    {
+        return LinkGun(Healer.Pawn.Weapon).Links;
+    }
+
+    return 0;
+}
+
+function bool HealDamage(int Amount, Controller Healer, class<DamageType> DamageType)
+{
+    local int i;
+    local bool bFound;
+    local int InboundLinks;
+
+    if (Healer == None || Healer.bDeleteMe)
+        return false;
+
+    if (TeamLink(Healer.GetTeamNum()) && Healer != Controller)
+    {
+        InboundLinks = GetHealerLinks(Healer);
+
+        for (i = 0; i < Linkers.Length; i++)
+        {
+            if (Linkers[i].LinkingController != None && Linkers[i].LinkingController == Healer)
+            {
+                bFound = true;
+                Linkers[i].LastLinkTime = Level.TimeSeconds;
+                Linkers[i].NumLinks = InboundLinks;
+                break;
+            }
+        }
+
+        if (!bFound)
+        {
+            Linkers.Insert(0, 1);
+            Linkers[0].LinkingController = Healer;
+            Linkers[0].LastLinkTime = Level.TimeSeconds;
+            Linkers[0].NumLinks = InboundLinks;
+        }
+    }
+
+    return super.HealDamage(Amount, Healer, DamageType);
+}
+
+function ResetLinks()
+{
+    local int i;
+    local int NewLinks;
+
+    i = 0;
+    NewLinks = 0;
+
+    while (i < Linkers.Length)
+    {
+        if (Linkers[i].LinkingController == None || Level.TimeSeconds - Linkers[i].LastLinkTime > LINKDECAYTIME)
+        {
+            Linkers.Remove(i, 1);
+        }
+        else
+        {
+            NewLinks += 1 + Linkers[i].NumLinks;
+            i++;
+        }
+    }
+
+    if (Links != NewLinks)
+        Links = NewLinks;
+}
+
+simulated event Tick(float DT)
+{
+    Super.Tick(DT);
+
+    if (Role == ROLE_Authority)
+        ResetLinks();
+}
 
 // No link stacking no need to do this
 /*

@@ -4,14 +4,13 @@
 class LinkTank3HeavyBeamEffect extends LinkBeamEffect
 	notplaceable;
 
-// hack
-//var ONSWeapon WeaponOwner;
+var ONSWeapon WeaponOwner;
 
-//replication
-//{
-//	unreliable if (Role == ROLE_Authority)
-//		WeaponOwner;
-//}
+replication
+{
+	unreliable if (Role == ROLE_Authority)
+		WeaponOwner;
+}
 
 /*
 simulated function Destroyed()
@@ -21,6 +20,7 @@ simulated function Destroyed()
 }
 */
 
+/*
 simulated function SetBeamLocation()
 {
 	if ( (Instigator == None) || (ONSVehicle(Instigator) == None) || (ONSVehicle(Instigator).Weapons.Length <= 0) )
@@ -33,6 +33,37 @@ simulated function SetBeamLocation()
     StartEffect = ONSVehicle(Instigator).Weapons[0].WeaponFireLocation;
 
 	SetLocation( StartEffect );
+}
+*/
+
+// This version fixes the link beam origination point not properly updating online
+simulated function SetBeamLocation()
+{
+    local ONSVehicle V;
+    local Coords C;
+
+    // Primary path: direct replicated weapon reference.
+    if (WeaponOwner != None && !WeaponOwner.bDeleteMe)
+    {
+        WeaponOwner.CalcWeaponFire();
+
+        StartEffect = WeaponOwner.WeaponFireLocation;
+        SetLocation(StartEffect);
+
+        return;
+    }
+
+    // Fallback for the short window before WeaponOwner resolves on an observer.
+    V = ONSVehicle(Instigator);
+
+    if (V != None)
+    {
+        C = V.GetBoneCoords('MachineGunTurret');
+
+        // Tune this only if the bone origin is behind the visible muzzle.
+        StartEffect = C.Origin + 100.0 * C.XAxis;
+        SetLocation(StartEffect);
+    }
 }
 
 simulated function vector SetBeamRotation()

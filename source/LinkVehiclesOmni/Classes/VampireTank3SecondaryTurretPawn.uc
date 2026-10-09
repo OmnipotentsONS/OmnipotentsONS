@@ -116,7 +116,7 @@ defaultproperties
      ExitPositions(0)=(Y=-200.000000,Z=100.000000)
      ExitPositions(1)=(Y=200.000000,Z=100.000000)
      EntryRadius=130.000000
-     FPCamPos=(Z=60.000000)
+     FPCamPos=(Y=8,Z=45.000000) //0, 60
      TPCamDistance=200.000000
      TPCamLookat=(X=0.000000)
      TPCamDistRange=(Max=600.000000)

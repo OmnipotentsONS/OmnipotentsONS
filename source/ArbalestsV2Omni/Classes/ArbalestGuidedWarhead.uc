@@ -33,7 +33,7 @@ var TeamInfo MyTeam;
 replication
 {
     reliable if (Role == ROLE_Authority && bNetOwner)
-        bStaticScreen;
+        bStaticScreen, OldPawn;
 
     reliable if ( Role < ROLE_Authority )
 		ServerBlowUp;
@@ -273,6 +273,14 @@ simulated function DrawHUD(Canvas Canvas)
 {
     local float Offset;
     local Plane SavedCM;
+    local PlayerController PC;
+    local HudCDeathmatch H;
+    local ArbalestNova V;
+    local ArbalestRocketLauncherNova W;
+    local string CoPilotLabel;
+    local float xl, yl, posy;
+	local ONSHUDOnslaught OH;
+	local float RadarWidth, CenterRadarPosX, CenterRadarPosY;
     
     SavedCM = Canvas.ColorModulate;
     Canvas.ColorModulate.X = 1;
@@ -338,6 +346,47 @@ simulated function DrawHUD(Canvas Canvas)
         }
    	}
    	Canvas.ColorModulate = SavedCM;
+
+	PC = PlayerController(Controller);
+
+	if ( Class == class'ArbalestGuidedWarhead' || Class == class'ArbalestMEGAGuidedWarhead' )
+	{
+		V = ArbalestNova(OldPawn);
+		if ( PC != None && V != None && V.Class == class'ArbalestNova' && V.Weapons.Length > 0 && V.Weapons[0] != None )
+		{
+			W = ArbalestRocketLauncherNova(V.Weapons[0]);
+			H = HudCDeathmatch(PC.MyHud);
+			if ( W != None && H != None )
+			{
+				if ( W.canFireMEGADeemer )
+					CoPilotLabel = "Nova Missile Loaded";
+				else
+					CoPilotLabel = "Nova Missile Loading Countdown " $ W.MEGADeemerSecondsLeft;
+
+				if ( W.canFireMEGADeemer )
+					Canvas.SetDrawColor(0,255,0,255);
+				else
+					Canvas.SetDrawColor(160,160,160,255);
+
+				Canvas.Font = H.GetConsoleFont(Canvas);
+				Canvas.StrLen(CoPilotLabel, xl, yl);
+				posy = Canvas.ClipY*0.7;
+				Canvas.SetPos(Canvas.ClipX-xl-5, posy-5-yl);
+				//Canvas.SetDrawColor(160,160,160,255);
+				Canvas.DrawText(CoPilotLabel);
+			}
+		}
+	}
+
+	// Show the Onslaught radar map
+	OH = ONSHUDOnslaught(PC.MyHud);
+	if ( OH != None && Level.bShowRadarMap && !OH.bMapDisabled )
+	{
+		RadarWidth = 0.5 * OH.RadarScale * OH.HUDScale * Canvas.ClipX;
+		CenterRadarPosX = OH.RadarPosX * Canvas.ClipX - RadarWidth;
+		CenterRadarPosY = OH.RadarPosY * Canvas.ClipY + RadarWidth;
+		OH.DrawRadarMap(Canvas, CenterRadarPosX, CenterRadarPosY, RadarWidth, false);
+	}
 }
 
 simulated event PlayDying(class<DamageType> DamageType, vector HitLoc);
