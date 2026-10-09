@@ -52,7 +52,7 @@ simulated event OwnerEffects()
 
 	if (Role < ROLE_Authority)
 	{
-		if (VampireTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+		if (ONSWeaponPawn(Owner) != None && VampireTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
 			NumLinks = VampireTank3(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 		else
 			NumLinks = 0;
@@ -94,7 +94,7 @@ function TraceFire(Vector Start, Rotator Dir)
     local int Damage;
     local int NumLinks;
 
-	if (VampireTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+	if (ONSWeaponPawn(Owner) != None && VampireTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
 		NumLinks = VampireTank3(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 	else
 		NumLinks = 0;
@@ -150,7 +150,7 @@ state InstantFireMode
     {
 		local int NumLinks;
 	
-		if (VampireTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+		if (ONSWeaponPawn(Owner) != None && VampireTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
 			NumLinks = VampireTank3(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 		else
 			NumLinks = 0;
@@ -186,7 +186,7 @@ state InstantFireMode
 		if (Level.NetMode != NM_DedicatedServer)
 		{
 
-			if (VampireTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+			if (ONSWeaponPawn(Owner) != None && VampireTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
 				NumLinks = VampireTank3(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 			else
 				NumLinks = 0;

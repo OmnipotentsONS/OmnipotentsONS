@@ -415,6 +415,12 @@ static function StaticPrecache(LevelInfo L)
 	L.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue');
 	L.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed');
 	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankTread');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed-Idle');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed-Linking');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed-DoubleLink');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue-Idle');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue-Linking');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue-DoubleLink');
 	L.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerGreen');
 	L.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerRed');
 	L.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerBlue');
@@ -437,6 +443,12 @@ simulated function UpdatePrecacheMaterials()
 	Level.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue');
 	Level.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed');
 	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankTread');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed-Idle');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed-Linking');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed-DoubleLink');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue-Idle');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue-Linking');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyBlue-DoubleLink');
 	Level.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerGreen');
 	Level.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerRed');
 	Level.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerBlue');
@@ -489,9 +501,9 @@ defaultproperties
      HealthMax=1450.000000
      Health=1150.00000
      Mesh=SkeletalMesh'ONSToys1Mesh.LinkTankChassis'
-     Skins(0)=Combiner'LinkTank3Tex.HeavyLinkTank.LinkTankBodyRed-Idle'
-     Skins(1)=Texture'LinkTank3Tex.HeavyLinkTank.LinkTankTread'
-     Skins(2)=Texture'LinkTank3Tex.HeavyLinkTank.LinkTankTread'
+     Skins(0)=Combiner'LinkTank3Tex.HeavyLinkTank.HeavyLinkTankBodyRed-Idle'
+     Skins(1)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
+     Skins(2)=Texture'LinkTank3Tex.LinkTankTex.LinkTankTread'
      DrawScale=1.1
      MaxThrust=100
      MaxGroundSpeed=950.000000

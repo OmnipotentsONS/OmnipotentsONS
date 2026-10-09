@@ -13,7 +13,7 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 	local Projectile SpawnedProjectile;
 	local int NumLinks;
 
-	if (LinkTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+	if (ONSWeaponPawn(Owner) != None && LinkTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
 		NumLinks = LinkTank3(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 	else
 		NumLinks = 0;
@@ -38,12 +38,16 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 
 static function StaticPrecache(LevelInfo L)
 {
+    L.AddPrecacheMaterial(Default.RedSkin);
+    L.AddPrecacheMaterial(Default.BlueSkin);
 //    L.AddPrecacheMaterial(Material'VMparticleTextures.TankFiringP.CloudParticleOrangeBMPtex');
 //    L.AddPrecacheMaterial(Material'AW-2004Particles.Weapons.TracerShot');
 }
 
 simulated function UpdatePrecacheMaterials()
 {
+    Level.AddPrecacheMaterial(RedSkin);
+    Level.AddPrecacheMaterial(BlueSkin);
 //    Level.AddPrecacheMaterial(Material'VMparticleTextures.TankFiringP.CloudParticleOrangeBMPtex');
 //    Level.AddPrecacheMaterial(Material'AW-2004Particles.Weapons.TracerShot');
 

@@ -78,8 +78,8 @@ simulated function UpdateLinkColor( LinkAttachment.ELinkColor Color )
 
 	// Update weapon colors too
 	for (i = 0; i < Weapons.Length; i++)
-		if (LinkTank3Gun(Weapons[i]) != None)
-			LinkTank3Gun(Weapons[i]).UpdateLinkColor(Color);
+		if (LinkTank3MiniGun(Weapons[i]) != None)
+			LinkTank3MiniGun(Weapons[i]).UpdateLinkColor(Color);
 }
 
 // ============================================================================
@@ -414,6 +414,12 @@ static function StaticPrecache(LevelInfo L)
 
 	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue');
 	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankTread');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-Idle');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-Linking');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-DoubleLink');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue-Idle');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue-Linking');
+	L.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue-DoubleLink');
 	L.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerGreen');
 	L.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerRed');
 	L.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerBlue');
@@ -435,6 +441,12 @@ simulated function UpdatePrecacheMaterials()
 {
 	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue');
 	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankTread');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-Idle');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-Linking');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyRed-DoubleLink');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue-Idle');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue-Linking');
+	Level.AddPrecacheMaterial(Material'LinkTank3Tex.LinkTankTex.LinkTankBodyBlue-DoubleLink');
 	Level.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerGreen');
 	Level.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerRed');
 	Level.AddPrecacheMaterial(Material'UT2004Weapons.NewWeaps.LinkPowerBlue');

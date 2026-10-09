@@ -102,7 +102,7 @@ function Projectile SpawnProjectile(class<Projectile> ProjClass, bool bAltFire)
 
   //log("VampireTank3SecondaryTurret VT="$VampireTank3(ONSWeaponPawn(Owner).VehicleBase));
 
-	if (VampireTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
+	if (ONSWeaponPawn(Owner) != None && VampireTank3(ONSWeaponPawn(Owner).VehicleBase) != None)
 		NumLinks = VampireTank3(ONSWeaponPawn(Owner).VehicleBase).Links;
 	else
 		NumLinks = 0;

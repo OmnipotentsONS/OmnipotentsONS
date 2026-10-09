@@ -58,8 +58,22 @@ var Sound OldAmbientSound;
 //		Beam;
 //}
 
+static function StaticPrecache(LevelInfo L)
+{
+	L.AddPrecacheMaterial(Material'UT2004Weapons.Shaders.PowerPulseShader');
+	L.AddPrecacheMaterial(Material'UT2004Weapons.Shaders.PowerPulseShaderYellow');
+	L.AddPrecacheMaterial(Material'UT2004Weapons.Shaders.PowerPulseShaderRed');
+	L.AddPrecacheMaterial(Material'UT2004Weapons.Shaders.PowerPulseShaderBlue');
+	L.AddPrecacheMaterial(Material'AS_Weapons_TX.LinkTurret.LinkTurret_Skin2_C');
+}
+
 simulated function UpdatePrecacheMaterials()
 {
+	Level.AddPrecacheMaterial(Material'UT2004Weapons.Shaders.PowerPulseShader');
+	Level.AddPrecacheMaterial(Material'UT2004Weapons.Shaders.PowerPulseShaderYellow');
+	Level.AddPrecacheMaterial(Material'UT2004Weapons.Shaders.PowerPulseShaderRed');
+	Level.AddPrecacheMaterial(Material'UT2004Weapons.Shaders.PowerPulseShaderBlue');
+	Level.AddPrecacheMaterial(Material'AS_Weapons_TX.LinkTurret.LinkTurret_Skin2_C');
 	Super.UpdatePrecacheMaterials();
 	
 	// this stuff should be covered by LinkGun anyway

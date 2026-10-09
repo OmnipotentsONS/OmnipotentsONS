@@ -12,6 +12,8 @@ var float VehicleDamageMult;
 
 static function StaticPrecache(LevelInfo L)
 {
+    L.AddPrecacheMaterial(Default.RedSkin);
+    L.AddPrecacheMaterial(Default.BlueSkin);
     L.AddPrecacheMaterial(Material'TurretParticles.Beams.TurretBeam5');
     L.AddPrecacheMaterial(Material'AW-2004Particles.Weapons.PlasmaMuzzleBlue');
     L.AddPrecacheMaterial(Material'EpicParticles.Flares.SoftFlare');
@@ -25,6 +27,8 @@ static function StaticPrecache(LevelInfo L)
 
 simulated function UpdatePrecacheMaterials()
 {
+    Level.AddPrecacheMaterial(RedSkin);
+    Level.AddPrecacheMaterial(BlueSkin);
     Level.AddPrecacheMaterial(Material'TurretParticles.Beams.TurretBeam5');
     Level.AddPrecacheMaterial(Material'AW-2004Particles.Weapons.PlasmaMuzzleBlue');
     Level.AddPrecacheMaterial(Material'EpicParticles.Flares.SoftFlare');
@@ -54,7 +58,7 @@ simulated event OwnerEffects()
 
 	if (Role < ROLE_Authority)
 	{
-		if (LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
+		if (ONSWeaponPawn(Owner) != None && LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
 			NumLinks = LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 		else
 			NumLinks = 0;
@@ -96,7 +100,7 @@ function TraceFire(Vector Start, Rotator Dir)
     local int Damage;
     local int NumLinks;
 
-	if (LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
+	if (ONSWeaponPawn(Owner) != None && LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
 		NumLinks = LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 	else
 		NumLinks = 0;
@@ -163,7 +167,7 @@ state InstantFireMode
     {
 		local int NumLinks;
 	
-		if (LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
+		if (ONSWeaponPawn(Owner) != None && LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
 			NumLinks = LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 		else
 			NumLinks = 0;
@@ -199,7 +203,7 @@ state InstantFireMode
 		if (Level.NetMode != NM_DedicatedServer)
 		{
 
-			if (LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
+			if (ONSWeaponPawn(Owner) != None && LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase) != None)
 				NumLinks = LinkTank3Heavy(ONSWeaponPawn(Owner).VehicleBase).GetLinks();
 			else
 				NumLinks = 0;
